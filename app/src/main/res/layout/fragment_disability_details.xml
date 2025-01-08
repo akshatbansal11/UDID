@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/llParent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/dp_15">
+
+                <TextView
+                    android:id="@+id/tvHead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:fontFamily="@font/opensans_bold"
+                    android:text="@string/disability_details_"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_18" />
+
+                <!--                <TextView-->
+                <!--                    android:id="@+id/tvHead"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginTop="@dimen/dp_20"-->
+                <!--                    android:text="Hospital for assessment/issue of UDID card/ diability certtificate "-->
+                <!--                    android:textColor="@color/black"-->
+                <!--                    android:textSize="@dimen/sp_20" />-->
+
+                <TextView
+                    android:id="@+id/tvType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:text="@string/type_of_disability"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/etType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:clickable="false"
+                    android:hint="@string/na"
+                    android:maxLength="50"
+                    android:fontFamily="@font/opensans_regular"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tvDisabilityOfBirth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/disability_of_birth"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/etDisabilityOfBirth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:clickable="false"
+                    android:fontFamily="@font/opensans_regular"
+                    android:hint="@string/na"
+                    android:maxLength="50"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tvSince"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:text="@string/disability_since"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/etSince"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:fontFamily="@font/opensans_regular"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:clickable="false"
+                    android:hint="@string/na"
+                    android:maxLength="50"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tvDueTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:text="@string/disability_due_to"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/etDueTo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:clickable="false"
+                    android:fontFamily="@font/opensans_regular"
+                    android:hint="@string/na"
+                    android:maxLength="50"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tvCertificate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:text="@string/do_you_have_disability_certificate"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/etCertificate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:clickable="false"
+                    android:hint="@string/na"
+                    android:fontFamily="@font/opensans_regular"
+                    android:maxLength="50"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true" />
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_12"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/uploaded_proof_of_address"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+                <ImageView
+                    android:layout_width="55dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="@dimen/dp_15"
+                    android:background="@drawable/va_image_placeholder" />
+
+
+                <TextView
+                    android:id="@+id/tvRegistration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/sr_no_registration_no_of_certificate"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/etRegistration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:clickable="false"
+                    android:fontFamily="@font/opensans_regular"
+                    android:hint="@string/na"
+                    android:maxLength="50"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tvDateOfIssue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:text="@string/date_of_issue"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/etDateOfIssue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:fontFamily="@font/opensans_regular"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:clickable="false"
+                    android:hint="@string/na"
+                    android:maxLength="50"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tvPercentage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/disability_percentage_"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+                <TextView
+                    android:id="@+id/etPercentage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:clickable="false"
+                    android:fontFamily="@font/opensans_regular"
+                    android:hint="@string/na"
+                    android:maxLength="50"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true" />
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
+</layout>

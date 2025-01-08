@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="ClickAction"
+            type="com.udid.ui.activity.PwdLoginActivity.ClickActions" />
+
+        <variable
+            name="viewModel"
+            type="com.udid.viewModel.ViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        tools:ignore="ScrollViewCount">
+
+        <RelativeLayout
+            android:id="@+id/rlParent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            tools:context="com.icucaa.ui.activity.SignInActivity">
+
+            <RelativeLayout
+                android:id="@+id/rlToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_login_bg">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/backPress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="@dimen/dp_10"
+                    android:layout_marginTop="@dimen/dp_50"
+                    android:onClick="@{ClickAction::backPress}"
+                    android:src="@drawable/ic_back" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivEmblem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="@dimen/dp_20"
+                    android:layout_marginTop="@dimen/dp_30"
+                    android:src="@mipmap/ashoka_emblem" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ivEmblem"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvWelcome"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/dp_20"
+                        android:text="@string/unique_disability_id"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_18"
+                        app:fontFamily="@font/poppins_bold" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/dp_20"
+                        android:text="@string/department_of_empowerment"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_11"
+                        app:fontFamily="@fonts/poppins_regular" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/rlToolbar"
+                android:padding="@dimen/dp_20">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvEnrollment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/enrollment_number_udid_number"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15"
+                    app:fontFamily="@font/opensans_semibold" />
+
+                <EditText
+                    android:id="@+id/etEnrollment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvEnrollment"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/curve_stroke_thin_grey"
+                    android:fontFamily="@font/opensans_regular"
+
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:padding="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDob"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/etEnrollment"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/dp_20"
+                    android:text="@string/date_of_birth"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15"
+                    app:fontFamily="@font/opensans_semibold" />
+
+                <TextView
+                    android:id="@+id/etDob"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvDob"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/curve_stroke_thin_grey"
+                    android:fontFamily="@font/opensans_regular"
+                    android:hint="@string/dd_mm_yyyy"
+                    android:onClick="@{ClickAction::dob}"
+
+                    android:padding="@dimen/dp_10"
+                    android:paddingVertical="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="#6B6B6B"
+                    android:textSize="@dimen/sp_15"
+                    app:drawableEndCompat="@drawable/ic_date_of_birth" />
+
+                <TextView
+                    android:id="@+id/tvSendBtnMail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/etDob"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/dp_30"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:background="@drawable/curve_fill_blue"
+                    android:elevation="@dimen/dp_5"
+                    android:onClick="@{ClickAction::login}"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_12"
+                    android:text="@string/sent_otp"
+                    android:textAlignment="center"
+                    android:textColor="@color/white" />
+
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</layout>

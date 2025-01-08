@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="ClickAction"
+            type="com.udid.ui.activity.DepartmentLoginActivity.ClickActions" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <RelativeLayout
+                android:id="@+id/rlToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_login_bg">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/backPress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="@dimen/dp_10"
+                    android:layout_marginTop="@dimen/dp_50"
+                    android:onClick="@{ClickAction::backPress}"
+                    android:src="@drawable/ic_back" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivEmblem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="@dimen/dp_20"
+                    android:layout_marginTop="@dimen/dp_30"
+                    android:src="@mipmap/ashoka_emblem" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ivEmblem"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvWelcome"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/dp_20"
+                        android:text="@string/unique_disability_id"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_18"
+                        app:fontFamily="@font/poppins_bold" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/dp_20"
+                        android:text="@string/department_of_empowerment"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_11"
+                        app:fontFamily="@fonts/poppins_regular" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/rlToolbar"
+                android:padding="@dimen/dp_20">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/email_id"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15"
+                    app:fontFamily="@font/opensans_semibold" />
+
+                <EditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvEmail"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/curve_stroke_thin_grey"
+                    android:hint="@string/enter_email"
+                    android:padding="10dp"
+                    android:paddingVertical="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="#6B6B6B"
+                    android:textSize="14sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/etEmail"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/password"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_14"
+                    app:fontFamily="@font/opensans_semibold" />
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tvPassword"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/curve_stroke_thin_grey"
+                    android:hint="@string/enter_password"
+                    android:inputType="textPassword"
+                    android:padding="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="#6B6B6B"
+                    android:textSize="@dimen/sp_15" />
+
+                <!--                <LinearLayout-->
+                <!--                    android:id="@+id/llCaptcha"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_below="@+id/etEmail"-->
+                <!--                    android:layout_marginTop="17dp"-->
+                <!--                    android:orientation="horizontal"-->
+                <!--                    android:weightSum="2">-->
+
+                <!--                    <LinearLayout-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_weight="1"-->
+                <!--                        android:orientation="vertical">-->
+
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
+                <!--                            android:id="@+id/EnterCaptcha"-->
+                <!--                            android:layout_width="match_parent"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:text="Enter Captcha"-->
+                <!--                            android:textColor="@color/black"-->
+                <!--                            android:textSize="16sp"-->
+                <!--                            android:textStyle="bold"-->
+                <!--                            app:fontFamily="@fonts/opensans_regular" />-->
+
+                <!--                        <EditText-->
+                <!--                            android:id="@+id/etEnterCaptcha"-->
+                <!--                            android:layout_width="match_parent"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_marginTop="5dp"-->
+                <!--                            android:layout_marginEnd="10dp"-->
+                <!--                            android:background="@drawable/curve_stroke_thin_grey"-->
+                <!--                            android:hint="Enter Captcha"-->
+                <!--                            android:padding="10dp"-->
+                <!--                            android:paddingVertical="10dp"-->
+                <!--                            android:singleLine="true"-->
+                <!--                            android:textColor="@color/black"-->
+                <!--                            android:textColorHint="#6B6B6B"-->
+                <!--                            android:textSize="16sp" />-->
+                <!--                    </LinearLayout>-->
+
+                <!--                    <LinearLayout-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_weight="1"-->
+                <!--                        android:orientation="vertical">-->
+
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
+                <!--                            android:id="@+id/CaptchaTv"-->
+                <!--                            android:layout_width="match_parent"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_marginStart="5dp"-->
+                <!--                            android:text="Captcha"-->
+                <!--                            android:textColor="@color/black"-->
+                <!--                            android:textSize="16sp"-->
+                <!--                            android:textStyle="bold"-->
+                <!--                            app:fontFamily="@fonts/opensans_regular" />-->
+
+                <!--                        <LinearLayout-->
+                <!--                            android:layout_width="match_parent"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:orientation="horizontal"-->
+                <!--                            android:weightSum="2">-->
+
+                <!--                            <EditText-->
+
+                <!--                                android:id="@+id/etCaptcha"-->
+                <!--                                android:layout_width="0dp"-->
+                <!--                                android:layout_height="wrap_content"-->
+                <!--                                android:layout_marginStart="5dp"-->
+                <!--                                android:layout_marginTop="5dp"-->
+                <!--                                android:layout_weight="1.6"-->
+                <!--                                android:background="@drawable/curve_stroke_thin_grey"-->
+                <!--                                android:editable="false"-->
+                <!--                                android:focusable="false"-->
+                <!--                                android:padding="10dp"-->
+                <!--                                android:paddingVertical="10dp"-->
+                <!--                                android:singleLine="true"-->
+                <!--                                android:textColor="@color/black"-->
+                <!--                                android:textColorHint="#6B6B6B"-->
+                <!--                                android:textSize="16sp" />-->
+
+                <!--                            <ImageView-->
+                <!--                                android:layout_width="0dp"-->
+                <!--                                android:layout_height="wrap_content"-->
+                <!--                                android:layout_gravity="center"-->
+                <!--                                android:layout_weight="0.4"-->
+                <!--                                android:onClick="@{ClickAction::recaptcha}"-->
+                <!--                                android:src="@drawable/ic_recaptcha" />-->
+
+                <!--                        </LinearLayout>-->
+
+                <!--                    </LinearLayout>-->
+                <!--                </LinearLayout>-->
+
+                <TextView
+                    android:id="@+id/tvSendBtnMail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/etPassword"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/dp_30"
+                    android:layout_marginBottom="@dimen/dp_10"
+                    android:background="@drawable/curve_fill_blue"
+                    android:elevation="5dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:onClick="@{ClickAction::sendOtp}"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_12"
+                    android:text="@string/send_otp"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_15" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/ForgotTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvSendBtnMail"
+                    android:text="@string/forgot_password"
+                    android:textAlignment="center"
+                    android:textColor="@color/blue"
+                    android:textSize="@dimen/sp_12"
+                    app:fontFamily="@font/poppins_medium" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</layout>

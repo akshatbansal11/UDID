@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="ClickAction"
+            type="com.udid.ui.activity.DashboardActivity.ClickActions" />
+    </data>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".Dashboard">
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/va_bg_application_view">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginVertical="@dimen/dp_30"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:text="Dashboard"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_logout"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:onClick="@{ClickAction::logout}"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginVertical="@dimen/dp_30"/>
+
+    </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvApplicationStatus"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginHorizontal="@dimen/dp_10"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="-70dp"
+            tools:listitem="@layout/dashboard_item" />
+
+    </RelativeLayout>
+</layout>

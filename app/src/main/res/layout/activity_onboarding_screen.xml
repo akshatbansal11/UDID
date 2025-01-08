@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="ClickAction"
+            type="com.udid.ui.activity.OnboardingScreenActivity.ClickActions" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".ui.activity.OnboardingScreenActivity">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/llFooter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <FrameLayout
+                android:id="@+id/fragmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/llFooter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <!-- This FrameLayout will host the dynamic fragments -->
+            </FrameLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <LinearLayout
+            android:id="@+id/llFooter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dp_8"
+            android:layout_marginVertical="@dimen/dp_8"
+            android:background="#FFFFFF"
+            android:orientation="horizontal"
+            android:paddingVertical="@dimen/dp_6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- First Dot -->
+            <ImageView
+                android:id="@+id/dotOne"
+                android:layout_width="@dimen/dp_10"
+                android:layout_height="@dimen/dp_10"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_15"
+                android:src="@drawable/ic_circle_shape"
+                app:tint="#FF8A00" />
+
+            <!-- Second Dot -->
+            <ImageView
+                android:id="@+id/dotTwo"
+                android:layout_width="@dimen/dp_10"
+                android:layout_height="@dimen/dp_10"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/dp_15"
+                android:src="@drawable/ic_circle_shape"/>
+
+            <!-- Spacer to push the button to the end -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Button -->
+
+            <TextView
+                android:id="@+id/tvNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/curve_fill_blue"
+                android:onClick="@{ClickAction::next}"
+                android:paddingHorizontal="@dimen/dp_20"
+                android:paddingVertical="@dimen/dp_10"
+                android:text="@string/next"
+                android:fontFamily="@font/poppins_semi_bold"
+                android:textAlignment="center"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tvBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/dp_5"
+                android:onClick="@{ClickAction::back}"
+                android:paddingHorizontal="@dimen/dp_20"
+                android:paddingVertical="@dimen/dp_10"
+                android:text="@string/back"
+                android:textAlignment="center"
+                android:textColor="#B0B3B8"
+                android:fontFamily="@font/poppins_semi_bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvGetStarted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/curve_fill_blue"
+                android:onClick="@{ClickAction::getStarted}"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:text="@string/get_started"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
