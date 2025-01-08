@@ -130,7 +130,7 @@
     <string name="update_mobile_n_number">Update Mobile Number</string>
     <string name="surrender_n_card">Surrender Card</string>
     <string name="track_your_n_card">Track your Card</string>
-    <string name="apply_for_n_re_issue">Apply for Re-Issue</string>
+    <string name="apply_for_n_re_issue">Apply for Renew</string>
     <string name="application_statuss">Application Status</string>
     <string name="medical_camps_hospitals">Medical Camps / Hospitals</string>
     <string name="district_welfare_office">District Welfare Office</string>
@@ -197,4 +197,5 @@
     <string name="percentage_of_disability">Percentage Of Disability</string>
     <string name="valid_upto">Valid Upto</string>
     <string name="aadhaar_number">Aadhaar Number</string>
+    <string name="scan_for_details">Scan For Details</string>
 </resources>

@@ -164,7 +164,7 @@
                     android:onClick="@{ClickAction::login}"
                     android:paddingHorizontal="@dimen/dp_10"
                     android:paddingVertical="@dimen/dp_12"
-                    android:text="@string/sent_otp"
+                    android:text="@string/login"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
 

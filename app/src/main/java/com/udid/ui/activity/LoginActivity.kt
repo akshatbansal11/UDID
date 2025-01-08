@@ -6,7 +6,7 @@ import com.udid.R
 import com.udid.databinding.ActivityLoginBinding
 import com.udid.utilities.BaseActivity
 
-class LoginActivity() : BaseActivity<ActivityLoginBinding>() {
+class LoginActivity : BaseActivity<ActivityLoginBinding>() {
     private var mBinding:ActivityLoginBinding?=null
 
     override val layoutId: Int
@@ -21,9 +21,6 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding>() {
 
         fun pwdLogin(view: View){
             startActivity(Intent(this@LoginActivity,PwdLoginActivity::class.java))
-        }
-        fun departmentLogin(view: View){
-            startActivity(Intent(this@LoginActivity,DepartmentLoginActivity::class.java))
         }
         fun scanForDetails(view: View){
             startActivity(Intent(this@LoginActivity,ScannerActivity::class.java))

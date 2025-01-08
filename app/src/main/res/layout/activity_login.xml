@@ -87,26 +87,10 @@
                     android:textColor="@color/white" />
 
                 <TextView
-                    android:id="@+id/tvDepartmentLogin"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvPwdLogin"
-                    android:layout_centerHorizontal="true"
-                    android:paddingHorizontal="@dimen/dp_40"
-                    android:layout_marginVertical="@dimen/dp_20"
-                    android:background="@drawable/curve_fill_blue"
-                    android:elevation="@dimen/dp_5"
-                    android:onClick="@{ClickAction::departmentLogin}"
-                    android:paddingVertical="@dimen/dp_15"
-                    android:text="@string/department_login"
-                    android:textAlignment="center"
-                    android:textColor="@color/white" />
-
-                <TextView
                     android:id="@+id/tvScannerPage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tvDepartmentLogin"
+                    android:layout_below="@id/tvPwdLogin"
                     android:layout_centerHorizontal="true"
                     android:paddingHorizontal="@dimen/dp_45"
                     android:layout_marginVertical="@dimen/dp_20"
@@ -114,7 +98,7 @@
                     android:elevation="@dimen/dp_5"
                     android:onClick="@{ClickAction::scanForDetails}"
                     android:paddingVertical="@dimen/dp_15"
-                    android:text="Scan For Details"
+                    android:text="@string/scan_for_details"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
 

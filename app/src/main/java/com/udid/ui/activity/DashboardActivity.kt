@@ -54,15 +54,16 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
             DashboardData(getString(R.string.surrender_n_card),R.drawable.surrender_card),
             DashboardData(getString(R.string.track_your_n_card),R.drawable.track_your_card),
             DashboardData(getString(R.string.apply_for_n_re_issue),R.drawable.apply_for_reissue),
+            DashboardData("Lost Card/Card Not Recieved",R.drawable.apply_for_reissue),
+            DashboardData("Appeal",R.drawable.apply_for_reissue),
+            DashboardData("Update Personal Profile",R.drawable.apply_for_reissue),
             DashboardData(getString(R.string.application_statuss),R.drawable.applicaton_status),
-            DashboardData(getString(R.string.medical_camps_hospitals),R.drawable.medical_camps),
-            DashboardData(getString(R.string.district_welfare_office),R.drawable.district_welfare),
-            DashboardData(getString(R.string.disability_scheme),R.drawable.disability),
-            DashboardData(getString(R.string.write_your_grievance),R.drawable.write_grievence),
             DashboardData(getString(R.string.download_application),R.drawable.download_application),
+            DashboardData("Download Receipt",R.drawable.download_application),
             DashboardData(getString(R.string.e_disability_certificate),R.drawable.e_disability_certificate),
             DashboardData(getString(R.string.e_udid_card),R.drawable.e_udid_card),
-//            DashboardData(getString(R.string.logout),R.drawable.ic_logout),
+            DashboardData("Doctor's Diagnosis Sheet",R.drawable.e_udid_card),
+            DashboardData("FeedBack/Query",R.drawable.write_grievence),
         )
 
         dashboardAdapter = DashboardAdapter(this, dashboardList!!)
