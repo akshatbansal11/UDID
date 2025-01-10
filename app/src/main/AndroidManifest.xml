@@ -36,6 +36,9 @@
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activity.UserDataActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activity.FeedbackAndQueryActivity"
             android:exported="false" />
         <activity
@@ -107,6 +110,7 @@
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.activity.MyAccountActivity"
             android:configChanges="keyboardHidden|orientation"
