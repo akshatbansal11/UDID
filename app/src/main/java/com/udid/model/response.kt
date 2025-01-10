@@ -19,6 +19,20 @@ data class MyAccountResponse(
     val message: String
 )
 
+data class DropDownResponse(
+    val _result: List<DropDownResult>,
+    val _resultflag: Int,
+    val message: String,
+    val model: String,
+    val total_count: Int
+)
+
+data class DropDownResult(
+    val id: Int,
+    val name: String
+)
+
+
 data class OTPResponse(
     val _resultflag: Int,
     val message: String,

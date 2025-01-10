@@ -62,6 +62,7 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                     else -> {
                         val data =
                             JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result.data))
+                        Log.d("data",EncryptionModel.aesDecrypt(userResponseModel._result.data))
                         Utility.savePreferencesString(
                             this, AppConstants.APPLICATION_NUMBER,
                             data.getString("application_number")
@@ -81,6 +82,11 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                             this,
                             AppConstants.photo,
                             data.getString("photo_path")
+                        )
+                        Utility.savePreferencesString(
+                            this,
+                            AppConstants.FULL_NAME,
+                            data.getString("full_name")
                         )
                         startActivity(Intent(this, DashboardActivity::class.java))
                         finishAffinity()
