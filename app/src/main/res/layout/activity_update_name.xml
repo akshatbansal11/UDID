@@ -146,6 +146,7 @@
                         android:layout_marginTop="@dimen/dp_7"
                         android:background="@drawable/curve_stroke_thin_grey"
                         android:hint="Enter Revise Name"
+                        android:fontFamily="@font/opensans_regular"
                         android:maxLength="50"
                         android:paddingHorizontal="@dimen/dp_10"
                         android:paddingVertical="@dimen/dp_5"
@@ -319,13 +320,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_15"
-                        android:background="@drawable/back_number_gray"
                         android:fontFamily="@font/opensans_semibold"
                         android:paddingHorizontal="@dimen/dp_15"
                         android:paddingVertical="@dimen/dp_10"
+                        android:background="@drawable/curve_fill_blue"
+                        android:backgroundTint="@color/darkBlue"
                         android:text="Generate OTP"
                         android:onClick="@{ClickAction::generateOtp}"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:textSize="@dimen/sp_16" />
 
                     <LinearLayout

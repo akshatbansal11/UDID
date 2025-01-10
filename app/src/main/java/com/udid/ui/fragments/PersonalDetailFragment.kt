@@ -4,10 +4,12 @@ import android.app.DatePickerDialog
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RotateDrawable
+import android.os.Build
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -17,7 +19,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.udid.R
 import com.udid.databinding.FragmentPersonalDetailsBinding
 import com.udid.databinding.FragmentProofOfCAddBinding
-import com.udid.model.ResultGetDropDown
+import com.udid.model.DropDownResult
 import com.udid.ui.adapter.BottomSheetAdapter
 import com.udid.utilities.BaseFragment
 import com.udid.utilities.Utility.convertDate
@@ -40,15 +42,16 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
     private var districtId: Int? = null // Store selected state
 
     private val guardian = listOf(
-        ResultGetDropDown(id = 1, name = "Father"),
-        ResultGetDropDown(id = 2, name = "Mother"),
-        ResultGetDropDown(id = 3, name = "Guardian")
+        DropDownResult(id = 1, name = "Father"),
+        DropDownResult(id = 2, name = "Mother"),
+        DropDownResult(id = 3, name = "Guardian")
     )
     private var gender:Int=0
     override val layoutId: Int
         get() = R.layout.fragment_personal_details
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun init() {
         mBinding=viewDataBinding
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedDataViewModel::class.java)
@@ -121,6 +124,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun openCalendar(type: String, selectedTextView: TextView) {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(
@@ -170,7 +174,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         }
 
         // Define a variable for the selected list and TextView
-        val selectedList: List<ResultGetDropDown>
+        val selectedList: List<DropDownResult>
         val selectedTextView: TextView
         // Initialize based on type
         when (type) {

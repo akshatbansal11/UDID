@@ -14,7 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.udid.R
 import com.udid.databinding.FragmentDisabilityDetailsBinding
 import com.udid.databinding.FragmentHospitalAssesmentBinding
-import com.udid.model.ResultGetDropDown
+import com.udid.model.DropDownResult
 import com.udid.ui.adapter.BottomSheetAdapter
 import com.udid.utilities.BaseFragment
 import com.udid.utilities.hideView
@@ -31,9 +31,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     private var districtId: Int? = null // Store selected state
 
     private val guardian = listOf(
-        ResultGetDropDown(id = 1, name = "Father"),
-        ResultGetDropDown(id = 2, name = "Mother"),
-        ResultGetDropDown(id = 3, name = "Guardian")
+        DropDownResult(id = 1, name = "Father"),
+        DropDownResult(id = 2, name = "Mother"),
+        DropDownResult(id = 3, name = "Guardian")
     )
     private var gender: Int = 0
     override val layoutId: Int
@@ -131,7 +131,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         }
 
         // Define a variable for the selected list and TextView
-        val selectedList: List<ResultGetDropDown>
+        val selectedList: List<DropDownResult>
         val selectedTextView: TextView
         // Initialize based on type
         when (type) {
