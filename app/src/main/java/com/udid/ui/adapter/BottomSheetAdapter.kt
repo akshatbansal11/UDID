@@ -7,19 +7,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.udid.R
-import com.udid.model.ResultGetDropDown
+import com.udid.model.DropDownResult
 
 
 class BottomSheetAdapter(
     private val context: Context,
-    private val list: List<ResultGetDropDown>,
+    private val list: List<DropDownResult>,
     private val onItemClicked: (String,Int) -> Unit // Lambda for item clicks
 ) : RecyclerView.Adapter<BottomSheetAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textView: TextView = view.findViewById(R.id.tvStateName)
 
-        fun bind(text: ResultGetDropDown) {
+        fun bind(text: DropDownResult) {
             textView.text = text.name
 
             // Set click listener for the item

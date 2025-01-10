@@ -18,6 +18,16 @@ data class OnBoardingImageData(
     val description: String
 )
 
+data class DropDownRequest(
+    val fields: Fields,
+    val model: String,
+    val type: String
+)
+
+data class Fields(
+    val state_code: String
+)
+
 data class OtpRequest(
     val application_number: String,
     val otp: String
