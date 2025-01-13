@@ -119,6 +119,7 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
             result.error?.printStackTrace()
             Toast.makeText(this, "Error cropping image: ${result.error?.message}", Toast.LENGTH_SHORT).show()
         }
+
     }
 
     @get:LayoutRes
@@ -355,13 +356,13 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
     private fun displayImageWithWatermark(imageUri: Uri) {
         val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
 
-        val finalBitmap = addWatermark(imageBitmap)
-        val imageSizeInBytes = getImageSizeInBytes(finalBitmap)
+//        val imageBitmap = addWatermark(imageBitmap)
+        val imageSizeInBytes = getImageSizeInBytes(imageBitmap)
         val imageSize = formatImageSize(imageSizeInBytes)
         if (imageSizeInBytes > 5 * 1024 * 1024) {
             Toast.makeText(this, "Upload an image size less than 5MB", Toast.LENGTH_SHORT).show()
         } else {
-//            showImage(finalBitmap)
+            showImage(imageBitmap)
             Toast.makeText(this, "Image size: $imageSize", Toast.LENGTH_SHORT).show()
         }
     }
@@ -419,6 +420,12 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
                 )
             )
         )
+
+    }
+
+    open fun showImage(bitmap: Bitmap) {
+        // In your child activity, override this method to set the image view
+        // For example: binding.imgViewer.setImageBitmap(bitmap)
     }
 
     fun hasCameraPermission(): Boolean {
@@ -438,6 +445,23 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
         if (!hasLocationPermission()) {
             permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toTypedArray(),
+                REQUEST_PERMISSION_CODE
+            )
+        }
+    }
+
+    fun requestCameraPermissions() {
+        val permissionsToRequest = mutableListOf<String>()
+
+        if (!hasCameraPermission()) {
+            permissionsToRequest.add(Manifest.permission.CAMERA)
+        }
+
 
         if (permissionsToRequest.isNotEmpty()) {
             ActivityCompat.requestPermissions(
@@ -526,10 +550,10 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
         }
 
         camera.setOnClickListener {
-            if (!hasCameraPermission() || !hasLocationPermission()) {
-                requestPermissions()
+            if (!hasCameraPermission()) {
+                requestCameraPermissions()
             } else {
-                takePicture.launch(cameraImageUri)
+                dispatchTakePictureIntent()
             }
             dialog.dismiss()
         }

@@ -31,6 +31,8 @@ class UpdateMobileNumberActivity : BaseActivity<ActivityUpdateMobileNumberBindin
             }
         }
 
+
+
     }
 
     private fun valid(): Boolean {

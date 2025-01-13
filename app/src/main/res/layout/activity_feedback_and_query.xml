@@ -241,6 +241,7 @@
                             android:background="@drawable/back_number_gray"
                             android:gravity="center"
                             android:padding="@dimen/dp_10"
+                            android:onClick="@{ClickAction::uploadFile}"
                             android:text="@string/choose_file"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sp_14" />

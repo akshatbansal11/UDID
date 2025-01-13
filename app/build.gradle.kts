@@ -124,5 +124,7 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     implementation("com.vanniktech:android-image-cropper:4.6.0")
+//    implementation ("com.github.CanHub:Android-Image-Cropper:4.0.0")
+
 
 }
