@@ -111,9 +111,7 @@
                     android:layout_marginTop="@dimen/dp_5"
                     android:background="@drawable/curve_stroke_thin_grey"
                     android:fontFamily="@font/opensans_regular"
-
                     android:imeOptions="actionNext"
-                    android:inputType="number"
                     android:padding="@dimen/dp_10"
                     android:paddingVertical="@dimen/dp_10"
                     android:singleLine="true"

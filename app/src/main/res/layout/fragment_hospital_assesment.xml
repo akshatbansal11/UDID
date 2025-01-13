@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -30,43 +31,194 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_bold"
-                    android:text="@string/hospital_for_assessment_issue_of_udid_card_diability_certtificate"
+                    android:text="Hospital for assessment/issue of UDID card /disability certificate"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_18" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/tvHead"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="@dimen/dp_20"-->
-<!--                    android:text="Hospital for assessment/issue of UDID card/ diability certtificate "-->
-<!--                    android:textColor="@color/black"-->
-<!--                    android:textSize="@dimen/sp_20" />-->
 
                 <TextView
-                    android:id="@+id/tvEnrollmentNo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_20"
+                    android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="@string/hospital_treating_disability"
+                    android:text="Is your treating hospital in other State/District ? *"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
+                <RadioGroup
+                    android:id="@+id/rgTreatingState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rbNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No"
+                        android:checked="true"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_14"
+                        app:buttonTint="@color/radioBrown" />
+
+                    <androidx.appcompat.widget.AppCompatRadioButton
+                        android:id="@+id/rbYes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Yes"
+                        android:layout_marginStart="@dimen/dp_15"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_14"
+                        app:buttonTint="@color/radioBrown" />
+                </RadioGroup>
                 <TextView
-                    android:id="@+id/etEnrollNo"
+                    android:id="@+id/tvTitleHospitalState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:visibility="gone"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="Hospital Treating State / UTs*"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+
+                <TextView
+                    android:id="@+id/tvHospitalState"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:background="@drawable/curve_all_corner_grey"
-                    android:maxLength="50"
+                    android:drawableEnd="@drawable/ic_arrow_down"
                     android:fontFamily="@font/opensans_regular"
-                    android:hint="@string/test_new"
-                    android:clickable="false"
+                    android:maxLength="50"
+                    android:visibility="gone"
                     android:paddingHorizontal="@dimen/dp_10"
                     android:paddingVertical="@dimen/dp_5"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:text="Select Hospital Treating State / UTs*"
+                    android:textColor="@color/grey" />
 
+                <TextView
+                    android:id="@+id/tvTitleHospitalDistrict"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:visibility="gone"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="Hospital Treating District*"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+
+                <TextView
+                    android:id="@+id/tvHospitalDistrict"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:drawableEnd="@drawable/ic_arrow_down"
+                    android:fontFamily="@font/opensans_regular"
+                    android:maxLength="50"
+                    android:visibility="gone"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true"
+                    android:text="Choose Hospital Treating District*"
+                    android:textColor="@color/grey" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="Hospital Name*"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
+
+
+                <TextView
+                    android:id="@+id/tvHospitalName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:background="@drawable/curve_all_corner_grey"
+                    android:drawableEnd="@drawable/ic_arrow_down"
+                    android:fontFamily="@font/opensans_regular"
+                    android:maxLength="50"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true"
+                    android:text="Select Hospital Name*"
+                    android:textColor="@color/grey" />
+
+                <LinearLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_15"
+                    android:orientation="horizontal">
+                    <CheckBox
+                        android:id="@+id/checkbox_confirm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="@color/radioBrown" />
+
+
+                    <TextView
+                        android:id="@+id/tv_checkbox_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="I hereby declare that all particulars stated above are true to the best of my knowledge and belief, and no material information has been concealed or misstated. I further state that if any inaccuracy is detected in the application, I shall be liable to forfeiture of any benefits derived and other action as per law. *"
+                        android:textSize="16sp"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvSaveDraft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/dp_3"
+                        android:layout_marginTop="@dimen/dp_15"
+                        android:layout_marginBottom="@dimen/dp_10"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/curve_fill_blue"
+                        android:backgroundTint="@color/radioBrown"
+                        android:clickable="true"
+                        android:fontFamily="@font/poppins_medium"
+                        android:paddingHorizontal="@dimen/dp_10"
+                        android:paddingVertical="@dimen/dp_10"
+                        android:text="Cancel"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/tvSendOtp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/dp_3"
+                        android:layout_marginTop="@dimen/dp_15"
+                        android:layout_marginBottom="@dimen/dp_10"
+                        android:layout_weight="0.5"
+                        android:background="@drawable/curve_fill_blue"
+                        android:clickable="true"
+                        android:backgroundTint="@color/radioBrown"
+                        android:fontFamily="@font/poppins_medium"
+                        android:paddingHorizontal="@dimen/dp_10"
+                        android:paddingVertical="@dimen/dp_10"
+                        android:text="@string/submit"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
     </RelativeLayout>

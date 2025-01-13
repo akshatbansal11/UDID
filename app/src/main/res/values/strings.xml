@@ -199,6 +199,22 @@
     <string name="valid_upto">Valid Upto</string>
     <string name="aadhaar_number">Aadhaar Number</string>
     <string name="scan_for_details">Scan For Details</string>
+    <string name="updated_aadhaar_number">Updated Aadhaar Number<font color="#FF0000">*</font></string>
+    <string name="identity_proof">Identity Proof<font color="#FF0000">*</font></string>
+    <string name="upload_document">Upload Document<font color="#FF0000">*</font></string>
+    <string name="reason_to_update_aadhaar_number">Reason to update Aadhaar Number<font color="#FF0000">*</font></string>
+    <string name="update_mobile_number">Update Mobile Number<font color="#FF0000">*</font></string>
+    <string name="updated_date_of_birth">Updated Date of Birth<font color="#FF0000">*</font></string>
+    <string name="reason_to_update_date_of_birth">Reason to Update Date of Birth<font color="#FF0000">*</font></string>
+    <string name="updated_revised_email_id">Updated Revised Email ID<font color="#FF0000">*</font></string>
+    <string name="reason_to_surrender_card">Reason to Surrender Card<font color="#FF0000">*</font></string>
+    <string name="reason_to_update_lost_card_card_not_received">Reason to update Lost Card/Card Not Received<font color="#FF0000">*</font></string>
+    <string name="name_star">Name <font color="#FF0000">*</font></string>
+    <string name="email_id_star">Email ID <font color="#FF0000">*</font></string>
+    <string name="mobile_number_star">Mobile Number <font color="#FF0000">*</font></string>
+    <string name="subject">Subject <font color="#FF0000">*</font></string>
+    <string name="message">Message <font color="#FF0000">*</font></string>
+    <string name="document">Document</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
 </resources>

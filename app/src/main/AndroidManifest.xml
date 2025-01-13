@@ -36,6 +36,15 @@
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activity.LostCardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity.SurrenderCardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity.UserDataActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activity.FeedbackAndQueryActivity"
             android:exported="false" />
         <activity

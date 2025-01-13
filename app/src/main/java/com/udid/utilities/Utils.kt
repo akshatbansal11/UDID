@@ -45,6 +45,8 @@ import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.text.*
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Logger
 import java.util.regex.Matcher
@@ -979,24 +981,29 @@ object Utility {
         return dateString
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SimpleDateFormat")
-    fun convertDate(pre: String, dateString: String, post: String): String {
-        val parseFormat = SimpleDateFormat(pre)
-        parseFormat.timeZone = TimeZone.getTimeZone("UTC")
-        var date: Date? = null
-        try {
-            date = parseFormat.parse(dateString)
-            parseFormat.timeZone = TimeZone.getDefault()
-        } catch (e: ParseException) {
-            e.printStackTrace()
+    fun convertDate(inputDate: String?): String {
+        // Check for null or empty input
+        if (inputDate.isNullOrEmpty()) {
+            return ""
         }
+        return try {
+            // Define the input format
+            val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
 
-        val format = SimpleDateFormat(post)
-        format.timeZone = TimeZone.getDefault()
-        // Log.e("dateTimeStamp",date)
+            // Parse the input date string
+            val parsedDate = ZonedDateTime.parse(inputDate, inputFormatter)
 
-        return format.format(date)
+            // Define the output format
+            val outputFormatter = DateTimeFormatter.ofPattern("dd MMM, yyyy")
 
+            // Format the parsed date to the desired format
+            parsedDate.format(outputFormatter)
+        } catch (e: Exception) {
+            // Return an empty string if parsing fails
+            ""
+        }
     }
 
     fun getDateWithTime(timestamp: Long): String {

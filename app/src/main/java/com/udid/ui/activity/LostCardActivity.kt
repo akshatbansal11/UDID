@@ -2,18 +2,18 @@ package com.udid.ui.activity
 
 import android.view.View
 import com.udid.R
-import com.udid.databinding.ActivityFeedbackAndQueryBinding
+import com.udid.databinding.ActivityLostCardBinding
 import com.udid.utilities.BaseActivity
 import com.udid.viewModel.ViewModel
 
-class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>() {
+class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
 
-    private var mBinding: ActivityFeedbackAndQueryBinding? = null
+    private var mBinding: ActivityLostCardBinding? = null
     private var viewModel= ViewModel()
 
 
     override val layoutId: Int
-        get() = R.layout.activity_feedback_and_query
+        get() = R.layout.activity_surrender_card
 
     override fun initView() {
         mBinding = viewDataBinding
@@ -22,7 +22,6 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
     }
 
     override fun setVariables() {
-
     }
 
     override fun setObservers() {
