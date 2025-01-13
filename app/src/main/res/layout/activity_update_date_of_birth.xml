@@ -162,7 +162,7 @@
                             android:paddingHorizontal="@dimen/dp_10"
                             android:paddingVertical="@dimen/dp_8"
                             android:singleLine="true"
-                            android:textColor="#6B6B6B"
+                            android:textColor="@color/black"
                             android:textSize="@dimen/sp_14" />
 
                         <ImageView
@@ -254,7 +254,7 @@
                         android:layout_marginTop="@dimen/dp_7"
                         android:background="@drawable/curve_stroke_thin_grey"
                         android:fontFamily="@font/opensans_regular"
-                        android:hint="Select Reason to update Date of Birth"
+                        android:text="Select Reason to update Date of Birth"
                         android:paddingHorizontal="@dimen/dp_10"
                         android:paddingVertical="@dimen/dp_8"
                         android:textColor="#6B6B6B"
@@ -301,6 +301,7 @@
                         android:background="@drawable/curve_fill_blue"
                         android:backgroundTint="@color/darkBlue"
                         android:text="Generate OTP"
+                        android:onClick="@{ClickAction::generateOtp}"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sp_16" />
 

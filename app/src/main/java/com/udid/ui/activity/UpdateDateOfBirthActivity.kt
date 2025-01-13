@@ -16,6 +16,7 @@ import com.udid.R
 import com.udid.databinding.ActivityUpdateAadharNumberBinding
 import com.udid.databinding.ActivityUpdateDateOfBirthBinding
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.Utility
 import com.udid.utilities.Utility.convertDate
 import com.udid.viewModel.ViewModel
 import java.text.SimpleDateFormat
@@ -45,6 +46,33 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
         fun openCalendar(view: View){
             openCalendar("etUpdatedDOB", mBinding?.etUpdatedDOB!!)
         }
+        fun generateOtp(view: View){
+            if(valid()){
+                mBinding?.clParent?.let { Utility.showSnackbar(it,"Done OTP") }
+            }
+        }
+    }
+
+    private fun valid(): Boolean {
+        val etUpdatedDOB = mBinding?.etUpdatedDOB?.text?.toString()
+        val fileName = mBinding?.etFileName?.text?.toString()
+        val reasonToUpdateDOB = mBinding?.etReasonToUpdateDOB?.text
+
+        // Check if Aadhaar number is null or empty
+        if (etUpdatedDOB.isNullOrEmpty()) {
+            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please select date of birth.") }
+            return false
+        }
+//        if (fileName==getString(R.string.no_file_chosen)) {
+//            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please Upload Supporting Document.") }
+//            return false
+//        }
+        if (reasonToUpdateDOB=="Select Reason to update Date of Birth") {
+            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please select reason to update Date of Birth") }
+            return false
+        }
+
+        return true
     }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun openCalendar(type: String, selectedTextView: TextView) {

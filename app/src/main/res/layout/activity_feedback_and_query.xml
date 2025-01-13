@@ -116,6 +116,7 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
                     <EditText
+                        android:id="@+id/etName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/opensans_regular"
@@ -136,6 +137,7 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
                     <EditText
+                        android:id="@+id/etEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/opensans_regular"
@@ -156,6 +158,7 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
                     <EditText
+                        android:id="@+id/etMobile"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/opensans_regular"
@@ -176,6 +179,7 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
                     <EditText
+                        android:id="@+id/etSubject"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/opensans_regular"
@@ -196,6 +200,7 @@
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
                     <EditText
+                        android:id="@+id/etMessage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/opensans_regular"
@@ -310,6 +315,7 @@
                         android:background="@drawable/curve_fill_blue"
                         android:backgroundTint="@color/darkBlue"
                         android:text="Submit"
+                        android:onClick="@{ClickAction::generateOtp}"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sp_16" />
