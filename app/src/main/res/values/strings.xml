@@ -158,6 +158,7 @@
     <string name="please_enter_otp">Please Enter OTP</string>
     <string name="name_of_application">Name Of Application</string>
     <string name="gender_">Gender</string>
+    <string name="camera_permission">You need to enable camera access and storage permission to access this</string>
     <string name="date_of_birth_">Date Of Birth</string>
     <string name="disability_type">Disability Type</string>
     <string name="disability_percentage">Disability percentage</string>
@@ -198,4 +199,6 @@
     <string name="valid_upto">Valid Upto</string>
     <string name="aadhaar_number">Aadhaar Number</string>
     <string name="scan_for_details">Scan For Details</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 </resources>

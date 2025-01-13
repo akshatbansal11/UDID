@@ -20,12 +20,19 @@ data class OnBoardingImageData(
 
 data class DropDownRequest(
     val fields: Fields,
+    val filters: Filters,
     val model: String,
     val type: String
 )
 
 data class Fields(
+    val reason: String,
     val state_code: String
+)
+
+data class Filters(
+    val request_code: String,
+    val status: Int
 )
 
 data class OtpRequest(
