@@ -217,4 +217,11 @@
     <string name="document">Document</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="updated_name">Updated Name<font color="#FF0000">*</font></string>
+    <string name="updated_name_regional_language">Updated Name Regional language<font color="#FF0000">*</font></string>
+    <string name="identity_proof_">Identity Proof<font color="#FF0000">*</font></string>
+    <string name="reason_to_update_name">Reason to update Name<font color="#FF0000">*</font></string>
+    <string name="enter_revise_name">Enter Revise Name</string>
+    <string name="select_identity_proof">Select Identity Proof</string>
+    <string name="spelling_correction_in_name">Spelling Correction in Name</string>
 </resources>

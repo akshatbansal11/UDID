@@ -39,12 +39,12 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private lateinit var stateAdapter: BottomSheetAdapter
     private var layoutManager: LinearLayoutManager? = null
-    private var districtId: Int? = null // Store selected state
+    private var districtId: String? = null // Store selected state
 
     private val guardian = listOf(
-        DropDownResult(id = 1, name = "Father"),
-        DropDownResult(id = 2, name = "Mother"),
-        DropDownResult(id = 3, name = "Guardian")
+        DropDownResult(id = "1", name = "Father"),
+        DropDownResult(id = "2", name = "Mother"),
+        DropDownResult(id = "3", name = "Guardian")
     )
     private var gender:Int=0
     override val layoutId: Int
@@ -189,9 +189,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         stateAdapter = BottomSheetAdapter(requireContext(), selectedList) { selectedItem, id ->
             // Handle state item click
             selectedTextView.text = selectedItem
-            if (id != -1) {
                 districtId = id
-            }
             selectedTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             bottomSheetDialog.dismiss()
         }

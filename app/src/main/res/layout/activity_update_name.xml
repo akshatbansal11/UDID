@@ -135,7 +135,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_7"
                         android:fontFamily="@font/opensans_semibold"
-                        android:text="Updated Name*"
+                        android:text="@string/updated_name"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
 
@@ -145,7 +145,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_7"
                         android:background="@drawable/curve_stroke_thin_grey"
-                        android:hint="Enter Revise Name"
+                        android:hint="@string/enter_revise_name"
                         android:fontFamily="@font/opensans_regular"
                         android:maxLength="50"
                         android:paddingHorizontal="@dimen/dp_10"
@@ -158,7 +158,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_7"
                         android:fontFamily="@font/opensans_semibold"
-                        android:text="Updated Name Regional language*"
+                        android:text="@string/updated_name_regional_language"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
 
@@ -169,7 +169,7 @@
                         android:layout_marginTop="@dimen/dp_7"
                         android:background="@drawable/curve_stroke_thin_grey"
                         android:fontFamily="@font/opensans_regular"
-                        android:hint="Enter Revise Name"
+                        android:hint="@string/enter_revise_name"
                         android:paddingHorizontal="@dimen/dp_10"
                         android:paddingVertical="@dimen/dp_8"
                         android:singleLine="true"
@@ -182,7 +182,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="7dp"
                         android:fontFamily="@font/opensans_semibold"
-                        android:text="Identity Proof*"
+                        android:text="@string/identity_proof_"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
 
@@ -197,7 +197,7 @@
                         android:paddingVertical="@dimen/dp_8"
                         android:singleLine="true"
                         android:onClick="@{ClickAction::identityProof}"
-                        android:text="@string/na"
+                        android:hint="@string/select_identity_proof"
                         android:textColor="#6B6B6B"
                         android:textSize="@dimen/sp_14"
                         app:drawableEndCompat="@drawable/ic_arrow_down" />
@@ -208,7 +208,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/sp_7"
                         android:fontFamily="@font/opensans_semibold"
-                        android:text="Upload Document"
+                        android:text="@string/upload_document"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
 
@@ -246,7 +246,7 @@
                             android:layout_weight="1.6"
                             android:gravity="center"
                             android:padding="@dimen/dp_10"
-                            android:text="@string/no_file_chosen"
+                            android:hint="@string/no_file_chosen"
                             android:textColor="@color/grey"
                             android:textSize="@dimen/sp_14" />
                     </LinearLayout>
@@ -268,7 +268,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_7"
                         android:fontFamily="@font/opensans_semibold"
-                        android:text="Reason to update Name*"
+                        android:text="@string/reason_to_update_name"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
 
@@ -279,7 +279,7 @@
                         android:layout_marginTop="@dimen/dp_7"
                         android:background="@drawable/curve_stroke_thin_grey"
                         android:fontFamily="@font/opensans_regular"
-                        android:hint="Select Reason"
+                        android:hint="@string/spelling_correction_in_name"
                         android:onClick="@{ClickAction::reasonToUpdateName}"
                         android:paddingHorizontal="@dimen/dp_10"
                         android:paddingVertical="@dimen/dp_5"

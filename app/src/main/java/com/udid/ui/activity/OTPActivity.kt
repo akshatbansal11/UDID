@@ -13,8 +13,8 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.udid.R
 import com.udid.databinding.ActivityOtpBinding
-import com.udid.model.LoginRequest
-import com.udid.model.OtpRequest
+//import com.udid.model.LoginRequest
+//import com.udid.model.OtpRequest
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.PrefEntities
@@ -73,54 +73,54 @@ class OTPActivity : BaseActivity<ActivityOtpBinding>() {
     }
 
     override fun setObservers() {
-        viewModel.otpLoginResult.observe(this) {
-            val userResponseModel = it
-            if (userResponseModel != null) {
-                if (userResponseModel._resultflag == 0) {
-                    mBinding?.rlParent?.let { it1 ->
-                        Utility.showSnackbar(
-                            it1,
-                            userResponseModel.message
-                        )
-                    }
-                } else {
-                    userResponseModel._result.token.let { it1 ->
-                        Utility.savePreferencesString(
-                            this, PrefEntities.TOKEN,
-                            it1
-                        )
-                    }
-//                    userResponseModel._result.data.pwdapplicationstatus.status_name.let { it1 ->
+//        viewModel.otpLoginResult.observe(this) {
+//            val userResponseModel = it
+//            if (userResponseModel != null) {
+//                if (userResponseModel._resultflag == 0) {
+//                    mBinding?.rlParent?.let { it1 ->
+//                        Utility.showSnackbar(
+//                            it1,
+//                            userResponseModel.message
+//                        )
+//                    }
+//                } else {
+//                    userResponseModel._result.token.let { it1 ->
 //                        Utility.savePreferencesString(
-//                            this, AppConstants.STATUS_NAME,
+//                            this, PrefEntities.TOKEN,
 //                            it1
 //                        )
 //                    }
-//                    userResponseModel._result.data.application_number.let { it1 ->
-//                        Utility.savePreferencesString(
-//                            this, AppConstants.APPLICATION_NUMBER,
-//                            it1
+////                    userResponseModel._result.data.pwdapplicationstatus.status_name.let { it1 ->
+////                        Utility.savePreferencesString(
+////                            this, AppConstants.STATUS_NAME,
+////                            it1
+////                        )
+////                    }
+////                    userResponseModel._result.data.application_number.let { it1 ->
+////                        Utility.savePreferencesString(
+////                            this, AppConstants.APPLICATION_NUMBER,
+////                            it1
+////                        )
+////                    }
+////                    userResponseModel._result.data.photo_path.let { it1 ->
+////                        Utility.savePreferencesString(this,AppConstants.photo,it1)
+////                    }
+//
+//                    if (isFrom == "Department") {
+//                        startActivity(
+//                            Intent(
+//                                this@OTPActivity,
+//                                ListForDepartmentUserActivity::class.java
+//                            )
 //                        )
+//                    } else {
+//                        startActivity(Intent(this@OTPActivity, DashboardActivity::class.java))
 //                    }
-//                    userResponseModel._result.data.photo_path.let { it1 ->
-//                        Utility.savePreferencesString(this,AppConstants.photo,it1)
-//                    }
-
-                    if (isFrom == "Department") {
-                        startActivity(
-                            Intent(
-                                this@OTPActivity,
-                                ListForDepartmentUserActivity::class.java
-                            )
-                        )
-                    } else {
-                        startActivity(Intent(this@OTPActivity, DashboardActivity::class.java))
-                    }
-                    finishAffinity()
-
-                }
-            }
-        }
+//                    finishAffinity()
+//
+//                }
+//            }
+//        }
         viewModel.loginResult.observe(this) {
             val userResponseModel = it
             if (userResponseModel != null) {
@@ -216,13 +216,13 @@ class OTPActivity : BaseActivity<ActivityOtpBinding>() {
 //    }
 
     private fun otpVerify(otp: String) {
-        viewModel.getOtpLoginApi(
-            this,
-            OtpRequest(
-                getPreferenceString(this, AppConstants.APPLICATION_NUMBER),
-                otp
-            )
-        )
+//        viewModel.getOtpLoginApi(
+//            this,
+//            OtpRequest(
+//                getPreferenceString(this, AppConstants.APPLICATION_NUMBER),
+//                otp
+//            )
+//        )
     }
 
     private fun showTimer(tvTimer: TextView?, remainingTime: Long?, tvResendOtp: TextView?) {

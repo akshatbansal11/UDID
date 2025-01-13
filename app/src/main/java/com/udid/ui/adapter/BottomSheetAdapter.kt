@@ -13,7 +13,7 @@ import com.udid.model.DropDownResult
 class BottomSheetAdapter(
     private val context: Context,
     private val list: List<DropDownResult>,
-    private val onItemClicked: (String,Int) -> Unit // Lambda for item clicks
+    private val onItemClicked: (String,String) -> Unit // Lambda for item clicks
 ) : RecyclerView.Adapter<BottomSheetAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

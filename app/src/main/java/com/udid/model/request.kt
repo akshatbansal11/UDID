@@ -7,11 +7,6 @@ data class DashboardData(
     val image: Int,
 ): Serializable
 
-data class TrackerData(
-    val title: String,
-    val unCompleteCircle: Int?
-): Serializable
-
 data class OnBoardingImageData(
     val imageResId: Int, // Resource ID of the image
     val title: String,
@@ -20,14 +15,15 @@ data class OnBoardingImageData(
 
 data class DropDownRequest(
     val fields: Fields,
-    val filters: Filters,
+    val filters: Filters?= null,
     val model: String,
     val type: String
 )
 
 data class Fields(
-    val reason: String,
-    val state_code: String
+    val reason: String?= null,
+    val state_code: String?= null,
+    val id: String?= null
 )
 
 data class Filters(
@@ -35,17 +31,9 @@ data class Filters(
     val status: Int
 )
 
-data class OtpRequest(
+data class GenerateOtpRequest(
     val application_number: String,
-    val otp: String
-)
-
-data class LoginRequest(
-    val application_number: String,
-    val dob: String?
-)
-data class MyAccountRequest(
-    val application_number: String
+    val mobile: String
 )
 data class ApplicationStatusRequest(
     val application_number: String

@@ -13,6 +13,7 @@ import com.udid.model.DashboardData
 import com.udid.ui.activity.ApplicationStatusActivity
 import com.udid.ui.activity.MyAccountActivity
 import com.udid.ui.activity.TrackYourCardActivity
+import com.udid.ui.activity.UpdateNameActivity
 
 
 class DashboardAdapter(
@@ -48,7 +49,7 @@ class DashboardAdapter(
 
             1 -> {
                 holder.mBinding.llParent.setOnClickListener {
-                    context.startActivity(Intent(context, MyAccountActivity::class.java))
+                    context.startActivity(Intent(context, UpdateNameActivity::class.java))
                 }
             }
 

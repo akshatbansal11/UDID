@@ -28,7 +28,7 @@ data class DropDownResponse(
 )
 
 data class DropDownResult(
-    val id: Int,
+    val id: String,
     val name: String
 )
 

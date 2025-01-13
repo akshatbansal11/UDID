@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.RotateDrawable
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -21,14 +20,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.udid.R
 import com.udid.databinding.ActivityUpdateNameBinding
+import com.udid.model.DropDownRequest
 import com.udid.model.DropDownResult
+import com.udid.model.Fields
+import com.udid.model.Filters
 import com.udid.ui.adapter.BottomSheetAdapter
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility
 import com.udid.utilities.Utility.showSnackbar
+import com.udid.utilities.hideView
 import com.udid.utilities.showView
+import com.udid.utilities.toast
 import com.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -42,14 +46,14 @@ import java.io.IOException
 class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
 
     private var mBinding: ActivityUpdateNameBinding? = null
-    private var viewModel= ViewModel()
-    private var bottomSheetDialog: BottomSheetDialog ?= null
-    private var bottomSheetAdapter: BottomSheetAdapter ?=  null
+    private var viewModel = ViewModel()
+    private var bottomSheetDialog: BottomSheetDialog? = null
+    private var bottomSheetAdapter: BottomSheetAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
     private var reasonToUpdateNameList = ArrayList<DropDownResult>()
-    private var reasonToUpdateNameId: Int? = null
+    private var reasonToUpdateNameId: String? = null
     private var identityProofList = ArrayList<DropDownResult>()
-    private var identityProofId: Int? = null
+    private var identityProofId: String? = null
     var body: MultipartBody.Part? = null
 
     override val layoutId: Int
@@ -62,44 +66,78 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
     }
 
     inner class ClickActions {
-        fun backPress(view: View){
+        fun backPress(view: View) {
             onBackPressedDispatcher.onBackPressed()
         }
-        fun uploadFile(view: View){
+
+        fun uploadFile(view: View) {
             openOnlyPdfAccordingToPosition()
         }
-        fun identityProof(view: View){
+
+        fun identityProof(view: View) {
             showBottomSheetDialog("identity_proof")
         }
-        fun reasonToUpdateName(view: View){
+
+        fun reasonToUpdateName(view: View) {
             showBottomSheetDialog("reason_to_update_name")
         }
-        fun generateOtp(view: View){
-            if(valid())
-            {
+
+        fun generateOtp(view: View) {
+            if (valid()) {
                 mBinding?.llOtp?.showView()
             }
         }
-        fun submit(view: View){
+
+        fun submit(view: View) {
             onBackPressedDispatcher.onBackPressed()
         }
     }
 
 
     override fun setVariables() {
-        mBinding?.tvCurrentName?.text = Utility.getPreferenceString(this,AppConstants.FULL_NAME)
+        mBinding?.etCurrentName?.text = Utility.getPreferenceString(this, AppConstants.FULL_NAME)
+    }
+
+    private fun identityProofApi() {
+        viewModel.getDropDown(
+            this, DropDownRequest(
+                Fields(id = "identity_name"),
+                model = "Identityproofs",
+                type = "mobile"
+            )
+        )
+    }
+    private fun reasonToUpdateNameListApi() {
+        viewModel.getDropDown(
+            this, DropDownRequest(
+                Fields(reason = "reason"),
+                model = "Updationreason",
+                filters = Filters(
+                    status = 1,
+                    request_code = "NA"
+                ),
+                type = "mobile"
+            )
+        )
     }
 
     override fun setObservers() {
 
-//        viewModel.dropDownStateResult.observe(this) {
-//            val userResponseModel = it
-//            if (userResponseModel?.data != null && userResponseModel.data.isNotEmpty()) {
-//                stateList.clear()
-//                stateList.addAll(userResponseModel.data)
-//                bottomSheetAdapter.notifyDataSetChanged()
-//            }
-//        }
+        viewModel.dropDownResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
+                if(userResponseModel.model == "Identityproofs") {
+                    identityProofList.clear()
+                    identityProofList.addAll(userResponseModel._result)
+                    bottomSheetAdapter?.notifyDataSetChanged()
+                }
+                else if(userResponseModel.model == "Updationreason") {
+                    reasonToUpdateNameList.clear()
+                    reasonToUpdateNameList.addAll(userResponseModel._result)
+                    bottomSheetAdapter?.notifyDataSetChanged()
+                }
+            }
+        }
 //        viewModel.dropDownDistrictResult.observe(this) {
 //            val userResponseModel = it
 //            if (userResponseModel?.data != null && userResponseModel.data.isNotEmpty()) {
@@ -108,13 +146,6 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
 //                bottomSheetAdapter.notifyDataSetChanged()
 //            }
 //        }
-    }
-
-    private fun identityProofListApi() {
-//        viewModel.getStateListApi(this)
-    }
-    private fun reasonToUpdateNameListApi() {
-//        viewModel.getStateListApi(this)
     }
 
     private fun showBottomSheetDialog(type: String) {
@@ -138,10 +169,11 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         // Initialize based on type
         when (type) {
             "identity_proof" -> {
-                identityProofListApi()
+                identityProofApi()
                 selectedList = identityProofList
                 selectedTextView = mBinding?.etIdentityProof
             }
+
             "reason_to_update_name" -> {
                 reasonToUpdateNameListApi()
                 selectedList = reasonToUpdateNameList
@@ -159,7 +191,16 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                 "identity_proof" -> {
                     identityProofId = id
                 }
+
                 "reason_to_update_name" -> {
+                    if(selectedItem == "Any other "){
+                        mBinding?.tvAnyOtherReason?.showView()
+                        mBinding?.etAnyOtherReason?.showView()
+                    }
+                    else {
+                        mBinding?.tvAnyOtherReason?.hideView()
+                        mBinding?.etAnyOtherReason?.hideView()
+                    }
                     reasonToUpdateNameId = id
                 }
             }
@@ -214,19 +255,17 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
             return false
         } else if (mBinding?.etUpdatedNameRegionalLanguage?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Please Enter the Updated Name")
+                showSnackbar(it, "Please Enter the Updated Regional Name")
 
             }
             return false
-        }
-        else if (mBinding?.etIdentityProof?.text.toString().isEmpty()) {
+        } else if (mBinding?.etIdentityProof?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
                 showSnackbar(it, "Please Select the identity proof")
 
             }
             return false
-        }
-        else if (mBinding?.etFileName?.text.toString().isEmpty()) {
+        } else if (mBinding?.etFileName?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
                 showSnackbar(it, "Please upload the document")
             }
@@ -296,11 +335,16 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
 //                                    mBinding?.ivPicOne?.setImageURI(selectedImageUri)
                                     uploadImage(it)
                                 } else {
-                                    mBinding?.let { showSnackbar(it.clParent,"File size exceeds 5 MB") }
+                                    mBinding?.let {
+                                        showSnackbar(
+                                            it.clParent,
+                                            "File size exceeds 5 MB"
+                                        )
+                                    }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent,"Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
                         }
                     }
                 }
@@ -320,7 +364,8 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                                     it.getString(it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
                                 val fileSizeInBytes =
                                     it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE))
-                                val fileSizeInMB = fileSizeInBytes / (1024 * 1024.0) // Convert to MB
+                                val fileSizeInMB =
+                                    fileSizeInBytes / (1024 * 1024.0) // Convert to MB
 
                                 // Validate file size (5 MB = 5 * 1024 * 1024 bytes)
                                 if (fileSizeInMB <= 5) {
@@ -328,7 +373,12 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                                     mBinding?.etFileName?.text = documentName
 //                                    mBinding?.ivPicOne?.setImageResource(R.drawable.ic_pdf)
                                 } else {
-                                    mBinding?.let { showSnackbar(it.clParent,"File size exceeds 5 MB") }
+                                    mBinding?.let {
+                                        showSnackbar(
+                                            it.clParent,
+                                            "File size exceeds 5 MB"
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -337,6 +387,7 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
             }
         }
     }
+
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(this, uri)
         body = MultipartBody.Part.createFormData(
