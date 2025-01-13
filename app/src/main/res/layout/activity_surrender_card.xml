@@ -227,6 +227,7 @@
                         android:fontFamily="@font/opensans_semibold"
                         android:paddingHorizontal="@dimen/dp_15"
                         android:paddingVertical="@dimen/dp_10"
+                        android:onClick="@{ClickAction::generateOtp}"
                         android:background="@drawable/curve_fill_blue"
                         android:backgroundTint="@color/darkBlue"
                         android:text="Generate OTP"
