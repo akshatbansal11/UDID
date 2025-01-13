@@ -24,9 +24,11 @@ import com.udid.model.DropDownRequest
 import com.udid.model.DropDownResult
 import com.udid.model.Fields
 import com.udid.model.Filters
+import com.udid.model.GenerateOtpRequest
 import com.udid.ui.adapter.BottomSheetAdapter
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.JSEncryptService
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility
 import com.udid.utilities.Utility.showSnackbar
@@ -40,6 +42,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.IOException
 
@@ -54,6 +57,7 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
     private var reasonToUpdateNameId: String? = null
     private var identityProofList = ArrayList<DropDownResult>()
     private var identityProofId: String? = null
+    private var otp: String? = null
     var body: MultipartBody.Part? = null
 
     override val layoutId: Int
@@ -84,12 +88,19 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
 
         fun generateOtp(view: View) {
             if (valid()) {
+                generateOtpApi()
                 mBinding?.llOtp?.showView()
             }
         }
 
         fun submit(view: View) {
-            onBackPressedDispatcher.onBackPressed()
+            if(mBinding?.etAnyOtherReason?.text.toString().trim().isNotEmpty()){
+                updateNameApi(mBinding?.etAnyOtherReason?.text.toString().trim())
+            }
+            else {
+                updateNameApi(null)
+            }
+//            onBackPressedDispatcher.onBackPressed()
         }
     }
 
@@ -107,6 +118,7 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
             )
         )
     }
+
     private fun reasonToUpdateNameListApi() {
         viewModel.getDropDown(
             this, DropDownRequest(
@@ -121,31 +133,65 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         )
     }
 
+    private fun generateOtpApi() {
+        viewModel.getGenerateOtpLoginApi(
+            this,
+            GenerateOtpRequest(
+                application_number = JSEncryptService.encrypt(
+                    Utility.getPreferenceString(
+                        this@UpdateNameActivity,
+                        AppConstants.APPLICATION_NUMBER
+                    )
+                )
+            )
+        )
+    }
+
+    private fun updateNameApi(anyOtherReason : String?){
+        viewModel.getUpdateName(
+            context = this,
+            applicationNumber = Utility.getPreferenceString(this, AppConstants.APPLICATION_NUMBER)
+                .toRequestBody(MultipartBody.FORM),
+            name = mBinding?.etUpdatedName?.text.toString().trim().toRequestBody(MultipartBody.FORM),
+            nameRegionalLanguage = mBinding?.etUpdatedNameRegionalLanguage?.text.toString().trim().toRequestBody(MultipartBody.FORM),
+            addressProofId = identityProofId?.toRequestBody(MultipartBody.FORM),
+            reason = reasonToUpdateNameId?.toRequestBody(MultipartBody.FORM),
+            otherReason = mBinding?.etAnyOtherReason?.text.toString().trim().toRequestBody(MultipartBody.FORM),
+            otp = otp?.toRequestBody(MultipartBody.FORM),
+            document = body
+        )
+    }
+
     override fun setObservers() {
 
         viewModel.dropDownResult.observe(this) {
             val userResponseModel = it
             if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
-                if(userResponseModel.model == "Identityproofs") {
+                if (userResponseModel.model == "Identityproofs") {
                     identityProofList.clear()
                     identityProofList.addAll(userResponseModel._result)
                     bottomSheetAdapter?.notifyDataSetChanged()
-                }
-                else if(userResponseModel.model == "Updationreason") {
+                } else if (userResponseModel.model == "Updationreason") {
                     reasonToUpdateNameList.clear()
                     reasonToUpdateNameList.addAll(userResponseModel._result)
                     bottomSheetAdapter?.notifyDataSetChanged()
                 }
             }
         }
-//        viewModel.dropDownDistrictResult.observe(this) {
-//            val userResponseModel = it
-//            if (userResponseModel?.data != null && userResponseModel.data.isNotEmpty()) {
-//                districtList.clear()
-//                districtList.addAll(userResponseModel.data)
-//                bottomSheetAdapter.notifyDataSetChanged()
-//            }
-//        }
+
+        viewModel.generateOtpLoginResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+                otp = JSEncryptService.decrypt(userResponseModel.otp)
+                toast(otp.toString())
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.errors.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
+        }
     }
 
     private fun showBottomSheetDialog(type: String) {
@@ -193,13 +239,13 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                 }
 
                 "reason_to_update_name" -> {
-                    if(selectedItem == "Any other "){
+                    if (selectedItem == "Any other ") {
                         mBinding?.tvAnyOtherReason?.showView()
                         mBinding?.etAnyOtherReason?.showView()
-                    }
-                    else {
+                    } else {
                         mBinding?.tvAnyOtherReason?.hideView()
                         mBinding?.etAnyOtherReason?.hideView()
+                        mBinding?.etAnyOtherReason?.setText("")
                     }
                     reasonToUpdateNameId = id
                 }

@@ -12,6 +12,7 @@ import com.udid.model.DropDownResponse
 import com.udid.model.GenerateOtpRequest
 import com.udid.model.LoginResponse
 import com.udid.model.MyAccountResponse
+import com.udid.model.OTPResponse
 import com.udid.repository.Repository
 import com.udid.utilities.ProcessDialog
 import com.udid.utilities.UDID
@@ -19,6 +20,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.json.JSONObject
 import java.net.SocketTimeoutException
 
@@ -29,10 +32,11 @@ class ViewModel : ViewModel() {
     private var job: Job? = null
 
     var loginResult = MutableLiveData<LoginResponse>()
-    var generateOtpLoginResult = MutableLiveData<LoginResponse>()
+    var generateOtpLoginResult = MutableLiveData<OTPResponse>()
     var myAccountResult = MutableLiveData<MyAccountResponse>()
     var appStatusResult = MutableLiveData<ApplicationStatusResponse>()
     var dropDownResult = MutableLiveData<DropDownResponse>()
+    var updateNameResult = MutableLiveData<DropDownResponse>()
 
     val errors = MutableLiveData<String>()
 
@@ -303,6 +307,79 @@ class ViewModel : ViewModel() {
                         when (response.code()) {
                             200, 201 -> {
                                 dropDownResult.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun getUpdateName(context: Context,
+                      applicationNumber: RequestBody?,
+                      name: RequestBody?,
+                      nameRegionalLanguage: RequestBody?,
+                      reason: RequestBody?,
+                      addressProofId: RequestBody?,
+                      otherReason: RequestBody?,
+                      otp: RequestBody?,
+                      document: MultipartBody.Part?,) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.updateName(
+                    applicationNumber,
+                    name,
+                    nameRegionalLanguage,
+                    reason,
+                    addressProofId,
+                    otherReason,
+                    otp,
+                    document
+                )
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                updateNameResult.postValue(response.body())
                                 dismissLoader()
                             }
                         }

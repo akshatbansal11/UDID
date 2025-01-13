@@ -148,6 +148,7 @@
                         android:hint="@string/enter_revise_name"
                         android:fontFamily="@font/opensans_regular"
                         android:maxLength="50"
+                        android:textSize="@dimen/sp_14"
                         android:paddingHorizontal="@dimen/dp_10"
                         android:paddingVertical="@dimen/dp_5"
                         android:textColor="#6B6B6B" />
