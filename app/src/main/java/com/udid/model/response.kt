@@ -36,7 +36,7 @@ data class DropDownResult(
 data class OTPResponse(
     val _resultflag: Int,
     val message: String,
-    val otp: Int
+    val otp: String
 )
 
 data class District(

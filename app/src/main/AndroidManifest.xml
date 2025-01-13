@@ -36,8 +36,14 @@
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activity.LostCardActivity"
-            android:exported="false" />
+            android:name=".ui.activity.SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.activity.SurrenderCardActivity"
             android:exported="false" />
@@ -93,13 +99,8 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.SplashActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:name=".ui.activity.LostCardActivity"
+            android:exported="false">
         </activity>
         <activity
             android:name=".ui.activity.ListForDepartmentUserActivity"

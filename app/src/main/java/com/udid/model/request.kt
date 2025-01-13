@@ -32,8 +32,8 @@ data class Filters(
 )
 
 data class GenerateOtpRequest(
-    val application_number: String,
-    val mobile: String
+    val application_number: String?,
+    val type: String = "mobile"
 )
 data class ApplicationStatusRequest(
     val application_number: String

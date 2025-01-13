@@ -7,10 +7,14 @@ import com.udid.model.DropDownResponse
 import com.udid.model.GenerateOtpRequest
 import com.udid.model.LoginResponse
 import com.udid.model.MyAccountResponse
+import com.udid.model.OTPResponse
 import com.udid.services.MyService
 import com.udid.services.ServiceGenerator
 import com.udid.services.ServiceGeneratorLogin
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.Part
 
 object Repository{
 
@@ -36,7 +40,7 @@ object Repository{
         return api.getMyAccount(request)
     }
 
-    suspend fun getGenerateOtpLogin(request: GenerateOtpRequest): Response<LoginResponse> {
+    suspend fun getGenerateOtpLogin(request: GenerateOtpRequest): Response<OTPResponse> {
         return api.getOtpLogin(request)
     }
 
@@ -45,6 +49,27 @@ object Repository{
     }
     suspend fun getDropDown(request: DropDownRequest): Response<DropDownResponse> {
         return api.getDropDown(request)
+    }
+    suspend fun updateName(
+        applicationNumber: RequestBody?,
+        name: RequestBody?,
+        nameRegionalLanguage: RequestBody?,
+        reason: RequestBody?,
+        addressProofId: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        document: MultipartBody.Part?,
+    ): Response<DropDownResponse>{
+        return api.updateName(
+            applicationNumber,
+            name,
+            nameRegionalLanguage,
+            reason,
+            addressProofId,
+            otherReason,
+            otp,
+            document
+        )
     }
 }
 
