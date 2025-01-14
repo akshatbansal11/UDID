@@ -335,7 +335,7 @@
 
                     <LinearLayout
                         android:id="@+id/llOtp"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_7"
@@ -368,6 +368,8 @@
                             android:background="@drawable/curve_stroke_thin_grey"
                             android:fontFamily="@font/opensans_regular"
                             android:hint="OTP"
+                            android:ems="6"
+                            android:maxLength="6"
                             android:inputType="number"
                             android:paddingHorizontal="@dimen/dp_15"
                             android:paddingVertical="@dimen/dp_8"
@@ -381,13 +383,14 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginTop="@dimen/dp_15"
-                            android:background="@drawable/back_number_gray"
+                            android:background="@drawable/curve_fill_blue"
+                            android:backgroundTint="@color/darkBlue"
                             android:fontFamily="@font/opensans_semibold"
                             android:paddingHorizontal="@dimen/dp_20"
                             android:paddingVertical="@dimen/dp_10"
-                            android:text="Submit"
+                            android:text="@string/submit"
                             android:onClick="@{ClickAction::submit}"
-                            android:textColor="@color/black"
+                            android:textColor="@color/white"
                             android:textSize="@dimen/sp_16" />
                     </LinearLayout>
                 </LinearLayout>

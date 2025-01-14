@@ -11,8 +11,14 @@ import com.udid.R
 import com.udid.databinding.DashboardItemBinding
 import com.udid.model.DashboardData
 import com.udid.ui.activity.ApplicationStatusActivity
+import com.udid.ui.activity.LostCardActivity
 import com.udid.ui.activity.MyAccountActivity
+import com.udid.ui.activity.SurrenderCardActivity
 import com.udid.ui.activity.TrackYourCardActivity
+import com.udid.ui.activity.UpdateAadharNumberActivity
+import com.udid.ui.activity.UpdateDateOfBirthActivity
+import com.udid.ui.activity.UpdateEmailIDActivity
+import com.udid.ui.activity.UpdateMobileNumberActivity
 import com.udid.ui.activity.UpdateNameActivity
 
 
@@ -52,14 +58,49 @@ class DashboardAdapter(
                     context.startActivity(Intent(context, UpdateNameActivity::class.java))
                 }
             }
+            2 -> {
+                holder.mBinding.llParent.setOnClickListener {
+                    context.startActivity(Intent(context, UpdateAadharNumberActivity::class.java))
+                }
+            }
+            3 -> {
+                holder.mBinding.llParent.setOnClickListener {
+                    context.startActivity(Intent(context, UpdateDateOfBirthActivity::class.java))
+                }
+            }
+            4 -> {
+                holder.mBinding.llParent.setOnClickListener {
+                    context.startActivity(Intent(context, UpdateMobileNumberActivity::class.java))
+                }
+            }
+            5 -> {
+                holder.mBinding.llParent.setOnClickListener {
+                    context.startActivity(Intent(context, UpdateEmailIDActivity::class.java))
+                }
+            }
+            6 -> {
+                holder.mBinding.llParent.setOnClickListener {
+                    context.startActivity(Intent(context, SurrenderCardActivity::class.java))
+                }
+            }
 
             7 -> {
                 holder.mBinding.llParent.setOnClickListener {
                     context.startActivity(Intent(context, TrackYourCardActivity::class.java))
                 }
             }
-
+            8 -> {
+                holder.mBinding.llParent.setOnClickListener {
+                    context.startActivity(Intent(context, TrackYourCardActivity::class.java))
+                }
+            }
             9 -> {
+                holder.mBinding.llParent.setOnClickListener {
+                    context.startActivity(Intent(context, LostCardActivity::class.java))
+                }
+            }
+
+            12 -> {
                 holder.mBinding.llParent.setOnClickListener {
                     context.startActivity(Intent(context, ApplicationStatusActivity::class.java))
                 }

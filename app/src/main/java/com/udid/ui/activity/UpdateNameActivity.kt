@@ -156,7 +156,7 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
             nameRegionalLanguage = mBinding?.etUpdatedNameRegionalLanguage?.text.toString().trim().toRequestBody(MultipartBody.FORM),
             addressProofId = identityProofId?.toRequestBody(MultipartBody.FORM),
             reason = reasonToUpdateNameId?.toRequestBody(MultipartBody.FORM),
-            otherReason = mBinding?.etAnyOtherReason?.text.toString().trim().toRequestBody(MultipartBody.FORM),
+            otherReason = anyOtherReason?.toRequestBody(MultipartBody.FORM),
             otp = otp?.toRequestBody(MultipartBody.FORM),
             document = body
         )
