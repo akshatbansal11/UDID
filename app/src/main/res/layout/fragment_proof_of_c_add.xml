@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_20"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Nature of Document for Address Proof *"
+                    android:text="@string/nature_of_document_for_address_proof"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Proof of Correspondence Address*"
+                    android:text="@string/proof_of_correspondence_address_star"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
                 <LinearLayout
@@ -150,7 +150,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Address*"
+                    android:text="@string/address_star"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -175,7 +175,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="State / UTs*"
+                    android:text="@string/state_uts"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -199,7 +199,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="District"
+                    android:text="@string/district_star"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -223,7 +223,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="City / Sub District / Tehsil *"
+                    android:text="@string/city_sub_district_tehsil"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -247,7 +247,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Village / Block"
+                    android:text="@string/village_block"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -271,7 +271,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Pincode*"
+                    android:text="@string/pincode"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 

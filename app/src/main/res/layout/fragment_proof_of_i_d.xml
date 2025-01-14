@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Do you have Aadhaar card? *"
+                    android:text="@string/do_you_have_aadhaar_card"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Aadhaar No. *"
+                    android:text="@string/aadhaar_no"
                     android:visibility="gone"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
@@ -119,7 +119,7 @@
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
                     android:visibility="gone"
-                    android:text="Aadhaar Enrollment Number*"
+                    android:text="@string/aadhaar_enrollment_number"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -147,7 +147,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Upload Aadhaar Enrollment slip *"
+                    android:text="@string/upload_aadhaar_enrollment_slip"
                     android:textColor="@color/black"
                     android:visibility="gone"
                     android:textSize="@dimen/sp_16" />
@@ -235,7 +235,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Identity Proof *"
+                    android:text="@string/identity_proof_star"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -261,7 +261,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_10"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Upload Identity Proof *"
+                    android:text="@string/upload_identity_proof"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 

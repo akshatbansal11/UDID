@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Is your treating hospital in other State/District ? *"
+                    android:text="@string/is_your_treating_hospital_in_other_state_district"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -78,7 +78,7 @@
                     android:layout_marginTop="@dimen/dp_7"
                     android:visibility="gone"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Hospital Treating State / UTs*"
+                    android:text="@string/hospital_treating_state_uts"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -96,7 +96,7 @@
                     android:paddingHorizontal="@dimen/dp_10"
                     android:paddingVertical="@dimen/dp_5"
                     android:singleLine="true"
-                    android:text="Select Hospital Treating State / UTs*"
+                    android:text="@string/select_hospital_treating_state_uts"
                     android:textColor="@color/grey" />
 
                 <TextView
@@ -106,7 +106,7 @@
                     android:layout_marginTop="@dimen/dp_7"
                     android:visibility="gone"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Hospital Treating District*"
+                    android:text="@string/hospital_treating_district"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -132,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Hospital Name*"
+                    android:text="@string/hospital_name"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
