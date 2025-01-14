@@ -1,5 +1,6 @@
 package com.udid.ui.fragments
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -16,6 +17,7 @@ import com.google.gson.Gson
 import com.udid.R
 import com.udid.databinding.FragmentHospitalAssesmentBinding
 import com.udid.model.DropDownResult
+import com.udid.model.PwdApplication
 import com.udid.ui.activity.UserDataActivity
 import com.udid.ui.adapter.BottomSheetAdapter
 import com.udid.utilities.BaseFragment
@@ -136,15 +138,36 @@ class HospitalAssesmentFragment : BaseFragment<FragmentHospitalAssesmentBinding>
         }
 
         mBinding?.tvSendOtp?.setOnClickListener {
-            val userData = sharedViewModel.userData.value
-            if (userData != null) {
-                val jsonData = Gson().toJson(userData) // Serialize to JSON
-                val intent = Intent(requireContext(), UserDataActivity::class.java)
-                intent.putExtra("jsonData", jsonData) // Pass JSON as an extra
-                startActivity(intent)
+            // Fetch the current data from the ViewModel or form
+            val userData = sharedViewModel.userData.value ?: PwdApplication()
+
+            // Call the validate method
+            val errors = userData.validate()
+
+            if (errors.isEmpty()) {
+                // If validation passes, proceed to send the OTP
+                sendOtp(userData)
+            } else {
+                // Show validation errors to the user
+                val errorMessage = errors.joinToString("\n") // Combine all errors into one string
+                showErrorDialog(errorMessage) // Custom method to show errors in a dialog/toast
             }
         }
 
+    }
+    private fun sendOtp(userData: PwdApplication) {
+        // Logic to send OTP
+        val jsonData = Gson().toJson(userData) // Serialize to JSON if needed
+        val intent = Intent(requireContext(), UserDataActivity::class.java)
+        intent.putExtra("jsonData", jsonData)
+        startActivity(intent)
+    }
+    private fun showErrorDialog(message: String) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Validation Errors")
+        builder.setMessage(message)
+        builder.setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+        builder.show()
     }
 
     private fun showBottomSheetDialog(type: String) {
@@ -243,3 +266,12 @@ class HospitalAssesmentFragment : BaseFragment<FragmentHospitalAssesmentBinding>
     }
 
 }
+
+
+//val userData = sharedViewModel.userData.value
+//if (userData != null) {
+//    val jsonData = Gson().toJson(userData) // Serialize to JSON
+//    val intent = Intent(requireContext(), UserDataActivity::class.java)
+//    intent.putExtra("jsonData", jsonData) // Pass JSON as an extra
+//    startActivity(intent)
+//}

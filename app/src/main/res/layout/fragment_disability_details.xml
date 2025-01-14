@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_20"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Disability Type*"
+                    android:text="@string/disability_type_start"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Disability Due To"
+                    android:text="@string/disability_due_to_star"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Disability by Birth *"
+                    android:text="@string/disability_by_birth"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -126,7 +126,7 @@
                     android:layout_marginTop="@dimen/dp_7"
                     android:visibility="gone"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Disability Since*"
+                    android:text="@string/disability_since_star"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 

@@ -224,4 +224,32 @@
     <string name="enter_revise_name">Enter Revise Name</string>
     <string name="select_identity_proof">Select Identity Proof</string>
     <string name="spelling_correction_in_name">Spelling Correction in Name</string>
+    <string name="applicant_s_full_name">Applicant\'s Full Name<font fgcolor="#FF3D00">*</font></string>
+    <string name="applicant_mobile_no">Applicant Mobile No<font fgcolor="#FF3D00">*</font></string>
+    <string name="applicant_date_of_birth">Applicant Date Of Birth<font fgcolor="#FF3D00">*</font></string>
+    <string name="name_of_applicants_father_mother_guardian">Name of Applicants Father/Mother/Guardian<font fgcolor="#FF3D00">*</font></string>
+    <string name="photo">Photo<font fgcolor="#FF3D00">*</font></string>
+    <string name="is_your_treating_hospital_in_other_state_district">Is your treating hospital in other State/District ?<font fgcolor="#FF3D00">*</font></string>
+    <string name="hospital_name">Hospital Name<font fgcolor="#FF3D00">*</font></string>
+    <string name="hospital_treating_district">Hospital Treating District<font fgcolor="#FF3D00">*</font></string>
+    <string name="select_hospital_treating_state_uts">Select Hospital Treating State / UTs<font fgcolor="#FF3D00">*</font></string>
+    <string name="hospital_treating_state_uts">Hospital Treating State / UTs<font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_type_start">Disability Type<font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_due_to_star">Disability Due To<font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_by_birth">Disability by Birth <font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_since_star">Disability Since<font fgcolor="#FF3D00">*</font></string>
+    <string name="nature_of_document_for_address_proof">Nature of Document for Address Proof <font fgcolor="#FF3D00">*</font></string>
+    <string name="proof_of_correspondence_address_star">Proof of Correspondence Address<font fgcolor="#FF3D00">*</font></string>
+    <string name="address_star">Address<font fgcolor="#FF3D00">*</font></string>
+    <string name="state_uts">State / UTs<font fgcolor="#FF3D00">*</font></string>
+    <string name="district_star">District<font fgcolor="#FF3D00">*</font></string>
+    <string name="city_sub_district_tehsil">City / Sub District / Tehsil <font fgcolor="#FF3D00">*</font></string>
+    <string name="village_block">Village / Block<font fgcolor="#FF3D00">*</font></string>
+    <string name="pincode">Pincode<font fgcolor="#FF3D00">*</font></string>
+    <string name="do_you_have_aadhaar_card">Do you have Aadhaar card? <font fgcolor="#FF3D00">*</font></string>
+    <string name="identity_proof_star">Identity Proof <font fgcolor="#FF3D00">*</font></string>
+    <string name="aadhaar_no">Aadhaar No. <font fgcolor="#FF3D00">*</font></string>
+    <string name="aadhaar_enrollment_number">Aadhaar Enrollment Number<font fgcolor="#FF3D00">*</font></string>
+    <string name="upload_aadhaar_enrollment_slip">Upload Aadhaar Enrollment slip <font fgcolor="#FF3D00">*</font></string>
+    <string name="upload_identity_proof">Upload Identity Proof <font fgcolor="#FF3D00">*</font></string>
 </resources>

@@ -4,10 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="ClickAction"
+            type="com.udid.ui.fragments.PersonalDetailFragment.ClickActions" />
     </data>
 
     <RelativeLayout
+        android:id="@+id/clParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.fragments.PersonalDetailFragment">
@@ -66,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_20"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Applicant's Full Name"
+                    android:text="@string/applicant_s_full_name"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -129,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Applicant Mobile No."
+                    android:text="@string/applicant_mobile_no"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -193,7 +196,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Applicant Date Of Birth"
+                    android:text="@string/applicant_date_of_birth"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -205,6 +208,7 @@
                     android:background="@drawable/curve_all_corner_grey"
                     android:fontFamily="@font/opensans_regular"
                     android:maxLength="50"
+                    android:drawableEnd="@drawable/ic_calendar"
                     android:hint="dd/mm/yyyy"
                     android:paddingHorizontal="@dimen/dp_10"
                     android:paddingVertical="@dimen/dp_5"
@@ -219,7 +223,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Gender"
+                    android:text="@string/gender"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -265,7 +269,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Name of Applicants Father/Mother/Guardian"
+                    android:text="@string/name_of_applicants_father_mother_guardian"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -282,8 +286,9 @@
                     android:paddingHorizontal="@dimen/dp_10"
                     android:paddingVertical="@dimen/dp_5"
                     android:singleLine="true"
-                    android:text="Select Relation with PWD"
-                    android:textColor="@color/grey" />
+                    android:textColorHint="@color/grey"
+                    android:hint="Select Relation with PWD"
+                    android:textColor="@color/black" />
 
 
                 <TextView
@@ -291,7 +296,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
                     android:fontFamily="@font/opensans_semibold"
-                    android:text="Photo"
+                    android:text="@string/photo"
                     android:textColor="@color/black"
                     android:textSize="@dimen/sp_16" />
 
@@ -307,7 +312,6 @@
 
                     <TextView
                         android:id="@+id/tvChooseFile"
-
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@drawable/back_number_gray"
@@ -477,7 +481,7 @@
                         android:layout_weight="0.5"
                         android:background="@drawable/curve_fill_blue"
                         android:backgroundTint="@color/radioBrown"
-                        android:clickable="true"
+                        android:onClick="@{ClickAction::generateOtp}"
                         android:fontFamily="@font/poppins_medium"
                         android:paddingHorizontal="@dimen/dp_10"
                         android:paddingVertical="@dimen/dp_10"
