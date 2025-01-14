@@ -36,7 +36,10 @@
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activity.PwdApplicationViewActivity"
+            android:name=".ui.activity.SplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activity.RenewalCardActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -100,8 +103,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.LostCardActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".ui.activity.ListForDepartmentUserActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -113,7 +115,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.SplashActivity"
+            android:name=".ui.activity.PwdApplicationViewActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:screenOrientation="portrait" />
