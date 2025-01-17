@@ -64,7 +64,7 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
                 else {
                     val data =
                         JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result))
-                    mBinding?.etUdidNo?.text=data.getString("application_number")
+                    mBinding?.etUdidNo?.text=data.getString("udid_number")
                     mBinding?.etNameOfApplication?.text=data.getString("full_name")
                     mBinding?.etDOB?.text=data.getString("dob")
                     mBinding?.etUdidGenerationDate?.text=data.getString("certificate_generate_date")

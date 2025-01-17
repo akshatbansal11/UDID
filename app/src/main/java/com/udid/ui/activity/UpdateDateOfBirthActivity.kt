@@ -7,39 +7,43 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RotateDrawable
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
 import android.provider.MediaStore
-import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.udid.R
-import com.udid.databinding.ActivityUpdateAadharNumberBinding
 import com.udid.databinding.ActivityUpdateDateOfBirthBinding
+import com.udid.model.DropDownRequest
 import com.udid.model.DropDownResult
+import com.udid.model.Fields
+import com.udid.model.Filters
+import com.udid.model.GenerateOtpRequest
+import com.udid.model.UserData
 import com.udid.ui.adapter.BottomSheetAdapter
+import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.EncryptionModel
+import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility
-import com.udid.utilities.Utility.convertDate
+import com.udid.utilities.Utility.dateConvertToFormat
+import com.udid.utilities.Utility.rotateDrawable
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.hideView
 import com.udid.utilities.showView
+import com.udid.utilities.toast
 import com.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -47,25 +51,22 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>() {
 
     private var mBinding: ActivityUpdateDateOfBirthBinding? = null
     private var viewModel= ViewModel()
-    private var etUpdatedDOB: String? = null
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetAdapter: BottomSheetAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
-    private var reasonToUpdateAadhaarList = ArrayList<DropDownResult>()
-    private var reasonToUpdateAadhaarId: String? = null
-    private var identityProofList = ArrayList<DropDownResult>()
-    private var identityProofId: String? = null
+    private var reasonToUpdateDobList = ArrayList<DropDownResult>()
+    private var reasonToUpdateDobId: String? = null
     var body: MultipartBody.Part? = null
+    var date: String? = null
 
     override val layoutId: Int
         get() = R.layout.activity_update_date_of_birth
@@ -75,82 +76,185 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
         mBinding?.clickAction = ClickActions()
         viewModel.init()
     }
+
+    override fun setVariables() {
+        mBinding?.etCurrentDOB?.text =
+            getPreferenceOfLogin(
+                this,
+                AppConstants.LOGIN_DATA,
+                UserData::class.java
+            ).dob?.let {
+                dateConvertToFormat(
+                    it
+                )
+            }
+    }
+
+    override fun setObservers() {
+
+        viewModel.dropDownResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
+                reasonToUpdateDobList.clear()
+                reasonToUpdateDobList.add(DropDownResult("0","Reason to update Date of Birth"))
+                reasonToUpdateDobList.addAll(userResponseModel._result)
+                bottomSheetAdapter?.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.generateOtpLoginResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                mBinding?.llOtp?.showView()
+                mBinding?.scrollView?.post {
+                    mBinding?.scrollView?.fullScroll(View.FOCUS_DOWN)
+                }
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.updateDobResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                onBackPressedDispatcher.onBackPressed()
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.errors.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
+        }
+    }
+
     inner class ClickActions {
         fun backPress(view: View){
             onBackPressedDispatcher.onBackPressed()
         }
-        @RequiresApi(Build.VERSION_CODES.O)
-        fun openCalendar(view: View){
-            openCalendar("etUpdatedDOB", mBinding?.etUpdatedDOB!!)
+
+        fun calenderOpen(view: View){
+            mBinding?.etUpdatedDOB?.let { calenderOpen(this@UpdateDateOfBirthActivity, it) }
         }
         fun generateOtp(view: View){
             if(valid()){
-                mBinding?.clParent?.let { Utility.showSnackbar(it,"Done OTP") }
+                generateOtpApi()
             }
         }
         fun uploadFile(view: View) {
             checkStoragePermission(this@UpdateDateOfBirthActivity)
         }
 
-
         fun reasonToUpdate(view: View) {
             showBottomSheetDialog("reason_to_update_name")
         }
+        fun submit(view: View){
+            if (valid()) {
+                if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
+                    updateDobApi()
+                } else {
+                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                }
+            }
+        }
+    }
+
+    private fun calenderOpen(
+        context: Context,
+        editText: TextView,
+    ) {
+        val cal: Calendar = Calendar.getInstance()
+        val year: Int = cal.get(Calendar.YEAR)
+        val month: Int = cal.get(Calendar.MONTH)
+        val day: Int = cal.get(Calendar.DAY_OF_MONTH)
+        val dialog = DatePickerDialog(
+            context,
+            android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+            { _, year, month, day ->
+                var month = month
+                month += 1
+                Log.d("Date", "onDateSet: MM/dd/yyy: $month/$day/$year")
+                date = "$year-$month-$day"
+                editText.text = "$day/$month/$year"
+            },
+            year, month, day
+        )
+        dialog.setCancelable(false)
+        dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialog.show()
+    }
+
+    private fun updateDobApi() {
+        viewModel.getUpdateDob(
+            context = this,
+            applicationNumber = EncryptionModel.aesEncrypt(
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).application_number.toString()
+            )
+                .toRequestBody(MultipartBody.FORM),
+            dob = EncryptionModel.aesEncrypt(
+                date.toString()
+            ).toRequestBody(MultipartBody.FORM),
+            reason = EncryptionModel.aesEncrypt(reasonToUpdateDobId.toString())
+                .toRequestBody(MultipartBody.FORM),
+            otherReason = EncryptionModel.aesEncrypt(mBinding?.etAnyOtherReason?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
+            otp = EncryptionModel.aesEncrypt(mBinding?.etEnterOtp?.text.toString().trim()).toRequestBody(MultipartBody.FORM),
+            document = body
+        )
+    }
+
+    private fun reasonToUpdateDobListApi() {
+        viewModel.getDropDown(
+            this, DropDownRequest(
+                Fields(reason = "reason"),
+                model = "Updationreason",
+                filters = Filters(
+                    status = 1,
+                    request_code = "DB"
+                ),
+                type = "mobile",
+                order = "DESC"
+            )
+        )
+    }
+
+    private fun generateOtpApi() {
+        viewModel.getGenerateOtpLoginApi(
+            this,
+            GenerateOtpRequest(
+                application_number = JSEncryptService.encrypt(
+                    getPreferenceOfLogin(
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).application_number.toString()
+                )
+            )
+        )
     }
 
     private fun valid(): Boolean {
-        val etUpdatedDOB = mBinding?.etUpdatedDOB?.text?.toString()
-        val fileName = mBinding?.etFileName?.text?.toString()
         val reasonToUpdateDOB = mBinding?.etReasonToUpdateDOB?.text
 
-        // Check if Aadhaar number is null or empty
-        if (etUpdatedDOB.isNullOrEmpty()) {
-            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please select date of birth.") }
+        if (mBinding?.etUpdatedDOB?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it,"Please select date of birth.") }
             return false
         }
-//        if (fileName==getString(R.string.no_file_chosen)) {
-//            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please Upload Supporting Document.") }
-//            return false
-//        }
+        if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it,"Please Upload Supporting Document.") }
+            return false
+        }
         if (reasonToUpdateDOB=="Select Reason to update Date of Birth") {
-            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please select reason to update Date of Birth") }
+            mBinding?.clParent?.let { showSnackbar(it,"Please select reason to update Date of Birth") }
             return false
         }
 
         return true
-    }
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun openCalendar(type: String, selectedTextView: TextView) {
-        val calendar = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(
-            this,
-            { _, year, month, day ->
-                val calendarInstance = Calendar.getInstance().apply {
-                    set(year, month, day)
-                }
-                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
-                val formattedDate = sdf.format(calendarInstance.time)
-
-                // Handle each case
-                when (type) {
-                    "etUpdatedDOB" -> etUpdatedDOB = formattedDate
-                    else -> {
-                        // Optional: Handle unknown types
-                        Log.w("Calendar", "Unknown type: $type")
-                    }
-                }
-
-                // Set the selected date in the TextView
-                selectedTextView.text = convertDate(formattedDate)
-                selectedTextView.setTextColor(
-                    ContextCompat.getColor(this, R.color.black)
-                )
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        datePickerDialog.show()
     }
 
     private fun showBottomSheetDialog(type: String) {
@@ -175,8 +279,10 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
         when (type) {
 
             "reason_to_update_name" -> {
-//                reasonToUpdateNameListApi()
-                selectedList = reasonToUpdateAadhaarList
+                if(reasonToUpdateDobList.isEmpty()) {
+                    reasonToUpdateDobListApi()
+                }
+                selectedList = reasonToUpdateDobList
                 selectedTextView = mBinding?.etReasonToUpdateDOB
             }
 
@@ -188,20 +294,26 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
             // Handle state item click
             selectedTextView?.text = selectedItem
             when (type) {
-                "identity_proof" -> {
-                    identityProofId = id
-                }
-
                 "reason_to_update_name" -> {
-                    if(selectedItem == "Any other "){
-                        mBinding?.tvAnyOtherReason?.showView()
-                        mBinding?.etAnyOtherReason?.showView()
+                    when (selectedItem) {
+                        "Any other " -> {
+                            mBinding?.tvAnyOtherReason?.showView()
+                            mBinding?.etAnyOtherReason?.showView()
+                            reasonToUpdateDobId = id
+                        }
+                        "Reason to update Date of Birth" -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            selectedTextView?.text = ""
+                            mBinding?.etAnyOtherReason?.setText("")
+                        }
+                        else -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.setText("")
+                            reasonToUpdateDobId = id
+                        }
                     }
-                    else {
-                        mBinding?.tvAnyOtherReason?.hideView()
-                        mBinding?.etAnyOtherReason?.hideView()
-                    }
-                    reasonToUpdateAadhaarId = id
                 }
             }
             selectedTextView?.setTextColor(ContextCompat.getColor(this, R.color.black))
@@ -233,48 +345,6 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
 
         // Show the bottom sheet
         bottomSheetDialog?.show()
-    }
-
-    private fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {
-        drawable?.mutate() // Mutate the drawable to avoid affecting other instances
-
-        val rotateDrawable = RotateDrawable()
-        rotateDrawable.drawable = drawable
-        rotateDrawable.fromDegrees = 0f
-        rotateDrawable.toDegrees = angle
-        rotateDrawable.level = 10000 // Needed to apply the rotation
-
-        return rotateDrawable
-    }
-
-
-    override fun setVariables() {
-    }
-
-    override fun setObservers() {
-    }
-
-    private fun uploadImage(file: File) {
-        lifecycleScope.launch {
-            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            body =
-                MultipartBody.Part.createFormData(
-                    "document_name",
-                    file.name, reqFile
-                )
-//            viewModel.getProfileUploadFile(
-//                context = this@AddAscadStateActivity,
-//                document_name = body,
-//                user_id = getPreferenceOfScheme(
-//                    this@AddAscadStateActivity,
-//                    AppConstants.SCHEME,
-//                    Result::class.java
-//                )?.user_id,
-//                table_name = getString(R.string.ascad_state).toRequestBody(
-//                    MultipartBody.FORM
-//                ),
-//            )
-        }
     }
 
     @SuppressLint("Range")
@@ -366,35 +436,21 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(this, uri)
         body = MultipartBody.Part.createFormData(
-            "document_name",
+            "document",
             documentName,
             requestBody
         )
-//        viewModel.getProfileUploadFile(
-//            context = this,
-//            document_name = body,
-//            user_id = getPreferenceOfScheme(this, AppConstants.SCHEME, Result::class.java)?.user_id,
-//            table_name = getString(R.string.ascad_state).toRequestBody(MultipartBody.FORM),
-//        )
     }
 
-    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
-        val contentResolver: ContentResolver = context.contentResolver
-        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
-        val file = File(context.cacheDir, tempFileName)
-
-        try {
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                file.outputStream().use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            // Handle the error appropriately
+    private fun uploadImage(file: File) {
+        lifecycleScope.launch {
+            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            body =
+                MultipartBody.Part.createFormData(
+                    "document",
+                    file.name, reqFile
+                )
         }
-
-        return file.asRequestBody("application/pdf".toMediaType())
     }
 
 }

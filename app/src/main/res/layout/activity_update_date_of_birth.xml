@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="ClickAction"
             type="com.udid.ui.activity.UpdateDateOfBirthActivity.ClickActions" />
@@ -83,43 +84,47 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <RelativeLayout
-            android:id="@+id/rlBody"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="@dimen/dp_10"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clToolbar">
-
             <ScrollView
+                android:id="@+id/scrollView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/clToolbar"
                 android:fillViewport="true">
+
+                <RelativeLayout
+                    android:id="@+id/rlBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_15">
 
                 <LinearLayout
                     android:id="@+id/llParent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingHorizontal="@dimen/dp_15">
+                    android:paddingHorizontal="@dimen/dp_15"
+                    android:paddingBottom="@dimen/dp_10">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_10"
                         android:fontFamily="@font/opensans_semibold"
-                        android:text="Note- Kindly update your personal details."
+                        android:text="@string/note_kindly_update_your_personal_details"
                         android:textColor="#FF0000"
                         android:textSize="@dimen/sp_14" />
+
                     <TextView
                         android:id="@+id/tvCurrentDOB"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_10"
                         android:fontFamily="@font/opensans_semibold"
-                        android:text="Current Date of Birth"
+                        android:text="@string/current_date_of_birth"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
 
@@ -133,6 +138,7 @@
                         android:paddingHorizontal="@dimen/dp_10"
                         android:paddingVertical="@dimen/dp_8"
                         android:singleLine="true"
+                        android:hint="@string/dd_mm_yyyy"
                         android:textColor="#6B6B6B"
                         android:textSize="@dimen/sp_14" />
 
@@ -145,38 +151,23 @@
                         android:text="@string/updated_date_of_birth"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
-                    <RelativeLayout
+
+                    <TextView
+                        android:id="@+id/etUpdatedDOB"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/dp_7"
+                        android:layout_marginTop="@dimen/dp_5"
                         android:background="@drawable/curve_stroke_thin_grey"
-                        >
-
-                        <EditText
-                            android:id="@+id/etUpdatedDOB"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:fontFamily="@font/opensans_regular"
-                            android:hint="dd/mm/yyyy"
-                            android:paddingHorizontal="@dimen/dp_10"
-                            android:paddingVertical="@dimen/dp_8"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_14" />
-
-                        <ImageView
-                            android:id="@+id/ivTogglePassword"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_calendar"
-                            android:onClick="@{ClickAction::openCalendar}"
-                            android:layout_marginTop="@dimen/dp_8"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginEnd="10dp"
-                            android:padding="5dp" />
-                    </RelativeLayout>
+                        android:fontFamily="@font/opensans_regular"
+                        android:hint="@string/dd_mm_yyyy"
+                        android:onClick="@{ClickAction::calenderOpen}"
+                        android:padding="@dimen/dp_10"
+                        android:paddingVertical="10dp"
+                        android:singleLine="true"
+                        android:textColor="@color/black"
+                        android:textColorHint="#6B6B6B"
+                        android:textSize="@dimen/sp_15"
+                        app:drawableEndCompat="@drawable/ic_date_of_birth" />
 
                     <TextView
                         android:id="@+id/tvUploadDocument"
@@ -193,7 +184,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_7"
-                        android:background="@drawable/curve_all_corner_grey"
+                        android:background="@drawable/curve_all_corner_white"
                         android:orientation="horizontal"
                         android:weightSum="2">
 
@@ -204,39 +195,25 @@
                             android:layout_weight=".4"
                             android:background="@drawable/back_number_gray"
                             android:gravity="center"
+                            android:layout_marginHorizontal="@dimen/dp_5"
+                            android:layout_marginVertical="@dimen/dp_5"
                             android:onClick="@{ClickAction::uploadFile}"
                             android:padding="@dimen/dp_10"
                             android:text="@string/choose_file"
                             android:textColor="@color/black"
                             android:textSize="@dimen/sp_14" />
 
-                        <View
-                            android:layout_width="@dimen/dp_1"
-                            android:layout_height="match_parent"
-                            android:background="#909090" />
-
                         <TextView
                             android:id="@+id/etFileName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1.6"
-                            android:gravity="center"
+                            android:layout_gravity="center"
+                            android:hint="@string/no_file_chosen"
                             android:padding="@dimen/dp_10"
-                            android:text="@string/no_file_chosen"
                             android:textColor="@color/grey"
                             android:textSize="@dimen/sp_14" />
                     </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvNote"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:fontFamily="@font/opensans_semibold"
-                        android:text="Please Upload Supporting Document."
-                        android:textColor="@color/red"
-                        android:textSize="@dimen/sp_16"
-                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tvReasonToUpdateName"
@@ -255,16 +232,15 @@
                         android:layout_marginTop="@dimen/dp_7"
                         android:background="@drawable/curve_stroke_thin_grey"
                         android:fontFamily="@font/opensans_regular"
-                        android:text="Select Reason to update Date of Birth"
-                        android:paddingHorizontal="@dimen/dp_10"
+                        android:hint="@string/select_reason_to_update_date_of_birth"
                         android:onClick="@{ClickAction::reasonToUpdate}"
+                        android:paddingHorizontal="@dimen/dp_10"
                         android:paddingVertical="@dimen/dp_8"
                         android:textColor="#6B6B6B"
                         android:textSize="@dimen/sp_14"
                         app:drawableEndCompat="@drawable/ic_arrow_down" />
 
                     <TextView
-                        android:visibility="gone"
                         android:id="@+id/tvAnyOtherReason"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -272,7 +248,8 @@
                         android:fontFamily="@font/opensans_semibold"
                         android:text="Any Other Reason"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/sp_16" />
+                        android:textSize="@dimen/sp_16"
+                        android:visibility="gone" />
 
                     <EditText
                         android:id="@+id/etAnyOtherReason"
@@ -281,93 +258,106 @@
                         android:layout_marginTop="@dimen/dp_7"
                         android:background="@drawable/curve_stroke_thin_grey"
                         android:fontFamily="@font/opensans_regular"
-                        android:paddingHorizontal="@dimen/dp_10"
-                        android:paddingVertical="@dimen/dp_8"
                         android:gravity="top"
-                        android:visibility="gone"
                         android:inputType="textMultiLine"
                         android:maxLength="500"
                         android:minLines="5"
                         android:overScrollMode="always"
+                        android:paddingHorizontal="@dimen/dp_10"
+                        android:paddingVertical="@dimen/dp_8"
                         android:textColor="#6B6B6B"
-                        android:textSize="@dimen/sp_14" />
+                        android:textSize="@dimen/sp_14"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tvGenerateOtp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/dp_50"
                         android:layout_marginTop="@dimen/dp_15"
-                        android:fontFamily="@font/opensans_semibold"
-                        android:paddingHorizontal="@dimen/dp_15"
-                        android:paddingVertical="@dimen/dp_10"
                         android:background="@drawable/curve_fill_blue"
                         android:backgroundTint="@color/darkBlue"
-                        android:text="Generate OTP"
-                        android:textAlignment="center"
-                        android:layout_marginHorizontal="@dimen/dp_50"
+                        android:fontFamily="@font/opensans_semibold"
                         android:onClick="@{ClickAction::generateOtp}"
+                        android:paddingHorizontal="@dimen/dp_15"
+                        android:paddingVertical="@dimen/dp_10"
+                        android:text="@string/generate_otp"
+                        android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sp_16" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/llOtp"
-                        android:visibility="gone"
+                <LinearLayout
+                        android:layout_below="@id/llParent"
                         android:layout_width="match_parent"
+                        android:visibility="gone"
+                        android:id="@+id/llOtp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/dp_7"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/tvFourDigitOtp"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dp_1"
+                            android:layout_marginHorizontal="@dimen/dp_15"
+                            android:layout_marginVertical="@dimen/dp_25"
+                            android:background="#D4D4D4" />
+
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/opensans_regular"
-                            android:text="A four digit OTP will be sent to your registered mobile no."
-                            android:textColor="@color/red"
-                            android:textSize="@dimen/sp_14" />
-
-                        <TextView
-                            android:id="@+id/tvEnterOtp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/dp_7"
-                            android:fontFamily="@font/opensans_semibold"
-                            android:text="Enter the OTP"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/sp_16" />
+                            android:layout_margin="@dimen/dp_15"
+                            android:layout_marginBottom="@dimen/dp_5"
+                            android:background="@drawable/curve_all_corner_white"
+                            android:elevation="@dimen/dp_5"
+                            android:orientation="vertical"
+                            android:padding="@dimen/dp_15">
 
-                        <EditText
-                            android:id="@+id/etEnterOtp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/dp_7"
-                            android:background="@drawable/curve_stroke_thin_grey"
-                            android:fontFamily="@font/opensans_regular"
-                            android:hint="OTP"
-                            android:inputType="number"
-                            android:paddingHorizontal="@dimen/dp_15"
-                            android:paddingVertical="@dimen/dp_8"
-                            android:singleLine="true"
-                            android:textColor="#6B6B6B"
-                            android:textSize="@dimen/sp_14" />
+                            <TextView
+                                android:id="@+id/tvSixDigitOtp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/poppins_medium"
+                                android:text="A six digit OTP will be sent to your registered mobile no."
+                                android:textColor="@color/black"
+                                android:textSize="@dimen/sp_14" />
 
-                        <TextView
-                            android:id="@+id/tvSubmit"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="@dimen/dp_15"
-                            android:background="@drawable/curve_fill_blue"
-                            android:backgroundTint="@color/darkBlue"                            android:fontFamily="@font/opensans_semibold"
-                            android:paddingHorizontal="@dimen/dp_20"
-                            android:paddingVertical="@dimen/dp_10"
-                            android:text="Submit"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/sp_16" />
+                            <EditText
+                                android:id="@+id/etEnterOtp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/dp_7"
+                                android:background="@drawable/curve_stroke_thin_grey"
+                                android:ems="6"
+                                android:fontFamily="@font/opensans_regular"
+                                android:hint="Enter the OTP"
+                                android:inputType="number"
+                                android:maxLength="6"
+                                android:paddingHorizontal="@dimen/dp_10"
+                                android:paddingVertical="@dimen/dp_8"
+                                android:singleLine="true"
+                                android:textColor="#6B6B6B"
+                                android:textSize="@dimen/sp_16" />
+
+                            <TextView
+                                android:id="@+id/tvSubmit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginVertical="@dimen/dp_15"
+                                android:background="@drawable/curve_fill_blue"
+                                android:backgroundTint="@color/darkBlue"
+                                android:paddingHorizontal="@dimen/dp_40"
+                                android:paddingVertical="@dimen/dp_10"
+                                android:fontFamily="@font/opensans_semibold"
+                                android:onClick="@{ClickAction::submit}"
+                                android:text="@string/submit"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/sp_16" />
+                        </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
+                </RelativeLayout>
             </ScrollView>
-        </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

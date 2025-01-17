@@ -17,7 +17,8 @@ data class DropDownRequest(
     val fields: Fields,
     val filters: Filters?= null,
     val model: String,
-    val type: String
+    val type: String,
+    val order :String?= null
 )
 
 data class Fields(

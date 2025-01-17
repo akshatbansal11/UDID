@@ -22,14 +22,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.udid.R
 import com.udid.databinding.ActivityUpdateAadharNumberBinding
+import com.udid.model.DropDownRequest
 import com.udid.model.DropDownResult
+import com.udid.model.Fields
+import com.udid.model.Filters
+import com.udid.model.GenerateOtpRequest
+import com.udid.model.UserData
 import com.udid.ui.adapter.BottomSheetAdapter
+import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.EncryptionModel
+import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility
+import com.udid.utilities.Utility.maskAadharNumber
+import com.udid.utilities.Utility.rotateDrawable
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.hideView
 import com.udid.utilities.showView
+import com.udid.utilities.toast
 import com.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -37,15 +49,15 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.IOException
 
 class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBinding>() {
 
     private var mBinding: ActivityUpdateAadharNumberBinding? = null
-    private var viewModel= ViewModel()
+    private var viewModel = ViewModel()
     private var isPasswordVisible: Boolean = false
-    private var uploadData : ImageView?=null
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetAdapter: BottomSheetAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
@@ -63,13 +75,73 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
         mBinding?.clickAction = ClickActions()
         viewModel.init()
     }
+
+    override fun setVariables() {
+        mBinding?.etCurrentAadhaarNumber?.text =
+            maskAadharNumber(
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).aadhaar_no.toString()
+            )
+    }
+
+    override fun setObservers() {
+        viewModel.dropDownResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
+                if (userResponseModel.model == "Identityproofs") {
+                    identityProofList.clear()
+                    identityProofList.add(DropDownResult("0","Select Identity Proof"))
+                    identityProofList.addAll(userResponseModel._result)
+                    bottomSheetAdapter?.notifyDataSetChanged()
+                } else if (userResponseModel.model == "Updationreason") {
+                    reasonToUpdateAadhaarList.clear()
+                    reasonToUpdateAadhaarList.add(DropDownResult("0", "Reason to update Aadhaar"))
+                    reasonToUpdateAadhaarList.addAll(userResponseModel._result)
+                    bottomSheetAdapter?.notifyDataSetChanged()
+                }
+            }
+        }
+
+        viewModel.generateOtpLoginResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                mBinding?.llOtp?.showView()
+                mBinding?.scrollView?.post {
+                    mBinding?.scrollView?.fullScroll(View.FOCUS_DOWN)
+                }
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+
+        viewModel.updateAadhaarResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                onBackPressedDispatcher.onBackPressed()
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+
+        viewModel.errors.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
+        }
+    }
+
     inner class ClickActions {
-        fun backPress(view: View){
+        fun backPress(view: View) {
             onBackPressedDispatcher.onBackPressed()
         }
-        fun toggleEye(view: View){
+
+        fun toggleEye(view: View) {
             togglePasswordVisibility()
         }
+
         fun uploadFile(view: View) {
             checkStoragePermission(this@UpdateAadharNumberActivity)
         }
@@ -79,61 +151,116 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
         }
 
         fun reasonToUpdateAadhaar(view: View) {
-            showBottomSheetDialog("reason_to_update_name")
+            showBottomSheetDialog("reason_to_update_aadhaar")
         }
 
-        fun submit(view: View){
-            onBackPressedDispatcher.onBackPressed()
+        fun submit(view: View) {
+            if (valid()) {
+                if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
+                    updateAadhaarApi()
+                } else {
+                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                }
+            }
         }
-        fun generateOtp(view: View){
-            if(valid()){
-                mBinding?.clParent?.let { Utility.showSnackbar(it,"Done OTP") }
+
+        fun generateOtp(view: View) {
+            if (valid()) {
+                generateOtpApi()
             }
         }
     }
 
+    private fun identityProofApi() {
+        viewModel.getDropDown(
+            this, DropDownRequest(
+                Fields(id = "identity_name"),
+                model = "Identityproofs",
+                type = "mobile"
+            )
+        )
+    }
+
+    private fun reasonToUpdateAadhaarListApi() {
+        viewModel.getDropDown(
+            this, DropDownRequest(
+                Fields(reason = "reason"),
+                model = "Updationreason",
+                filters = Filters(
+                    status = 1,
+                    request_code = "AD"
+                ),
+                type = "mobile",
+                order = "DESC"
+            )
+        )
+    }
+
+    private fun generateOtpApi() {
+        viewModel.getGenerateOtpLoginApi(
+            this,
+            GenerateOtpRequest(
+                application_number = JSEncryptService.encrypt(
+                    getPreferenceOfLogin(
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).application_number.toString()
+                )
+            )
+        )
+    }
+
+    private fun updateAadhaarApi() {
+        viewModel.getUpdateAadhaar(
+            context = this,
+            applicationNumber = EncryptionModel.aesEncrypt(
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).application_number.toString()
+            )
+                .toRequestBody(MultipartBody.FORM),
+            aadhaarNo = EncryptionModel.aesEncrypt(mBinding?.etUpdatedAadhaarNumber?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
+            addressProofId = EncryptionModel.aesEncrypt(identityProofId.toString())
+                .toRequestBody(MultipartBody.FORM),
+            reason = EncryptionModel.aesEncrypt(reasonToUpdateAadhaarId.toString())
+                .toRequestBody(MultipartBody.FORM),
+            otherReason = EncryptionModel.aesEncrypt(mBinding?.etAnyOtherReason?.text.toString().trim().toString())
+                .toRequestBody(MultipartBody.FORM),
+            otp = EncryptionModel.aesEncrypt(mBinding?.etEnterOtp?.text.toString().trim()).toRequestBody(MultipartBody.FORM),
+            document = body
+        )
+    }
+
     private fun valid(): Boolean {
-        val aadhaarNumber = mBinding?.etUpdatedAadhaarNumber?.text?.toString()
-        val identityProof = mBinding?.etIdentityProof?.text?.toString()
-        val fileName = mBinding?.etFileName?.text?.toString()
-        val reasonToUpdateAadhaar = mBinding?.etReasonToUpdateAadhar?.text?.toString()
 
         // Check if Aadhaar number is null or empty
-        if (aadhaarNumber.isNullOrEmpty()) {
-            mBinding?.clParent?.let { Utility.showSnackbar(it,"Aadhaar number cannot be empty") }
+        if (mBinding?.etUpdatedAadhaarNumber?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it, "Please enter aadhaar no.") }
             return false
         }
-        if (identityProof=="Select Identity Proof") {
-            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please select Identity Proof.") }
+        if (mBinding?.etIdentityProof?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it, "Please select Identity Proof.") }
             return false
         }
-//        if (fileName==getString(R.string.no_file_chosen)) {
-//            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please Upload Supporting Document.") }
-//            return false
-//        }
-        if (reasonToUpdateAadhaar=="Select Reason to update Aadhaar Number") {
-            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please Select Reason to update Aadhaar Number") }
+        if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let {
+                showSnackbar(it, "Please Upload Supporting Document.")
+            }
             return false
         }
-
-
-//        // Check if Aadhaar number is 12 digits long
-//        if (aadhaarNumber.length != 12) {
-//            mBinding?.etUpdatedAadhaarNumber?.error = "Aadhaar number must be 12 digits long"
-//            return false
-//        }
-//
-//        // Check if Aadhaar number contains only digits
-//        if (!aadhaarNumber.all { it.isDigit() }) {
-//            mBinding?.etUpdatedAadhaarNumber?.error = "Aadhaar number must contain only digits"
-//            return false
-//        }
-
-//        // Optionally validate using Verhoeff Algorithm
-//        if (!isValidAadhaar(aadhaarNumber)) {
-//            mBinding?.etUpdatedAadhaarNumber?.error = "Invalid Aadhaar number"
-//            return false
-//        }
+        if (mBinding?.etReasonToUpdateAadhar?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let {
+                showSnackbar(
+                    it,
+                    "Please Select Reason to update Aadhaar Number"
+                )
+            }
+            return false
+        }
 
         // If all checks pass
         return true
@@ -160,13 +287,18 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
         // Initialize based on type
         when (type) {
             "identity_proof" -> {
-//                identityProofApi()
+                if (identityProofList.isEmpty()) {
+                    identityProofApi()
+                }
                 selectedList = identityProofList
                 selectedTextView = mBinding?.etIdentityProof
             }
 
-            "reason_to_update_name" -> {
-//                reasonToUpdateNameListApi()
+            "reason_to_update_aadhaar" -> {
+                if (reasonToUpdateAadhaarList.isEmpty()) {
+                    reasonToUpdateAadhaarListApi()
+                }
+                reasonToUpdateAadhaarListApi()
                 selectedList = reasonToUpdateAadhaarList
                 selectedTextView = mBinding?.etReasonToUpdateAadhar
             }
@@ -180,19 +312,33 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
             selectedTextView?.text = selectedItem
             when (type) {
                 "identity_proof" -> {
-                    identityProofId = id
+                    if (selectedItem == "Select Identity Proof") {
+                        selectedTextView?.text = ""
+                    } else {
+                        identityProofId = id
+                    }
                 }
 
-                "reason_to_update_name" -> {
-                    if(selectedItem == "Any other "){
-                        mBinding?.tvAnyOtherReason?.showView()
-                        mBinding?.etAnyOtherReason?.showView()
+                "reason_to_update_aadhaar" -> {
+                    when (selectedItem) {
+                        "Any other " -> {
+                            mBinding?.tvAnyOtherReason?.showView()
+                            mBinding?.etAnyOtherReason?.showView()
+                            reasonToUpdateAadhaarId = id
+                        }
+                        "Reason to update Aadhaar" -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            selectedTextView?.text = ""
+                            mBinding?.etAnyOtherReason?.setText("")
+                        }
+                        else -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.setText("")
+                            reasonToUpdateAadhaarId = id
+                        }
                     }
-                    else {
-                        mBinding?.tvAnyOtherReason?.hideView()
-                        mBinding?.etAnyOtherReason?.hideView()
-                    }
-                    reasonToUpdateAadhaarId = id
                 }
             }
             selectedTextView?.setTextColor(ContextCompat.getColor(this, R.color.black))
@@ -226,56 +372,20 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
         bottomSheetDialog?.show()
     }
 
-    private fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {
-        drawable?.mutate() // Mutate the drawable to avoid affecting other instances
-
-        val rotateDrawable = RotateDrawable()
-        rotateDrawable.drawable = drawable
-        rotateDrawable.fromDegrees = 0f
-        rotateDrawable.toDegrees = angle
-        rotateDrawable.level = 10000 // Needed to apply the rotation
-
-        return rotateDrawable
-    }
-
     private fun togglePasswordVisibility() {
         if (isPasswordVisible) {
-            mBinding?.etUpdatedAadhaarNumber?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            mBinding?.etUpdatedAadhaarNumber?.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             mBinding?.ivTogglePassword?.setImageResource(R.drawable.ic_eye_off) // change to eye icon
         } else {
-            mBinding?.etUpdatedAadhaarNumber?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            mBinding?.etUpdatedAadhaarNumber?.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             mBinding?.ivTogglePassword?.setImageResource(R.drawable.ic_eye) // change to eye off icon
         }
-        mBinding?.etUpdatedAadhaarNumber?.setSelection(mBinding?.etUpdatedAadhaarNumber?.text?.length ?: 0)  // Move cursor to end of text
+        mBinding?.etUpdatedAadhaarNumber?.setSelection(
+            mBinding?.etUpdatedAadhaarNumber?.text?.length ?: 0
+        )  // Move cursor to end of text
         isPasswordVisible = !isPasswordVisible
-    }
-    override fun setVariables() {
-    }
-
-    override fun setObservers() {
-    }
-
-    private fun uploadImage(file: File) {
-        lifecycleScope.launch {
-            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            body =
-                MultipartBody.Part.createFormData(
-                    "document_name",
-                    file.name, reqFile
-                )
-//            viewModel.getProfileUploadFile(
-//                context = this@AddAscadStateActivity,
-//                document_name = body,
-//                user_id = getPreferenceOfScheme(
-//                    this@AddAscadStateActivity,
-//                    AppConstants.SCHEME,
-//                    Result::class.java
-//                )?.user_id,
-//                table_name = getString(R.string.ascad_state).toRequestBody(
-//                    MultipartBody.FORM
-//                ),
-//            )
-        }
     }
 
     @SuppressLint("Range")
@@ -364,37 +474,23 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
         }
     }
 
+    private fun uploadImage(file: File) {
+        lifecycleScope.launch {
+            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            body =
+                MultipartBody.Part.createFormData(
+                    "document",
+                    file.name, reqFile
+                )
+        }
+    }
+
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(this, uri)
         body = MultipartBody.Part.createFormData(
-            "document_name",
+            "document",
             documentName,
             requestBody
         )
-//        viewModel.getProfileUploadFile(
-//            context = this,
-//            document_name = body,
-//            user_id = getPreferenceOfScheme(this, AppConstants.SCHEME, Result::class.java)?.user_id,
-//            table_name = getString(R.string.ascad_state).toRequestBody(MultipartBody.FORM),
-//        )
-    }
-
-    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
-        val contentResolver: ContentResolver = context.contentResolver
-        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
-        val file = File(context.cacheDir, tempFileName)
-
-        try {
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                file.outputStream().use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            // Handle the error appropriately
-        }
-
-        return file.asRequestBody("application/pdf".toMediaType())
     }
 }

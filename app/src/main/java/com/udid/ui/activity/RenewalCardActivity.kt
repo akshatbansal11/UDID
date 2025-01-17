@@ -27,6 +27,7 @@ import com.udid.ui.adapter.BottomSheetAdapter
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility
+import com.udid.utilities.Utility.rotateDrawable
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.hideView
 import com.udid.utilities.showView
@@ -63,7 +64,6 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
-
         mBinding?.rgRenewalCard?.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.rbHome -> {
@@ -90,6 +90,12 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
             }
         }
 
+    }
+
+    override fun setVariables() {
+    }
+
+    override fun setObservers() {
     }
 
     inner class ClickActions {
@@ -298,48 +304,6 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
         bottomSheetDialog?.show()
     }
 
-    private fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {
-        drawable?.mutate() // Mutate the drawable to avoid affecting other instances
-
-        val rotateDrawable = RotateDrawable()
-        rotateDrawable.drawable = drawable
-        rotateDrawable.fromDegrees = 0f
-        rotateDrawable.toDegrees = angle
-        rotateDrawable.level = 10000 // Needed to apply the rotation
-
-        return rotateDrawable
-    }
-
-
-    override fun setVariables() {
-    }
-
-    override fun setObservers() {
-    }
-
-    private fun uploadImage(file: File) {
-        lifecycleScope.launch {
-            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            body =
-                MultipartBody.Part.createFormData(
-                    "document_name",
-                    file.name, reqFile
-                )
-//            viewModel.getProfileUploadFile(
-//                context = this@AddAscadStateActivity,
-//                document_name = body,
-//                user_id = getPreferenceOfScheme(
-//                    this@AddAscadStateActivity,
-//                    AppConstants.SCHEME,
-//                    Result::class.java
-//                )?.user_id,
-//                table_name = getString(R.string.ascad_state).toRequestBody(
-//                    MultipartBody.FORM
-//                ),
-//            )
-        }
-    }
-
     @SuppressLint("Range")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -426,37 +390,23 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
         }
     }
 
+    private fun uploadImage(file: File) {
+        lifecycleScope.launch {
+            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            body =
+                MultipartBody.Part.createFormData(
+                    "document",
+                    file.name, reqFile
+                )
+        }
+    }
+
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(this, uri)
         body = MultipartBody.Part.createFormData(
-            "document_name",
+            "document",
             documentName,
             requestBody
         )
-//        viewModel.getProfileUploadFile(
-//            context = this,
-//            document_name = body,
-//            user_id = getPreferenceOfScheme(this, AppConstants.SCHEME, Result::class.java)?.user_id,
-//            table_name = getString(R.string.ascad_state).toRequestBody(MultipartBody.FORM),
-//        )
-    }
-
-    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
-        val contentResolver: ContentResolver = context.contentResolver
-        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
-        val file = File(context.cacheDir, tempFileName)
-
-        try {
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                file.outputStream().use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            // Handle the error appropriately
-        }
-
-        return file.asRequestBody("application/pdf".toMediaType())
     }
 }

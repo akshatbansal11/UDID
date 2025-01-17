@@ -16,6 +16,7 @@ object AppConstants {
     const val USERID = "USERID"
     const val CATEGORY_ID = "CATEGORY_ID"
     const val FULL_NAME = "FULL_NAME"
+    const val LOGIN_DATA = "LOGIN_DATA"
 
     const val IS_FROM = "IS_FROM"
     const val EMAIL = "EMAIL"

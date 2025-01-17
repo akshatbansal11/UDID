@@ -25,12 +25,15 @@ import com.udid.model.DropDownResult
 import com.udid.model.Fields
 import com.udid.model.Filters
 import com.udid.model.GenerateOtpRequest
+import com.udid.model.UserData
 import com.udid.ui.adapter.BottomSheetAdapter
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.EncryptionModel
 import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
-import com.udid.utilities.Utility
+import com.udid.utilities.Utility.rotateDrawable
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.hideView
 import com.udid.utilities.showView
@@ -57,7 +60,6 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
     private var reasonToUpdateNameId: String? = null
     private var identityProofList = ArrayList<DropDownResult>()
     private var identityProofId: String? = null
-    private var otp: String? = null
     var body: MultipartBody.Part? = null
 
     override val layoutId: Int
@@ -69,13 +71,68 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         viewModel.init()
     }
 
+    override fun setVariables() {
+        mBinding?.etCurrentName?.text =
+            getPreferenceOfLogin(
+                this,
+                AppConstants.LOGIN_DATA,
+                UserData::class.java
+            ).full_name
+    }
+
+    override fun setObservers() {
+
+        viewModel.dropDownResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
+                if (userResponseModel.model == "Identityproofs") {
+                    identityProofList.clear()
+                    identityProofList.add(DropDownResult("0", "Select Identity Proof"))
+                    identityProofList.addAll(userResponseModel._result)
+                    bottomSheetAdapter?.notifyDataSetChanged()
+                } else if (userResponseModel.model == "Updationreason") {
+                    reasonToUpdateNameList.clear()
+                    reasonToUpdateNameList.add(DropDownResult("0", "Spelling Correction in Name"))
+                    reasonToUpdateNameList.addAll(userResponseModel._result)
+                    bottomSheetAdapter?.notifyDataSetChanged()
+                }
+            }
+        }
+
+        viewModel.generateOtpLoginResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                mBinding?.llOtp?.showView()
+                mBinding?.scrollView?.post {
+                    mBinding?.scrollView?.fullScroll(View.FOCUS_DOWN)
+                }
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+
+        viewModel.updateNameResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                onBackPressedDispatcher.onBackPressed()
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.errors.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
+        }
+    }
+
     inner class ClickActions {
         fun backPress(view: View) {
             onBackPressedDispatcher.onBackPressed()
         }
 
         fun uploadFile(view: View) {
-            openOnlyPdfAccordingToPosition()
+            checkStoragePermission(this@UpdateNameActivity)
         }
 
         fun identityProof(view: View) {
@@ -89,24 +146,18 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         fun generateOtp(view: View) {
             if (valid()) {
                 generateOtpApi()
-                mBinding?.llOtp?.showView()
             }
         }
 
         fun submit(view: View) {
-            if(mBinding?.etAnyOtherReason?.text.toString().trim().isNotEmpty()){
-                updateNameApi(mBinding?.etAnyOtherReason?.text.toString().trim())
+            if (valid()) {
+                if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
+                    updateNameApi()
+                } else {
+                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                }
             }
-            else {
-                updateNameApi(null)
-            }
-//            onBackPressedDispatcher.onBackPressed()
         }
-    }
-
-
-    override fun setVariables() {
-        mBinding?.etCurrentName?.text = Utility.getPreferenceString(this, AppConstants.FULL_NAME)
     }
 
     private fun identityProofApi() {
@@ -128,7 +179,8 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                     status = 1,
                     request_code = "NA"
                 ),
-                type = "mobile"
+                type = "mobile",
+                order = "DESC"
             )
         )
     }
@@ -138,60 +190,43 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
             this,
             GenerateOtpRequest(
                 application_number = JSEncryptService.encrypt(
-                    Utility.getPreferenceString(
-                        this@UpdateNameActivity,
-                        AppConstants.APPLICATION_NUMBER
-                    )
+                    getPreferenceOfLogin(
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).application_number.toString()
                 )
             )
         )
     }
 
-    private fun updateNameApi(anyOtherReason : String?){
+    private fun updateNameApi() {
         viewModel.getUpdateName(
             context = this,
-            applicationNumber = Utility.getPreferenceString(this, AppConstants.APPLICATION_NUMBER)
+            applicationNumber = EncryptionModel.aesEncrypt(
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).application_number.toString()
+            )
                 .toRequestBody(MultipartBody.FORM),
-            name = mBinding?.etUpdatedName?.text.toString().trim().toRequestBody(MultipartBody.FORM),
-            nameRegionalLanguage = mBinding?.etUpdatedNameRegionalLanguage?.text.toString().trim().toRequestBody(MultipartBody.FORM),
-            addressProofId = identityProofId?.toRequestBody(MultipartBody.FORM),
-            reason = reasonToUpdateNameId?.toRequestBody(MultipartBody.FORM),
-            otherReason = anyOtherReason?.toRequestBody(MultipartBody.FORM),
-            otp = otp?.toRequestBody(MultipartBody.FORM),
+            name = EncryptionModel.aesEncrypt(mBinding?.etUpdatedName?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
+            nameRegionalLanguage = EncryptionModel.aesEncrypt(
+                mBinding?.etUpdatedNameRegionalLanguage?.text.toString().trim()
+            ).toRequestBody(MultipartBody.FORM),
+            addressProofId = EncryptionModel.aesEncrypt(identityProofId.toString())
+                .toRequestBody(MultipartBody.FORM),
+            reason = EncryptionModel.aesEncrypt(reasonToUpdateNameId.toString())
+                .toRequestBody(MultipartBody.FORM),
+            otherReason = EncryptionModel.aesEncrypt(
+                mBinding?.etAnyOtherReason?.text.toString().trim()
+            )
+                .toRequestBody(MultipartBody.FORM),
+            otp = EncryptionModel.aesEncrypt(mBinding?.etEnterOtp?.text.toString().trim()).toRequestBody(MultipartBody.FORM),
             document = body
         )
-    }
-
-    override fun setObservers() {
-
-        viewModel.dropDownResult.observe(this) {
-            val userResponseModel = it
-            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
-                if (userResponseModel.model == "Identityproofs") {
-                    identityProofList.clear()
-                    identityProofList.addAll(userResponseModel._result)
-                    bottomSheetAdapter?.notifyDataSetChanged()
-                } else if (userResponseModel.model == "Updationreason") {
-                    reasonToUpdateNameList.clear()
-                    reasonToUpdateNameList.addAll(userResponseModel._result)
-                    bottomSheetAdapter?.notifyDataSetChanged()
-                }
-            }
-        }
-
-        viewModel.generateOtpLoginResult.observe(this) {
-            val userResponseModel = it
-            if (userResponseModel?._resultflag != 0) {
-                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
-                otp = JSEncryptService.decrypt(userResponseModel.otp)
-                toast(otp.toString())
-            } else {
-                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
-            }
-        }
-        viewModel.errors.observe(this) {
-            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
-        }
     }
 
     private fun showBottomSheetDialog(type: String) {
@@ -215,13 +250,17 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         // Initialize based on type
         when (type) {
             "identity_proof" -> {
-                identityProofApi()
+                if (identityProofList.isEmpty()) {
+                    identityProofApi()
+                }
                 selectedList = identityProofList
                 selectedTextView = mBinding?.etIdentityProof
             }
 
             "reason_to_update_name" -> {
-                reasonToUpdateNameListApi()
+                if (reasonToUpdateNameList.isEmpty()) {
+                    reasonToUpdateNameListApi()
+                }
                 selectedList = reasonToUpdateNameList
                 selectedTextView = mBinding?.etReasonToUpdateName
             }
@@ -235,19 +274,35 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
             selectedTextView?.text = selectedItem
             when (type) {
                 "identity_proof" -> {
-                    identityProofId = id
+                    if (selectedItem == "Select Identity Proof") {
+                        selectedTextView?.text = ""
+                    } else {
+                        identityProofId = id
+                    }
                 }
 
                 "reason_to_update_name" -> {
-                    if (selectedItem == "Any other ") {
-                        mBinding?.tvAnyOtherReason?.showView()
-                        mBinding?.etAnyOtherReason?.showView()
-                    } else {
-                        mBinding?.tvAnyOtherReason?.hideView()
-                        mBinding?.etAnyOtherReason?.hideView()
-                        mBinding?.etAnyOtherReason?.setText("")
+                    when (selectedItem) {
+                        "Any other " -> {
+                            mBinding?.tvAnyOtherReason?.showView()
+                            mBinding?.etAnyOtherReason?.showView()
+                            reasonToUpdateNameId = id
+                        }
+
+                        "Spelling Correction in Name" -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            selectedTextView?.text = ""
+                            mBinding?.etAnyOtherReason?.setText("")
+                        }
+
+                        else -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.setText("")
+                            reasonToUpdateNameId = id
+                        }
                     }
-                    reasonToUpdateNameId = id
                 }
             }
             selectedTextView?.setTextColor(ContextCompat.getColor(this, R.color.black))
@@ -281,18 +336,6 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         bottomSheetDialog?.show()
     }
 
-    private fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {
-        drawable?.mutate() // Mutate the drawable to avoid affecting other instances
-
-        val rotateDrawable = RotateDrawable()
-        rotateDrawable.drawable = drawable
-        rotateDrawable.fromDegrees = 0f
-        rotateDrawable.toDegrees = angle
-        rotateDrawable.level = 10000 // Needed to apply the rotation
-
-        return rotateDrawable
-    }
-
     private fun valid(): Boolean {
         if (mBinding?.etCurrentName?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
@@ -323,29 +366,6 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
             return false
         }
         return true
-    }
-
-    private fun uploadImage(file: File) {
-        lifecycleScope.launch {
-            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            body =
-                MultipartBody.Part.createFormData(
-                    "document_name",
-                    file.name, reqFile
-                )
-//            viewModel.getProfileUploadFile(
-//                context = this@AddAscadStateActivity,
-//                document_name = body,
-//                user_id = getPreferenceOfScheme(
-//                    this@AddAscadStateActivity,
-//                    AppConstants.SCHEME,
-//                    Result::class.java
-//                )?.user_id,
-//                table_name = getString(R.string.ascad_state).toRequestBody(
-//                    MultipartBody.FORM
-//                ),
-//            )
-        }
     }
 
     @SuppressLint("Range")
@@ -437,34 +457,20 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(this, uri)
         body = MultipartBody.Part.createFormData(
-            "document_name",
+            "document",
             documentName,
             requestBody
         )
-//        viewModel.getProfileUploadFile(
-//            context = this,
-//            document_name = body,
-//            user_id = getPreferenceOfScheme(this, AppConstants.SCHEME, Result::class.java)?.user_id,
-//            table_name = getString(R.string.ascad_state).toRequestBody(MultipartBody.FORM),
-//        )
     }
 
-    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
-        val contentResolver: ContentResolver = context.contentResolver
-        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
-        val file = File(context.cacheDir, tempFileName)
-
-        try {
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                file.outputStream().use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            // Handle the error appropriately
+    private fun uploadImage(file: File) {
+        lifecycleScope.launch {
+            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            body =
+                MultipartBody.Part.createFormData(
+                    "document",
+                    file.name, reqFile
+                )
         }
-
-        return file.asRequestBody("application/pdf".toMediaType())
     }
 }

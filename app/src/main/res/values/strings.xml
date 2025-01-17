@@ -252,4 +252,13 @@
     <string name="aadhaar_enrollment_number">Aadhaar Enrollment Number<font fgcolor="#FF3D00">*</font></string>
     <string name="upload_aadhaar_enrollment_slip">Upload Aadhaar Enrollment slip <font fgcolor="#FF3D00">*</font></string>
     <string name="upload_identity_proof">Upload Identity Proof <font fgcolor="#FF3D00">*</font></string>
+    <string name="select_reason_to_update_aadhaar_number">Select Reason to update Aadhaar Number</string>
+    <string name="current_date_of_birth">Current Date of Birth</string>
+    <string name="note_kindly_update_your_personal_details">Note- Kindly update your personal details.</string>
+    <string name="select_reason_to_update_date_of_birth">Select Reason to update Date of Birth</string>
+    <string name="generate_otp">Generate OTP</string>
+    <string name="enter_revised_email">Enter Revised Email</string>
+    <string name="any_other_reason">Any Other Reason</string>
+    <string name="reason_to_surrender_card_">Reason to surrender card</string>
+    <string name="reason_to_lost_card_card_not_received">Reason to Lost Card/Card Not Received</string>
 </resources>

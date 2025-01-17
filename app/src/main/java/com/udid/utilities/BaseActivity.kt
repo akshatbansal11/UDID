@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Dialog
 import android.app.KeyguardManager
+import android.content.ContentResolver
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -46,8 +47,12 @@ import com.canhub.cropper.CropImageView
 import com.google.android.material.snackbar.Snackbar
 import com.udid.R
 import com.udid.repository.Repository
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executor
@@ -603,6 +608,24 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
             .setNegativeButton(getString(R.string.cancel), okListener)
             .create()
             .show()
+    }
+    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
+        val contentResolver: ContentResolver = context.contentResolver
+        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
+        val file = File(context.cacheDir, tempFileName)
+
+        try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                file.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            // Handle the error appropriately
+        }
+
+        return file.asRequestBody("application/pdf".toMediaType())
     }
 }
 

@@ -2,12 +2,8 @@ package com.udid.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.RotateDrawable
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
@@ -20,23 +16,31 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.udid.R
 import com.udid.databinding.ActivitySurrenderCardBinding
+import com.udid.model.DropDownRequest
 import com.udid.model.DropDownResult
+import com.udid.model.Fields
+import com.udid.model.Filters
+import com.udid.model.GenerateOtpRequest
+import com.udid.model.UserData
 import com.udid.ui.adapter.BottomSheetAdapter
+import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.EncryptionModel
+import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
-import com.udid.utilities.Utility
+import com.udid.utilities.Utility.rotateDrawable
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.hideView
 import com.udid.utilities.showView
+import com.udid.utilities.toast
 import com.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.io.IOException
 
 class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
 
@@ -45,10 +49,8 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetAdapter: BottomSheetAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
-    private var reasonToUpdateAadhaarList = ArrayList<DropDownResult>()
-    private var reasonToUpdateAadhaarId: String? = null
-    private var identityProofList = ArrayList<DropDownResult>()
-    private var identityProofId: String? = null
+    private var reasonToSurrenderCardList = ArrayList<DropDownResult>()
+    private var reasonToSurrenderCardId: String? = null
     var body: MultipartBody.Part? = null
 
     override val layoutId: Int
@@ -64,6 +66,42 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
     }
 
     override fun setObservers() {
+
+        viewModel.dropDownResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
+                reasonToSurrenderCardList.clear()
+                reasonToSurrenderCardList.add(DropDownResult("0","Reason to surrender card"))
+                reasonToSurrenderCardList.addAll(userResponseModel._result)
+                bottomSheetAdapter?.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.generateOtpLoginResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                mBinding?.llOtp?.showView()
+                mBinding?.scrollView?.post {
+                    mBinding?.scrollView?.fullScroll(View.FOCUS_DOWN)
+                }
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.surrenderResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                onBackPressedDispatcher.onBackPressed()
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.errors.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
+        }
+        
     }
 
     inner class ClickActions {
@@ -72,44 +110,80 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
         }
 
         fun submit(view: View) {
-            onBackPressedDispatcher.onBackPressed()
+            if (valid()) {
+                if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
+                    surrenderCardApi()
+                } else {
+                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                }
+            }
         }
 
         fun generateOtp(view: View) {
-            if (valid()) {
-                mBinding?.clParent?.let { Utility.showSnackbar(it, "Done OTP") }
+            if(valid()){
+                generateOtpApi()
             }
         }
+
         fun uploadFile(view: View) {
             checkStoragePermission(this@SurrenderCardActivity)
         }
 
 
         fun reasonToUpdate(view: View) {
-            showBottomSheetDialog("reason_to_update_name")
+            showBottomSheetDialog("reason_to_surrender_card")
         }
     }
 
-    private fun valid(): Boolean {
-        val reasonToSurrendarCard = mBinding?.etReasonToSurrendarCard?.text?.toString()
-        val fileName = mBinding?.etFileName?.text?.toString()
+    private fun surrenderCardApi() {
+        viewModel.getSurrenderCard(
+            context = this,
+            applicationNumber = EncryptionModel.aesEncrypt(
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).application_number.toString()
+            )
+                .toRequestBody(MultipartBody.FORM),
+            reason = EncryptionModel.aesEncrypt(reasonToSurrenderCardId.toString())
+                .toRequestBody(MultipartBody.FORM),
+            otherReason = EncryptionModel.aesEncrypt(mBinding?.etAnyOtherReason?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
+            otp = EncryptionModel.aesEncrypt(mBinding?.etEnterOtp?.text.toString().trim()).toRequestBody(MultipartBody.FORM)
+        )
+    }
 
-//        if (fileName==getString(R.string.no_file_chosen)) {
-//            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please Upload Supporting Document.") }
-//            return false
-//        }
-        if (reasonToSurrendarCard == "Reason to surrender card") {
-            mBinding?.clParent?.let {
-                Utility.showSnackbar(
-                    it,
-                    "Please select reason"
+    private fun reasonToSurrenderCardListApi() {
+        viewModel.getDropDown(
+            this, DropDownRequest(
+                Fields(reason = "reason"),
+                model = "Updationreason",
+                filters = Filters(
+                    status = 1,
+                    request_code = "SR"
+                ),
+                type = "mobile",
+                order = "DESC"
+            )
+        )
+    }
+
+    private fun generateOtpApi() {
+        viewModel.getGenerateOtpLoginApi(
+            this,
+            GenerateOtpRequest(
+                application_number = JSEncryptService.encrypt(
+                    getPreferenceOfLogin(
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).application_number.toString()
                 )
-            }
-            return false
-        }
-
-        return true
+            )
+        )
     }
+
     private fun showBottomSheetDialog(type: String) {
         bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_state, null)
@@ -130,11 +204,12 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
         val selectedTextView: TextView?
         // Initialize based on type
         when (type) {
-
-            "reason_to_update_name" -> {
-//                reasonToUpdateNameListApi()
-                selectedList = reasonToUpdateAadhaarList
-                selectedTextView = mBinding?.etReasonToSurrendarCard
+            "reason_to_surrender_card" -> {
+                if(reasonToSurrenderCardList.isEmpty()) {
+                    reasonToSurrenderCardListApi()
+                }
+                selectedList = reasonToSurrenderCardList
+                selectedTextView = mBinding?.etReasonToSurrenderCard
             }
 
             else -> return
@@ -145,20 +220,26 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
             // Handle state item click
             selectedTextView?.text = selectedItem
             when (type) {
-                "identity_proof" -> {
-                    identityProofId = id
-                }
-
-                "reason_to_update_name" -> {
-                    if(selectedItem == "Any other "){
-                        mBinding?.tvAnyOtherReason?.showView()
-                        mBinding?.etAnyOtherReason?.showView()
+                "reason_to_surrender_card" -> {
+                    when (selectedItem) {
+                        "Any other " -> {
+                            mBinding?.tvAnyOtherReason?.showView()
+                            mBinding?.etAnyOtherReason?.showView()
+                            reasonToSurrenderCardId = id
+                        }
+                        "Reason to surrender card" -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            selectedTextView?.text = ""
+                            mBinding?.etAnyOtherReason?.setText("")
+                        }
+                        else -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.setText("")
+                            reasonToSurrenderCardId = id
+                        }
                     }
-                    else {
-                        mBinding?.tvAnyOtherReason?.hideView()
-                        mBinding?.etAnyOtherReason?.hideView()
-                    }
-                    reasonToUpdateAadhaarId = id
                 }
             }
             selectedTextView?.setTextColor(ContextCompat.getColor(this, R.color.black))
@@ -192,40 +273,22 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
         bottomSheetDialog?.show()
     }
 
-    private fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {
-        drawable?.mutate() // Mutate the drawable to avoid affecting other instances
-
-        val rotateDrawable = RotateDrawable()
-        rotateDrawable.drawable = drawable
-        rotateDrawable.fromDegrees = 0f
-        rotateDrawable.toDegrees = angle
-        rotateDrawable.level = 10000 // Needed to apply the rotation
-
-        return rotateDrawable
-    }
-
-
-    private fun uploadImage(file: File) {
-        lifecycleScope.launch {
-            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            body =
-                MultipartBody.Part.createFormData(
-                    "document_name",
-                    file.name, reqFile
-                )
-//            viewModel.getProfileUploadFile(
-//                context = this@AddAscadStateActivity,
-//                document_name = body,
-//                user_id = getPreferenceOfScheme(
-//                    this@AddAscadStateActivity,
-//                    AppConstants.SCHEME,
-//                    Result::class.java
-//                )?.user_id,
-//                table_name = getString(R.string.ascad_state).toRequestBody(
-//                    MultipartBody.FORM
-//                ),
-//            )
+    private fun valid(): Boolean {
+        if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it, "Please Upload Supporting Document.") }
+            return false
         }
+        else if (mBinding?.etReasonToSurrenderCard?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let {
+                showSnackbar(
+                    it,
+                    "Please select Reason to Surrender Card"
+                )
+            }
+            return false
+        }
+
+        return true
     }
 
     @SuppressLint("Range")
@@ -257,8 +320,6 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
                                 val fileSizeInMB = it.length() / (1024 * 1024.0) // Convert to MB
                                 if (fileSizeInMB <= 5) {
                                     mBinding?.etFileName?.text = file.name
-//                                    mBinding?.llUploadOne?.showView()
-//                                    mBinding?.ivPicOne?.setImageURI(selectedImageUri)
                                     uploadImage(it)
                                 } else {
                                     mBinding?.let {
@@ -314,37 +375,23 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
         }
     }
 
+    private fun uploadImage(file: File) {
+        lifecycleScope.launch {
+            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            body =
+                MultipartBody.Part.createFormData(
+                    "document",
+                    file.name, reqFile
+                )
+        }
+    }
+
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(this, uri)
         body = MultipartBody.Part.createFormData(
-            "document_name",
+            "document",
             documentName,
             requestBody
         )
-//        viewModel.getProfileUploadFile(
-//            context = this,
-//            document_name = body,
-//            user_id = getPreferenceOfScheme(this, AppConstants.SCHEME, Result::class.java)?.user_id,
-//            table_name = getString(R.string.ascad_state).toRequestBody(MultipartBody.FORM),
-//        )
-    }
-
-    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
-        val contentResolver: ContentResolver = context.contentResolver
-        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
-        val file = File(context.cacheDir, tempFileName)
-
-        try {
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                file.outputStream().use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            // Handle the error appropriately
-        }
-
-        return file.asRequestBody("application/pdf".toMediaType())
     }
 }

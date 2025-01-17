@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.udid.model.UserData;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -163,6 +165,13 @@ public class Preferences {
     public static String getPreference(Context context, String key) {
         SharedPreferences prefs = Preferences.getSharedPreferences(context);
         return prefs.getString(key, "");
+    }
+
+    public static UserData getPreferenceOfLogin(Context context, String key, Class<UserData> typeClass) {
+        Gson gson = new Gson();
+        SharedPreferences prefs = Preferences.getSharedPreferences(context);
+        prefs.getString(key, "");
+        return gson.fromJson(prefs.getString(key, ""), typeClass);
     }
 
     public static Object getPreferenceOfObject(Context context, String key, Class<?> typeClass) {

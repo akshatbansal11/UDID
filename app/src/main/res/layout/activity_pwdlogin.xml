@@ -140,7 +140,6 @@
                     android:fontFamily="@font/opensans_regular"
                     android:hint="@string/dd_mm_yyyy"
                     android:onClick="@{ClickAction::dob}"
-
                     android:padding="@dimen/dp_10"
                     android:paddingVertical="10dp"
                     android:singleLine="true"

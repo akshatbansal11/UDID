@@ -9,6 +9,8 @@ import android.content.pm.PackageManager
 import android.graphics.*
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.RotateDrawable
 import android.media.ExifInterface
 import android.net.ConnectivityManager
 import android.net.Uri
@@ -181,14 +183,17 @@ object Utility {
         }
     }
 
-//    fun logout(context : Context){
-//        savePreferencesBoolean(context,AppConstants.ACCEPT_REQ,false)
-//        Preferences.removeAllPreference(context)
-//        clearAllPreferencesExceptDeviceToken(context)
-//        val intent = Intent(context, LoginActivity::class.java)
-//        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-//        context.startActivity(intent)
-//    }
+    fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {
+        drawable?.mutate() // Mutate the drawable to avoid affecting other instances
+
+        val rotateDrawable = RotateDrawable()
+        rotateDrawable.drawable = drawable
+        rotateDrawable.fromDegrees = 0f
+        rotateDrawable.toDegrees = angle
+        rotateDrawable.level = 10000 // Needed to apply the rotation
+
+        return rotateDrawable
+    }
 
     fun distance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
         val theta = lon1 - lon2
@@ -265,7 +270,7 @@ object Utility {
         return try {
             val originalFormat: DateFormat =
                 SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-            val targetFormat: DateFormat = SimpleDateFormat("dd, MMM yyyy")
+            val targetFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
             val date: Date = originalFormat.parse(dateString)
 
             targetFormat.format(date).toUpperCase()

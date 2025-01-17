@@ -11,8 +11,10 @@ import com.udid.R
 import com.udid.databinding.DashboardItemBinding
 import com.udid.model.DashboardData
 import com.udid.ui.activity.ApplicationStatusActivity
+import com.udid.ui.activity.FeedbackAndQueryActivity
 import com.udid.ui.activity.LostCardActivity
 import com.udid.ui.activity.MyAccountActivity
+import com.udid.ui.activity.RenewalCardActivity
 import com.udid.ui.activity.SurrenderCardActivity
 import com.udid.ui.activity.TrackYourCardActivity
 import com.udid.ui.activity.UpdateAadharNumberActivity
@@ -91,7 +93,7 @@ class DashboardAdapter(
             }
             8 -> {
                 holder.mBinding.llParent.setOnClickListener {
-                    context.startActivity(Intent(context, TrackYourCardActivity::class.java))
+                    context.startActivity(Intent(context, RenewalCardActivity::class.java))
                 }
             }
             9 -> {
@@ -103,6 +105,11 @@ class DashboardAdapter(
             12 -> {
                 holder.mBinding.llParent.setOnClickListener {
                     context.startActivity(Intent(context, ApplicationStatusActivity::class.java))
+                }
+            }
+            18 -> {
+                holder.mBinding.llParent.setOnClickListener {
+                    context.startActivity(Intent(context, FeedbackAndQueryActivity::class.java))
                 }
             }
         }

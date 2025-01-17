@@ -8,12 +8,17 @@ import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import com.google.gson.Gson
 import com.udid.R
 import com.udid.databinding.ActivityPwdloginBinding
+import com.udid.model.UpdateRequest
+import com.udid.model.UserData
+import com.udid.model.UserDataPwdApplicationStatus
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.EncryptionModel
 import com.udid.utilities.PrefEntities
+import com.udid.utilities.Preferences
 import com.udid.utilities.Utility
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.toast
@@ -63,9 +68,53 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                         val data =
                             JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result.data))
                         Log.d("data",EncryptionModel.aesDecrypt(userResponseModel._result.data))
-                        Utility.savePreferencesString(
-                            this, AppConstants.APPLICATION_NUMBER,
-                            data.getString("application_number")
+                        val gson = Gson()
+                        val userData = gson.fromJson(data.toString(), UserData::class.java)
+                        Log.d("data1",userData.toString())
+                        Preferences.setPreference(
+                            this, AppConstants.LOGIN_DATA, UserData(
+                                userData.login_status,
+                                userData.id,
+                                userData.application_number,
+                                userData.udid_number,
+                                userData.regional_language,
+                                userData.full_name_i18n,
+                                userData.full_name,
+                                userData.father_name,
+                                userData.dob,
+                                userData.gender,
+                                userData.mobile,
+                                userData.email,
+                                userData.photo,
+                                userData.current_address,
+                                userData.current_state_code,
+                                userData.current_district_code,
+                                userData.current_subdistrict_code,
+                                userData.current_village_code,
+                                userData.current_pincode,
+                                userData.disability_type_id,
+                                userData.application_status,
+                                userData.certificate_generate_date,
+                                userData.rejected_date,
+                                userData.disability_type_pt,
+                                userData.pwd_card_expiry_date,
+                                userData.aadhaar_no,
+                                userData.transfer_date,
+                                UserDataPwdApplicationStatus(userData.pwdapplicationstatus.status_name),
+                                userData.pwddispatch,
+                                userData.photo_path,
+                                userData.appealrequest,
+                                userData.renewalrequest,
+                                userData.surrenderrequest,
+                                userData.lostcardrequest,
+                                UpdateRequest(
+                                    userData.updaterequest.Name,
+                                    userData.updaterequest.Email,
+                                    userData.updaterequest.Mobile,
+                                    userData.updaterequest.AadhaarNumber,
+                                    userData.updaterequest.DateOfBirth
+                                )
+                            )
                         )
                         userResponseModel._result.token.let { it1 ->
                             Utility.savePreferencesString(
@@ -73,21 +122,6 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                                 it1
                             )
                         }
-                        val pwdApplicationStatus = data.getJSONObject("pwdapplicationstatus")
-                        val statusName = pwdApplicationStatus.getString("status_name")
-                        Utility.savePreferencesString(
-                            this, AppConstants.STATUS_NAME,
-                            statusName)
-                        Utility.savePreferencesString(
-                            this,
-                            AppConstants.photo,
-                            data.getString("photo_path")
-                        )
-                        Utility.savePreferencesString(
-                            this,
-                            AppConstants.FULL_NAME,
-                            data.getString("full_name")
-                        )
                         startActivity(Intent(this, DashboardActivity::class.java))
                         finishAffinity()
                     }
