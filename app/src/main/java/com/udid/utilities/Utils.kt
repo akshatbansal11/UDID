@@ -166,7 +166,8 @@ object EncryptionModel {
 
 
 object Utility {
-
+    private const val PREF_NAME = "AppPreferences"
+    private const val THEME_KEY = "ThemeMode"
     fun getMessageType(messageType: String): String {
         return when (messageType) {
             AppConstants.TEXT -> {
@@ -1962,5 +1963,14 @@ object Utility {
             e.printStackTrace()
         }
         return ""
+    }
+    fun saveThemeMode(context: Context, isDarkMode: Boolean) {
+        val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putBoolean(THEME_KEY, isDarkMode).apply()
+    }
+
+    fun isDarkMode(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(THEME_KEY, false) // Default is light mode
     }
 }
