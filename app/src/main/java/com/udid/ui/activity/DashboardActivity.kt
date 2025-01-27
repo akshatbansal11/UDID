@@ -58,11 +58,11 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
         get() = R.layout.activity_dashboard
 
     override fun initView() {
-//        if (Utility.isDarkMode(this)) {
+// add  if (Utility.isDarkMode(this)) {
 //            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 //        } else {
 //            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//        }
+//        } in base activity
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()

@@ -1,6 +1,9 @@
 package com.udid.utilities
 
 object AppConstants {
+    const val USERNAME = "USERNAME"
+    const val REMEMBER_MEE = "REMEMBER_MEE"
+    const val PASSWORD = "PASSWORD"
     const val ITEM="ITEM"
     const val OTP="OTP"
     const val DATE_OF_BIRTH="DATE_OF_BIRTH"
@@ -58,4 +61,8 @@ object AppConstants {
     const val photo: String = "photo"
     const val OTHER: String = "Other"
 
+}
+object cryptConstantCodes{
+    const val CRYPT_IV = "newsonairapp0oo0rn0ia0al0l"
+    const val CRYPT_KEY = "BlVssQKxzAHFAUNZbqvwS+yKw/m"
 }
