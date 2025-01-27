@@ -16,7 +16,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -27,13 +27,15 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            isDebuggable = false
+//            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
         debug {
-            isShrinkResources = false
+//            isShrinkResources = true
             isDebuggable = true
             isMinifyEnabled = false
             proguardFiles(
@@ -49,6 +51,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     dataBinding {
         enable = true
     }
@@ -61,14 +70,14 @@ android {
     productFlavors {
         create("product"){
             dimension = "full"
-            buildConfigField ("String", "API_BASE_URL", "\"https://knowyourtemples.in/\"")
+            buildConfigField ("String", "API_BASE_URL", "\"http://134.209.222.136:86/\"")
 //            buildConfigField 'String', 'WEB_BASE_URL', '"https://templesnet.com/"'
 //            buildConfigField 'String', 'RZP_API_KEY', '"rzp_test_xmAF4mhT1iSMZ6"'
 //            manifestPlaceholders["razorPayApiKey"] = "rzp_test_xmAF4mhT1iSMZ6"
         }
         create("local"){
             dimension = "full"
-            buildConfigField ("String", "API_BASE_URL", "\"https://knowyourtemples.in/\"")
+            buildConfigField ("String", "API_BASE_URL", "\"http://134.209.222.136:86/\"")
         }
     }
 }

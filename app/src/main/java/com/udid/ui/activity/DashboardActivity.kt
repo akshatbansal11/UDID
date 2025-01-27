@@ -92,20 +92,24 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
         }
 
         mBinding?.leftDrawerMenu?.llPrivacyPolicyHeading?.setOnClickListener {
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://www.swavlambancard.gov.in/privacy-policy?view-type=mobile")
-                )
-            )
+            startActivity(Intent(this,WebViewActivity::class.java)
+                .putExtra(AppConstants.WEB_URL,"privacy_policy"))
+//            startActivity(
+//                Intent(
+//                    Intent.ACTION_VIEW,
+//                    Uri.parse("https://www.swavlambancard.gov.in/privacy-policy?view-type=mobile")
+//                )
+//            )
         }
         mBinding?.leftDrawerMenu?.llTermsAndConditionHeading?.setOnClickListener{
-            startActivity(
-                Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://www.swavlambancard.gov.in/terms-and-conditions?view-type=mobile")
-                )
-            )
+            startActivity(Intent(this,WebViewActivity::class.java)
+                .putExtra(AppConstants.WEB_URL,"terms_and_conditions"))
+//            startActivity(
+//                Intent(
+//                    Intent.ACTION_VIEW,
+//                    Uri.parse("https://www.swavlambancard.gov.in/terms-and-conditions?view-type=mobile")
+//                )
+//            )
         }
     }
 

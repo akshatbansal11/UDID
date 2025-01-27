@@ -36,8 +36,15 @@
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activity.WebViewActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.AppealActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.SplashActivity"
             android:exported="true">
@@ -49,31 +56,47 @@
         </activity>
         <activity
             android:name=".ui.activity.RenewalCardActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.SurrenderCardActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UserDataActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activity.FeedbackAndQueryActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateEmailIDActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateMobileNumberActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateDateOfBirthActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateAadharNumberActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateNameActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activity.ScannerActivity"
             android:configChanges="keyboardHidden|orientation"
