@@ -8,6 +8,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.udid.R
 import com.udid.databinding.ActivityFeedbackAndQueryBinding
 import com.udid.model.UserData
@@ -43,7 +44,17 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
     }
 
     override fun setVariables() {
-
+        mBinding?.ivProfile?.let {
+            Glide.with(this)
+                .load(getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).photo_path)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(it)
+        }
     }
 
     override fun setObservers() {
@@ -90,6 +101,7 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
                 .toRequestBody(MultipartBody.FORM),
             message = EncryptionModel.aesEncrypt(mBinding?.etMobile?.text.toString().trim())
                 .toRequestBody(MultipartBody.FORM),
+            type = "mobile".toRequestBody(MultipartBody.FORM),
             document = body
         )
     }

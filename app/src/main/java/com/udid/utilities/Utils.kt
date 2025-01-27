@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.udid.R
+import com.udid.callBack.DialogCallback
 import com.udid.utilities.CryptUniqueIdGenerator.getCryptUniqueId
 import java.io.*
 import java.math.BigDecimal
@@ -50,7 +51,6 @@ import java.text.*
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.logging.Logger
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.crypto.BadPaddingException
@@ -92,7 +92,10 @@ object EncryptionModel {
                 iv.toHexString()
             )
 
-            Base64.encodeToString(components.joinToString(":").toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
+            Base64.encodeToString(
+                components.joinToString(":").toByteArray(Charsets.UTF_8),
+                Base64.NO_WRAP
+            )
         } catch (e: Exception) {
             e.printStackTrace()
             ""
@@ -154,7 +157,8 @@ object EncryptionModel {
     private fun String.hexToBytes(): ByteArray {
         val result = ByteArray(length / 2)
         for (i in indices step 2) {
-            result[i / 2] = ((Character.digit(this[i], 16) shl 4) + Character.digit(this[i + 1], 16)).toByte()
+            result[i / 2] =
+                ((Character.digit(this[i], 16) shl 4) + Character.digit(this[i + 1], 16)).toByte()
         }
         return result
     }
@@ -168,15 +172,19 @@ object Utility {
             AppConstants.TEXT -> {
                 messageType
             }
+
             AppConstants.IMAGE -> {
                 "\uD83D\uDCF7 $messageType"
             }
+
             AppConstants.VIDEO -> {
                 "\uD83C\uDFA5 $messageType"
             }
+
             AppConstants.AUDIO -> {
                 messageType
             }
+
             else -> {
                 messageType
             }
@@ -266,7 +274,18 @@ object Utility {
             ""
         }
     }
-    fun dateConvertToFormat(dateString: String): String {
+
+    fun convertDate(inputDate: String): String {
+        // Define the input and output date formats
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+        // Parse the input date and format it into the desired format
+        val date: Date = inputFormat.parse(inputDate)!!
+        return outputFormat.format(date)
+    }
+
+    fun dateConvertToFormat(dateString: String?): String {
         return try {
             val originalFormat: DateFormat =
                 SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
@@ -278,6 +297,7 @@ object Utility {
             ""
         }
     }
+
     fun dateConvertToString(dateString: String): String {
         return try {
             val originalFormat: DateFormat =
@@ -446,6 +466,7 @@ object Utility {
         }
         return ""
     }
+
     private const val SECOND_MILLIS = 1000
     private const val MINUTE_MILLIS = 60 * SECOND_MILLIS
     private const val HOUR_MILLIS = 60 * MINUTE_MILLIS
@@ -493,7 +514,8 @@ object Utility {
         val calendar = Calendar.getInstance()
         return calendar.time
     }
-        fun isValidEmail(target: CharSequence): Boolean {
+
+    fun isValidEmail(target: CharSequence): Boolean {
         return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches()
     }
 
@@ -552,31 +574,6 @@ object Utility {
         }
     }
 
-//    fun getImageContentUri(context: Context, imageFile: File): Uri? {
-//        val filePath = imageFile.absolutePath
-//        val cursor = context.contentResolver.query(
-//            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-//            arrayOf(MediaStore.Images.Media._ID),
-//            MediaStore.Images.Media.DATA + "=? ",
-//            arrayOf(filePath), null
-//        )
-//        if (cursor != null && cursor.moveToFirst()) {
-//            val id = cursor.getInt(cursor.getColumnIndex(MediaStore.MediaColumns._ID))
-//            cursor.close()
-//            return Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "" + id)
-//        } else {
-//            if (imageFile.exists()) {
-//                val values = ContentValues()
-//                values.put(MediaStore.Images.Media.DATA, filePath)
-//                return context.contentResolver.insert(
-//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
-//                )
-//            } else {
-//                return null
-//            }
-//        }
-//    }
-
     fun savePreferencesBoolean(context: Context, key: String, value: Boolean) {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = sharedPreferences.edit()
@@ -588,6 +585,7 @@ object Utility {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         return sharedPreferences.getBoolean(key, false)
     }
+
     fun getPreferencesInt(context: Context, key: String): Int {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         return sharedPreferences.getInt(key, 0)
@@ -688,7 +686,7 @@ object Utility {
 
     fun scaleDown(
         realImage: Bitmap, maxImageSize: Float,
-        filter: Boolean
+        filter: Boolean,
     ): Bitmap {
         val ratio = Math.min(
             maxImageSize / realImage.width,
@@ -742,7 +740,7 @@ object Utility {
 
     class SafeClickListener(
         private var defaultInterval: Int = 1000,
-        private val onSafeCLick: (View) -> Unit
+        private val onSafeCLick: (View) -> Unit,
     ) : View.OnClickListener {
         private var lastTimeClicked: Long = 0
         override fun onClick(v: View) {
@@ -890,6 +888,7 @@ object Utility {
         view.setBackgroundColor(Color.parseColor("#AC0000"))
         snackbar.show()
     }
+
     fun showSnackbarSuccess(view: View, message: String) {
         var view = view
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
@@ -986,30 +985,6 @@ object Utility {
         return dateString
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    @SuppressLint("SimpleDateFormat")
-    fun convertDate(inputDate: String?): String {
-        // Check for null or empty input
-        if (inputDate.isNullOrEmpty()) {
-            return ""
-        }
-        return try {
-            // Define the input format
-            val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
-
-            // Parse the input date string
-            val parsedDate = ZonedDateTime.parse(inputDate, inputFormatter)
-
-            // Define the output format
-            val outputFormatter = DateTimeFormatter.ofPattern("dd MMM, yyyy")
-
-            // Format the parsed date to the desired format
-            parsedDate.format(outputFormatter)
-        } catch (e: Exception) {
-            // Return an empty string if parsing fails
-            ""
-        }
-    }
 
     fun getDateWithTime(timestamp: Long): String {
         val formatter = SimpleDateFormat("dd MMMM - HH:mm", Locale.ENGLISH)
@@ -1403,6 +1378,7 @@ object Utility {
             ""
         }
     }
+
     fun dateConvert1(dateString: String): String {
         return try {
             val originalFormat: DateFormat =
@@ -1415,6 +1391,7 @@ object Utility {
             ""
         }
     }
+
     fun dateConvert2(dateString: String): String {
         return try {
             val originalFormat: DateFormat =
@@ -1678,40 +1655,38 @@ object Utility {
 //        }
 //        dialog.show()
 //    }
-//     fun showConfirmationAlertDialog(
-//        context: Context,
-//        callback: DialogCallback,
-//        heading:String
-//    ) {
-//        val dialog = Dialog(context, android.R.style.Theme_Translucent_NoTitleBar)
-//        dialog.setCancelable(true)
-//        dialog.setCanceledOnTouchOutside(true)
-//        dialog.window!!.setLayout(
-//            LinearLayout.LayoutParams.MATCH_PARENT,
-//            LinearLayout.LayoutParams.WRAP_CONTENT
-//        )
-//        dialog.window?.setGravity(Gravity.CENTER)
-//        val lp: WindowManager.LayoutParams = dialog.window!!.attributes
-//        lp.dimAmount = 0.5f
-//        dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-//        dialog.window
-//        dialog.window?.attributes = lp
-//        dialog.setContentView(R.layout.item_delete_confirmation_dialog)
-//        val tvCancel = dialog.findViewById(R.id.tvCancel) as TextView
-//        val ivConfirm = dialog.findViewById(R.id.tvConfirm) as TextView
-//        val tvShowText = dialog.findViewById(R.id.tvShowText) as TextView
-//         tvShowText.text=heading
-//
-//        ivConfirm.setOnClickListener {
-//            dialog.dismiss()
-//            callback.onYes()
-//        }
-//        tvCancel.setOnClickListener {
-//            dialog.dismiss()
-//        }
-//        dialog.show()
-//    }
+     fun showConfirmationAlertDialog(
+    context: Context,
+    callback: DialogCallback
+    ) {
+        val dialog = Dialog(context, android.R.style.Theme_Translucent_NoTitleBar)
+        dialog.setCancelable(true)
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setGravity(Gravity.CENTER)
+        val lp: WindowManager.LayoutParams = dialog.window!!.attributes
+        lp.dimAmount = 0.5f
+        dialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window
+        dialog.window?.attributes = lp
+        dialog.setContentView(R.layout.item_confirmation_dialog)
+        val tvCancel: TextView = dialog.findViewById(R.id.tvCancel)
+        val ivConfirm: TextView = dialog.findViewById(R.id.tvConfirm)
+        val tvShowText: TextView = dialog.findViewById(R.id.tvShowText)
+
+        ivConfirm.setOnClickListener {
+            dialog.dismiss()
+            callback.onYes()
+        }
+        tvCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 //
 //    fun showImageDialog(context: Context,image:String) {
 //        val dialog = Dialog(context,android.R.style.Theme_Translucent_NoTitleBar)
@@ -1880,9 +1855,10 @@ object Utility {
             context.startActivity(i)
         }
     }
-    fun getFormattedDate(dateStr: String):String{
+
+    fun getFormattedDate(dateStr: String): String {
         try {
-            var format:SimpleDateFormat?=null
+            var format: SimpleDateFormat? = null
 
             if (dateStr.startsWith("1") && !dateStr.startsWith("11"))
                 format = SimpleDateFormat("dd'st' MMMM yyyy")
@@ -1893,20 +1869,19 @@ object Utility {
             else
                 format = SimpleDateFormat("dd'th' MMMM yyyy")
 
-           var format1 = SimpleDateFormat("dd MMM yyyy")
+            var format1 = SimpleDateFormat("dd MMM yyyy")
             val date: Date = format.parse(dateStr)
             val formattedDate: String = format1.format(date).toString().toUpperCase()
 
             return formattedDate
-        }
-        catch (ex: Exception){
+        } catch (ex: Exception) {
             return dateStr
         }
     }
 
-     fun getFormatedAmount(amount: Double): String? {
-         val formatter = DecimalFormat("#,###.00")
-        return  formatter.format(amount)
+    fun getFormatedAmount(amount: Double): String? {
+        val formatter = DecimalFormat("#,###.00")
+        return formatter.format(amount)
     }
 
     fun getDecryptedString(value: String?, cryptKey: String?): String? {
@@ -1978,7 +1953,7 @@ object Utility {
         return randomStringBuilder.toString()
     }
 
-    fun versionName(context: Context):String{
+    fun versionName(context: Context): String {
         try {
             val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             return pInfo.versionName

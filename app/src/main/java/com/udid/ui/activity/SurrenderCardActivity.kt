@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.udid.R
 import com.udid.databinding.ActivitySurrenderCardBinding
@@ -63,6 +64,17 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
     }
 
     override fun setVariables() {
+        mBinding?.ivProfile?.let {
+            Glide.with(this)
+                .load(getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).photo_path)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(it)
+        }
     }
 
     override fun setObservers() {
@@ -93,7 +105,8 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 toast(userResponseModel.message)
-                onBackPressedDispatcher.onBackPressed()
+                startActivity(Intent(this, UpdateRequestActivity::class.java)
+                    .putExtra(AppConstants.UPDATE_REQUEST, getString(R.string.submit_surrender_card)))
             } else {
                 mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
             }
@@ -150,7 +163,8 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
                 .toRequestBody(MultipartBody.FORM),
             otherReason = EncryptionModel.aesEncrypt(mBinding?.etAnyOtherReason?.text.toString().trim())
                 .toRequestBody(MultipartBody.FORM),
-            otp = EncryptionModel.aesEncrypt(mBinding?.etEnterOtp?.text.toString().trim()).toRequestBody(MultipartBody.FORM)
+            otp = EncryptionModel.aesEncrypt(mBinding?.etEnterOtp?.text.toString().trim()).toRequestBody(MultipartBody.FORM),
+            type = "mobile".toRequestBody(MultipartBody.FORM)
         )
     }
 

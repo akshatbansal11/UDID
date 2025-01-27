@@ -10,10 +10,13 @@ import com.udid.databinding.ActivityTrackYourCardBinding
 import com.udid.model.ApplicationStatus
 import com.udid.model.ApplicationStatusRequest
 import com.udid.model.StatusArray
+import com.udid.model.UserData
 import com.udid.ui.adapter.TrackerAdapter
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.JSEncryptService
 import com.udid.utilities.Preferences
+import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.Utility
 import com.udid.viewModel.ViewModel
 
@@ -35,10 +38,13 @@ class TrackYourCardActivity : BaseActivity<ActivityTrackYourCardBinding>() {
         viewModel.getAppStatus(
             this@TrackYourCardActivity,
             ApplicationStatusRequest(
-                Utility.getPreferenceString(
-                    this@TrackYourCardActivity,
-                    AppConstants.APPLICATION_NUMBER
-                )
+                JSEncryptService.encrypt(
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).application_number.toString()
+                ).toString()
             )
         )
 

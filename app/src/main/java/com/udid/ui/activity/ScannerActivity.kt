@@ -43,15 +43,14 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
         Log.d("content" , string)
 
         val pairs = parseKeyValuePairs(string)
-
-        mBinding?.etUdidNo?.text =pairs["UDID No"]
-        mBinding?.etName?.text =pairs["Name"]
-        mBinding?.etYearOfBirth?.text =pairs["Year of Birth"]
-        mBinding?.etDisabilityType?.text =pairs["Disability Type"]
-        mBinding?.etPercentageOfDisability?.text =pairs["Percentage of Disability"]
-        mBinding?.etDateOfIssue?.text =pairs["Date of Issue"]
-        mBinding?.etValidUpto?.text =pairs["Valid Upto"]
-        mBinding?.etAadhaarNo?.text = pairs["Aadhaar No"]?.let { Utility.maskAadharNumber(it) }
+        mBinding?.etUdidNo?.text =if(pairs["UDID No"]?.isNotEmpty() == true) pairs["UDID No"] else "NA"
+        mBinding?.etName?.text =if(pairs["Name"]?.isNotEmpty() == true) pairs["Name"] else "NA"
+        mBinding?.etYearOfBirth?.text =if(pairs["Date of Birth"]?.isNotEmpty() == true)pairs["Date of Birth"] else "NA"
+        mBinding?.etDisabilityType?.text =if(pairs["Disability Type"]?.isNotEmpty() == true)pairs["Disability Type"] else "NA"
+        mBinding?.etPercentageOfDisability?.text =if(pairs["Percentage of Disability"]?.isNotEmpty() == true)pairs["Percentage of Disability"] else "NA"
+        mBinding?.etDateOfIssue?.text =if(pairs["Date of Issue"]?.isNotEmpty() == true) pairs["Date of Issue"] else "NA"
+        mBinding?.etValidUpto?.text =if(pairs["Valid Upto"]?.isNotEmpty() == true) pairs["Valid Upto"] else "NA"
+        mBinding?.etAadhaarNo?.text = if(pairs["Aadhaar No"]?.isNotEmpty() == true) pairs["Aadhaar No"]?.let { Utility.maskAadharNumber(it)} else "NA"
     }
 
     private fun parseKeyValuePairs(data: String): Map<String, String> {

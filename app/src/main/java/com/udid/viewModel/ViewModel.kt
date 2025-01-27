@@ -26,7 +26,7 @@ import okhttp3.RequestBody
 import org.json.JSONObject
 import java.net.SocketTimeoutException
 
-class ViewModel : ViewModel() {
+open class ViewModel : ViewModel() {
 
     private lateinit var repository: Repository
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -45,7 +45,9 @@ class ViewModel : ViewModel() {
     var surrenderResult = MutableLiveData<CommonResponse>()
     var lostCardResult = MutableLiveData<CommonResponse>()
     var feedbackAndQueryResult = MutableLiveData<CommonResponse>()
-
+    var appealResult = MutableLiveData<CommonResponse>()
+    var renewCardResult = MutableLiveData<CommonResponse>()
+    var logoutResult = MutableLiveData<CommonResponse>()
     val errors = MutableLiveData<String>()
 
     fun init() {
@@ -273,6 +275,7 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(
@@ -329,6 +332,7 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(
@@ -358,15 +362,18 @@ class ViewModel : ViewModel() {
         }
     }
 
-    fun getUpdateName(context: Context,
-                      applicationNumber: RequestBody?,
-                      name: RequestBody?,
-                      nameRegionalLanguage: RequestBody?,
-                      reason: RequestBody?,
-                      addressProofId: RequestBody?,
-                      otherReason: RequestBody?,
-                      otp: RequestBody?,
-                      document: MultipartBody.Part?,) {
+    fun getUpdateName(
+        context: Context,
+        applicationNumber: RequestBody?,
+        name: RequestBody?,
+        nameRegionalLanguage: RequestBody?,
+        reason: RequestBody?,
+        addressProofId: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
         job = scope.launch {
@@ -379,6 +386,7 @@ class ViewModel : ViewModel() {
                     addressProofId,
                     otherReason,
                     otp,
+                    type,
                     document
                 )
 
@@ -402,6 +410,7 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(
@@ -431,11 +440,13 @@ class ViewModel : ViewModel() {
         }
     }
 
-    fun getUpdateMobile(context: Context,
-                      applicationNumber: RequestBody?,
-                      mobile: RequestBody?,
-                      otp: RequestBody?)
-    {
+    fun getUpdateMobile(
+        context: Context,
+        applicationNumber: RequestBody?,
+        mobile: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+    ) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
         job = scope.launch {
@@ -443,7 +454,8 @@ class ViewModel : ViewModel() {
                 val response = repository.updateMobile(
                     applicationNumber,
                     mobile,
-                    otp
+                    otp,
+                    type
                 )
 
                 Log.e("response", response.toString())
@@ -466,6 +478,7 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(
@@ -495,15 +508,17 @@ class ViewModel : ViewModel() {
         }
     }
 
-    fun getUpdateAadhaar(context: Context,
-                         applicationNumber: RequestBody?,
-                         aadhaarNo: RequestBody?,
-                         addressProofId: RequestBody?,
-                         reason: RequestBody?,
-                         otherReason: RequestBody?,
-                         otp: RequestBody?,
-                         document: MultipartBody.Part?)
-    {
+    fun getUpdateAadhaar(
+        context: Context,
+        applicationNumber: RequestBody?,
+        aadhaarNo: RequestBody?,
+        addressProofId: RequestBody?,
+        reason: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
         job = scope.launch {
@@ -515,6 +530,7 @@ class ViewModel : ViewModel() {
                     reason,
                     otherReason,
                     otp,
+                    type,
                     document
                 )
 
@@ -538,6 +554,7 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(
@@ -567,14 +584,16 @@ class ViewModel : ViewModel() {
         }
     }
 
-    fun getUpdateDob(context: Context,
-                         applicationNumber: RequestBody?,
-                         dob: RequestBody?,
-                         reason: RequestBody?,
-                         otherReason: RequestBody?,
-                         otp: RequestBody?,
-                         document: MultipartBody.Part?)
-    {
+    fun getUpdateDob(
+        context: Context,
+        applicationNumber: RequestBody?,
+        dob: RequestBody?,
+        reason: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
         job = scope.launch {
@@ -585,6 +604,7 @@ class ViewModel : ViewModel() {
                     reason,
                     otherReason,
                     otp,
+                    type,
                     document
                 )
 
@@ -608,6 +628,7 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(
@@ -637,11 +658,13 @@ class ViewModel : ViewModel() {
         }
     }
 
-    fun getUpdateEmail(context: Context,
-                        applicationNumber: RequestBody?,
-                        email: RequestBody?,
-                        otp: RequestBody?)
-    {
+    fun getUpdateEmail(
+        context: Context,
+        applicationNumber: RequestBody?,
+        email: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?
+    ) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
         job = scope.launch {
@@ -649,7 +672,8 @@ class ViewModel : ViewModel() {
                 val response = repository.updateEmail(
                     applicationNumber,
                     email,
-                    otp
+                    otp,
+                    type
                 )
 
                 Log.e("response", response.toString())
@@ -672,6 +696,7 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(
@@ -701,12 +726,14 @@ class ViewModel : ViewModel() {
         }
     }
 
-    fun getSurrenderCard(context: Context,
-                     applicationNumber: RequestBody?,
-                     reason: RequestBody?,
-                     otherReason: RequestBody?,
-                     otp: RequestBody?)
-    {
+    fun getSurrenderCard(
+        context: Context,
+        applicationNumber: RequestBody?,
+        reason: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?
+    ) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
         job = scope.launch {
@@ -715,7 +742,8 @@ class ViewModel : ViewModel() {
                     applicationNumber,
                     reason,
                     otherReason,
-                    otp
+                    otp,
+                    type
                 )
 
                 Log.e("response", response.toString())
@@ -738,6 +766,7 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(
@@ -767,13 +796,15 @@ class ViewModel : ViewModel() {
         }
     }
 
-    fun getLostCard(context: Context,
-                     applicationNumber: RequestBody?,
-                     reason: RequestBody?,
-                     otherReason: RequestBody?,
-                     otp: RequestBody?,
-                     document: MultipartBody.Part?)
-    {
+    fun getLostCard(
+        context: Context,
+        applicationNumber: RequestBody?,
+        reason: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
         job = scope.launch {
@@ -783,6 +814,7 @@ class ViewModel : ViewModel() {
                     reason,
                     otherReason,
                     otp,
+                    type,
                     document
                 )
 
@@ -806,6 +838,7 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(
@@ -835,14 +868,16 @@ class ViewModel : ViewModel() {
         }
     }
 
-    fun getFeedBack(context: Context,
-                    fullName: RequestBody?,
-                    mobile: RequestBody?,
-                    subject: RequestBody?,
-                    email: RequestBody?,
-                    message: RequestBody?,
-                    document: MultipartBody.Part?)
-    {
+    fun getFeedBack(
+        context: Context,
+        fullName: RequestBody?,
+        mobile: RequestBody?,
+        subject: RequestBody?,
+        email: RequestBody?,
+        message: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
         job = scope.launch {
@@ -853,6 +888,7 @@ class ViewModel : ViewModel() {
                     subject,
                     email,
                     message,
+                    type,
                     document
                 )
 
@@ -876,6 +912,218 @@ class ViewModel : ViewModel() {
                                 )
                                 dismissLoader()
                             }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun getAppeal(
+        context: Context,
+        applicationNumber: RequestBody?,
+        reason: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.appeal(
+                    applicationNumber,
+                    reason,
+                    type,
+                    document
+                )
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                appealResult.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun getRenewCard(
+        context: Context,
+        applicationNumber: RequestBody?,
+        renewalType: RequestBody?,
+        currentAddress: RequestBody?,
+        hospitalTreatingStateCode: RequestBody?,
+        hospitalTreatingDistrictCode: RequestBody?,
+        hospitalTreatingSubDistrictCode: RequestBody?,
+        currentPincode: RequestBody?,
+        hospitalTreatingId: RequestBody?,
+        type: RequestBody?,
+        address_proof_file: MultipartBody.Part?,
+    ) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.getRenewCard(
+                    applicationNumber,
+                    renewalType,
+                    currentAddress,
+                    hospitalTreatingStateCode,
+                    hospitalTreatingDistrictCode,
+                    hospitalTreatingSubDistrictCode,
+                    currentPincode,
+                    hospitalTreatingId,
+                    type,
+                    address_proof_file
+                )
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                renewCardResult.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun getLogout(
+        context: Context,
+        applicationNumber: RequestBody?,
+        type: RequestBody?,
+    ) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.logout(
+                    applicationNumber, type
+                )
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                logoutResult.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
                                 errors.postValue(

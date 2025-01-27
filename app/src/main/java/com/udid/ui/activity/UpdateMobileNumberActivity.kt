@@ -1,16 +1,15 @@
 package com.udid.ui.activity
 
 import android.view.View
+import com.bumptech.glide.Glide
 import com.udid.R
 import com.udid.databinding.ActivityUpdateMobileNumberBinding
 import com.udid.model.GenerateOtpRequest
 import com.udid.model.UserData
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
-import com.udid.utilities.EncryptionModel
 import com.udid.utilities.JSEncryptService
 import com.udid.utilities.Preferences.getPreferenceOfLogin
-import com.udid.utilities.Utility
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.showView
 import com.udid.utilities.toast
@@ -39,6 +38,18 @@ class UpdateMobileNumberActivity : BaseActivity<ActivityUpdateMobileNumberBindin
                 AppConstants.LOGIN_DATA,
                 UserData::class.java
             ).mobile.toString()
+
+        mBinding?.ivProfile?.let {
+            Glide.with(this)
+                .load(getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).photo_path)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(it)
+        }
     }
 
     override fun setObservers() {
@@ -118,6 +129,7 @@ class UpdateMobileNumberActivity : BaseActivity<ActivityUpdateMobileNumberBindin
                 ?.toRequestBody(MultipartBody.FORM),
             mobile = JSEncryptService.encrypt(mBinding?.etUpdatedNumber?.text.toString().trim())
                 ?.toRequestBody(MultipartBody.FORM),
+            type = "mobile".toRequestBody(MultipartBody.FORM),
             otp = JSEncryptService.encrypt(mBinding?.etEnterOtp?.text.toString().trim())?.toRequestBody(MultipartBody.FORM),
         )
     }

@@ -18,18 +18,26 @@ data class DropDownRequest(
     val filters: Filters?= null,
     val model: String,
     val type: String,
-    val order :String?= null
+    val order: Any?= null
 )
 
 data class Fields(
     val reason: String?= null,
     val state_code: String?= null,
-    val id: String?= null
+    val id: String?= null,
+    val subdistrict_code: String?= null,
+    val district_code: String?= null
 )
 
 data class Filters(
-    val request_code: String,
-    val status: Int
+    val request_code: String?= null,
+    val status: Int?= null,
+    val district_code: String?= null,
+    val state_code: String?= null
+)
+
+data class Order(
+    val subdistrict_name :String?= null
 )
 
 data class GenerateOtpRequest(
@@ -37,12 +45,13 @@ data class GenerateOtpRequest(
     val type: String = "mobile"
 )
 data class ApplicationStatusRequest(
-    val application_number: String
+    val application_number: String,
+    val type: String = "mobile"
 )
 
-data class ResultGetDropDown(
-    val id: Int,
-    val name: String
+data class LogoutRequest(
+    val application_number: String,
+    val type: String = "mobile"
 )
 
 data class PwdApplication(

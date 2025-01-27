@@ -106,6 +106,15 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
         )
     }
 
+    fun showLoader(context: Context) {
+        ProcessDialog.start(context)
+    }
+
+    fun dismissLoader() {
+        if (ProcessDialog.isShowing())
+            ProcessDialog.dismiss()
+    }
+
     private var pdf = ArrayList<File>()
 
         val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
@@ -215,15 +224,6 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
            return super.dispatchTouchEvent(ev)
        }
    */
-
-    fun showLoader() {
-        ProcessDialog.start(context)
-    }
-
-    fun dismissLoader() {
-        if (ProcessDialog.isShowing())
-            ProcessDialog.dismiss()
-    }
 
 
     fun hideKeyboard() {

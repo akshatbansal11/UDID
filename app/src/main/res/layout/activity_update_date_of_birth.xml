@@ -62,7 +62,6 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="@dimen/dp_100"
                 android:layout_height="@dimen/dp_100"
-                android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/dp_30"
                 android:layout_marginVertical="@dimen/dp_30"
                 android:elevation="@dimen/dp_4"
@@ -72,12 +71,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvHeading">
 
                 <ImageView
-                    android:id="@+id/circularImageView"
+                    android:id="@+id/ivProfile"
                     android:layout_width="@dimen/dp_90"
-                    android:layout_height="96dp"
-                    android:layout_marginHorizontal="@dimen/dp_4"
-                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="@dimen/dp_90"
                     android:scaleType="centerCrop"
+                    android:layout_gravity="center"
                     android:src="@drawable/ic_profile" />
 
             </androidx.cardview.widget.CardView>

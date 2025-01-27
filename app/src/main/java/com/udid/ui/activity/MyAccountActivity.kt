@@ -1,13 +1,17 @@
 package com.udid.ui.activity
 
+import android.util.Log
 import android.view.View
 import com.bumptech.glide.Glide
 import com.udid.R
 import com.udid.databinding.ActivityMyAccountBinding
+import com.udid.model.UserData
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.EncryptionModel
+import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.Utility
+import com.udid.utilities.Utility.convertDate
 import com.udid.viewModel.ViewModel
 import org.json.JSONObject
 
@@ -24,12 +28,16 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
         val myAccountJson = JSONObject()
         myAccountJson.put(
             "application_number",
-            Utility.getPreferenceString(this@MyAccountActivity,AppConstants.APPLICATION_NUMBER)
+            getPreferenceOfLogin(
+                context,
+                AppConstants.LOGIN_DATA,
+                UserData::class.java
+            ).application_number.toString()
         )
-//        myAccountJson.put(
-//            "type",
-//            "mobile"
-//        )
+        myAccountJson.put(
+            "type",
+            "mobile"
+        )
         viewModel.getMyAccount(this@MyAccountActivity, EncryptionModel.aesEncrypt(myAccountJson.toString()))
     }
 
@@ -41,12 +49,18 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
 
     override fun setVariables() {
 
-//        mBinding?.circularImageView?.let { it1 ->
-//            Glide.with(this)
-//                .load(Utility.getPreferenceString(this,AppConstants.photo))
-//                .placeholder(R.drawable.ic_profile)
-//                .into(it1)
-//        }
+        mBinding?.ivProfile?.let {
+            Glide.with(this)
+                .load(
+                    getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).photo_path)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(it)
+        }
     }
 
     override fun setObservers() {
@@ -64,17 +78,18 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
                 else {
                     val data =
                         JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result))
-                    mBinding?.etUdidNo?.text=data.getString("udid_number")
-                    mBinding?.etNameOfApplication?.text=data.getString("full_name")
-                    mBinding?.etDOB?.text=data.getString("dob")
-                    mBinding?.etUdidGenerationDate?.text=data.getString("certificate_generate_date")
-                    mBinding?.etAadhaarNo?.text=Utility.maskAadharNumber(data.getString("aadhaar_no"))
-                    mBinding?.etGender?.text=data.getString("gender")
-                    mBinding?.tvBlindness?.text=data.getString("disability_types")
-                    mBinding?.etDisabilityPercentage?.text= data.getString("final_disability_percentage")
-                    mBinding?.etMobile?.text=data.getString("mobile")
-                    mBinding?.etEmailID?.text=data.getString("email")
-                    mBinding?.etAddress?.text=data.getString("current_address")
+                    Log.d("Decrypted Data : ", data.toString())
+                    mBinding?.etUdidNo?.text= data.getString("udid_number").ifEmpty { "NA" }
+                    mBinding?.etNameOfApplication?.text=data.getString("full_name").ifEmpty { "NA" }
+                    mBinding?.etDOB?.text=data.getString("dob").ifEmpty { "NA" }
+                    mBinding?.etUdidGenerationDate?.text=convertDate(data.getString("certificate_generate_date")).ifEmpty { "NA" }
+                    mBinding?.etAadhaarNo?.text=Utility.maskAadharNumber(data.getString("aadhaar_no")).ifEmpty { "NA" }
+                    mBinding?.etGender?.text=data.getString("gender").ifEmpty { "NA" }
+                    mBinding?.tvBlindness?.text=data.getString("disability_types").ifEmpty { "NA" }
+                    mBinding?.etDisabilityPercentage?.text= data.getString("final_disability_percentage").ifEmpty { "NA" }
+                    mBinding?.etMobile?.text=data.getString("mobile").ifEmpty { "NA" }
+                    mBinding?.etEmailID?.text=data.getString("email").ifEmpty { "NA" }
+                    mBinding?.etAddress?.text=data.getString("current_address").ifEmpty { "NA" }
                 }
             }
         }

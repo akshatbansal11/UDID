@@ -261,4 +261,52 @@
     <string name="any_other_reason">Any Other Reason</string>
     <string name="reason_to_surrender_card_">Reason to surrender card</string>
     <string name="reason_to_lost_card_card_not_received">Reason to Lost Card/Card Not Received</string>
+    <string name="appeal_reason">Appeal Reason<font fgcolor="#FF3D00">*</font></string>
+    <string name="appeal">Appeal</string>
+    <string name="state_name">State Name<font fgcolor="#FF3D00">*</font></string>
+    <string name="district_name">District Name<font fgcolor="#FF3D00">*</font></string>
+    <string name="permanent_address">Permanent Address<font fgcolor="#FF3D00">*</font></string>
+    <string name="upload_address_proof">Upload Address Proof<font fgcolor="#FF3D00">*</font></string>
+    <string name="sub_district_name">Sub-District Name<font fgcolor="#FF3D00">*</font></string>
+    <string name="pincode_">Pincode*</string>
+    <string name="home_district_where_this_udid_was_issued">Home District where this UDID was issued.</string>
+    <string name="present_residence_other_than_home_district">Present residence other than home district.</string>
+    <string name="treating_hospital_state_district_is_different_from_the_state_district_given_in_your_address">Treating hospital State/district is different from the state/district given in your address.</string>
+    <string name="please_enter_pincode">Please enter Pincode</string>
+    <string name="you_have_already_applied_the_admin_will_approve_your_request">You have already applied. The admin will approve your request</string>
+    <string name="email_id_">Email ID</string>
+    <string name="application">Application</string>
+    <string name="your_e_disability_certificate">Your E-disability certificate</string>
+    <string name="receipt">Receipt</string>
+    <string name="your_e_udid_card">Your E-UDID Card</string>
+    <string name="doctor_diagnosis_sheet">Doctor Diagnosis Sheet</string>
+    <string name="are_you_sure_want_to_logout">Are you sure want to Logout?</string>
+    <string name="successfully_verified">Successfully Verified.</string>
+    <string name="download_update_receipt">Download Update Receipt</string>
+    <string name="submit_update_name">Submit Update Name</string>
+    <string name="submit_update_mobile_number">Submit Update Mobile Number</string>
+    <string name="submit_update_email_id">Submit Update Email ID</string>
+    <string name="submit_update_date_of_birth">Submit Update Date of Birth</string>
+    <string name="submit_update_aadhaar_number">Submit Update Aadhaar Number</string>
+    <string name="name_receipt">Name Receipt</string>
+    <string name="mobile_number_receipt">Mobile Number Receipt</string>
+    <string name="email_id_receipt">Email Id Receipt</string>
+    <string name="date_of_birth_receipt">Date Of Birth Receipt</string>
+    <string name="aadhaar_number_receipt">Aadhaar Number Receipt</string>
+    <string name="lost_card_card_not_recieved">Lost Card/Card Not Recieved</string>
+    <string name="update_personal_profile">Update Personal Profile</string>
+    <string name="download_receipt">Download Receipt</string>
+    <string name="doctor_s_diagnosis_sheet">Doctor\'s Diagnosis Sheet</string>
+    <string name="feedback_query">FeedBack/Query</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="press_back_again">Press Back Again</string>
+    <string name="submit_appeal">Submit Appeal</string>
+    <string name="submit_renewal_card">Submit Renewal Card</string>
+    <string name="renewal_card">Renewal Card</string>
+    <string name="submit_lost_card">Submit Lost Card</string>
+    <string name="submit_surrender_card">Submit Surrender Card</string>
+    <string name="terms_condition"><![CDATA[Terms & Condition]]></string>
+    <string name="read_our_terms_and_service">Read our Terms and Service</string>
+    <string name="view_our_privacy_policy">View Our Privacy Policy</string>
+    <string name="privacy_policy">Privacy Policy</string>
 </resources>

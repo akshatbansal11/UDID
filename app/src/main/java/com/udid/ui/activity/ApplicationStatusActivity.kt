@@ -2,6 +2,7 @@ package com.udid.ui.activity
 
 import android.util.Log
 import android.view.View
+import com.bumptech.glide.Glide
 import com.udid.R
 import com.udid.databinding.ActivityApplicationStatusBinding
 import com.udid.model.UserData
@@ -36,6 +37,18 @@ class ApplicationStatusActivity() : BaseActivity<ActivityApplicationStatusBindin
                 AppConstants.LOGIN_DATA,
                 UserData::class.java
             ).pwdapplicationstatus.status_name
+
+        mBinding?.ivProfile?.let {
+            Glide.with(this)
+                .load(getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).photo_path)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(it)
+        }
     }
 
     override fun setObservers() {

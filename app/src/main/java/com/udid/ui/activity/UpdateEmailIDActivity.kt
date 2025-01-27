@@ -1,6 +1,8 @@
 package com.udid.ui.activity
 
+import android.content.Intent
 import android.view.View
+import com.bumptech.glide.Glide
 import com.udid.R
 import com.udid.databinding.ActivityUpdateEmailIdactivityBinding
 import com.udid.model.GenerateOtpRequest
@@ -40,6 +42,18 @@ class UpdateEmailIDActivity : BaseActivity<ActivityUpdateEmailIdactivityBinding>
                 AppConstants.LOGIN_DATA,
                 UserData::class.java
             ).email.toString()
+
+        mBinding?.ivProfile?.let {
+            Glide.with(this)
+                .load(getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).photo_path)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(it)
+        }
     }
 
     override fun setObservers() {
@@ -59,7 +73,10 @@ class UpdateEmailIDActivity : BaseActivity<ActivityUpdateEmailIdactivityBinding>
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 toast(userResponseModel.message)
-                onBackPressedDispatcher.onBackPressed()
+                startActivity(
+                    Intent(this, UpdateRequestActivity::class.java)
+                        .putExtra(AppConstants.UPDATE_REQUEST,
+                            getString(R.string.submit_update_email_id)))
             } else {
                 mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
             }
@@ -119,6 +136,7 @@ class UpdateEmailIDActivity : BaseActivity<ActivityUpdateEmailIdactivityBinding>
             email = JSEncryptService.encrypt(mBinding?.etUpdatedEmail?.text.toString().trim())
                 ?.toRequestBody(MultipartBody.FORM),
             otp = JSEncryptService.encrypt(mBinding?.etEnterOtp?.text.toString().trim())?.toRequestBody(MultipartBody.FORM),
+            type = "mobile".toRequestBody(MultipartBody.FORM)
         )
     }
 

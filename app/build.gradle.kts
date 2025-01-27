@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.udid"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -125,6 +125,5 @@ dependencies {
 
     implementation("com.vanniktech:android-image-cropper:4.6.0")
 //    implementation ("com.github.CanHub:Android-Image-Cropper:4.0.0")
-
 
 }

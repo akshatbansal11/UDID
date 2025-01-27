@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="ClickAction"
-            type="com.udid.ui.activity.ApplicationStatusActivity.ClickActions" />
-
+            type="com.udid.ui.activity.UpdateRequestActivity.ClickActions" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clParent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        tools:context=".ApplicationStatus">
+        android:layout_height="match_parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clToolbar"
             android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_15"
                 android:fontFamily="@font/poppins_medium"
-                android:text="Application Status"
+                android:text="NA"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_20"
                 app:layout_constraintBottom_toBottomOf="@+id/ivBackPress"
@@ -73,43 +73,86 @@
                     android:id="@+id/ivProfile"
                     android:layout_width="@dimen/dp_90"
                     android:layout_height="@dimen/dp_90"
-                    android:scaleType="centerCrop"
                     android:layout_gravity="center"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/ic_profile" />
 
             </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-        <LinearLayout
-            android:id="@+id/llParent"
+
+        <RelativeLayout
+            android:id="@+id/rlBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/dp_15"
+            android:layout_marginBottom="@dimen/dp_15"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/clToolbar">
 
-        <TextView
-            android:id="@+id/tvApplicationStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_20"
-            android:text="@string/application_status"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_16" />
+            <TextView
+                android:id="@+id/tvContext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_10"
+                android:layout_marginHorizontal="@dimen/dp_15"
+                android:fontFamily="@font/opensans_semibold"
+                android:text="@string/na"
+                android:textColor="@color/red"
+                android:textSize="@dimen/sp_16" />
 
-        <TextView
-            android:id="@+id/etApplicationStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_7"
-            android:background="@drawable/curve_all_corner_grey"
-            android:paddingHorizontal="@dimen/dp_10"
-            android:paddingVertical="@dimen/dp_8"
-            android:text="@string/na"
-            android:textColor="#6B6B6B"
-            android:textSize="@dimen/sp_14" />
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/llSubmitRequest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_15"
+                android:orientation="vertical"
+                android:layout_below="@id/tvContext">
+                <TextView
+                    android:id="@+id/tvSuccessfully"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_15"
+                    android:layout_marginTop="@dimen/dp_15"
+                    android:background="@drawable/curve_all_corner_white"
+                    android:backgroundTint="#0DC700"
+                    android:drawablePadding="@dimen/dp_10"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:paddingHorizontal="@dimen/dp_25"
+                    android:paddingVertical="@dimen/dp_7"
+                    android:text="@string/successfully_verified"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_18"
+                    app:drawableEndCompat="@drawable/ic_tick" />
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:layout_marginHorizontal="@dimen/dp_15"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/na"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/sp_16" />
+                <TextView
+                    android:id="@+id/tvDownloadReceipt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_15"
+                    android:layout_marginVertical="@dimen/dp_15"
+                    android:background="@drawable/curve_fill_blue"
+                    android:backgroundTint="@color/darkBlue"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:onClick="@{ClickAction::downloadReceipt}"
+                    android:paddingHorizontal="@dimen/dp_15"
+                    android:paddingVertical="@dimen/dp_10"
+                    android:text="@string/download_update_receipt"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_16" />
+            </LinearLayout>
+        </RelativeLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

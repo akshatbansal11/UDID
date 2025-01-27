@@ -146,18 +146,16 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
         fun login(view: View) {
             if (valid()) {
 
-                val loginRequestJson = JSONObject()
-                loginRequestJson.put(
-                    "application_number",
-                    mBinding?.etEnrollment?.text.toString().trim()
-                )
-                loginRequestJson.put("dob", date)
-//              loginRequestJson.put("type", "mobile")
-
+                val loginRequestJson = JSONObject().apply {
+                    put("application_number", mBinding?.etEnrollment?.text.toString().trim())
+//                    put("type","mobile")
+                    put("dob", date)
+                }
                 viewModel.getLoginApi(
                     this@PwdLoginActivity,
                     EncryptionModel.aesEncrypt(loginRequestJson.toString())
                 )
+                Log.e("Decrypted Data" ,EncryptionModel.aesDecrypt(EncryptionModel.aesEncrypt(loginRequestJson.toString())))
             }
         }
     }
@@ -167,24 +165,40 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
         editText: TextView,
     ) {
         val cal: Calendar = Calendar.getInstance()
+
+        // Parse the date from editText if it contains a valid date
+        val currentText = editText.text.toString()
+        if (currentText.isNotEmpty()) {
+            try {
+                val parts = currentText.split("/")
+                if (parts.size == 3) {
+                    val day = parts[0].toInt()
+                    val month = parts[1].toInt() - 1 // Months are 0-based in Calendar
+                    val year = parts[2].toInt()
+                    cal.set(year, month, day)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
         val year: Int = cal.get(Calendar.YEAR)
         val month: Int = cal.get(Calendar.MONTH)
         val day: Int = cal.get(Calendar.DAY_OF_MONTH)
+
         val dialog = DatePickerDialog(
             context,
             android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-            { _, year, month, day ->
-                var month = month
-                month += 1
-                Log.d("Date", "onDateSet: MM/dd/yyy: $month/$day/$year")
-                date = "$year-$month-$day"
-                editText.text = "$day/$month/$year"
+            { _, selectedYear, selectedMonth, selectedDay ->
+                val adjustedMonth = selectedMonth + 1 // Months are 0-based
+                Log.d("Date", "onDateSet: MM/dd/yyyy: $adjustedMonth/$selectedDay/$selectedYear")
+                date = "$selectedYear-$adjustedMonth-$selectedDay"
+                editText.text = "$selectedDay/$adjustedMonth/$selectedYear"
             },
             year, month, day
         )
         dialog.setCancelable(false)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
         dialog.show()
     }
 
