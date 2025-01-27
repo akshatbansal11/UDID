@@ -55,7 +55,12 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                     this,
                     AppConstants.PASSWORD
                 ).let { EncryptionHelper.decrypt(it) }
+
             )
+            date=getPreferenceString(
+                this,
+                AppConstants.PASSWORD
+            ).let { EncryptionHelper.decrypt(it) }
         }
         mBinding?.checkBoxRememberMe?.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -89,6 +94,33 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                     }
 
                     else -> {
+                        val userName = mBinding?.etEnrollment?.text.toString().trim()
+                        val password = date
+
+                        if (password != null) {
+                            if (userName.isNotEmpty() && password.isNotEmpty()) {
+                                val encryptedUserName = EncryptionHelper.encrypt(userName)
+                                val encryptedPassword = password?.let { it1 ->
+                                    EncryptionHelper.encrypt(
+                                        it1
+                                    )
+                                }
+
+                                // Save encrypted data in SharedPreferences
+                                Utility.savePreferencesString(
+                                    this,
+                                    AppConstants.USERNAME,
+                                    encryptedUserName
+                                )
+                                if (encryptedPassword != null) {
+                                    Utility.savePreferencesString(
+                                        this,
+                                        AppConstants.PASSWORD,
+                                        encryptedPassword
+                                    )
+                                }
+                            }
+                        }
                         val data =
                             JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result.data))
                         Log.d("data",EncryptionModel.aesDecrypt(userResponseModel._result.data))
