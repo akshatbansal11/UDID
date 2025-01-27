@@ -50,16 +50,16 @@
         <item name="layout_constraintRight_toRightOf">parent</item>
         <item name="layout_constraintTop_toTopOf">parent</item>
     </style>
-    <style name="TextViewStyle" >
-        <item name="android:textColor">@color/white</item>
-    </style>
-    <style name="ForgotPasswordTextStyle" >
-        <item name="android:textColor">#FF7200</item>
-    </style>
-    <style name="ParentBackGroundStyle" >
-        <item name="android:backgroundTint">@color/black</item>
-    </style>
-    <style name="ParentViewBackGroundStyle" >
-        <item name="android:background">@drawable/va_bg_application_view_night</item>
-    </style>
+<!--    <style name="TextViewStyle" >-->
+<!--        <item name="android:textColor">@color/white</item>-->
+<!--    </style>-->
+<!--    <style name="ForgotPasswordTextStyle" >-->
+<!--        <item name="android:textColor">#FF7200</item>-->
+<!--    </style>-->
+<!--    <style name="ParentBackGroundStyle" >-->
+<!--        <item name="android:backgroundTint">@color/black</item>-->
+<!--    </style>-->
+<!--    <style name="ParentViewBackGroundStyle" >-->
+<!--        <item name="android:background">@drawable/va_bg_application_view_night</item>-->
+<!--    </style>-->
 </resources>

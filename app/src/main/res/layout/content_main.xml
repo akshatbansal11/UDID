@@ -11,14 +11,12 @@
         android:id="@+id/rlParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         tools:context=".Dashboard">
         <RelativeLayout
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/ParentViewBackGroundStyle"
-            >
+            android:background="@drawable/va_bg_application_view">
 
             <TextView
                 android:id="@+id/tvHeading"
