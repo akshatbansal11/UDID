@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -57,10 +58,28 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
         get() = R.layout.activity_dashboard
 
     override fun initView() {
+        if (Utility.isDarkMode(this)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         trackerAdapter()
+        val isDarkMode = Utility.isDarkMode(this)
+        mBinding?.leftDrawerMenu?.themeSwitch?.isChecked = isDarkMode
+        mBinding?.leftDrawerMenu?.themeSwitch?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                // Enable dark mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                // Enable light mode
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            // Save preference in SharedPreferences
+            Utility.saveThemeMode(this, isChecked)
+        }
     }
 
     override fun setVariables() {
