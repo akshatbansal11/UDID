@@ -147,12 +147,41 @@
                     android:textColorHint="#6B6B6B"
                     android:textSize="@dimen/sp_15"
                     app:drawableEndCompat="@drawable/ic_date_of_birth" />
+                <LinearLayout
+                    android:id="@+id/llRememberMe"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/etDob"
+                   >
+
+                    <!-- CheckBox with Remember Me -->
+                    <CheckBox
+                        android:id="@+id/checkBoxRememberMe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:buttonTint="@color/grey"
+                        android:padding="8dp"
+                        android:text="Remember Me"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" />
+
+                    <!-- Spacer to push Forgot Password to the right -->
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvSendBtnMail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/etDob"
+                    android:layout_below="@+id/llRememberMe"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="@dimen/dp_30"
                     android:layout_marginBottom="@dimen/dp_10"

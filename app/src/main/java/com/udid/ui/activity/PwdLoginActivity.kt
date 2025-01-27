@@ -20,7 +20,9 @@ import com.udid.utilities.EncryptionModel
 import com.udid.utilities.PrefEntities
 import com.udid.utilities.Preferences
 import com.udid.utilities.Utility
+import com.udid.utilities.Utility.getPreferenceString
 import com.udid.utilities.Utility.showSnackbar
+import com.udid.utilities.crypt.EncryptionHelper
 import com.udid.utilities.toast
 import com.udid.viewModel.ViewModel
 import org.json.JSONObject
@@ -40,6 +42,28 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
+        val isRemembered = getPreferenceString(this, AppConstants.REMEMBER_MEE) == "isChecked"
+        if (isRemembered) {
+            mBinding?.etEnrollment?.setText(
+                getPreferenceString(
+                    this,
+                    AppConstants.USERNAME
+                ).let { EncryptionHelper.decrypt(it) }
+            )
+            mBinding?.etDob?.setText(
+                getPreferenceString(
+                    this,
+                    AppConstants.PASSWORD
+                ).let { EncryptionHelper.decrypt(it) }
+            )
+        }
+        mBinding?.checkBoxRememberMe?.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                Utility.savePreferencesString(this@PwdLoginActivity, AppConstants.REMEMBER_MEE, "isChecked")
+            } else {
+                Utility.savePreferencesString(this@PwdLoginActivity, AppConstants.REMEMBER_MEE, "unchecked")
+            }
+        }
     }
 
     override fun setVariables() {
