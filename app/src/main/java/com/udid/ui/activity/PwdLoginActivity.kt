@@ -88,11 +88,6 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                             )
                         }
                     }
-
-                    2 -> {
-                        toast("Need To update your mobile number from website")
-                    }
-
                     else -> {
                         val userName = mBinding?.etEnrollment?.text.toString().trim()
                         val password = date
@@ -100,7 +95,7 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                         if (password != null) {
                             if (userName.isNotEmpty() && password.isNotEmpty()) {
                                 val encryptedUserName = EncryptionHelper.encrypt(userName)
-                                val encryptedPassword = password?.let { it1 ->
+                                val encryptedPassword = password.let { it1 ->
                                     EncryptionHelper.encrypt(
                                         it1
                                     )

@@ -109,39 +109,41 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
     private fun valid(): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
         if (mBinding?.etName?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please enter name.") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_name)) }
             return false
         }
         else if (mBinding?.etEmail?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please enter an email address.") }
+            mBinding?.clParent?.let { showSnackbar(it,
+                getString(R.string.please_enter_an_email_address)) }
             return false
         }
         else if (!mBinding?.etEmail?.text.toString().trim().matches(emailRegex)) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please enter a valid email address.") }
+            mBinding?.clParent?.let { showSnackbar(it,
+                getString(R.string.please_enter_a_valid_email_address)) }
             return false
         }
         else if (mBinding?.etMobile?.text.toString().trim().isEmpty()) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Please enter the mobile number.")
+                showSnackbar(it, getString(R.string.please_enter_the_mobile_number))
             }
             return false
         }
         else if (mBinding?.etMobile?.text.toString().trim().length != 10) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Mobile number must be exactly 10 digits.")
+                showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
             }
             return false
         }
         else if (mBinding?.etSubject?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please enter subject.") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_subject)) }
             return false
         }
         else if (mBinding?.etMessage?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please enter your message.") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_your_message)) }
             return false
         }
         else if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it,"Please Upload Document.") }
+            mBinding?.clParent?.let { showSnackbar(it,getString(R.string.please_upload_document)) }
             return false
         }
 
@@ -184,13 +186,13 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -222,7 +224,7 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }

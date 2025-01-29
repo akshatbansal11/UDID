@@ -131,16 +131,6 @@
             android:name=".ui.activity.LostCardActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.ListForDepartmentUserActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activity.OTPActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.activity.PwdApplicationViewActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"

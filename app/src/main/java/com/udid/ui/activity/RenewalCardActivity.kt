@@ -118,25 +118,25 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
                 when (userResponseModel.model) {
                     "States" -> {
                         stateList.clear()
-                        stateList.add(DropDownResult("0", "Select State Name"))
+                        stateList.add(DropDownResult("0", getString(R.string.select_state_name)))
                         stateList.addAll(userResponseModel._result)
                     }
 
                     "Districts" -> {
                         districtList.clear()
-                        districtList.add(DropDownResult("0", "Select District Name"))
+                        districtList.add(DropDownResult("0", getString(R.string.select_district_name)))
                         districtList.addAll(userResponseModel._result)
                     }
 
                     "Subdistricts" -> {
                         subDistrictList.clear()
-                        subDistrictList.add(DropDownResult("0", "Select Sub-District Name"))
+                        subDistrictList.add(DropDownResult("0", getString(R.string.select_sub_district_name)))
                         subDistrictList.addAll(userResponseModel._result)
                     }
 
                     "Hospitals" -> {
                         hospitalList.clear()
-                        hospitalList.add(DropDownResult("0", "Select Hospital Name"))
+                        hospitalList.add(DropDownResult("0", getString(R.string.select_hospital_name)))
                         hospitalList.addAll(userResponseModel._result)
                     }
                 }
@@ -188,7 +188,8 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
             if (mBinding?.etPresentDistrictName?.text.toString().trim().isNotEmpty()|| mBinding?.etTreatingDistrictName?.text.toString().trim().isNotEmpty() ) {
                 showBottomSheetDialog("hospital")
             } else {
-                mBinding?.clParent?.let {showSnackbar(it, "Please select District First.")}
+                mBinding?.clParent?.let {showSnackbar(it,
+                    getString(R.string.please_select_district_first))}
             }
         }
 
@@ -196,7 +197,7 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
             if (mBinding?.etPresentDistrictName?.text.toString().trim().isNotEmpty()|| mBinding?.etTreatingDistrictName?.text.toString().trim().isNotEmpty() ) {
                 showBottomSheetDialog("subDistrict")
             } else {
-                mBinding?.clParent?.let {showSnackbar(it, "Please select District First.")}
+                mBinding?.clParent?.let {showSnackbar(it, getString(R.string.please_select_district_first))}
             }
         }
 
@@ -204,7 +205,8 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
             if (mBinding?.etPresentStateName?.text.toString().trim().isNotEmpty() || mBinding?.etTreatingStateName?.text.toString().trim().isNotEmpty()) {
                 showBottomSheetDialog("district")
             } else {
-                mBinding?.clParent?.let {showSnackbar(it, "Please select State First.")}
+                mBinding?.clParent?.let {showSnackbar(it,
+                    getString(R.string.please_select_state_first))}
             }
         }
 
@@ -217,7 +219,7 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
                 if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
                     renewCardApi()
                 } else {
-                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
                 }
             }
         }
@@ -501,24 +503,26 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
     private fun valid(): Boolean {
         when (radioTag) {
             0 -> {
-                mBinding?.clParent?.let { showSnackbar(it, "Please Select One of the Options") }
+                mBinding?.clParent?.let { showSnackbar(it,
+                    getString(R.string.please_select_one_of_the_options)) }
                 return false
             }
 
             2 -> {
                 if (mBinding?.etPermanentAddress?.text.toString().trim().isEmpty()) {
-                    mBinding?.clParent?.let { showSnackbar(it, "Please enter Address.") }
+                    mBinding?.clParent?.let { showSnackbar(it,
+                        getString(R.string.please_enter_address)) }
                     return false
                 } else if (mBinding?.etFileName?.text.toString().isEmpty()) {
                     mBinding?.clParent?.let {
-                        showSnackbar(it, "Please select Address Proof.")
+                        showSnackbar(it, getString(R.string.please_select_address_proof))
                     }
                     return false
                 } else if (mBinding?.etPresentStateName?.text.toString().trim().isEmpty()) {
                     mBinding?.clParent?.let {
                         showSnackbar(
                             it,
-                            "Please select Hospital Treating State / UTs."
+                            getString(R.string.please_select_hospital_treating_state_uts)
                         )
                     }
                     return false
@@ -526,23 +530,26 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
                     mBinding?.clParent?.let {
                         showSnackbar(
                             it,
-                            "Please select Hospital Treating District."
+                            getString(R.string.please_select_hospital_treating_district)
                         )
                     }
                     return false
                 } else if (mBinding?.etSubDistrictName?.text.toString().trim().isEmpty()) {
                     mBinding?.clParent?.let {
-                        showSnackbar(it, "Please select Hospital Treating Sub-District.")
+                        showSnackbar(it,
+                            getString(R.string.please_select_hospital_treating_sub_district))
                     }
                     return false
                 } else if (mBinding?.etPincode?.text.toString().trim().isEmpty()) {
-                    mBinding?.clParent?.let { showSnackbar(it, "Please enter pincode.") }
+                    mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_pincode)) }
                     return false
                 } else if (mBinding?.etPincode?.text?.length != 6) {
-                    mBinding?.clParent?.let { showSnackbar(it, "Pincode should be 6 digits.") }
+                    mBinding?.clParent?.let { showSnackbar(it,
+                        getString(R.string.pincode_should_be_6_digits)) }
                     return false
                 } else if (mBinding?.etPresentHospitalName?.text.toString().trim().isEmpty()) {
-                    mBinding?.clParent?.let { showSnackbar(it, "Please select Hospital Treating.") }
+                    mBinding?.clParent?.let { showSnackbar(it,
+                        getString(R.string.please_select_hospital_treating_)) }
                     return false
                 }
                 return true
@@ -554,7 +561,7 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
                     mBinding?.clParent?.let {
                         showSnackbar(
                             it,
-                            "Please select Hospital Treating State / UTs."
+                            getString(R.string.please_select_hospital_treating_state_uts_)
                         )
                     }
                     return false
@@ -562,12 +569,12 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
                     mBinding?.clParent?.let {
                         showSnackbar(
                             it,
-                            "Please select Hospital Treating District."
+                            getString(R.string.please_select_hospital_treating_district_)
                         )
                     }
                     return false
                 } else if (mBinding?.etTreatingHospitalName?.text.toString().trim().isEmpty()) {
-                    mBinding?.clParent?.let { showSnackbar(it, "Please select Hospital Treating.") }
+                    mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_select_hospital_treating_)) }
                     return false
                 }
 
@@ -614,13 +621,13 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -652,7 +659,7 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }

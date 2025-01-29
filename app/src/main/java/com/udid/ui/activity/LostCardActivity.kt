@@ -30,7 +30,6 @@ import com.udid.utilities.EncryptionModel
 import com.udid.utilities.JSEncryptService
 import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
-import com.udid.utilities.Utility
 import com.udid.utilities.Utility.rotateDrawable
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.hideView
@@ -47,7 +46,7 @@ import java.io.File
 class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
 
     private var mBinding: ActivityLostCardBinding? = null
-    private var viewModel= ViewModel()
+    private var viewModel = ViewModel()
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetAdapter: BottomSheetAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
@@ -68,11 +67,13 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
     override fun setVariables() {
         mBinding?.ivProfile?.let {
             Glide.with(this)
-                .load(getPreferenceOfLogin(
-                    this,
-                    AppConstants.LOGIN_DATA,
-                    UserData::class.java
-                ).photo_path)
+                .load(
+                    getPreferenceOfLogin(
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).photo_path
+                )
                 .placeholder(R.drawable.ic_profile)
                 .error(R.drawable.ic_profile)
                 .into(it)
@@ -84,7 +85,12 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
             val userResponseModel = it
             if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
                 reasonToLostCardList.clear()
-                reasonToLostCardList.add(DropDownResult("0","Reason to Lost Card/Card Not Received"))
+                reasonToLostCardList.add(
+                    DropDownResult(
+                        "0",
+                        getString(R.string.reason_to_lost_card_card_not_received)
+                    )
+                )
                 reasonToLostCardList.addAll(userResponseModel._result)
                 bottomSheetAdapter?.notifyDataSetChanged()
             }
@@ -106,8 +112,10 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 toast(userResponseModel.message)
-                startActivity(Intent(this, UpdateRequestActivity::class.java)
-                    .putExtra(AppConstants.UPDATE_REQUEST, getString(R.string.submit_lost_card)))
+                startActivity(
+                    Intent(this, UpdateRequestActivity::class.java)
+                        .putExtra(AppConstants.UPDATE_REQUEST, getString(R.string.submit_lost_card))
+                )
 //                onBackPressedDispatcher.onBackPressed()
             } else {
                 mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
@@ -120,24 +128,26 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
     }
 
     inner class ClickActions {
-        fun backPress(view: View){
+        fun backPress(view: View) {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        fun submit(view: View){
+        fun submit(view: View) {
             if (valid()) {
                 if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
                     lostCardApi()
                 } else {
-                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
                 }
             }
         }
+
         fun generateOtp(view: View) {
-            if(valid()){
+            if (valid()) {
                 generateOtpApi()
             }
         }
+
         fun uploadFile(view: View) {
             checkStoragePermission(this@LostCardActivity)
         }
@@ -160,9 +170,12 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
             ).toRequestBody(MultipartBody.FORM),
             reason = EncryptionModel.aesEncrypt(reasonToLostCardId.toString())
                 .toRequestBody(MultipartBody.FORM),
-            otherReason = EncryptionModel.aesEncrypt(mBinding?.etAnyOtherReason?.text.toString().trim().toString())
+            otherReason = EncryptionModel.aesEncrypt(
+                mBinding?.etAnyOtherReason?.text.toString().trim().toString()
+            )
                 .toRequestBody(MultipartBody.FORM),
-            otp = EncryptionModel.aesEncrypt(mBinding?.etEnterOtp?.text.toString().trim()).toRequestBody(MultipartBody.FORM),
+            otp = EncryptionModel.aesEncrypt(mBinding?.etEnterOtp?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
             type = "mobile".toRequestBody(MultipartBody.FORM),
             document = body
         )
@@ -219,7 +232,7 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
         // Initialize based on type
         when (type) {
             "reason_to_lost_card" -> {
-                if(reasonToLostCardList.isEmpty()) {
+                if (reasonToLostCardList.isEmpty()) {
                     reasonToLostCardListApi()
                 }
                 selectedList = reasonToLostCardList
@@ -241,12 +254,14 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
                             mBinding?.etAnyOtherReason?.showView()
                             reasonToLostCardId = id
                         }
+
                         "Reason to Lost Card/Card Not Received" -> {
                             mBinding?.tvAnyOtherReason?.hideView()
                             mBinding?.etAnyOtherReason?.hideView()
                             selectedTextView?.text = ""
                             mBinding?.etAnyOtherReason?.setText("")
                         }
+
                         else -> {
                             mBinding?.tvAnyOtherReason?.hideView()
                             mBinding?.etAnyOtherReason?.hideView()
@@ -289,14 +304,13 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
 
     private fun valid(): Boolean {
         if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please Upload Supporting Document.") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_upload_supporting_document)) }
             return false
-        }
-        else if (mBinding?.etLostCardReason?.text.toString().trim().isEmpty()) {
+        } else if (mBinding?.etLostCardReason?.text.toString().trim().isEmpty()) {
             mBinding?.clParent?.let {
                 showSnackbar(
                     it,
-                    "Please select Reason to Surrender Card"
+                    getString(R.string.please_select_reason_to_surrender_card)
                 )
             }
             return false
@@ -341,13 +355,13 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -379,7 +393,7 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }

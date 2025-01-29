@@ -274,7 +274,7 @@ class DashboardAdapter(
 
             context.getString(R.string.update_personal_profile) -> {
                 holder.mBinding.llParent.setOnClickListener {
-                    context.toast("Coming Soon")
+                    context.toast(context.getString(R.string.coming_soon))
                 }
             }
 

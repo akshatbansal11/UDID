@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_15"
                 android:fontFamily="@font/poppins_medium"
-                android:text="Feedback/Query"
+                android:text="@string/feedback_query"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_20"
                 app:layout_constraintBottom_toBottomOf="@+id/ivBackPress"
@@ -278,7 +278,7 @@
                         android:paddingVertical="@dimen/dp_10"
                         android:background="@drawable/curve_fill_blue"
                         android:backgroundTint="@color/darkBlue"
-                        android:text="Submit"
+                        android:text="@string/submit"
                         android:onClick="@{ClickAction::submit}"
                         android:textAlignment="center"
                         android:textColor="@color/white"
@@ -286,6 +286,5 @@
                 </LinearLayout>
             </ScrollView>
         </RelativeLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

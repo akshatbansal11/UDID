@@ -105,42 +105,45 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
             mBinding?.llSubmitRequest?.hideView()
         } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_name)) {
             mBinding?.tvHeading?.text = getString(R.string.update_n_name)
-            mBinding?.tvStatus?.text = "Your Updated Name will be updated"
+            mBinding?.tvStatus?.text = getString(R.string.your_updated_name_will_be_updated)
             mBinding?.tvContext?.hideView()
         }
         else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_email_id)) {
             mBinding?.tvHeading?.text = getString(R.string.email_id_)
-            mBinding?.tvStatus?.text = "Your Updated email id will be updated"
+            mBinding?.tvStatus?.text = getString(R.string.your_updated_email_id_will_be_updated)
             mBinding?.tvContext?.hideView()
         }
         else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_date_of_birth)) {
             mBinding?.tvHeading?.text = getString(R.string.date_of_birth_)
-            mBinding?.tvStatus?.text = "Your Updated date of birth will be updated"
+            mBinding?.tvStatus?.text =
+                getString(R.string.your_updated_date_of_birth_will_be_updated)
             mBinding?.tvContext?.hideView()
         }
         else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_aadhaar_number)) {
             mBinding?.tvHeading?.text = getString(R.string.aadhaar_number)
-            mBinding?.tvStatus?.text = "Your Updated aadhaar number will be updated"
+            mBinding?.tvStatus?.text =
+                getString(R.string.your_updated_aadhaar_number_will_be_updated)
             mBinding?.tvContext?.hideView()
         }
         else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_appeal)) {
             mBinding?.tvHeading?.text = getString(R.string.appeal)
-            mBinding?.tvStatus?.text = "Your appeal will be updated"
+            mBinding?.tvStatus?.text = getString(R.string.your_appeal_will_be_updated)
             mBinding?.tvContext?.hideView()
         }
         else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_renewal_card)) {
             mBinding?.tvHeading?.text = getString(R.string.renewal_card)
-            mBinding?.tvStatus?.text = "Your Renewal Card will be updated"
+            mBinding?.tvStatus?.text = getString(R.string.your_renewal_card_will_be_updated)
             mBinding?.tvContext?.hideView()
         }
         else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_lost_card)) {
             mBinding?.tvHeading?.text = getString(R.string.lost_card_card_not_recieved)
-            mBinding?.tvStatus?.text = "Your Lost Card/Card Not Recieved will be updated"
+            mBinding?.tvStatus?.text =
+                getString(R.string.your_lost_card_card_not_recieved_will_be_updated)
             mBinding?.tvContext?.hideView()
         }
         else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_surrender_card)) {
             mBinding?.tvHeading?.text = getString(R.string.surrender_n_card)
-            mBinding?.tvStatus?.text = "Your Surrender Card will be updated"
+            mBinding?.tvStatus?.text = getString(R.string.your_surrender_card_will_be_updated)
             mBinding?.tvContext?.hideView()
         }
     }
@@ -390,7 +393,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
 
         val url = baseUrl.toHttpUrlOrNull() ?: run {
             dismissLoader()
-            mBinding?.clParent?.let { showSnackbar(it, "Invalid URL") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.invalid_url)) }
             completion(Result.failure(Exception("Invalid URL")))
             return
         }
@@ -461,7 +464,8 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 dismissLoader()
-                mBinding?.clParent?.let { showSnackbar(it, "Failed to download: ${e.localizedMessage}") }
+                mBinding?.clParent?.let { showSnackbar(it,
+                    getString(R.string.failed_to_download, e.localizedMessage)) }
                 completion(Result.failure(e))
             }
 
@@ -474,31 +478,31 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                             if (data != null) {
                                 convertToPDF(fileName, data, completion)
                             } else {
-                                mBinding?.clParent?.let { showSnackbar(it, "No data received") }
+                                mBinding?.clParent?.let { showSnackbar(it, getString(R.string.no_data_received)) }
                                 completion(Result.failure(Exception("No data received")))
                             }
                         }
                         else -> {
-                            mBinding?.clParent?.let { showSnackbar(it, "Unexpected response: ${response.code}") }
+                            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.unexpected_response, response.code.toString())) }
                         }
                     }
                 } else {
                     when (response.code) {
                         400, 403, 404 -> {
-                            mBinding?.clParent?.let { showSnackbar(it, "Request failed: ${response.message}") }
+                            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.request_failed, response.message)) }
                             completion(Result.failure(Exception("Request failed: ${response.message}")))
                         }
                         401 -> {
-                            mBinding?.clParent?.let { showSnackbar(it, "Unauthorized: ${response.message}") }
+                            mBinding?.clParent?.let { showSnackbar(it, response.message) }
                             UDID.closeAndRestartApplication()
-                            completion(Result.failure(Exception("Unauthorized: ${response.message}")))
+                            completion(Result.failure(Exception(response.message)))
                         }
                         500 -> {
                             mBinding?.clParent?.let { showSnackbar(it, response.message) }
-                            completion(Result.failure(Exception("Internal server error: ${response.message}")))
+                            completion(Result.failure(Exception(response.message)))
                         }
                         else -> {
-                            mBinding?.clParent?.let { showSnackbar(it, "Unexpected error: ${response.message}") }
+                            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.unexpected_error, response.message)) }
                         }
                     }
                 }

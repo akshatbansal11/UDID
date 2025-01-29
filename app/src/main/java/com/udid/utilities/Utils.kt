@@ -36,27 +36,18 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.udid.R
 import com.udid.callBack.DialogCallback
-import com.udid.utilities.CryptUniqueIdGenerator.getCryptUniqueId
 import java.io.*
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.net.HttpURLConnection
 import java.net.URL
-import java.security.InvalidAlgorithmParameterException
-import java.security.InvalidKeyException
 import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.text.*
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
-import javax.crypto.IllegalBlockSizeException
-import javax.crypto.NoSuchPaddingException
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.math.*
@@ -1883,75 +1874,6 @@ object Utility {
     fun getFormatedAmount(amount: Double): String? {
         val formatter = DecimalFormat("#,###.00")
         return formatter.format(amount)
-    }
-
-    fun getDecryptedString(value: String?, cryptKey: String?): String? {
-        var newValue: String? = ""
-        try {
-            newValue =
-                if (!TextUtils.isEmpty(value) && !TextUtils.isEmpty(cryptKey)) CryptLib().DecryptString(
-                    value,
-                    cryptKey
-                ) else ""
-        } catch (e: InvalidKeyException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: NoSuchPaddingException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: NoSuchAlgorithmException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: BadPaddingException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: IllegalBlockSizeException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: InvalidAlgorithmParameterException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: UnsupportedEncodingException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        }
-        return newValue
-    }
-
-    fun getEncryptedString(value: String?, cryptKey: String?): String? {
-        var newValue: String? = ""
-        try {
-            newValue =
-                if (!TextUtils.isEmpty(value) && !TextUtils.isEmpty(cryptKey)) CryptLib().EncryptString(
-                    value,
-                    cryptKey
-                ) else ""
-        } catch (e: InvalidKeyException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: NoSuchPaddingException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: NoSuchAlgorithmException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: BadPaddingException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: IllegalBlockSizeException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: InvalidAlgorithmParameterException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        } catch (e: UnsupportedEncodingException) {
-            Log.e("UtilsCommon  setStringEncrypted", e.toString())
-        }
-        return newValue
-    }
-
-    fun getUniqueIDWithRandomString(): String? {
-        return getCryptUniqueId() + "-" + randomString()
-    }
-
-    fun randomString(): String {
-        val generator = SecureRandom()
-        val randomStringBuilder = StringBuilder()
-        val randomLength = 5
-        var tempChar: Int
-        val symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-        for (i in 0 until randomLength) {
-            tempChar = generator.nextInt(symbols.length - 1)
-            randomStringBuilder.append(symbols[tempChar])
-        }
-        return randomStringBuilder.toString()
     }
 
     fun versionName(context: Context): String {

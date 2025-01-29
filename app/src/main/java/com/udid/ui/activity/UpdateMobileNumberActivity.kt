@@ -95,7 +95,7 @@ class UpdateMobileNumberActivity : BaseActivity<ActivityUpdateMobileNumberBindin
                 if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
                     updateMobileNumberApi()
                 } else {
-                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
                 }
             }
         }
@@ -137,12 +137,12 @@ class UpdateMobileNumberActivity : BaseActivity<ActivityUpdateMobileNumberBindin
     private fun valid(): Boolean {
         if (mBinding?.etUpdatedNumber?.text?.toString().isNullOrEmpty()) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Please enter the updated mobile number.")
+                showSnackbar(it, getString(R.string.please_enter_the_updated_mobile_number))
             }
             return false
         } else if (mBinding?.etUpdatedNumber?.text?.length != 10) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Mobile number must be exactly 10 digits.")
+                showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
             }
             return false
         }

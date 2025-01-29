@@ -99,12 +99,12 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
             if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
                 if (userResponseModel.model == "Identityproofs") {
                     identityProofList.clear()
-                    identityProofList.add(DropDownResult("0", "Select Identity Proof"))
+                    identityProofList.add(DropDownResult("0", getString(R.string.select_identity_proof)))
                     identityProofList.addAll(userResponseModel._result)
                     bottomSheetAdapter?.notifyDataSetChanged()
                 } else if (userResponseModel.model == "Updationreason") {
                     reasonToUpdateNameList.clear()
-                    reasonToUpdateNameList.add(DropDownResult("0", "Spelling Correction in Name"))
+                    reasonToUpdateNameList.add(DropDownResult("0", getString(R.string.spelling_correction_in_name)))
                     reasonToUpdateNameList.addAll(userResponseModel._result)
                     bottomSheetAdapter?.notifyDataSetChanged()
                 }
@@ -167,7 +167,7 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                 if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
                     updateNameApi()
                 } else {
-                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
                 }
             }
         }
@@ -353,29 +353,29 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
     private fun valid(): Boolean {
         if (mBinding?.etCurrentName?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Please Enter the Updated Name")
+                showSnackbar(it, getString(R.string.please_enter_the_updated_name))
             }
             return false
         } else if (mBinding?.etUpdatedNameRegionalLanguage?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Please Enter the Updated Regional Name")
+                showSnackbar(it, getString(R.string.please_enter_the_updated_regional_name))
 
             }
             return false
         } else if (mBinding?.etIdentityProof?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Please Select the identity proof")
+                showSnackbar(it, getString(R.string.please_select_the_identity_proof))
 
             }
             return false
         } else if (mBinding?.etFileName?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Please upload the document")
+                showSnackbar(it, getString(R.string.please_upload_the_document))
             }
             return false
         } else if (mBinding?.etReasonToUpdateName?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Please Enter the Reason")
+                showSnackbar(it, getString(R.string.please_enter_the_reason))
             }
             return false
         }
@@ -418,13 +418,13 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -456,7 +456,7 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }

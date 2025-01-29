@@ -106,12 +106,13 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
             if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
                 if (userResponseModel.model == "Identityproofs") {
                     identityProofList.clear()
-                    identityProofList.add(DropDownResult("0","Select Identity Proof"))
+                    identityProofList.add(DropDownResult("0",getString(R.string.select_identity_proof)))
                     identityProofList.addAll(userResponseModel._result)
                     bottomSheetAdapter?.notifyDataSetChanged()
                 } else if (userResponseModel.model == "Updationreason") {
                     reasonToUpdateAadhaarList.clear()
-                    reasonToUpdateAadhaarList.add(DropDownResult("0", "Reason to update Aadhaar"))
+                    reasonToUpdateAadhaarList.add(DropDownResult("0",
+                        getString(R.string.reason_to_update_aadhaar)))
                     reasonToUpdateAadhaarList.addAll(userResponseModel._result)
                     bottomSheetAdapter?.notifyDataSetChanged()
                 }
@@ -175,7 +176,7 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
                 if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
                     updateAadhaarApi()
                 } else {
-                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
                 }
             }
         }
@@ -256,16 +257,17 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
 
         // Check if Aadhaar number is null or empty
         if (mBinding?.etUpdatedAadhaarNumber?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please enter aadhaar no.") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_aadhaar_no)) }
             return false
         }
         if (mBinding?.etIdentityProof?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please select Identity Proof.") }
+            mBinding?.clParent?.let { showSnackbar(it,
+                getString(R.string.please_select_identity_proof)) }
             return false
         }
         if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
             mBinding?.clParent?.let {
-                showSnackbar(it, "Please Upload Supporting Document.")
+                showSnackbar(it, getString(R.string.please_upload_supporting_document))
             }
             return false
         }
@@ -273,7 +275,7 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
             mBinding?.clParent?.let {
                 showSnackbar(
                     it,
-                    "Please Select Reason to update Aadhaar Number"
+                    getString(R.string.please_select_reason_to_update_aadhaar_number)
                 )
             }
             return false
@@ -441,13 +443,13 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -479,7 +481,7 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }

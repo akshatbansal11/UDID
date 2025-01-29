@@ -107,14 +107,14 @@ class AppealActivity : BaseActivity<ActivityAppealBinding>() {
     }
     private fun valid(): Boolean {
         if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please Upload Document.") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_upload_document)) }
             return false
         }
         else if (mBinding?.etAppealReason?.text.toString().trim().isEmpty()) {
             mBinding?.clParent?.let {
                 showSnackbar(
                     it,
-                    "Please enter appeal reason"
+                    getString(R.string.please_enter_appeal_reason)
                 )
             }
             return false
@@ -159,13 +159,14 @@ class AppealActivity : BaseActivity<ActivityAppealBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent,
+                                getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -197,7 +198,7 @@ class AppealActivity : BaseActivity<ActivityAppealBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }

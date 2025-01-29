@@ -39,7 +39,7 @@
             android:layout_marginHorizontal="@dimen/dp_15"
             android:layout_marginTop="@dimen/dp_6"
             android:layout_marginBottom="@dimen/dp_8"
-            android:text="My Account"
+            android:text="@string/na"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="12sp" />

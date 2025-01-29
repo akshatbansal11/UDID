@@ -193,7 +193,6 @@
                         android:paddingHorizontal="@dimen/dp_10"
                         android:paddingVertical="@dimen/dp_8"
                         android:singleLine="true"
-
                         android:text="@string/na"
                         android:textColor="#6B6B6B"
                         android:textSize="@dimen/sp_14" />
@@ -204,7 +203,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/sp_7"
                         android:fontFamily="@font/opensans_semibold"
-                        android:text="Aadhaar No"
+                        android:text="@string/aadhaar_no_"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
 
@@ -294,7 +293,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_7"
-                        android:text="Permanent/Temporary"
+                        android:text="@string/permanent_temporary"
                         android:textColor="@color/black"
                         android:fontFamily="@font/opensans_semibold"
                         android:textSize="@dimen/sp_16" />
@@ -367,7 +366,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_7"
                         android:fontFamily="@font/opensans_semibold"
-                        android:text="Email ID"
+                        android:text="@string/email_id_"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
 

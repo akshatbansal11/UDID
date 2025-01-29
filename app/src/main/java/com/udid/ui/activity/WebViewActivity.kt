@@ -22,11 +22,11 @@ class WebViewActivity : BaseActivity<ActivityWebViewBinding>() {
         mBinding?.clickAction = ClickActions()
         url = intent.extras?.getString(AppConstants.WEB_URL)
         if(url == "privacy_policy") {
-            mBinding?.tvHeading?.text = "Privacy Policy"
+            mBinding?.tvHeading?.text = getString(R.string.privacy_policy)
             mBinding?.webView?.let { setupWebView(it, "https://www.swavlambancard.gov.in/privacy-policy?view-type=mobile") }
         }
         else{
-            mBinding?.tvHeading?.text = "Terms And Conditions"
+            mBinding?.tvHeading?.text = getString(R.string.terms_and_conditions)
             mBinding?.webView?.let { setupWebView(it, "https://www.swavlambancard.gov.in/terms-and-conditions?view-type=mobile") }
         }
     }

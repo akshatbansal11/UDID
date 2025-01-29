@@ -1,126 +1,30 @@
 <resources>
     <string name="app_name">UDID</string>
     <string name="Ok">ok</string>
-    <string name="we_are_making_experience_better">Http Exception</string>
-    <string name="no_internet">No Internet</string>
     <string name="login">LOGIN</string>
-    <string name="enter_captcha">Enter Captcha</string>
-    <string name="enter_captcha_">Enter Captcha</string>
-    <string name="captcha">Captcha</string>
     <string name="date_of_birth">Date of Birth<font fgcolor="#FF3D00">*</font></string>
     <string name="dd_mm_yyyy">dd/mm/yyyy</string>
     <string name="enrollment_number_udid_number">Enrollment Number/ UDID Number<font fgcolor="#FF3D00">*</font></string>
     <string name="please_enrollment_number_udid_number">Please enter Enrolment Number/ UDID Number</string>
     <string name="please_date_of_birth">Please enter date of birth</string>
-    <string name="enter_username">Please Enter the Username</string>
-    <string name="enter_password">Enter the Password</string>
 
-    <string name="application_for_naturalization_as_a_citizen_of_india_under_section_6b_read_with_6_1_of_the_citizenship_act_1955">Application for Naturalization as a Citizen of India under section 6B read with 6(1) of the Citizenship Act, 1955</string>
-    <string name="indicates_mandatory"><font fgcolor="#FF3D00">*</font>Indicates mandatory</string>
-    <string name="applicant_details">APPLICANT DETAILS</string>
-    <string name="full_name">Full Name<font fgcolor="#FF3D00">*</font></string>
-    <string name="alias_name_if_any">Alias Name (If Any)</string>
     <string name="gender">Gender<font fgcolor="#FF3D00">*</font></string>
-    <string name="please_select">Please Select</string>
-    <string name="birth_date">Birth Date<font fgcolor="#FF3D00">*</font></string>
-    <string name="hospital_treating_disability">Hospital Treating Disability</string>
-    <string name="birth_country">Birth Country<font fgcolor="#FF3D00">*</font></string>
-    <string name="birth_state">Birth State<font fgcolor="#FF3D00">*</font></string>
-    <string name="birth_district">Birth District<font fgcolor="#FF3D00">*</font></string>
-    <string name="birth_place">Birth Place<font fgcolor="#FF3D00">*</font></string>
-    <string name="identity_mark">Identity Mark<font fgcolor="#FF3D00">*</font></string>
-    <string name="email_id">Email ID<font fgcolor="#FF3D00">*</font></string>
-    <string name="mobile_number">Mobile Number<font fgcolor="#FF3D00">*</font></string>
-    <string name="occupation">Occupation<font fgcolor="#FF3D00">*</font></string>
-    <string name="citizen_of_by_birth">Citizen of (By Birth)<font fgcolor="#FF3D00">*</font></string>
-    <string name="present_citizen_of_if_different">Present Citizen Of(If Different)<font fgcolor="#FF3D00">*</font></string>
-    <string name="specify_minority_community">Specify Minority Community<font fgcolor="#FF3D00">*</font></string>
-    <string name="father_details">FATHER DETAILS</string>
-    <string name="name">Name<font fgcolor="#FF3D00">*</font></string>
-    <string name="resident_of">Resident Of<font fgcolor="#FF3D00">*</font></string>
-    <string name="citizen_of">Citizen Of<font fgcolor="#FF3D00">*</font></string>
-    <string name="citizen_of_">Citizen Of</string>
-    <string name="mother_details">MOTHER DETAILS</string>
-    <string name="your_employer_details">YOUR EMPLOYER DETAILS</string>
-    <string name="applicant_s_marital_details">APPLICANT\'S MARITAL DETAILS</string>
-    <string name="marital_status">Marital Status*</string>
-    <string name="spouse_name">Spouse Name*</string>
-    <string name="date">Date</string>
-    <string name="place">Place</string>
-    <string name="applicant_in_service">Applicant In Service?<font fgcolor="#FF3D00">*</font></string>
-    <string name="employer_address">Employer Address<font fgcolor="#FF3D00">*</font></string>
-    <string name="city_town">City/Town<font fgcolor="#FF3D00">*</font></string>
-    <string name="state">State<font fgcolor="#FF3D00">*</font></string>
-    <string name="district">District<font fgcolor="#FF3D00">*</font></string>
-    <string name="passport_residential_details">PASSPORT / RESIDENTIAL DETAILS</string>
-    <string name="applicant_photo">APPLICANT PHOTO</string>
     <string name="choose_file">Choose File</string>
     <string name="no_file_chosen">No File Chosen</string>
-    <string name="maximum_size_50kb_allowed_jpg_format">Maximum size 50KB allowed (JPG format)</string>
-    <string name="applicant_signature">Applicant Signature*</string>
-    <string name="save">SAVE</string>
-    <string name="don_t_have_an_account_sign_up">Don\'t have an Account?<font fgcolor="#0F6DDC"> Register</font></string>
-    <string name="clicking_on_continue_button"><font fgcolor="#FF3D00"> *</font>Clicking on continue button, OTP will be received at both mobile Number and email Id for registered user.</string>
-    <string name="if_user_is_new_it_directs_to_sign_up_for_registering"><font fgcolor="#FF3D00"> *</font>If user is new, it directs to sign up for registering</string>
-    <string name="logout">Logout</string>
-    <string name="click_here_to_initiate_online_filing_of_fresh_application">Click here to initiate online filing of fresh application</string>
-    <string name="status_of_online_submitted_application"><u>Status of online submitted application</u></string>
-    <string name="continue_">CONTINUE</string>
-    <string name="sign_in_to_portal">Sign in to portal</string>
-    <string name="indian_citizenship_online_portal">Indian Citizenship Online Portal</string>
-    <string name="bharat_nagrik">भारतीय नागरिकता ऑनलाइन पोर्टल</string>
-    <string name="email_id_mobile_number">Email Id/Mobile Number</string>
-    <string name="phone_email">Phone / Email</string>
     <string name="resend_otp">Resend OTP</string>
     <string name="otp_has_been_sent_to_your_mobile_number">OTP has been sent to your Mobile number: xxxxxxxxxx</string>
     <string name="enter_4_digit_code">Enter 4 digit code</string>
-    <string name="otp_verification">OTP Verification</string>
-    <string name="sign_up_to_portal">Sign up to portal</string>
     <string name="name_">Name</string>
-    <string name="email">Email</string>
     <string name="mobile_number_">Mobile Number</string>
-    <string name="phone">Phone</string>
     <string name="submit">Submit</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="personal_details">Personal \nDetails </string>
     <string name="proof_of_identity_card">Proof of \nIdentity Card</string>
     <string name="proof_of_correspondence_address">Proof of \nCorrespondence \nAddress</string>
     <string name="disability_details">Disability \nDetails</string>
-    <string name="hospital_for_assessment_issue_of_udid_card_diability_certificate">Hospital For \nassessment/issue \nof UDID card\n/disability certificate</string>
-    <string name="pwd_application_logs">Pwd Application \nLogs</string>
     <string name="personal_details2">PERSONAL DETAILS</string>
-    <string name="status_verified">Status: Verified</string>
     <string name="application_status">Application Status</string>
-    <string name="verified">Verified</string>
-    <string name="ol8010620200002564">OL8010620200002564</string>
-    <string name="udid_no">UDID NO</string>
-    <string name="_07800000024020002385">07800000024020002385</string>
-    <string name="enrollment_no">Enrollment No</string>
-    <string name="test_new">Test New</string>
-    <string name="applicant_full_name_in_regional_language">Applicant Full Name in regional Language</string>
-    <string name="applicant_regional_name">नया परीक्षण करें</string>
-    <string name="applicant_father_s_name">Applicant Father\'s Name</string>
-    <string name="applicant_mother_s_name">Applicant Mother’s Name</string>
-    <string name="applicant_dob">Applicant DOB</string>
-    <string name="_04_02_2020">04/02/2020</string>
-    <string name="email2">Email</string>
-    <string name="abs_gmail_com">abs@gmail.com</string>
     <string name="mobile">Mobile</string>
-    <string name="_8898989898">8898989898</string>
-    <string name="gender2">Gender</string>
-    <string name="male">Male</string>
-    <string name="category">Category</string>
-    <string name="general">General</string>
-    <string name="blood_group">Blood Group</string>
-    <string name="relation_with_pwd_person_with_disability">Relation with Pwd (Person with Disability)</string>
-    <string name="nome_of_guardian_caretaker">Nome of Guardian/Caretaker</string>
-    <string name="contact_no_of_guardian_caretaker">Contact No. of Guardian/Caretaker</string>
-    <string name="income_per_annum">Income(per Annum)</string>
-    <string name="employment_status">Employment Status</string>
-    <string name="optional_details">OPTIONAL DETAILS</string>
-    <string name="sent_otp">Sent Otp</string>
-    <string name="send_otp">SEND OTP</string>
 
     <string name="my_n_account">My Account</string>
     <string name="update_n_name">Update name</string>
@@ -132,24 +36,14 @@
     <string name="track_your_n_card">Track your Card</string>
     <string name="apply_for_n_re_issue">Apply for Renew</string>
     <string name="application_statuss">Application Status</string>
-    <string name="medical_camps_hospitals">Medical Camps / Hospitals</string>
-    <string name="district_welfare_office">District Welfare Office</string>
-    <string name="disability_scheme">Disability Scheme</string>
-    <string name="write_your_grievance">Write Your grievance</string>
     <string name="download_application">Download Application</string>
     <string name="e_disability_certificate">Download your E-disability certificate</string>
     <string name="e_udid_card">Download your E-UDID card</string>
     <string name="unique_disability_id">Unique Disability ID</string>
-    <string name="password">Password<font fgcolor="#FF3D00">*</font></string>
     <string name="department_of_empowerment">Department of Empowerment of Person with Disabilities, Ministry of Social Justice and Epowerment, Govt.of India</string>
     <string name="confirm">CONFIRM</string>
-    <string name="enter_email">Enter Email</string>
-    <string name="forgot_password">Forgot Password</string>
     <string name="pwd_login">PWD Login</string>
-    <string name="department_login">Department Login</string>
     <string name="pwd_applications_view">PWD Applications View</string>
-    <string name="pwd_completed_specialist_opinion_for_assessment_of_disability">PwD Completed Specialist opinion for Assessment of Disability</string>
-    <string name="list_for_department_user">List for Department user</string>
     <string name="my_account">My Account</string>
     <string name="udid_number">UDID Number</string>
     <string name="udid_generation_date">UDID Generation Date</string>
@@ -167,33 +61,9 @@
     <string name="next">Next</string>
     <string name="back">Back</string>
     <string name="get_started">Get Started</string>
-    <string name="applicant_full_name">Applicant Full Name</string>
-    <string name="highest_qualification_photo">Highest Qualification Photo</string>
-    <string name="signature_thumb_other_print">Signature/Thumb/Other Print</string>
-    <string name="disability_details_">Disability Details</string>
-    <string name="type_of_disability">Type Of Disability</string>
-    <string name="disability_of_birth">Disability Of Birth</string>
-    <string name="disability_since">Disability Since</string>
-    <string name="disability_due_to">Disability Due To</string>
-    <string name="do_you_have_disability_certificate">Do you have disability certificate?</string>
-    <string name="uploaded_proof_of_address">Uploaded Proof Of Address</string>
-    <string name="sr_no_registration_no_of_certificate">Sr. No. / Registration No. of Certificate</string>
     <string name="date_of_issue">Date Of Issue</string>
-    <string name="disability_percentage_">Disability Percentage(%)</string>
-    <string name="hospital_for_assessment_issue_of_udid_card_diability_certtificate">Hospital for assessment/issue of UDID card/ diability certtificate</string>
-    <string name="proof_of_correspondence_address_see_instructions">Proof of Correspondence Address (See instructions)</string>
-    <string name="state_">State</string>
-    <string name="district_">District</string>
-    <string name="sub_district_tehsil">Sub District/ Tehsil</string>
-    <string name="address_">Address</string>
-    <string name="current_pincode">Current Pincode</string>
-    <string name="uploaded_proof_of_address_">Uploaded Proof Of Address</string>
     <string name="proof_of_identity_card_">Proof of Identity Card</string>
-    <string name="type_of_identity">Type of Identity</string>
-    <string name="aadhar_number_12_digit">Aadhar Number(12 Digit):</string>
-    <string name="i_agree_to_share_aadhar_information_with_the_government">I agree to share Aadhar information with the Government</string>
     <string name="hospital_for_assessment">Hospital For \nAssessment</string>
-    <string name="something_went_wrong">Something Went Wrong</string>
     <string name="year_of_birth">Year Of Birth</string>
     <string name="percentage_of_disability">Percentage Of Disability</string>
     <string name="valid_upto">Valid Upto</string>
@@ -258,7 +128,6 @@
     <string name="select_reason_to_update_date_of_birth">Select Reason to update Date of Birth</string>
     <string name="generate_otp">Generate OTP</string>
     <string name="enter_revised_email">Enter Revised Email</string>
-    <string name="any_other_reason">Any Other Reason</string>
     <string name="reason_to_surrender_card_">Reason to surrender card</string>
     <string name="reason_to_lost_card_card_not_received">Reason to Lost Card/Card Not Received</string>
     <string name="appeal_reason">Appeal Reason<font fgcolor="#FF3D00">*</font></string>
@@ -309,4 +178,92 @@
     <string name="read_our_terms_and_service">Read our Terms and Service</string>
     <string name="view_our_privacy_policy">View Our Privacy Policy</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="menu">MENU</string>
+    <string name="lost_card_card_not_received">Lost Card/Card Not Received</string>
+    <string name="a_six_digit_otp_will_be_sent_to_your_registered_mobile_no">A six digit OTP will be sent to your registered mobile no.</string>
+    <string name="enter_the_otp">Enter the OTP</string>
+    <string name="aadhaar_no_">Aadhaar No.</string>
+    <string name="permanent_temporary">Permanent/Temporary</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="select_state_name">Select State Name</string>
+    <string name="select_district_name">Select District Name</string>
+    <string name="select_sub_district_name">Select Sub-District Name</string>
+    <string name="please_select_hospital_treating">Please select Hospital Treating.</string>
+    <string name="select_hospital_name">Select Hospital Name</string>
+    <string name="validate_pwd_card">Validate PwD Card</string>
+    <string name="any_other_reason">Any Other Reason</string>
+    <string name="current_aadhaar_number">Current Aadhaar Number</string>
+    <string name="please_upload_supporting_document">Please Upload Supporting Document.</string>
+    <string name="current_email_id">Current Email ID</string>
+    <string name="current_mobile_number">Current Mobile Number</string>
+    <string name="enter_revised_mobile">Enter Revised Mobile</string>
+    <string name="note_if_you_are_updating_your_mobile_number_this_will_not_affect_your_udid_card">Note: If you are updating your Mobile Number. This will not affect your UDID card.</string>
+    <string name="current_name">Current Name</string>
+    <string name="close">Close</string>
+    <string name="choose_any_one">Choose Any One</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="pdf">Pdf</string>
+    <string name="confirm_">Confirm</string>
+    <string name="mann_ki_baat">Mann Ki Baat</string>
+    <string name="modi_coined_the_word_divyang_to_replace_viklang_during_mann_ki_baat_in_2015_to_change_mindsets_and_foster_compassion_for_people_with_disabilities">Modi coined the word \'Divyang\' to replace \'Viklang\' during Mann Ki Baat in 2015, to change mindsets and foster compassion for people with disabilities.</string>
+    <string name="world_disability_day">World Disability Day</string>
+    <string name="logout">Logout</string>
+    <string name="please_upload_document">Please Upload Document.</string>
+    <string name="please_enter_appeal_reason">Please enter appeal reason</string>
+    <string name="file_size_exceeds_5_mb">File size exceeds 5 MB</string>
+    <string name="format_not_supported">Format not supported</string>
+    <string name="invalid_url">Invalid URL</string>
+    <string name="failed_to_download">Failed to download: %1$s</string>
+    <string name="no_data_received">No data received</string>
+    <string name="unexpected_response">Unexpected response: %1$s</string>
+    <string name="request_failed">Request failed: %1$s</string>
+    <string name="unexpected_error">Unexpected error: %1$s</string>
+    <string name="please_enter_name">Please enter name.</string>
+    <string name="please_enter_an_email_address">Please enter an email address.</string>
+    <string name="please_enter_a_valid_email_address">Please enter a valid email address.</string>
+    <string name="please_enter_the_mobile_number">Please enter the mobile number.</string>
+    <string name="mobile_number_must_be_exactly_10_digits">Mobile number must be exactly 10 digits.</string>
+    <string name="please_enter_subject">Please enter subject.</string>
+    <string name="please_enter_your_message">Please enter your message.</string>
+    <string name="please_enter_the_otp">Please enter the OTP</string>
+    <string name="please_select_reason_to_surrender_card">Please select Reason to Surrender Card</string>
+    <string name="please_select_district_first">Please select District First.</string>
+    <string name="please_select_state_first">Please select State First.</string>
+    <string name="please_select_one_of_the_options">Please Select One of the Options</string>
+    <string name="please_enter_address">Please enter Address.</string>
+    <string name="please_select_address_proof">Please select Address Proof.</string>
+    <string name="please_select_hospital_treating_state_uts">Please select Hospital Treating State / UTs.</string>
+    <string name="please_select_hospital_treating_district">Please select Hospital Treating District.</string>
+    <string name="please_select_hospital_treating_sub_district">Please select Hospital Treating Sub-District.</string>
+    <string name="pincode_should_be_6_digits">Pincode should be 6 digits.</string>
+    <string name="please_select_hospital_treating_">Please select Hospital Treating.</string>
+    <string name="please_select_hospital_treating_state_uts_">Please select Hospital Treating State / UTs.</string>
+    <string name="please_select_hospital_treating_district_">Please select Hospital Treating District.</string>
+    <string name="permission_is_required">Permission is required</string>
+    <string name="canceled">Canceled</string>
+    <string name="scan_qr_code">Scan QR code</string>
+    <string name="camera_permission_required">CAMERA permission required</string>
+    <string name="reason_to_update_aadhaar">Reason to update Aadhaar</string>
+    <string name="please_enter_aadhaar_no">Please enter aadhaar no.</string>
+    <string name="please_select_identity_proof">Please select Identity Proof.</string>
+    <string name="please_select_reason_to_update_aadhaar_number">Please Select Reason to update Aadhaar Number</string>
+    <string name="please_select_date_of_birth">Please select date of birth.</string>
+    <string name="please_select_reason_to_update_date_of_birth">Please select reason to update Date of Birth</string>
+    <string name="please_enter_the_updated_mobile_number">Please enter the updated mobile number.</string>
+    <string name="please_enter_the_updated_name">Please Enter the Updated Name</string>
+    <string name="please_enter_the_updated_regional_name">Please Enter the Updated Regional Name</string>
+    <string name="please_select_the_identity_proof">Please Select the identity proof</string>
+    <string name="please_upload_the_document">Please upload the document</string>
+    <string name="please_enter_the_reason">Please Enter the Reason</string>
+    <string name="your_updated_name_will_be_updated">Your Updated Name will be updated</string>
+    <string name="your_updated_email_id_will_be_updated">Your Updated email id will be updated</string>
+    <string name="your_updated_date_of_birth_will_be_updated">Your Updated date of birth will be updated</string>
+    <string name="your_updated_aadhaar_number_will_be_updated">Your Updated aadhaar number will be updated</string>
+    <string name="your_appeal_will_be_updated">Your appeal will be updated</string>
+    <string name="your_renewal_card_will_be_updated">Your Renewal Card will be updated</string>
+    <string name="your_lost_card_card_not_recieved_will_be_updated">Your Lost Card/Card Not Recieved will be updated</string>
+    <string name="your_surrender_card_will_be_updated">Your Surrender Card will be updated</string>
+    <string name="terms_and_conditions">Terms And Conditions</string>
+    <string name="coming_soon">Coming Soon</string>
 </resources>

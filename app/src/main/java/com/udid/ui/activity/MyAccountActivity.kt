@@ -79,17 +79,17 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
                     val data =
                         JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result))
                     Log.d("Decrypted Data : ", data.toString())
-                    mBinding?.etUdidNo?.text= data.getString("udid_number").ifEmpty { "NA" }
-                    mBinding?.etNameOfApplication?.text=data.getString("full_name").ifEmpty { "NA" }
+                    mBinding?.etUdidNo?.text= data.getString("udid_number").ifEmpty { getString(R.string.na) }
+                    mBinding?.etNameOfApplication?.text=data.getString("full_name").ifEmpty { getString(R.string.na) }
                     mBinding?.etDOB?.text=data.getString("dob").ifEmpty { "NA" }
-                    mBinding?.etUdidGenerationDate?.text=convertDate(data.getString("certificate_generate_date")).ifEmpty { "NA" }
-                    mBinding?.etAadhaarNo?.text=Utility.maskAadharNumber(data.getString("aadhaar_no")).ifEmpty { "NA" }
-                    mBinding?.etGender?.text=data.getString("gender").ifEmpty { "NA" }
-                    mBinding?.tvBlindness?.text=data.getString("disability_types").ifEmpty { "NA" }
-                    mBinding?.etDisabilityPercentage?.text= data.getString("final_disability_percentage").ifEmpty { "NA" }
-                    mBinding?.etMobile?.text=data.getString("mobile").ifEmpty { "NA" }
-                    mBinding?.etEmailID?.text=data.getString("email").ifEmpty { "NA" }
-                    mBinding?.etAddress?.text=data.getString("current_address").ifEmpty { "NA" }
+                    mBinding?.etUdidGenerationDate?.text=convertDate(data.getString("certificate_generate_date")).ifEmpty { getString(R.string.na) }
+                    mBinding?.etAadhaarNo?.text=Utility.maskAadharNumber(data.getString("aadhaar_no")).ifEmpty { getString(R.string.na) }
+                    mBinding?.etGender?.text=data.getString("gender").ifEmpty { getString(R.string.na) }
+                    mBinding?.tvBlindness?.text=data.getString("disability_types").ifEmpty { getString(R.string.na) }
+                    mBinding?.etDisabilityPercentage?.text= data.getString("final_disability_percentage").ifEmpty { getString(R.string.na) }
+                    mBinding?.etMobile?.text=data.getString("mobile").ifEmpty { getString(R.string.na) }
+                    mBinding?.etEmailID?.text=data.getString("email").ifEmpty { getString(R.string.na) }
+                    mBinding?.etAddress?.text=data.getString("current_address").ifEmpty { getString(R.string.na) }
                 }
             }
         }

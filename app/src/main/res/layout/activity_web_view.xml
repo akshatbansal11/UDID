@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_15"
                 android:fontFamily="@font/poppins_medium"
-                android:text="Privacy Policy"
+                android:text="@string/privacy_policy"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sp_20"
                 app:layout_constraintBottom_toBottomOf="@+id/ivBackPress"

@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="15dp"
-                    android:text="Validate PwD Card"
+                    android:text="@string/validate_pwd_card"
                     android:textColor="@color/white"
                     android:textSize="@dimen/sp_20"
                     android:textStyle="bold"

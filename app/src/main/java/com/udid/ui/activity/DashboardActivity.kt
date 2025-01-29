@@ -3,10 +3,7 @@ package com.udid.ui.activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -43,7 +40,6 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
-import javax.crypto.spec.SecretKeySpec
 
 class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
 
@@ -162,7 +158,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
         }
     }
 
-    inner class ClickActions {}
+    inner class ClickActions
 
     private fun trackerAdapter() {
         dashboardList.add(DashboardData(getString(R.string.my_n_account), R.drawable.my_account))
@@ -277,7 +273,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
 
         val url = baseUrl.toHttpUrlOrNull() ?: run {
             dismissLoader()
-            mBinding?.contentNav?.rlParent?.let { showSnackbar(it, "Invalid URL") }
+            mBinding?.contentNav?.rlParent?.let { showSnackbar(it, getString(R.string.invalid_url)) }
             completion(Result.failure(Exception("Invalid URL")))
             return
         }
@@ -313,7 +309,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
                 mBinding?.contentNav?.rlParent?.let {
                     showSnackbar(
                         it,
-                        "Failed to download: ${e.localizedMessage}"
+                        getString(R.string.failed_to_download, e.localizedMessage)
                     )
                 }
                 completion(Result.failure(e))
@@ -328,7 +324,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
                             if (data != null) {
                                 convertToPDF(fileName, data, completion)
                             } else {
-                                mBinding?.contentNav?.rlParent?.let { showSnackbar(it, "No data received") }
+                                mBinding?.contentNav?.rlParent?.let { showSnackbar(it,
+                                    getString(R.string.no_data_received)) }
                                 completion(Result.failure(Exception("No data received")))
                             }
                         }
@@ -337,7 +334,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
                             mBinding?.contentNav?.rlParent?.let {
                                 showSnackbar(
                                     it,
-                                    "Unexpected response: ${response.code}"
+                                    getString(R.string.unexpected_response, response.code.toString())
                                 )
                             }
                         }
@@ -348,10 +345,10 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
                             mBinding?.contentNav?.rlParent?.let {
                                 showSnackbar(
                                     it,
-                                    "Request failed: ${response.message}"
+                                    getString(R.string.request_failed, response.message)
                                 )
                             }
-                            completion(Result.failure(Exception("Request failed: ${response.message}")))
+                            completion(Result.failure(Exception(getString(R.string.request_failed, response.message))))
                         }
 
                         401 -> {
@@ -362,7 +359,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
                                 )
                             }
                             UDID.closeAndRestartApplication()
-                            completion(Result.failure(Exception("Unauthorized: ${response.message}")))
+                            completion(Result.failure(Exception(response.message)))
                         }
 
                         500 -> {
@@ -374,7 +371,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
                             mBinding?.contentNav?.rlParent?.let {
                                 showSnackbar(
                                     it,
-                                    "Unexpected error: ${response.message}"
+                                    getString(R.string.unexpected_error, response.message)
                                 )
                             }
                         }
@@ -481,7 +478,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
                 )
             }
 
-            // 3. Disable 'updatepersonalprofile' menu
+            // 3. Disable 'updatePersonalProfile' menu
             if (!listOf(1, 20, 3, 29, 32).contains(
                     getPreferenceOfLogin(
                         this,

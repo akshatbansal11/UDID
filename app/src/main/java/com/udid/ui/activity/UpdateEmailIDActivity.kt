@@ -4,15 +4,13 @@ import android.content.Intent
 import android.view.View
 import com.bumptech.glide.Glide
 import com.udid.R
-import com.udid.databinding.ActivityUpdateEmailIdactivityBinding
+import com.udid.databinding.ActivityUpdateEmailIdBinding
 import com.udid.model.GenerateOtpRequest
 import com.udid.model.UserData
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
-import com.udid.utilities.EncryptionModel
 import com.udid.utilities.JSEncryptService
 import com.udid.utilities.Preferences.getPreferenceOfLogin
-import com.udid.utilities.Utility
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.showView
 import com.udid.utilities.toast
@@ -20,14 +18,14 @@ import com.udid.viewModel.ViewModel
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class UpdateEmailIDActivity : BaseActivity<ActivityUpdateEmailIdactivityBinding>() {
+class UpdateEmailIDActivity : BaseActivity<ActivityUpdateEmailIdBinding>() {
 
-    private var mBinding: ActivityUpdateEmailIdactivityBinding? = null
+    private var mBinding: ActivityUpdateEmailIdBinding? = null
     private var viewModel = ViewModel()
 
 
     override val layoutId: Int
-        get() = R.layout.activity_update_email_idactivity
+        get() = R.layout.activity_update_email_id
 
     override fun initView() {
         mBinding = viewDataBinding
@@ -101,7 +99,7 @@ class UpdateEmailIDActivity : BaseActivity<ActivityUpdateEmailIdactivityBinding>
                 if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
                     updateEmailIdApi()
                 } else {
-                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
                 }
             }
         }
@@ -143,11 +141,11 @@ class UpdateEmailIDActivity : BaseActivity<ActivityUpdateEmailIdactivityBinding>
     private fun valid(): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
         if (mBinding?.etUpdatedEmail?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please enter an email address.") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_an_email_address)) }
             return false
         }
         else if (!mBinding?.etUpdatedEmail?.text.toString().trim().matches(emailRegex)) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please enter a valid email address.") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_a_valid_email_address)) }
             return false
         }
 

@@ -109,7 +109,7 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
             val userResponseModel = it
             if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
                 reasonToUpdateDobList.clear()
-                reasonToUpdateDobList.add(DropDownResult("0","Reason to update Date of Birth"))
+                reasonToUpdateDobList.add(DropDownResult("0",getString(R.string.reason_to_update_date_of_birth)))
                 reasonToUpdateDobList.addAll(userResponseModel._result)
                 bottomSheetAdapter?.notifyDataSetChanged()
             }
@@ -169,7 +169,7 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
                 if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
                     updateDobApi()
                 } else {
-                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
                 }
             }
         }
@@ -259,15 +259,17 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
         val reasonToUpdateDOB = mBinding?.etReasonToUpdateDOB?.text
 
         if (mBinding?.etUpdatedDOB?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it,"Please select date of birth.") }
+            mBinding?.clParent?.let { showSnackbar(it,
+                getString(R.string.please_select_date_of_birth)) }
             return false
         }
         if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it,"Please Upload Supporting Document.") }
+            mBinding?.clParent?.let { showSnackbar(it,getString(R.string.please_upload_supporting_document)) }
             return false
         }
         if (reasonToUpdateDOB=="Select Reason to update Date of Birth") {
-            mBinding?.clParent?.let { showSnackbar(it,"Please select reason to update Date of Birth") }
+            mBinding?.clParent?.let { showSnackbar(it,
+                getString(R.string.please_select_reason_to_update_date_of_birth)) }
             return false
         }
 
@@ -400,13 +402,13 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -438,7 +440,7 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }

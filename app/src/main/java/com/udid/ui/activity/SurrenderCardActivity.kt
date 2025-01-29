@@ -83,7 +83,7 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
             val userResponseModel = it
             if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
                 reasonToSurrenderCardList.clear()
-                reasonToSurrenderCardList.add(DropDownResult("0","Reason to surrender card"))
+                reasonToSurrenderCardList.add(DropDownResult("0",getString(R.string.reason_to_surrender_card_)))
                 reasonToSurrenderCardList.addAll(userResponseModel._result)
                 bottomSheetAdapter?.notifyDataSetChanged()
             }
@@ -127,7 +127,7 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
                 if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
                     surrenderCardApi()
                 } else {
-                    showSnackbar(mBinding?.clParent!!, "Please enter the OTP")
+                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
                 }
             }
         }
@@ -289,14 +289,14 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
 
     private fun valid(): Boolean {
         if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it, "Please Upload Supporting Document.") }
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_upload_supporting_document)) }
             return false
         }
         else if (mBinding?.etReasonToSurrenderCard?.text.toString().trim().isEmpty()) {
             mBinding?.clParent?.let {
                 showSnackbar(
                     it,
-                    "Please select Reason to Surrender Card"
+                    getString(R.string.please_select_reason_to_surrender_card)
                 )
             }
             return false
@@ -339,13 +339,13 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -377,7 +377,7 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
