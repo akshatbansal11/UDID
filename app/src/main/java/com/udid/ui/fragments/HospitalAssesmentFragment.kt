@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RotateDrawable
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.udid.R
 import com.udid.databinding.FragmentHospitalAssesmentBinding
 import com.udid.model.DropDownResult
@@ -156,12 +158,19 @@ class HospitalAssesmentFragment : BaseFragment<FragmentHospitalAssesmentBinding>
 
     }
     private fun sendOtp(userData: PwdApplication) {
-        // Logic to send OTP
-        val jsonData = Gson().toJson(userData) // Serialize to JSON if needed
+        // Serialize and beautify JSON
+        val gson = GsonBuilder().setPrettyPrinting().create()
+        val prettyJsonData = gson.toJson(userData)
+
+        // Log or print beautified JSON for debugging
+        Log.d("PrettyJSON", prettyJsonData)
+
+        // Pass the beautified JSON to another activity
         val intent = Intent(requireContext(), UserDataActivity::class.java)
-        intent.putExtra("jsonData", jsonData)
+        intent.putExtra("jsonData", prettyJsonData)
         startActivity(intent)
     }
+
     private fun showErrorDialog(message: String) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Validation Errors")

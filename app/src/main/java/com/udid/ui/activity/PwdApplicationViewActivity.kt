@@ -1,9 +1,12 @@
 package com.udid.ui.activity
 
 import android.view.View
+import com.udid.viewModel.SharedDataViewModel
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.udid.R
 import com.udid.databinding.ActivityPwdApplicationViewBinding
+import com.udid.model.PwdApplication
 import com.udid.ui.fragments.DisabilityDetailFragment
 import com.udid.ui.fragments.HospitalAssesmentFragment
 import com.udid.ui.fragments.PersonalDetailFragment
@@ -14,6 +17,7 @@ import com.udid.utilities.BaseActivity
 class PwdApplicationViewActivity : BaseActivity<ActivityPwdApplicationViewBinding>() {
     private var mBinding: ActivityPwdApplicationViewBinding? = null
     private var currentFragment: androidx.fragment.app.Fragment? = null
+    private lateinit var sharedViewModel: SharedDataViewModel
 
     override val layoutId: Int
         get() = R.layout.activity_pwd_application_view
@@ -21,8 +25,51 @@ class PwdApplicationViewActivity : BaseActivity<ActivityPwdApplicationViewBindin
     override fun initView() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
+        // Initialize ViewModel
+        sharedViewModel = ViewModelProvider(this).get(SharedDataViewModel::class.java)
+
+        // Set dummy data to ViewModel
+        sharedViewModel.userData.value = getDummyData()
         replaceFragment(PersonalDetailFragment())
     }
+
+    private fun getDummyData(): PwdApplication {
+        return PwdApplication(
+            applicantFullName = "John Doe",
+            applicantMobileNo = "9876543210",
+            applicantEmail = "john.doe@example.com",
+            applicantDob = "1990-01-01",
+            gender = 1, // 1 for Male, 2 for Female
+            guardian = "Jane Doe",
+            photo = 1, // Assuming 1 means the photo is uploaded
+            sign = 1, // Assuming 1 means the signature is uploaded
+            aadhaarCard = 1,
+            aadhaarNo = "123456789012",
+            aadhaarCheckBox = 1,
+            aadhaarEnrollment = "Enrollment123",
+            aadhaarUploadSlip = 1,
+            identityProof = "Driving License",
+            identityProofSlip = 1,
+            documentAddressProof = "Electricity Bill",
+            documentAddressProofPhoto = 1,
+            documentAddress = "123 Main Street",
+            state = "StateName",
+            district = "DistrictName",
+            city = "CityName",
+            village = "VillageName",
+            pincode = "123456",
+            disabilityType = "Visual Impairment",
+            disabilityDue = "Since Birth",
+            disabilityBirth = 1,
+            disabilitySince = "1990-01-01",
+            treatingHospital = 1,
+            hospitalState = "HospitalState",
+            hospitalDistrict = "HospitalDistrict",
+            hospitalName = "XYZ Hospital",
+            hospitalCheckBox = 1
+        )
+    }
+
 
     override fun setVariables() {
         // Initialize variables here if needed

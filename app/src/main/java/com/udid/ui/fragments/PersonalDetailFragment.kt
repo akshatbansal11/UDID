@@ -30,6 +30,7 @@ import com.udid.R
 import com.udid.databinding.FragmentPersonalDetailsBinding
 import com.udid.databinding.FragmentProofOfCAddBinding
 import com.udid.model.DropDownResult
+import com.udid.model.PwdApplication
 import com.udid.ui.adapter.BottomSheetAdapter
 import com.udid.utilities.BaseFragment
 import com.udid.utilities.URIPathHelper
@@ -82,7 +83,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             mBinding?.etApplicantFullName?.setText(userData.applicantFullName)
             mBinding?.etApplicantMobileNo?.setText(userData.applicantMobileNo)
             mBinding?.etApplicantEmailId?.setText(userData.applicantEmail)
+            Log.d("DOB",userData.applicantDob)
             mBinding?.etApplicantDateOfBirth?.text = convertDate(userData.applicantDob)
+            mBinding?.etApplicantDateOfBirth?.text = userData.applicantDob
             mBinding?.tvGuardian?.setText(userData.guardian)
             if(!userData.guardian.isNullOrEmpty()){
                 mBinding?.tvGuardian?.setTextColor(Color.parseColor("#000000"))
@@ -161,6 +164,10 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             }
         }
     }
+
+
+
+
 
     private fun valid(): Boolean {
         val etApplicantFullName = mBinding?.etApplicantFullName?.text?.toString()
