@@ -202,7 +202,7 @@
     <string name="logout">लॉगआउट</string>
     <string name="please_upload_document">कृपया दस्तावेज अपलोड करें।</string>
     <string name="please_enter_appeal_reason">कृपया अपील का कारण दर्ज करें</string>
-    <string name="file_size_exceeds_5_mb">फ़ाइल का आकार 5 एमबी से अधिक है</string>
+    <string name="file_size_exceeds_5_mb">फ़ाइल का आकार 500 के.बी से अधिक है</string>
     <string name="format_not_supported">स्वरूप समर्थित नहीं है</string>
     <string name="invalid_url">अमान्य यूआरएल</string>
     <string name="failed_to_download">डाउनलोड करने में विफल: %1$s</string>

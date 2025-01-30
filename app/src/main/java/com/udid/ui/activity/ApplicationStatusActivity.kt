@@ -1,6 +1,5 @@
 package com.udid.ui.activity
 
-import android.util.Log
 import android.view.View
 import com.bumptech.glide.Glide
 import com.udid.R
@@ -8,9 +7,7 @@ import com.udid.databinding.ActivityApplicationStatusBinding
 import com.udid.model.UserData
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
-import com.udid.utilities.JSEncryptService
 import com.udid.utilities.Preferences.getPreferenceOfLogin
-import com.udid.utilities.Utility
 
 class ApplicationStatusActivity() : BaseActivity<ActivityApplicationStatusBinding>() {
 

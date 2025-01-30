@@ -210,7 +210,7 @@
     <string name="logout">Logout</string>
     <string name="please_upload_document">Please Upload Document.</string>
     <string name="please_enter_appeal_reason">Please enter appeal reason</string>
-    <string name="file_size_exceeds_5_mb">File size exceeds 5 MB</string>
+    <string name="file_size_exceeds_5_mb">File size exceeds 500 KB</string>
     <string name="format_not_supported">Format not supported</string>
     <string name="invalid_url">Invalid URL</string>
     <string name="failed_to_download">Failed to download: %1$s</string>
