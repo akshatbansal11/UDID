@@ -1,6 +1,5 @@
 package com.udid.ui.activity
 
-import android.content.Intent
 import android.view.View
 import com.bumptech.glide.Glide
 import com.udid.R
@@ -10,6 +9,7 @@ import com.udid.model.UserData
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences
 import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.showView
@@ -71,10 +71,18 @@ class UpdateEmailIDActivity : BaseActivity<ActivityUpdateEmailIdBinding>() {
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 toast(userResponseModel.message)
-                startActivity(
-                    Intent(this, UpdateRequestActivity::class.java)
-                        .putExtra(AppConstants.UPDATE_REQUEST,
-                            getString(R.string.submit_update_email_id)))
+                Preferences.setPreference(this, AppConstants.LOGIN_DATA, getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).copy(
+                    email = mBinding?.etUpdatedEmail?.text.toString().trim()
+                ))
+                onBackPressedDispatcher.onBackPressed()
+//                startActivity(
+//                    Intent(this, UpdateRequestActivity::class.java)
+//                        .putExtra(AppConstants.UPDATE_REQUEST,
+//                            getString(R.string.submit_update_email_id)))
             } else {
                 mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
             }

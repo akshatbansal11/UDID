@@ -50,13 +50,10 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                     AppConstants.USERNAME
                 ).let { EncryptionHelper.decrypt(it) }
             )
-            mBinding?.etDob?.setText(
-                getPreferenceString(
-                    this,
-                    AppConstants.PASSWORD
-                ).let { EncryptionHelper.decrypt(it) }
-
-            )
+            mBinding?.etDob?.text = getPreferenceString(
+                this,
+                AppConstants.PASSWORD
+            ).let { EncryptionHelper.decrypt(it) }
             date=getPreferenceString(
                 this,
                 AppConstants.PASSWORD

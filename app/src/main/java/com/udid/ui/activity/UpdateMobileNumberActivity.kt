@@ -9,6 +9,8 @@ import com.udid.model.UserData
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences
+import com.udid.utilities.Preferences.getPreference
 import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.showView
@@ -69,6 +71,13 @@ class UpdateMobileNumberActivity : BaseActivity<ActivityUpdateMobileNumberBindin
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 toast(userResponseModel.message)
+                Preferences.setPreference(this, AppConstants.LOGIN_DATA, getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).copy(
+                    mobile = mBinding?.etUpdatedNumber?.text.toString().trim().toLongOrNull()
+                ))
                 onBackPressedDispatcher.onBackPressed()
             } else {
                 mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
@@ -129,8 +138,8 @@ class UpdateMobileNumberActivity : BaseActivity<ActivityUpdateMobileNumberBindin
                 ?.toRequestBody(MultipartBody.FORM),
             mobile = JSEncryptService.encrypt(mBinding?.etUpdatedNumber?.text.toString().trim())
                 ?.toRequestBody(MultipartBody.FORM),
-            type = "mobile".toRequestBody(MultipartBody.FORM),
             otp = JSEncryptService.encrypt(mBinding?.etEnterOtp?.text.toString().trim())?.toRequestBody(MultipartBody.FORM),
+            type = "mobile".toRequestBody(MultipartBody.FORM)
         )
     }
 

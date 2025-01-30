@@ -81,8 +81,8 @@ object Repository {
     suspend fun updateMobile(
         applicationNumber: RequestBody?,
         mobile: RequestBody?,
-        type: RequestBody?,
         otp: RequestBody?,
+        type: RequestBody?
     ): Response<CommonResponse> {
         return api.updateMobile(
             applicationNumber,

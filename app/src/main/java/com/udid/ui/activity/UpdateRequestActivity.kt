@@ -162,7 +162,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_name) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
-                        "update",
+                        "noEncryptionWithRequestType",
                         AppConstants.SUBMIT_UPDATED_NAME,
                         getString(R.string.name_receipt),
                         1
@@ -187,7 +187,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_mobile_number) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
-                        "update",
+                        "noEncryptionWithRequestType",
                         AppConstants.SUBMIT_MOBILE_NUMBER,
                         getString(R.string.mobile_number_receipt),
                         3
@@ -212,7 +212,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_email_id) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
-                        "update",
+                        "noEncryptionWithRequestType",
                         AppConstants.SUBMIT_EMAIL_ID,
                         getString(R.string.email_id_receipt),
                         2
@@ -237,7 +237,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_date_of_birth) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
-                        "update",
+                        "noEncryptionWithRequestType",
                         AppConstants.SUBMIT_DATE_OF_BIRTH,
                         getString(R.string.date_of_birth_receipt),
                         5
@@ -262,7 +262,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_aadhaar_number) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
-                        "update",
+                        "noEncryptionWithRequestType",
                         AppConstants.SUBMIT_AADHAAR_NUMBER,
                         getString(R.string.aadhaar_number_receipt),
                         4

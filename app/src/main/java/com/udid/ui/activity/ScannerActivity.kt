@@ -13,6 +13,7 @@ import com.udid.R
 import com.udid.databinding.ActivityScannerBinding
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.Utility
+import com.udid.utilities.showView
 import com.udid.utilities.toast
 
 class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
@@ -32,9 +33,10 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
         registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
             run {
                 if (result.contents == null) {
-                    toast(getString(R.string.canceled))
+//                    toast(getString(R.string.canceled))
                     onBackPressedDispatcher.onBackPressed()
                 } else {
+                    mBinding?.rlParent?.showView()
                     setResult(result.contents)
                 }
             }
