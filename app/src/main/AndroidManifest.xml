@@ -41,6 +41,11 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.activity.LanguageActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.AppealActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"

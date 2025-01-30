@@ -16,7 +16,7 @@ class OnboardingOneFragment : BaseFragment<FragmentOnboardingOneBinding>() {
         val imageData = OnBoardingImageData(
             R.drawable.on_boarding_one, // Replace with your image resource ID
             getString(R.string.world_disability_day),
-            getString(R.string.modi_coined_the_word_divyang_to_replace_viklang_during_mann_ki_baat_in_2015_to_change_mindsets_and_foster_compassion_for_people_with_disabilities)
+            getString(R.string.modi_coined_the_word_divyang)
         )
 
         // Set data to views using binding

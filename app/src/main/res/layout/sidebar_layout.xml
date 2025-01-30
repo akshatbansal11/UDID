@@ -184,6 +184,34 @@
 <!--            </LinearLayout>-->
 
             <LinearLayout
+                android:id="@+id/llLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_15"
+                android:layout_marginHorizontal="@dimen/dp_15"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ivLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dp_10"
+                    android:src="@drawable/ic_language" />
+
+                <TextView
+                    android:id="@+id/tvLanguage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_regular"
+                    android:paddingHorizontal="@dimen/dp_5"
+                    android:paddingVertical="5dp"
+                    android:text="@string/language"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/llLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -34,6 +34,9 @@ object AppConstants {
     const val SUBMIT_SURRENDER_CARD = "http://134.209.222.136:86/api/rest/downloadUpdateSurrenderReciept"
     const val SUBMIT_LOST_CARD= "http://134.209.222.136:86/api/rest/downloadUpdateLostCardReciept"
     const val WEB_URL = "WEB_URL"
+    const val LANGUAGE_CODE_ENGLISH = "en"
+    const val LANGUAGE_CODE_HINDI = "hi"
+    const val LANGUAGE = "LANGUAGE"
 
     const val IS_FROM = "IS_FROM"
     const val EMAIL = "EMAIL"

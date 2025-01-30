@@ -105,6 +105,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
                 mBinding?.drawerLayout?.openDrawer(GravityCompat.START)
             }
         }
+        mBinding?.leftDrawerMenu?.llLanguage?.setOnClickListener {
+            startActivity(Intent(this,LanguageActivity::class.java))
+        }
 
         mBinding?.leftDrawerMenu?.llPrivacyPolicyHeading?.setOnClickListener {
             startActivity(Intent(this,WebViewActivity::class.java)

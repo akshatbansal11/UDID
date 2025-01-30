@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="Ok">ठीक</string>
+    <string name="login">लॉगिन</string>
+    <string name="date_of_birth">जन्म तिथि<font fgcolor="#FF3D00">*</font></string>
+    <string name="dd_mm_yyyy">दिन/महीना/वर्ष</string>
+    <string name="enrollment_number_udid_number">पंजीकरण संख्या/ यूडीआईडी संख्या<font fgcolor="#FF3D00">*</font></string>
+    <string name="please_enrollment_number_udid_number">कृपया पंजीकरण संख्या/ यूडीआईडी संख्या दर्ज करें</string>
+    <string name="please_date_of_birth">कृपया जन्म तिथि दर्ज करें</string>
+    <string name="gender">लिंग<font fgcolor="#FF3D00">*</font></string>
+    <string name="choose_file">फ़ाइल चुनें</string>
+    <string name="no_file_chosen">कोई फ़ाइल नहीं चुनी गई</string>
+    <string name="name_">नाम</string>
+    <string name="mobile_number_">मोबाइल नंबर</string>
+    <string name="submit">प्रस्तुत करें</string>
+    <string name="personal_details">व्यक्तिगत \nविवरण</string>
+    <string name="proof_of_identity_card">पहचान पत्र का \nप्रमाण</string>
+    <string name="proof_of_correspondence_address">पत्राचार पते का \nप्रमाण</string>
+    <string name="disability_details">विकलांगता \nविवरण</string>
+    <string name="personal_details2">व्यक्तिगत विवरण</string>
+    <string name="application_status">आवेदन की स्थिति</string>
+    <string name="mobile">मोबाइल</string>
+    <string name="my_n_account">मेरा खाता</string>
+    <string name="update_n_name">नाम अपडेट करें</string>
+    <string name="update_aadhar_n_number">आधार संख्या अपडेट करें</string>
+    <string name="update_date_n_of_birth">जन्म तिथि अपडेट करें</string>
+    <string name="update_n_email_id">ईमेल आईडी अपडेट करें</string>
+    <string name="update_mobile_n_number">मोबाइल नंबर अपडेट करें</string>
+    <string name="surrender_n_card">कार्ड सरेंडर करें</string>
+    <string name="track_your_n_card">अपना कार्ड ट्रैक करें</string>
+    <string name="apply_for_n_re_issue">नवीनीकरण के लिए आवेदन करें</string>
+    <string name="application_statuss">आवेदन की स्थिति</string>
+    <string name="download_application">आवेदन डाउनलोड करें</string>
+    <string name="e_disability_certificate">अपना ई-विकलांगता प्रमाणपत्र डाउनलोड करें</string>
+    <string name="e_udid_card">अपना ई-यूडीआईडी कार्ड डाउनलोड करें</string>
+    <string name="unique_disability_id">अद्वितीय विकलांगता आईडी</string>
+    <string name="department_of_empowerment">विकलांग व्यक्तियों के सशक्तिकरण विभाग, सामाजिक न्याय और अधिकारिता मंत्रालय, भारत सरकार</string>
+    <string name="pwd_login">पीडब्ल्यूडी लॉगिन</string>
+    <string name="pwd_applications_view">पीडब्ल्यूडी आवेदन दृश्य</string>
+    <string name="my_account">मेरा खाता</string>
+    <string name="udid_number">यूडीआईडी संख्या</string>
+    <string name="udid_generation_date">यूडीआईडी निर्माण तिथि</string>
+    <string name="na">एनए</string>
+    <string name="name_of_application">आवेदन का नाम</string>
+    <string name="gender_">लिंग</string>
+    <string name="camera_permission">कैमरा एक्सेस और स्टोरेज अनुमति सक्षम करने की आवश्यकता है</string>
+    <string name="date_of_birth_">जन्म तिथि</string>
+    <string name="disability_type">विकलांगता का प्रकार</string>
+    <string name="disability_percentage">विकलांगता प्रतिशत</string>
+    <string name="validity">वैधता</string>
+    <string name="address">पता</string>
+    <string name="next">अगला</string>
+    <string name="back">पीछे</string>
+    <string name="get_started">शुरू करें</string>
+    <string name="date_of_issue">जारी करने की तिथि</string>
+    <string name="proof_of_identity_card_">पहचान पत्र का प्रमाण</string>
+    <string name="hospital_for_assessment">मूल्यांकन के लिए \nअस्पताल</string>
+    <string name="year_of_birth">जन्म वर्ष</string>
+    <string name="percentage_of_disability">विकलांगता का प्रतिशत</string>
+    <string name="valid_upto">तक वैध</string>
+    <string name="aadhaar_number">आधार संख्या</string>
+    <string name="scan_for_details">विवरण के लिए स्कैन करें</string>
+    <string name="updated_aadhaar_number">अपडेट किया गया आधार नंबर<font color="#FF0000">*</font></string>
+    <string name="identity_proof">पहचान प्रमाण<font color="#FF0000">*</font></string>
+    <string name="upload_document">दस्तावेज़ अपलोड करें<font color="#FF0000">*</font></string>
+    <string name="reason_to_update_aadhaar_number">आधार संख्या अपडेट करने का कारण<font color="#FF0000">*</font></string>
+    <string name="update_mobile_number">मोबाइल नंबर अपडेट करें<font color="#FF0000">*</font></string>
+    <string name="updated_date_of_birth">अपडेट की गई जन्म तिथि<font color="#FF0000">*</font></string>
+    <string name="reason_to_update_date_of_birth">जन्म तिथि अपडेट करने का कारण<font color="#FF0000">*</font></string>
+    <string name="updated_revised_email_id">अपडेट किया गया संशोधित ईमेल आईडी<font color="#FF0000">*</font></string>
+    <string name="reason_to_surrender_card">कार्ड सरेंडर करने का कारण<font color="#FF0000">*</font></string>
+    <string name="reason_to_update_lost_card_card_not_received">कार्ड अपडेट/प्राप्त न होने का कारण<font color="#FF0000">*</font></string>
+    <string name="name_star">नाम <font color="#FF0000">*</font></string>
+    <string name="email_id_star">ईमेल आईडी <font color="#FF0000">*</font></string>
+    <string name="mobile_number_star">मोबाइल नंबर <font color="#FF0000">*</font></string>
+    <string name="subject">विषय <font color="#FF0000">*</font></string>
+    <string name="message">संदेश <font color="#FF0000">*</font></string>
+    <string name="document">दस्तावेज़</string>
+    <string name="ok">ठीक</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="updated_name">अपडेट किया गया नाम<font color="#FF0000">*</font></string>
+    <string name="updated_name_regional_language">क्षेत्रीय भाषा में अपडेट नाम<font color="#FF0000">*</font></string>
+    <string name="identity_proof_">पहचान प्रमाण<font color="#FF0000">*</font></string>
+    <string name="reason_to_update_name">नाम अपडेट करने का कारण<font color="#FF0000">*</font></string>
+    <string name="enter_revise_name">संशोधित नाम दर्ज करें</string>
+    <string name="select_identity_proof">पहचान प्रमाण चुनें</string>
+    <string name="spelling_correction_in_name">नाम में वर्तनी सुधार</string>
+    <string name="applicant_s_full_name">आवेदक का पूरा नाम<font fgcolor="#FF3D00">*</font></string>
+    <string name="applicant_mobile_no">आवेदक का मोबाइल नंबर<font fgcolor="#FF3D00">*</font></string>
+    <string name="applicant_date_of_birth">आवेदक की जन्म तिथि<font fgcolor="#FF3D00">*</font></string>
+    <string name="name_of_applicants_father_mother_guardian">आवेदक के पिता/माता/अभिभावक का नाम<font fgcolor="#FF3D00">*</font></string>
+    <string name="photo">फोटो<font fgcolor="#FF3D00">*</font></string>
+    <string name="is_your_treating_hospital_in_other_state_district">क्या आपका इलाज करने वाला अस्पताल अन्य राज्य/जिले में है? <font fgcolor="#FF3D00">*</font></string>
+    <string name="hospital_name">अस्पताल का नाम<font fgcolor="#FF3D00">*</font></string>
+    <string name="hospital_treating_district">उपचार करने वाले अस्पताल का जिला<font fgcolor="#FF3D00">*</font></string>
+    <string name="select_hospital_treating_state_uts">उपचार करने वाले अस्पताल का राज्य / केंद्र शासित प्रदेश चुनें<font fgcolor="#FF3D00">*</font></string>
+    <string name="hospital_treating_state_uts">उपचार करने वाले अस्पताल का राज्य / केंद्र शासित प्रदेश<font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_type_start">विकलांगता का प्रकार<font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_due_to_star">विकलांगता का कारण<font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_by_birth">जन्म से विकलांगता <font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_since_star">विकलांगता से<font fgcolor="#FF3D00">*</font></string>
+    <string name="nature_of_document_for_address_proof">पते के प्रमाण के लिए दस्तावेज़ का प्रकार <font fgcolor="#FF3D00">*</font></string>
+    <string name="proof_of_correspondence_address_star">पत्राचार पते का प्रमाण<font fgcolor="#FF3D00">*</font></string>
+    <string name="address_star">पता<font fgcolor="#FF3D00">*</font></string>
+    <string name="state_uts">राज्य / केंद्र शासित प्रदेश<font fgcolor="#FF3D00">*</font></string>
+    <string name="district_star">जिला<font fgcolor="#FF3D00">*</font></string>
+    <string name="city_sub_district_tehsil">शहर / उप जिला / तहसील <font fgcolor="#FF3D00">*</font></string>
+    <string name="village_block">गांव / ब्लॉक<font fgcolor="#FF3D00">*</font></string>
+    <string name="pincode">पिनकोड<font fgcolor="#FF3D00">*</font></string>
+    <string name="do_you_have_aadhaar_card">क्या आपके पास आधार कार्ड है? <font fgcolor="#FF3D00">*</font></string>
+    <string name="identity_proof_star">पहचान प्रमाण <font fgcolor="#FF3D00">*</font></string>
+    <string name="aadhaar_no">आधार नंबर <font fgcolor="#FF3D00">*</font></string>
+    <string name="aadhaar_enrollment_number">आधार नामांकन संख्या<font fgcolor="#FF3D00">*</font></string>
+    <string name="upload_aadhaar_enrollment_slip">आधार नामांकन पर्ची अपलोड करें <font fgcolor="#FF3D00">*</font></string>
+    <string name="upload_identity_proof">पहचान प्रमाण अपलोड करें <font fgcolor="#FF3D00">*</font></string>
+    <string name="select_reason_to_update_aadhaar_number">आधार संख्या अपडेट करने का कारण चुनें</string>
+    <string name="current_date_of_birth">वर्तमान जन्म तिथि</string>
+    <string name="note_kindly_update_your_personal_details">नोट- कृपया अपने व्यक्तिगत विवरण अपडेट करें।</string>
+    <string name="select_reason_to_update_date_of_birth">जन्म तिथि अपडेट करने का कारण चुनें</string>
+    <string name="generate_otp">ओटीपी उत्पन्न करें</string>
+    <string name="enter_revised_email">संशोधित ईमेल दर्ज करें</string>
+    <string name="reason_to_surrender_card_">कार्ड सरेंडर करने का कारण</string>
+    <string name="reason_to_lost_card_card_not_received">कार्ड खोने / कार्ड प्राप्त न होने का कारण</string>
+    <string name="appeal_reason">अपील का कारण<font fgcolor="#FF3D00">*</font></string>
+    <string name="appeal">अपील</string>
+    <string name="state_name">राज्य का नाम<font fgcolor="#FF3D00">*</font></string>
+    <string name="district_name">जिले का नाम<font fgcolor="#FF3D00">*</font></string>
+    <string name="permanent_address">स्थायी पता<font fgcolor="#FF3D00">*</font></string>
+    <string name="upload_address_proof">पता प्रमाण अपलोड करें<font fgcolor="#FF3D00">*</font></string>
+    <string name="sub_district_name">उप-जिले का नाम<font fgcolor="#FF3D00">*</font></string>
+    <string name="pincode_">पिनकोड<font fgcolor="#FF3D00">*</font></string>
+    <string name="home_district_where_this_udid_was_issued">वह गृह जिला जहां यह यूडीआईडी जारी किया गया था।</string>
+    <string name="present_residence_other_than_home_district">गृह जिले के अलावा वर्तमान निवास।</string>
+    <string name="treating_hospital_state_district_is_different_from_the_state_district_given_in_your_address">आपके पते में दिए गए राज्य/जिले से उपचार करने वाले अस्पताल का राज्य/जिला अलग है।</string>
+    <string name="please_enter_pincode">कृपया पिनकोड दर्ज करें</string>
+    <string name="you_have_already_applied_the_admin_will_approve_your_request">आपने पहले ही आवेदन किया है। प्रशासक आपकी अनुरोध को अनुमोदित करेगा</string>
+    <string name="email_id_">ईमेल आईडी</string>
+    <string name="application">आवेदन</string>
+    <string name="your_e_disability_certificate">आपका ई-विकलांगता प्रमाण पत्र</string>
+    <string name="receipt">रसीद</string>
+    <string name="your_e_udid_card">आपका ई-यूडीआईडी कार्ड</string>
+    <string name="doctor_diagnosis_sheet">डॉक्टर का निदान पत्र</string>
+    <string name="are_you_sure_want_to_logout">क्या आप वाकई लॉगआउट करना चाहते हैं?</string>
+    <string name="successfully_verified">सफलतापूर्वक सत्यापित।</string>
+    <string name="download_update_receipt">अपडेट रसीद डाउनलोड करें</string>
+    <string name="submit_update_name">नाम अपडेट सबमिट करें</string>
+    <string name="submit_update_mobile_number">मोबाइल नंबर अपडेट सबमिट करें</string>
+    <string name="submit_update_email_id">ईमेल आईडी अपडेट सबमिट करें</string>
+    <string name="submit_update_date_of_birth">जन्म तिथि अपडेट सबमिट करें</string>
+    <string name="submit_update_aadhaar_number">आधार नंबर अपडेट सबमिट करें</string>
+    <string name="name_receipt">नाम की रसीद</string>
+    <string name="mobile_number_receipt">मोबाइल नंबर की रसीद</string>
+    <string name="email_id_receipt">ईमेल आईडी की रसीद</string>
+    <string name="date_of_birth_receipt">जन्म तिथि की रसीद</string>
+    <string name="aadhaar_number_receipt">आधार नंबर की रसीद</string>
+    <string name="lost_card_card_not_recieved">खोया हुआ कार्ड / कार्ड प्राप्त नहीं हुआ</string>
+    <string name="update_personal_profile">व्यक्तिगत प्रोफ़ाइल अपडेट करें</string>
+    <string name="download_receipt">रसीद डाउनलोड करें</string>
+    <string name="doctor_s_diagnosis_sheet">डॉक्टर का निदान पत्र</string>
+    <string name="feedback_query">प्रतिक्रिया/प्रश्न</string>
+    <string name="dashboard">डैशबोर्ड</string>
+    <string name="press_back_again">फिर से बैक दबाएं</string>
+    <string name="submit_appeal">अपील सबमिट करें</string>
+    <string name="submit_renewal_card">नवीनीकरण कार्ड सबमिट करें</string>
+    <string name="renewal_card">नवीनीकरण कार्ड</string>
+    <string name="submit_lost_card">खोया हुआ कार्ड सबमिट करें</string>
+    <string name="submit_surrender_card">कार्ड सरेंडर सबमिट करें</string>
+    <string name="terms_condition"><![CDATA[नियम और शर्तें]]></string>
+    <string name="read_our_terms_and_service">हमारे नियम और सेवा पढ़ें</string>
+    <string name="view_our_privacy_policy">हमारी गोपनीयता नीति देखें</string>
+    <string name="privacy_policy">गोपनीयता नीति</string>
+    <string name="menu">मेनू</string>
+    <string name="lost_card_card_not_received">खोया हुआ कार्ड / कार्ड प्राप्त नहीं हुआ</string>
+    <string name="a_six_digit_otp_will_be_sent_to_your_registered_mobile_no">आपके पंजीकृत मोबाइल नंबर पर छह अंकों का ओटीपी भेजा जाएगा।</string>
+    <string name="enter_the_otp">ओटीपी दर्ज करें</string>
+    <string name="aadhaar_no_">आधार नंबर</string>
+    <string name="permanent_temporary">स्थायी/अस्थायी</string>
+    <string name="remember_me">मुझे याद रखें</string>
+    <string name="select_state_name">राज्य का नाम चुनें</string>
+    <string name="select_district_name">जिले का नाम चुनें</string>
+    <string name="select_sub_district_name">उप-जिले का नाम चुनें</string>
+    <string name="please_select_hospital_treating">कृपया उपचार करने वाला अस्पताल चुनें।</string>
+    <string name="select_hospital_name">अस्पताल का नाम चुनें</string>
+    <string name="validate_pwd_card">पीडब्ल्यूडी कार्ड सत्यापित करें</string>
+    <string name="any_other_reason">कोई अन्य कारण</string>
+    <string name="current_aadhaar_number">वर्तमान आधार नंबर</string>
+    <string name="please_upload_supporting_document">कृपया सहायक दस्तावेज अपलोड करें।</string>
+    <string name="current_email_id">वर्तमान ईमेल आईडी</string>
+    <string name="current_mobile_number">वर्तमान मोबाइल नंबर</string>
+    <string name="enter_revised_mobile">संशोधित मोबाइल दर्ज करें</string>
+    <string name="note_if_you_are_updating_your_mobile_number_this_will_not_affect_your_udid_card">नोट: यदि आप अपना मोबाइल नंबर अपडेट कर रहे हैं, तो इसका प्रभाव आपके यूडीआईडी कार्ड पर नहीं पड़ेगा।</string>
+    <string name="current_name">वर्तमान नाम</string>
+    <string name="close">बंद करें</string>
+    <string name="choose_any_one">कोई एक चुनें</string>
+    <string name="camera">कैमरा</string>
+    <string name="gallery">गैलरी</string>
+    <string name="pdf">पीडीएफ</string>
+    <string name="confirm_">पुष्टि करें</string>
+    <string name="mann_ki_baat">मन की बात</string>
+    <string name="modi_coined_the_word_divyang">मोदी ने 2015 में मन की बात के दौरान विकलांग की जगह दिव्यांग शब्द गढ़ा, ताकि मानसिकता बदली जा सके और दिव्यांग जनों के प्रति सहानुभूति बढ़ाई जा सके।</string>
+    <string name="world_disability_day">विश्व विकलांगता दिवस</string>
+    <string name="logout">लॉगआउट</string>
+    <string name="please_upload_document">कृपया दस्तावेज अपलोड करें।</string>
+    <string name="please_enter_appeal_reason">कृपया अपील का कारण दर्ज करें</string>
+    <string name="file_size_exceeds_5_mb">फ़ाइल का आकार 5 एमबी से अधिक है</string>
+    <string name="format_not_supported">स्वरूप समर्थित नहीं है</string>
+    <string name="invalid_url">अमान्य यूआरएल</string>
+    <string name="failed_to_download">डाउनलोड करने में विफल: %1$s</string>
+    <string name="no_data_received">कोई डेटा प्राप्त नहीं हुआ</string>
+    <string name="unexpected_response">अप्रत्याशित प्रतिक्रिया: %1$s</string>
+    <string name="request_failed">अनुरोध असफल: %1$s</string>
+    <string name="unexpected_error">अप्रत्याशित त्रुटि: %1$s</string>
+    <string name="please_enter_name">कृपया नाम दर्ज करें।</string>
+    <string name="please_enter_an_email_address">कृपया ईमेल पता दर्ज करें।</string>
+    <string name="please_enter_a_valid_email_address">कृपया एक मान्य ईमेल पता दर्ज करें।</string>
+    <string name="please_enter_the_mobile_number">कृपया मोबाइल नंबर दर्ज करें।</string>
+    <string name="mobile_number_must_be_exactly_10_digits">मोबाइल नंबर बिल्कुल 10 अंकों का होना चाहिए।</string>
+    <string name="please_enter_subject">कृपया विषय दर्ज करें।</string>
+    <string name="please_enter_your_message">कृपया अपना संदेश दर्ज करें।</string>
+    <string name="please_enter_the_otp">कृपया ओटीपी दर्ज करें।</string>
+    <string name="please_select_reason_to_surrender_card">कृपया कार्ड सरेंडर करने का कारण चुनें।</string>
+    <string name="please_select_district_first">कृपया पहले जिला चुनें।</string>
+    <string name="please_select_state_first">कृपया पहले राज्य चुनें।</string>
+    <string name="please_select_one_of_the_options">कृपया विकल्पों में से एक का चयन करें।</string>
+    <string name="please_enter_address">कृपया पता दर्ज करें।</string>
+    <string name="please_select_address_proof">कृपया पते का प्रमाण चुनें।</string>
+    <string name="please_select_hospital_treating_state_uts">कृपया अस्पताल के राज्य/संघ राज्य क्षेत्र चुनें।</string>
+    <string name="please_select_hospital_treating_district">कृपया अस्पताल का जिला चुनें।</string>
+    <string name="please_select_hospital_treating_sub_district">कृपया अस्पताल का उप-जिला चुनें।</string>
+    <string name="pincode_should_be_6_digits">पिनकोड 6 अंकों का होना चाहिए।</string>
+    <string name="please_select_hospital_treating_">कृपया अस्पताल का चयन करें।</string>
+    <string name="please_select_hospital_treating_state_uts_">कृपया अस्पताल का राज्य/संघ राज्य क्षेत्र चुनें।</string>
+    <string name="please_select_hospital_treating_district_">कृपया अस्पताल का जिला चुनें।</string>
+    <string name="permission_is_required">अनुमति आवश्यक है।</string>
+    <string name="canceled">रद्द किया गया।</string>
+    <string name="scan_qr_code">क्यूआर कोड स्कैन करें।</string>
+    <string name="camera_permission_required">कैमरा अनुमति आवश्यक है।</string>
+    <string name="reason_to_update_aadhaar">आधार अपडेट करने का कारण</string>
+    <string name="please_enter_aadhaar_no">कृपया आधार नंबर दर्ज करें।</string>
+    <string name="please_select_identity_proof">कृपया पहचान प्रमाण चुनें।</string>
+    <string name="please_select_reason_to_update_aadhaar_number">कृपया आधार नंबर अपडेट करने का कारण चुनें।</string>
+    <string name="please_select_date_of_birth">कृपया जन्म तिथि चुनें।</string>
+    <string name="please_select_reason_to_update_date_of_birth">कृपया जन्म तिथि अपडेट करने का कारण चुनें।</string>
+    <string name="please_enter_the_updated_mobile_number">कृपया अद्यतन मोबाइल नंबर दर्ज करें।</string>
+    <string name="please_enter_the_updated_name">कृपया अद्यतन नाम दर्ज करें।</string>
+    <string name="please_enter_the_updated_regional_name">कृपया अद्यतन क्षेत्रीय नाम दर्ज करें।</string>
+    <string name="please_select_the_identity_proof">कृपया पहचान प्रमाण चुनें।</string>
+    <string name="please_upload_the_document">कृपया दस्तावेज़ अपलोड करें।</string>
+    <string name="please_enter_the_reason">कृपया कारण दर्ज करें।</string>
+    <string name="your_updated_name_will_be_updated">आपका अद्यतन नाम अपडेट कर दिया जाएगा।</string>
+    <string name="your_updated_email_id_will_be_updated">आपका अद्यतन ईमेल आईडी अपडेट कर दिया जाएगा।</string>
+    <string name="your_updated_date_of_birth_will_be_updated">आपकी अद्यतन जन्म तिथि अपडेट कर दी जाएगी।</string>
+    <string name="your_updated_aadhaar_number_will_be_updated">आपका अद्यतन आधार नंबर अपडेट कर दिया जाएगा।</string>
+    <string name="your_appeal_will_be_updated">आपकी अपील अपडेट कर दी जाएगी।</string>
+    <string name="your_renewal_card_will_be_updated">आपका नवीनीकरण कार्ड अपडेट कर दिया जाएगा।</string>
+    <string name="your_lost_card_card_not_recieved_will_be_updated">आपका खोया हुआ कार्ड/कार्ड प्राप्त नहीं हुआ अपडेट कर दिया जाएगा।</string>
+    <string name="your_surrender_card_will_be_updated">आपका सरेंडर कार्ड अपडेट कर दिया जाएगा।</string>
+    <string name="terms_and_conditions">नियम और शर्तें</string>
+    <string name="coming_soon">जल्द आ रहा है।</string>
+    <string name="continue_">जारी रखें</string>
+    <string name="language">भाषा</string>
+    <string name="choose_language">भाषा चुनें</string>
+
+
+</resources>

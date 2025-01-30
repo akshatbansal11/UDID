@@ -6,6 +6,8 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.*
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.*
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.drawable.ColorDrawable
@@ -181,6 +183,16 @@ object Utility {
                 messageType
             }
         }
+    }
+
+    fun setLocale(activity: Context, languageCode: String) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val resources: Resources = activity.resources
+        val config: Configuration = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+        savePreferencesString(activity, "locale", languageCode)
     }
 
     fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {

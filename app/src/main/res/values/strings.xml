@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">UDID</string>
+    <string name="app_name" translatable="false">UDID</string>
     <string name="Ok">ok</string>
     <string name="login">LOGIN</string>
     <string name="date_of_birth">Date of Birth<font fgcolor="#FF3D00">*</font></string>
@@ -11,12 +11,10 @@
     <string name="gender">Gender<font fgcolor="#FF3D00">*</font></string>
     <string name="choose_file">Choose File</string>
     <string name="no_file_chosen">No File Chosen</string>
-    <string name="resend_otp">Resend OTP</string>
-    <string name="otp_has_been_sent_to_your_mobile_number">OTP has been sent to your Mobile number: xxxxxxxxxx</string>
-    <string name="enter_4_digit_code">Enter 4 digit code</string>
     <string name="name_">Name</string>
     <string name="mobile_number_">Mobile Number</string>
     <string name="submit">Submit</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="personal_details">Personal \nDetails </string>
     <string name="proof_of_identity_card">Proof of \nIdentity Card</string>
@@ -28,7 +26,7 @@
 
     <string name="my_n_account">My Account</string>
     <string name="update_n_name">Update name</string>
-    <string name="update_aadhar_n_number">"Update Aadhar Number "</string>
+    <string name="update_aadhar_n_number">"Update Aadhaar Number"</string>
     <string name="update_date_n_of_birth">Update Date of Birth</string>
     <string name="update_n_email_id">Update Email ID</string>
     <string name="update_mobile_n_number">Update Mobile Number</string>
@@ -41,15 +39,14 @@
     <string name="e_udid_card">Download your E-UDID card</string>
     <string name="unique_disability_id">Unique Disability ID</string>
     <string name="department_of_empowerment">Department of Empowerment of Person with Disabilities, Ministry of Social Justice and Epowerment, Govt.of India</string>
-    <string name="confirm">CONFIRM</string>
     <string name="pwd_login">PWD Login</string>
     <string name="pwd_applications_view">PWD Applications View</string>
     <string name="my_account">My Account</string>
     <string name="udid_number">UDID Number</string>
     <string name="udid_generation_date">UDID Generation Date</string>
     <string name="na">NA</string>
-    <string name="please_enter_correct_otp">Please Enter Correct OTP</string>
-    <string name="please_enter_otp">Please Enter OTP</string>
+
+
     <string name="name_of_application">Name Of Application</string>
     <string name="gender_">Gender</string>
     <string name="camera_permission">You need to enable camera access and storage permission to access this</string>
@@ -137,7 +134,9 @@
     <string name="permanent_address">Permanent Address<font fgcolor="#FF3D00">*</font></string>
     <string name="upload_address_proof">Upload Address Proof<font fgcolor="#FF3D00">*</font></string>
     <string name="sub_district_name">Sub-District Name<font fgcolor="#FF3D00">*</font></string>
-    <string name="pincode_">Pincode*</string>
+    <string name="pincode_">Pincode<font fgcolor="#FF3D00">*</font></string>
+
+
     <string name="home_district_where_this_udid_was_issued">Home District where this UDID was issued.</string>
     <string name="present_residence_other_than_home_district">Present residence other than home district.</string>
     <string name="treating_hospital_state_district_is_different_from_the_state_district_given_in_your_address">Treating hospital State/district is different from the state/district given in your address.</string>
@@ -162,7 +161,7 @@
     <string name="email_id_receipt">Email Id Receipt</string>
     <string name="date_of_birth_receipt">Date Of Birth Receipt</string>
     <string name="aadhaar_number_receipt">Aadhaar Number Receipt</string>
-    <string name="lost_card_card_not_recieved">Lost Card/Card Not Recieved</string>
+    <string name="lost_card_card_not_recieved">Lost Card/Card Not Received</string>
     <string name="update_personal_profile">Update Personal Profile</string>
     <string name="download_receipt">Download Receipt</string>
     <string name="doctor_s_diagnosis_sheet">Doctor\'s Diagnosis Sheet</string>
@@ -206,7 +205,7 @@
     <string name="pdf">Pdf</string>
     <string name="confirm_">Confirm</string>
     <string name="mann_ki_baat">Mann Ki Baat</string>
-    <string name="modi_coined_the_word_divyang_to_replace_viklang_during_mann_ki_baat_in_2015_to_change_mindsets_and_foster_compassion_for_people_with_disabilities">Modi coined the word \'Divyang\' to replace \'Viklang\' during Mann Ki Baat in 2015, to change mindsets and foster compassion for people with disabilities.</string>
+    <string name="modi_coined_the_word_divyang">Modi coined the word \'Divyang\' to replace \'Viklang\' during Mann Ki Baat in 2015, to change mindsets and foster compassion for people with disabilities.</string>
     <string name="world_disability_day">World Disability Day</string>
     <string name="logout">Logout</string>
     <string name="please_upload_document">Please Upload Document.</string>
@@ -262,8 +261,13 @@
     <string name="your_updated_aadhaar_number_will_be_updated">Your Updated aadhaar number will be updated</string>
     <string name="your_appeal_will_be_updated">Your appeal will be updated</string>
     <string name="your_renewal_card_will_be_updated">Your Renewal Card will be updated</string>
-    <string name="your_lost_card_card_not_recieved_will_be_updated">Your Lost Card/Card Not Recieved will be updated</string>
+    <string name="your_lost_card_card_not_recieved_will_be_updated">Your Lost Card/Card Not Received will be updated</string>
     <string name="your_surrender_card_will_be_updated">Your Surrender Card will be updated</string>
     <string name="terms_and_conditions">Terms And Conditions</string>
     <string name="coming_soon">Coming Soon</string>
+    <string name="hindi" translatable="false">Hindi</string>
+    <string name="english" translatable="false">English</string>
+    <string name="continue_">Continue</string>
+    <string name="language">Language</string>
+    <string name="choose_language">Choose Language</string>
 </resources>

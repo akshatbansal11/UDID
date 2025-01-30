@@ -47,7 +47,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginHorizontal="14dp"
             android:layout_marginVertical="6dp"
-            android:text="@string/modi_coined_the_word_divyang_to_replace_viklang_during_mann_ki_baat_in_2015_to_change_mindsets_and_foster_compassion_for_people_with_disabilities"
+            android:text="@string/modi_coined_the_word_divyang"
             android:textColor="#4E4B66"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"

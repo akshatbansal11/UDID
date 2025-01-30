@@ -142,11 +142,17 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Utility.isDarkMode(this)) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        if(Utility.getPreferenceString(this,AppConstants.LANGUAGE) == "en"){
+            Utility.setLocale(this, AppConstants.LANGUAGE_CODE_ENGLISH)
         }
+        else{
+            Utility.setLocale(this, AppConstants.LANGUAGE_CODE_HINDI)
+        }
+//        if (Utility.isDarkMode(this)) {
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//        } else {
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//        }
         context = this
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         window.statusBarColor = ContextCompat.getColor(this, R.color.darkBlue)
