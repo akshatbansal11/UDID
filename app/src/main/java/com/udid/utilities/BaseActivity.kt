@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Dialog
 import android.app.KeyguardManager
+import android.content.ContentResolver
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -34,6 +35,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -46,8 +48,12 @@ import com.canhub.cropper.CropImageView
 import com.google.android.material.snackbar.Snackbar
 import com.udid.R
 import com.udid.repository.Repository
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executor
@@ -101,6 +107,15 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
         )
     }
 
+    fun showLoader(context: Context) {
+        ProcessDialog.start(context)
+    }
+
+    fun dismissLoader() {
+        if (ProcessDialog.isShowing())
+            ProcessDialog.dismiss()
+    }
+
     private var pdf = ArrayList<File>()
 
         val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
@@ -127,6 +142,17 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if(Utility.getPreferenceString(this,AppConstants.LANGUAGE) == "en"){
+            Utility.setLocale(this, AppConstants.LANGUAGE_CODE_ENGLISH)
+        }
+        else{
+            Utility.setLocale(this, AppConstants.LANGUAGE_CODE_HINDI)
+        }
+//        if (Utility.isDarkMode(this)) {
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//        } else {
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//        }
         context = this
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         window.statusBarColor = ContextCompat.getColor(this, R.color.darkBlue)
@@ -210,15 +236,6 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
            return super.dispatchTouchEvent(ev)
        }
    */
-
-    fun showLoader() {
-        ProcessDialog.start(context)
-    }
-
-    fun dismissLoader() {
-        if (ProcessDialog.isShowing())
-            ProcessDialog.dismiss()
-    }
 
 
     fun hideKeyboard() {
@@ -603,6 +620,24 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
             .setNegativeButton(getString(R.string.cancel), okListener)
             .create()
             .show()
+    }
+    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
+        val contentResolver: ContentResolver = context.contentResolver
+        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
+        val file = File(context.cacheDir, tempFileName)
+
+        try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                file.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            // Handle the error appropriately
+        }
+
+        return file.asRequestBody("application/pdf".toMediaType())
     }
 }
 

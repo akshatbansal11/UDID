@@ -36,10 +36,22 @@
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activity.RenewalCardActivity"
-            android:exported="false" />
+            android:name=".ui.activity.WebViewActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.PwdApplicationViewActivity"
+            android:name=".ui.activity.LanguageActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.AppealActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.activity.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,29 +60,48 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.activity.RenewalCardActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.activity.SurrenderCardActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UserDataActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activity.FeedbackAndQueryActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateEmailIDActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateMobileNumberActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateDateOfBirthActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateAadharNumberActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UpdateNameActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activity.ScannerActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -92,7 +123,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.activity.DepartmentLoginActivity"
+            android:name=".ui.activity.UpdateRequestActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -103,19 +134,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.LostCardActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
-            android:name=".ui.activity.ListForDepartmentUserActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activity.OTPActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.activity.SplashActivity"
+            android:name=".ui.activity.PwdApplicationViewActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -144,12 +165,12 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.udid.provider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 

@@ -24,7 +24,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
             if (isGranted) {
                 showCamera()
             } else {
-                toast("Permission is required")
+                toast(getString(R.string.permission_is_required))
             }
         }
 
@@ -32,7 +32,8 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
         registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
             run {
                 if (result.contents == null) {
-                    toast("Canceled")
+                    toast(getString(R.string.canceled))
+                    onBackPressedDispatcher.onBackPressed()
                 } else {
                     setResult(result.contents)
                 }
@@ -43,15 +44,14 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
         Log.d("content" , string)
 
         val pairs = parseKeyValuePairs(string)
-
-        mBinding?.etUdidNo?.text =pairs["UDID No"]
-        mBinding?.etName?.text =pairs["Name"]
-        mBinding?.etYearOfBirth?.text =pairs["Year of Birth"]
-        mBinding?.etDisabilityType?.text =pairs["Disability Type"]
-        mBinding?.etPercentageOfDisability?.text =pairs["Percentage of Disability"]
-        mBinding?.etDateOfIssue?.text =pairs["Date of Issue"]
-        mBinding?.etValidUpto?.text =pairs["Valid Upto"]
-        mBinding?.etAadhaarNo?.text = pairs["Aadhaar No"]?.let { Utility.maskAadharNumber(it) }
+        mBinding?.etUdidNo?.text =if(pairs["UDID No"]?.isNotEmpty() == true) pairs["UDID No"] else getString(R.string.na)
+        mBinding?.etName?.text =if(pairs["Name"]?.isNotEmpty() == true) pairs["Name"] else getString(R.string.na)
+        mBinding?.etYearOfBirth?.text =if(pairs["Date of Birth"]?.isNotEmpty() == true)pairs["Date of Birth"] else getString(R.string.na)
+        mBinding?.etDisabilityType?.text =if(pairs["Disability Type"]?.isNotEmpty() == true)pairs["Disability Type"] else getString(R.string.na)
+        mBinding?.etPercentageOfDisability?.text =if(pairs["Percentage of Disability"]?.isNotEmpty() == true)pairs["Percentage of Disability"] else getString(R.string.na)
+        mBinding?.etDateOfIssue?.text =if(pairs["Date of Issue"]?.isNotEmpty() == true) pairs["Date of Issue"] else getString(R.string.na)
+        mBinding?.etValidUpto?.text =if(pairs["Valid Upto"]?.isNotEmpty() == true) pairs["Valid Upto"] else getString(R.string.na)
+        mBinding?.etAadhaarNo?.text = if(pairs["Aadhaar No"]?.isNotEmpty() == true) pairs["Aadhaar No"]?.let { Utility.maskAadharNumber(it)} else getString(R.string.na)
     }
 
     private fun parseKeyValuePairs(data: String): Map<String, String> {
@@ -87,7 +87,7 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
     private fun showCamera() {
         val options = ScanOptions()
         options.setDesiredBarcodeFormats(ScanOptions.QR_CODE)
-        options.setPrompt("Scan QR code")
+        options.setPrompt(getString(R.string.scan_qr_code))
         options.setCameraId(0)
         options.setBeepEnabled(false)
         options.setBarcodeImageEnabled(true)
@@ -96,18 +96,16 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
         scanLauncher.launch(options)
     }
 
-    private fun checkPermissionCamera(context: Context) {
-        if (ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            showCamera()
-        } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA)) {
-            toast("CAMERA permission required")
-        } else {
-            requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-        }
+    private fun checkPermissionCamera(context: Context) = if (ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    ) {
+        showCamera()
+    } else if (shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA)) {
+        toast(getString(R.string.camera_permission_required))
+    } else {
+        requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
     }
 
     override fun setVariables() {

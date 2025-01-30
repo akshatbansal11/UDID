@@ -1,80 +1,651 @@
 package com.udid.ui.activity
 
+import android.content.Context
 import android.content.Intent
-import android.view.View
+import android.net.Uri
+import android.util.Log
+import androidx.core.content.FileProvider
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.udid.R
+import com.udid.callBack.DialogCallback
 import com.udid.databinding.ActivityDashboardBinding
 import com.udid.model.DashboardData
+import com.udid.model.UserData
 import com.udid.ui.adapter.DashboardAdapter
+import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.JSEncryptService
 import com.udid.utilities.Preferences
+import com.udid.utilities.Preferences.getPreferenceOfLogin
+import com.udid.utilities.UDID
 import com.udid.utilities.Utility
+import com.udid.utilities.Utility.showConfirmationAlertDialog
+import com.udid.utilities.Utility.showSnackbar
+import com.udid.viewModel.ViewModel
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import java.util.Date
+import java.util.Locale
 
 class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
 
-    private var mBinding: ActivityDashboardBinding ?= null
-    private var dashboardAdapter: DashboardAdapter ?= null
-    private var gridLayoutManager: GridLayoutManager ?= null
-    private var dashboardList: ArrayList<DashboardData> ?= null
+    private var mBinding: ActivityDashboardBinding? = null
+    private var dashboardAdapter: DashboardAdapter? = null
+    private var gridLayoutManager: GridLayoutManager? = null
+    private var dashboardList = ArrayList<DashboardData>()
+    private var backCounts = 0
+    private var viewModel = ViewModel()
 
     override val layoutId: Int
         get() = R.layout.activity_dashboard
 
     override fun initView() {
+// add  if (Utility.isDarkMode(this)) {
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//        } else {
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//        } in base activity
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
-
-
+        viewModel.init()
         trackerAdapter()
-    }
-
-    inner class ClickActions {
-        fun backPress(view: View){
-            onBackPressedDispatcher.onBackPressed()
-        }
-        fun logout(view: View){
-            Preferences.removeAllPreference(this@DashboardActivity)
-            Utility.clearAllPreferencesExceptDeviceToken(this@DashboardActivity)
-            val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-        }
-    }
-
-    private fun trackerAdapter() {
-
-        dashboardList = arrayListOf(
-            DashboardData(getString(R.string.my_n_account),R.drawable.my_account),
-            DashboardData(getString(R.string.update_n_name),R.drawable.update_namesvg),
-            DashboardData(getString(R.string.update_aadhar_n_number),R.drawable.ic_aadhaar),
-            DashboardData(getString(R.string.update_date_n_of_birth),R.drawable.ic_dob),
-            DashboardData(getString(R.string.update_mobile_n_number),R.drawable.mobile),
-            DashboardData(getString(R.string.update_n_email_id),R.drawable.ic_email),
-            DashboardData(getString(R.string.surrender_n_card),R.drawable.surrender_card),
-            DashboardData(getString(R.string.track_your_n_card),R.drawable.track_your_card),
-            DashboardData(getString(R.string.apply_for_n_re_issue),R.drawable.apply_for_reissue),
-            DashboardData("Lost Card/Card Not Recieved",R.drawable.apply_for_reissue),
-            DashboardData("Appeal",R.drawable.apply_for_reissue),
-            DashboardData("Update Personal Profile",R.drawable.apply_for_reissue),
-            DashboardData(getString(R.string.application_statuss),R.drawable.applicaton_status),
-            DashboardData(getString(R.string.download_application),R.drawable.download_application),
-            DashboardData("Download Receipt",R.drawable.download_application),
-            DashboardData(getString(R.string.e_disability_certificate),R.drawable.e_disability_certificate),
-            DashboardData(getString(R.string.e_udid_card),R.drawable.e_udid_card),
-            DashboardData("Doctor's Diagnosis Sheet",R.drawable.e_udid_card),
-            DashboardData("FeedBack/Query",R.drawable.write_grievence),
-        )
-
-        dashboardAdapter = DashboardAdapter(this, dashboardList!!)
-        gridLayoutManager = GridLayoutManager(this, 3)
-        mBinding?.rvApplicationStatus?.layoutManager = gridLayoutManager
-        mBinding?.rvApplicationStatus?.adapter = dashboardAdapter
+//        val isDarkMode = Utility.isDarkMode(this)
+//        mBinding?.leftDrawerMenu?.themeSwitch?.isChecked = isDarkMode
+//        mBinding?.leftDrawerMenu?.themeSwitch?.setOnCheckedChangeListener { _, isChecked ->
+//            if (isChecked) {
+//                // Enable dark mode
+//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+//            } else {
+//                // Enable light mode
+//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+//            }
+//            // Save preference in SharedPreferences
+//            Utility.saveThemeMode(this, isChecked)
+//        }
     }
 
     override fun setVariables() {
+        mBinding?.leftDrawerMenu?.llLogout?.setOnClickListener {
+
+            showConfirmationAlertDialog(
+                this,
+                object :
+                    DialogCallback {
+                    override fun onYes() {
+                        viewModel.getLogout(this@DashboardActivity,
+                            getPreferenceOfLogin(
+                                context,
+                                AppConstants.LOGIN_DATA,
+                                UserData::class.java
+                            ).application_number.toString().toRequestBody(MultipartBody.FORM),
+                            "mobile".toRequestBody(MultipartBody.FORM))
+                    }
+                }
+            )
+        }
+
+        mBinding?.contentNav?.ivSetting?.setOnClickListener {
+            if (mBinding?.drawerLayout?.isDrawerOpen(GravityCompat.START) == true) {
+                mBinding?.drawerLayout?.closeDrawer(GravityCompat.END)
+            } else {
+                mBinding?.drawerLayout?.openDrawer(GravityCompat.START)
+            }
+        }
+        mBinding?.leftDrawerMenu?.llLanguage?.setOnClickListener {
+            startActivity(Intent(this,LanguageActivity::class.java))
+        }
+
+        mBinding?.leftDrawerMenu?.llPrivacyPolicyHeading?.setOnClickListener {
+            startActivity(Intent(this,WebViewActivity::class.java)
+                .putExtra(AppConstants.WEB_URL,"privacy_policy"))
+//            startActivity(
+//                Intent(
+//                    Intent.ACTION_VIEW,
+//                    Uri.parse("https://www.swavlambancard.gov.in/privacy-policy?view-type=mobile")
+//                )
+//            )
+        }
+        mBinding?.leftDrawerMenu?.llTermsAndConditionHeading?.setOnClickListener{
+            startActivity(Intent(this,WebViewActivity::class.java)
+                .putExtra(AppConstants.WEB_URL,"terms_and_conditions"))
+//            startActivity(
+//                Intent(
+//                    Intent.ACTION_VIEW,
+//                    Uri.parse("https://www.swavlambancard.gov.in/terms-and-conditions?view-type=mobile")
+//                )
+//            )
+        }
     }
 
     override fun setObservers() {
+
+        viewModel.logoutResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel != null) {
+                when (userResponseModel._resultflag) {
+                    0 -> {
+                        mBinding?.contentNav?.rlParent?.let { it1 ->
+                            showSnackbar(
+                                it1,
+                                userResponseModel.message
+                            )
+                        }
+                    }
+                    else -> {
+                        Preferences.removeAllPreference(this@DashboardActivity)
+                        Utility.clearAllPreferencesExceptDeviceToken(this@DashboardActivity)
+                        val intent = Intent(this@DashboardActivity, LoginActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+
+        viewModel.errors.observe(this) {
+            mBinding?.contentNav?.let { it1 -> showSnackbar(it1.rlParent, it) }
+        }
+    }
+
+    inner class ClickActions
+
+    private fun trackerAdapter() {
+        dashboardList.add(DashboardData(getString(R.string.my_n_account), R.drawable.my_account))
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.update_n_name),
+                R.drawable.update_namesvg
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.update_aadhar_n_number),
+                R.drawable.ic_aadhaar
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.update_date_n_of_birth),
+                R.drawable.ic_dob
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.update_mobile_n_number),
+                R.drawable.mobile
+            )
+        )
+        dashboardList.add(DashboardData(getString(R.string.update_n_email_id), R.drawable.ic_email))
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.surrender_n_card),
+                R.drawable.surrender_card
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.track_your_n_card),
+                R.drawable.track_your_card
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.apply_for_n_re_issue),
+                R.drawable.apply_for_reissue
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.lost_card_card_not_recieved),
+                R.drawable.ic_lost_card
+            )
+        )
+        dashboardList.add(DashboardData(getString(R.string.appeal), R.drawable.ic_appeal))
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.update_personal_profile),
+                R.drawable.ic_personal_profile
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.application_statuss),
+                R.drawable.applicaton_status
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.download_application),
+                R.drawable.download_application
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.download_receipt),
+                R.drawable.ic_download_receipt
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.e_disability_certificate),
+                R.drawable.e_disability_certificate
+            )
+        )
+        dashboardList.add(DashboardData(getString(R.string.e_udid_card), R.drawable.e_udid_card))
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.doctor_s_diagnosis_sheet),
+                R.drawable.ic_doctor_sheet
+            )
+        )
+        dashboardList.add(
+            DashboardData(
+                getString(R.string.feedback_query),
+                R.drawable.write_grievence
+            )
+        )
+
+        menuValidate()
+        dashboardAdapter = DashboardAdapter(this, dashboardList)
+        gridLayoutManager = GridLayoutManager(this, 3)
+        mBinding?.contentNav?.rvApplicationStatus?.layoutManager = gridLayoutManager
+        mBinding?.contentNav?.rvApplicationStatus?.adapter = dashboardAdapter
+    }
+
+    fun downloadApplication(
+        context: Context,
+        baseUrl: String,
+        fileName: String,
+        completion: (Result<File>) -> Unit,
+    ) {
+        showLoader(context)
+
+        val url = baseUrl.toHttpUrlOrNull() ?: run {
+            dismissLoader()
+            mBinding?.contentNav?.rlParent?.let { showSnackbar(it, getString(R.string.invalid_url)) }
+            completion(Result.failure(Exception("Invalid URL")))
+            return
+        }
+
+        val requestBody = JSONObject().apply {
+            put(
+                "application_number", JSEncryptService.encrypt(
+                    getPreferenceOfLogin(
+                        context,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).application_number.toString()
+                )
+            )
+            put("type", "mobile")
+        }.toString()
+
+        Log.e("Data:", requestBody)
+
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(url)
+            .post(
+                requestBody.toRequestBody("application/json".toMediaType())
+            )
+            .addHeader("Authorization", UDID.getToken())
+            .addHeader("Content-Type", "application/json")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                dismissLoader()
+                mBinding?.contentNav?.rlParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.failed_to_download, e.localizedMessage)
+                    )
+                }
+                completion(Result.failure(e))
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                dismissLoader()
+                if (response.isSuccessful) {
+                    when (response.code) {
+                        200, 201 -> {
+                            val data = response.body?.bytes()
+                            if (data != null) {
+                                convertToPDF(fileName, data, completion)
+                            } else {
+                                mBinding?.contentNav?.rlParent?.let { showSnackbar(it,
+                                    getString(R.string.no_data_received)) }
+                                completion(Result.failure(Exception("No data received")))
+                            }
+                        }
+
+                        else -> {
+                            mBinding?.contentNav?.rlParent?.let {
+                                showSnackbar(
+                                    it,
+                                    getString(R.string.unexpected_response, response.code.toString())
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    when (response.code) {
+                        400, 403, 404 -> {
+                            mBinding?.contentNav?.rlParent?.let {
+                                showSnackbar(
+                                    it,
+                                    getString(R.string.request_failed, response.message)
+                                )
+                            }
+                            completion(Result.failure(Exception(getString(R.string.request_failed, response.message))))
+                        }
+
+                        401 -> {
+                            mBinding?.contentNav?.rlParent?.let {
+                                showSnackbar(
+                                    it,
+                                    response.message
+                                )
+                            }
+                            UDID.closeAndRestartApplication()
+                            completion(Result.failure(Exception(response.message)))
+                        }
+
+                        500 -> {
+                            mBinding?.contentNav?.rlParent?.let { showSnackbar(it, response.message) }
+                            completion(Result.failure(Exception(response.message)))
+                        }
+
+                        else -> {
+                            mBinding?.contentNav?.rlParent?.let {
+                                showSnackbar(
+                                    it,
+                                    getString(R.string.unexpected_error, response.message)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    private fun convertToPDF(
+        fileName: String,
+        data: ByteArray,
+        completion: (Result<File>) -> Unit,
+    ) {
+        try {
+            val temporaryDirectory = File(this.cacheDir, "pdfs")
+            if (!temporaryDirectory.exists()) {
+                temporaryDirectory.mkdirs()
+            }
+
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+
+            val pdfFile = File(temporaryDirectory, "$fileName $timestamp.pdf")
+            pdfFile.writeBytes(data)
+
+            completion(Result.success(pdfFile))
+        } catch (e: Exception) {
+            completion(Result.failure(e))
+        }
+    }
+
+    fun openPDF(pdfFile: File) {
+        try {
+            // Create a URI for the PDF file using FileProvider for secure file access
+            val pdfUri: Uri =
+                FileProvider.getUriForFile(
+                    this,
+                    "${this.packageName}.fileprovider", // Ensure your app's FileProvider is correctly configured
+                    pdfFile
+                )
+
+            // Create an Intent to open the PDF file
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(pdfUri, "application/pdf")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Grant permission for the PDF viewer
+            }
+
+            // Start the activity to view the PDF
+            startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Handle the exception (e.g., show a toast if no PDF viewer is available)
+        }
+    }
+
+    private fun menuValidate() {
+        if (getPreferenceOfLogin(
+                this,
+                AppConstants.LOGIN_DATA,
+                UserData::class.java
+            ).udid_number != null
+        ) {
+            if (getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).pwd_card_expiry_date == null ||
+                !isWithin90Days(getPreferenceOfLogin(
+                    this@DashboardActivity,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).pwd_card_expiry_date.toString()) ||
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).disability_type_pt == "P" ||
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).disability_type_pt == "Permanent"
+            ) {
+                dashboardList.remove(
+                    DashboardData(
+                        getString(R.string.apply_for_n_re_issue),
+                        R.drawable.apply_for_reissue
+                    )
+                )
+            }
+
+            // 2. Disable 'track-your-card' menu
+            if (getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).pwddispatch == null
+            ) {
+                dashboardList.remove(
+                    DashboardData(
+                        getString(R.string.track_your_n_card),
+                        R.drawable.track_your_card
+                    )
+                )
+            }
+
+            // 3. Disable 'updatePersonalProfile' menu
+            if (!listOf(1, 20, 3, 29, 32).contains(
+                    getPreferenceOfLogin(
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).application_status
+                )
+            ) {
+                dashboardList.remove(
+                    DashboardData(
+                        getString(R.string.update_personal_profile),
+                        R.drawable.ic_personal_profile
+                    )
+                )
+            }
+
+            // 4. Manage 'appeal' menu
+            when (getPreferenceOfLogin(
+                this,
+                AppConstants.LOGIN_DATA,
+                UserData::class.java
+            ).appealrequest) {
+                0 -> dashboardList.remove(
+                    DashboardData(
+                        getString(R.string.appeal),
+                        R.drawable.ic_appeal
+                    )
+                ) // Hide 'appeal' menu
+            }
+
+            // 5. Handle application status = 13
+            if (getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).application_status == 13
+            ) {
+                dashboardList.clear()
+                dashboardList.addAll(
+                    listOf(
+                        DashboardData(
+                            getString(R.string.my_n_account),
+                            R.drawable.my_account
+                        ),
+                        DashboardData(
+                            getString(R.string.application_statuss),
+                            R.drawable.applicaton_status
+                        )
+                    )
+                )
+            }
+        } else {
+            // 6. Handle cases where udidNumber is missing
+            when {
+                listOf(1, 3, 29, 32).contains(
+                    getPreferenceOfLogin(
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).application_status
+                ) -> {
+                    dashboardList.clear()
+                    dashboardList.addAll(
+                        listOf(
+                            DashboardData(
+                                getString(R.string.my_n_account),
+                                R.drawable.my_account
+                            ),
+                            DashboardData(
+                                getString(R.string.update_personal_profile),
+                                R.drawable.ic_personal_profile
+                            ),
+                            DashboardData(
+                                getString(R.string.download_application),
+                                R.drawable.download_application
+                            ),
+                            DashboardData(
+                                getString(R.string.download_receipt),
+                                R.drawable.ic_download_receipt
+                            )
+                        )
+                    )
+                }
+
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).appealrequest == 1 -> {
+                    dashboardList.clear()
+                    dashboardList.addAll(
+                        listOf(
+                            DashboardData(
+                                getString(R.string.my_n_account),
+                                R.drawable.my_account
+                            ),
+                            DashboardData(getString(R.string.appeal), R.drawable.ic_appeal),
+                            DashboardData(
+                                getString(R.string.download_application),
+                                R.drawable.download_application
+                            ),
+                            DashboardData(
+                                getString(R.string.download_receipt),
+                                R.drawable.ic_download_receipt
+                            )
+                        )
+                    )
+                }
+                else -> {
+                    dashboardList.clear()
+                    dashboardList.addAll(
+                        listOf(
+                            DashboardData(
+                                getString(R.string.my_n_account),
+                                R.drawable.my_account
+                            ),
+                            DashboardData(
+                                getString(R.string.application_statuss),
+                                R.drawable.applicaton_status
+                            ),
+                            DashboardData(
+                                getString(R.string.download_application),
+                                R.drawable.download_application
+                            ),
+                            DashboardData(
+                                getString(R.string.download_receipt),
+                                R.drawable.ic_download_receipt
+                            )
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun isWithin90Days(pwdCardExpiryDate: String): Boolean {
+        // Parse the expiry date (format: yyyy-MM-dd)
+        val expiryDate = LocalDate.parse(pwdCardExpiryDate)
+
+        // Get the current date
+        val currentDate = LocalDate.now()
+
+        // Calculate the days between the current date and expiry date
+        val daysUntilExpiry = ChronoUnit.DAYS.between(currentDate, expiryDate)
+
+        // Return true if within 90 days, false otherwise
+        return daysUntilExpiry in 0..90
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        backCounts++
+        Utility.Run.after(2000) {
+            backCounts = 0
+        }
+        if (backCounts >= 2) {
+            finishAffinity()
+        } else {
+            mBinding?.contentNav?.rlParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.press_back_again)
+                )
+            }
+        }
     }
 }

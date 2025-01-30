@@ -2,10 +2,14 @@ package com.udid.ui.activity
 
 import android.util.Log
 import android.view.View
+import com.bumptech.glide.Glide
 import com.udid.R
 import com.udid.databinding.ActivityApplicationStatusBinding
+import com.udid.model.UserData
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.Utility
 
 class ApplicationStatusActivity() : BaseActivity<ActivityApplicationStatusBinding>() {
@@ -18,8 +22,6 @@ class ApplicationStatusActivity() : BaseActivity<ActivityApplicationStatusBindin
     override fun initView() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
-        Log.d("status", Utility.getPreferenceString(this,AppConstants.STATUS_NAME))
-        mBinding?.etApplicationStatus?.text = Utility.getPreferenceString(this,AppConstants.STATUS_NAME)
     }
 
     inner class ClickActions {
@@ -29,7 +31,24 @@ class ApplicationStatusActivity() : BaseActivity<ActivityApplicationStatusBindin
     }
 
     override fun setVariables() {
+        mBinding?.etApplicationStatus?.text =
+            getPreferenceOfLogin(
+                this,
+                AppConstants.LOGIN_DATA,
+                UserData::class.java
+            ).pwdapplicationstatus.status_name
 
+        mBinding?.ivProfile?.let {
+            Glide.with(this)
+                .load(getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).photo_path)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(it)
+        }
     }
 
     override fun setObservers() {

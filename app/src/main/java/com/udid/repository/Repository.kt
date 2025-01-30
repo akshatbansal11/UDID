@@ -2,6 +2,8 @@ package com.udid.repository
 
 import com.udid.model.ApplicationStatusRequest
 import com.udid.model.ApplicationStatusResponse
+import com.udid.model.CommonResponse
+import com.udid.model.LogoutRequest
 import com.udid.model.DropDownRequest
 import com.udid.model.DropDownResponse
 import com.udid.model.GenerateOtpRequest
@@ -14,9 +16,9 @@ import com.udid.services.ServiceGeneratorLogin
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
-import retrofit2.http.Part
+import java.io.File
 
-object Repository{
+object Repository {
 
     private var repository: Repository? = null
     private lateinit var api: MyService
@@ -28,7 +30,7 @@ object Repository{
 
             api = ServiceGenerator.createService(MyService::class.java)
 
-            apiLogin =  ServiceGeneratorLogin.createServiceLogin(MyService::class.java)
+            apiLogin = ServiceGeneratorLogin.createServiceLogin(MyService::class.java)
             return repository!!
         }
 
@@ -47,9 +49,11 @@ object Repository{
     suspend fun getAppStatus(request: ApplicationStatusRequest): Response<ApplicationStatusResponse> {
         return api.getAppStatus(request)
     }
+
     suspend fun getDropDown(request: DropDownRequest): Response<DropDownResponse> {
         return api.getDropDown(request)
     }
+
     suspend fun updateName(
         applicationNumber: RequestBody?,
         name: RequestBody?,
@@ -58,8 +62,9 @@ object Repository{
         addressProofId: RequestBody?,
         otherReason: RequestBody?,
         otp: RequestBody?,
+        type: RequestBody?,
         document: MultipartBody.Part?,
-    ): Response<DropDownResponse>{
+    ): Response<CommonResponse> {
         return api.updateName(
             applicationNumber,
             name,
@@ -68,7 +73,182 @@ object Repository{
             addressProofId,
             otherReason,
             otp,
+            type,
+            document,
+        )
+    }
+
+    suspend fun updateMobile(
+        applicationNumber: RequestBody?,
+        mobile: RequestBody?,
+        type: RequestBody?,
+        otp: RequestBody?,
+    ): Response<CommonResponse> {
+        return api.updateMobile(
+            applicationNumber,
+            mobile,
+            otp,
+            type
+        )
+    }
+
+    suspend fun updateAadhaar(
+        applicationNumber: RequestBody?,
+        aadhaarNo: RequestBody?,
+        addressProofId: RequestBody?,
+        reason: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ): Response<CommonResponse> {
+        return api.updateAadhaar(
+            applicationNumber,
+            aadhaarNo,
+            addressProofId,
+            reason,
+            otherReason,
+            otp,
+            type,
             document
+        )
+    }
+
+    suspend fun updateDob(
+        applicationNumber: RequestBody?,
+        dob: RequestBody?,
+        reason: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ): Response<CommonResponse> {
+        return api.updateDob(
+            applicationNumber,
+            dob,
+            reason,
+            otherReason,
+            otp,
+            type,
+            document
+        )
+    }
+
+    suspend fun updateEmail(
+        applicationNumber: RequestBody?,
+        email: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+    ): Response<CommonResponse> {
+        return api.updateEmail(
+            applicationNumber,
+            email,
+            otp,
+            type
+        )
+    }
+
+    suspend fun surrenderCard(
+        applicationNumber: RequestBody?,
+        reason: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+    ): Response<CommonResponse> {
+        return api.surrenderCard(
+            applicationNumber,
+            reason,
+            otherReason,
+            otp,
+            type
+        )
+    }
+
+    suspend fun lostCard(
+        applicationNumber: RequestBody?,
+        reason: RequestBody?,
+        otherReason: RequestBody?,
+        otp: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ): Response<CommonResponse> {
+        return api.lostCard(
+            applicationNumber,
+            reason,
+            otherReason,
+            otp,
+            type,
+            document
+        )
+    }
+
+    suspend fun feedBack(
+        fullName: RequestBody?,
+        mobile: RequestBody?,
+        subject: RequestBody?,
+        email: RequestBody?,
+        message: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ): Response<CommonResponse> {
+        return api.feedBack(
+            fullName,
+            mobile,
+            subject,
+            email,
+            message,
+            type,
+            document
+        )
+    }
+
+    suspend fun appeal(
+        applicationNumber: RequestBody?,
+        reason: RequestBody?,
+        type: RequestBody?,
+        document: MultipartBody.Part?,
+    ): Response<CommonResponse> {
+        return api.appeal(
+            applicationNumber,
+            reason,
+            type,
+            document
+        )
+    }
+
+    suspend fun getRenewCard(
+        applicationNumber: RequestBody?,
+        renewalType: RequestBody?,
+        currentAddress: RequestBody?,
+        hospitalTreatingStateCode: RequestBody?,
+        hospitalTreatingDistrictCode: RequestBody?,
+        hospitalTreatingSubDistrictCode: RequestBody?,
+        currentPincode: RequestBody?,
+        hospitalTreatingId: RequestBody?,
+        type: RequestBody?,
+        address_proof_file: MultipartBody.Part?
+    ): Response<CommonResponse> {
+        return api.getRenewCard(
+            applicationNumber,
+            renewalType,
+            currentAddress,
+            hospitalTreatingStateCode,
+            hospitalTreatingDistrictCode,
+            hospitalTreatingSubDistrictCode,
+            currentPincode,
+            hospitalTreatingId,
+            type,
+            address_proof_file
+        )
+    }
+
+    suspend fun logout(
+        applicationNumber: RequestBody?,
+        type: RequestBody?,
+    ): Response<CommonResponse> {
+        return api.logout(
+            applicationNumber,
+            type
         )
     }
 }

@@ -15,14 +15,7 @@
         <!-- Customize your theme here. -->
     </style>
     <!-- Base application theme. -->
-    <style name="Base.Theme.UDID." parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
 
-    <style name="ShapeAppearanceOverlay.App.CornerSize5Percent" parent="">
-        <item name="cornerSize">5%</item>
-    </style>
     <style name="ShapeAppearanceOverlay.App.CornerSize10Percent" parent="">
         <item name="cornerSize">10%</item>
     </style>
@@ -36,18 +29,16 @@
 <!--        <item name="android:background">@drawable/curve_top_corner</item>-->
     </style>
 
-    <style name="TabLayoutTextStyle">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-    <style name="progressBarCentre">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:elevation">@dimen/dp_16</item>
-        <item name="layout_constraintBottom_toBottomOf">parent</item>
-        <item name="layout_constraintLeft_toLeftOf">parent</item>
-        <item name="layout_constraintRight_toRightOf">parent</item>
-        <item name="layout_constraintTop_toTopOf">parent</item>
-    </style>
+    <!--    <style name="TextViewStyle" >-->
+<!--        <item name="android:textColor">@color/white</item>-->
+<!--    </style>-->
+<!--    <style name="ForgotPasswordTextStyle" >-->
+<!--        <item name="android:textColor">#FF7200</item>-->
+<!--    </style>-->
+<!--    <style name="ParentBackGroundStyle" >-->
+<!--        <item name="android:backgroundTint">@color/black</item>-->
+<!--    </style>-->
+<!--    <style name="ParentViewBackGroundStyle" >-->
+<!--        <item name="android:background">@drawable/va_bg_application_view_night</item>-->
+<!--    </style>-->
 </resources>

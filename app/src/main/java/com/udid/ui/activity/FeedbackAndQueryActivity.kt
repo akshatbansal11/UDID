@@ -2,41 +2,31 @@ package com.udid.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.RotateDrawable
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.bumptech.glide.Glide
 import com.udid.R
 import com.udid.databinding.ActivityFeedbackAndQueryBinding
-import com.udid.model.DropDownResult
-import com.udid.ui.adapter.BottomSheetAdapter
+import com.udid.model.UserData
+import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.EncryptionModel
+import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility
 import com.udid.utilities.Utility.showSnackbar
-import com.udid.utilities.hideView
-import com.udid.utilities.showView
+import com.udid.utilities.toast
 import com.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.io.IOException
 
 class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>() {
 
@@ -54,10 +44,32 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
     }
 
     override fun setVariables() {
-
+        mBinding?.ivProfile?.let {
+            Glide.with(this)
+                .load(getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).photo_path)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(it)
+        }
     }
 
     override fun setObservers() {
+        viewModel.feedbackAndQueryResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                onBackPressedDispatcher.onBackPressed()
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.errors.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
+        }
     }
 
     inner class ClickActions {
@@ -66,11 +78,8 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
         }
 
         fun submit(view: View){
-            onBackPressedDispatcher.onBackPressed()
-        }
-        fun generateOtp(view: View){
-            if(valid()){
-                mBinding?.clParent?.let { Utility.showSnackbar(it,"Done OTP") }
+            if(valid()) {
+                feedbackAndQueryApi()
             }
         }
         fun uploadFile(view: View) {
@@ -78,85 +87,67 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
         }
     }
 
+    private fun feedbackAndQueryApi() {
+        viewModel.getFeedBack(
+            context = this,
+            fullName = EncryptionModel.aesEncrypt(mBinding?.etName?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
+            email = EncryptionModel.aesEncrypt(mBinding?.etEmail?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
+            mobile = EncryptionModel.aesEncrypt(
+                mBinding?.etMobile?.text.toString().trim()
+            ).toRequestBody(MultipartBody.FORM),
+            subject = EncryptionModel.aesEncrypt(mBinding?.etSubject?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
+            message = EncryptionModel.aesEncrypt(mBinding?.etMobile?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
+            type = "mobile".toRequestBody(MultipartBody.FORM),
+            document = body
+        )
+    }
+
     private fun valid(): Boolean {
-        val name = mBinding?.etName?.text?.toString()
-        val email = mBinding?.etEmail?.text?.toString()
-        val mobile = mBinding?.etMobile?.text?.toString()
-        val subject = mBinding?.etSubject?.text?.toString()
-        val message = mBinding?.etMessage?.text?.toString()
-        val fileName = mBinding?.etFileName?.text?.toString()
-
-//        if (fileName==getString(R.string.no_file_chosen)) {
-//            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please Upload Supporting Document.") }
-//            return false
-//        }
-        if (name.isNullOrEmpty()) {
-            mBinding?.clParent?.let { Utility.showSnackbar(it, "Please enter name.") }
-            return false
-        }
-        if (subject.isNullOrEmpty()) {
-            mBinding?.clParent?.let { Utility.showSnackbar(it, "Please enter subject.") }
-            return false
-        }
-        if (message.isNullOrEmpty()) {
-            mBinding?.clParent?.let { Utility.showSnackbar(it, "Please enter your message.") }
-            return false
-        }
-        if (email.isNullOrEmpty()) {
-            mBinding?.clParent?.let { Utility.showSnackbar(it, "Please enter an email address.") }
-            return false
-        }
-
-        // Regular expression to validate email format
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
-
-        // Check if the email matches the regex
-        if (!email.matches(emailRegex)) {
-            mBinding?.clParent?.let { Utility.showSnackbar(it, "Please enter a valid email address.") }
+        if (mBinding?.etName?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_name)) }
             return false
         }
-
-        if (mobile.isNullOrEmpty()) {
+        else if (mBinding?.etEmail?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it,
+                getString(R.string.please_enter_an_email_address)) }
+            return false
+        }
+        else if (!mBinding?.etEmail?.text.toString().trim().matches(emailRegex)) {
+            mBinding?.clParent?.let { showSnackbar(it,
+                getString(R.string.please_enter_a_valid_email_address)) }
+            return false
+        }
+        else if (mBinding?.etMobile?.text.toString().trim().isEmpty()) {
             mBinding?.clParent?.let {
-                Utility.showSnackbar(it, "Please enter the mobile number.")
+                showSnackbar(it, getString(R.string.please_enter_the_mobile_number))
             }
             return false
         }
-
-        // Check if the mobile number is exactly 10 digits long
-        if (mobile.length != 10) {
+        else if (mBinding?.etMobile?.text.toString().trim().length != 10) {
             mBinding?.clParent?.let {
-                Utility.showSnackbar(it, "Mobile number must be exactly 10 digits.")
+                showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
             }
+            return false
+        }
+        else if (mBinding?.etSubject?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_subject)) }
+            return false
+        }
+        else if (mBinding?.etMessage?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_your_message)) }
+            return false
+        }
+        else if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it,getString(R.string.please_upload_document)) }
             return false
         }
 
         return true
-    }
-
-
-
-    private fun uploadImage(file: File) {
-        lifecycleScope.launch {
-            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            body =
-                MultipartBody.Part.createFormData(
-                    "document_name",
-                    file.name, reqFile
-                )
-//            viewModel.getProfileUploadFile(
-//                context = this@AddAscadStateActivity,
-//                document_name = body,
-//                user_id = getPreferenceOfScheme(
-//                    this@AddAscadStateActivity,
-//                    AppConstants.SCHEME,
-//                    Result::class.java
-//                )?.user_id,
-//                table_name = getString(R.string.ascad_state).toRequestBody(
-//                    MultipartBody.FORM
-//                ),
-//            )
-        }
     }
 
     @SuppressLint("Range")
@@ -195,13 +186,13 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -233,7 +224,7 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
@@ -245,37 +236,23 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
         }
     }
 
+    private fun uploadImage(file: File) {
+        lifecycleScope.launch {
+            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            body =
+                MultipartBody.Part.createFormData(
+                    "document",
+                    file.name, reqFile
+                )
+        }
+    }
+
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(this, uri)
         body = MultipartBody.Part.createFormData(
-            "document_name",
+            "document",
             documentName,
             requestBody
         )
-//        viewModel.getProfileUploadFile(
-//            context = this,
-//            document_name = body,
-//            user_id = getPreferenceOfScheme(this, AppConstants.SCHEME, Result::class.java)?.user_id,
-//            table_name = getString(R.string.ascad_state).toRequestBody(MultipartBody.FORM),
-//        )
-    }
-
-    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
-        val contentResolver: ContentResolver = context.contentResolver
-        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
-        val file = File(context.cacheDir, tempFileName)
-
-        try {
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                file.outputStream().use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            // Handle the error appropriately
-        }
-
-        return file.asRequestBody("application/pdf".toMediaType())
     }
 }

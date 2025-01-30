@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="ClickAction"
+            type="com.udid.ui.activity.AppealActivity.ClickActions" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clParent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivBg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@drawable/toolbar_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivBackPress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginVertical="40dp"
+                android:onClick="@{ClickAction::backPress}"
+                android:src="@drawable/ic_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_15"
+                android:fontFamily="@font/poppins_medium"
+                android:text="@string/appeal"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_20"
+                app:layout_constraintBottom_toBottomOf="@+id/ivBackPress"
+                app:layout_constraintStart_toEndOf="@+id/ivBackPress"
+                app:layout_constraintTop_toTopOf="@+id/ivBackPress" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="@dimen/dp_100"
+                android:layout_height="@dimen/dp_100"
+                android:layout_marginHorizontal="@dimen/dp_30"
+                android:layout_marginVertical="@dimen/dp_30"
+                android:elevation="@dimen/dp_4"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="@dimen/dp_50"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvHeading">
+
+                <ImageView
+                    android:id="@+id/ivProfile"
+                    android:layout_width="@dimen/dp_90"
+                    android:layout_height="@dimen/dp_90"
+                    android:scaleType="centerCrop"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_profile" />
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/clToolbar">
+
+            <RelativeLayout
+                android:id="@+id/rlBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dp_15">
+
+                <LinearLayout
+                    android:id="@+id/llParent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/dp_15"
+                    android:paddingBottom="@dimen/dp_10">
+
+
+                    <TextView
+                        android:id="@+id/tvUploadDocument"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sp_7"
+                        android:fontFamily="@font/opensans_semibold"
+                        android:text="@string/upload_document"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_16" />
+
+                    <LinearLayout
+                        android:id="@+id/llUploadFile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_7"
+                        android:background="@drawable/curve_all_corner_white"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <TextView
+                            android:id="@+id/tvChooseFile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:background="@drawable/back_number_gray"
+                            android:gravity="center"
+                            android:layout_marginHorizontal="@dimen/dp_5"
+                            android:layout_marginVertical="@dimen/dp_5"
+                            android:onClick="@{ClickAction::uploadFile}"
+                            android:padding="@dimen/dp_10"
+                            android:text="@string/choose_file"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/sp_14" />
+
+                        <TextView
+                            android:id="@+id/etFileName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.6"
+                            android:layout_gravity="center"
+                            android:hint="@string/no_file_chosen"
+                            android:padding="@dimen/dp_10"
+                            android:textColor="@color/grey"
+                            android:textSize="@dimen/sp_14" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:fontFamily="@font/opensans_semibold"
+                        android:text="@string/appeal_reason"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_16" />
+
+                    <EditText
+                        android:id="@+id/etAppealReason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_7"
+                        android:background="@drawable/curve_stroke_thin_grey"
+                        android:fontFamily="@font/opensans_regular"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"
+                        android:maxLength="500"
+                        android:minLines="5"
+                        android:overScrollMode="always"
+                        android:paddingHorizontal="@dimen/dp_10"
+                        android:paddingVertical="@dimen/dp_8"
+                        android:textColor="#6B6B6B"
+                        android:textSize="@dimen/sp_14"/>
+
+                    <TextView
+                        android:id="@+id/tvSubmit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/dp_50"
+                        android:layout_marginTop="@dimen/dp_15"
+                        android:background="@drawable/curve_fill_blue"
+                        android:backgroundTint="@color/darkBlue"
+                        android:fontFamily="@font/opensans_semibold"
+                        android:onClick="@{ClickAction::submit}"
+                        android:paddingHorizontal="@dimen/dp_15"
+                        android:paddingVertical="@dimen/dp_10"
+                        android:text="@string/submit"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sp_16" />
+
+                </LinearLayout>
+            </RelativeLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

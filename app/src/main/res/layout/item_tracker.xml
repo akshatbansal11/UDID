@@ -49,7 +49,7 @@
                 android:layout_marginHorizontal="@dimen/dp_20"
                 android:layout_toEndOf="@id/rlBody"
                 android:fontFamily="@font/opensans_semibold"
-                android:text="Submitted"
+                android:text="@string/na"
                 android:textColor="#00074C"
                 android:textSize="@dimen/sp_13" />
         </RelativeLayout>

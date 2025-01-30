@@ -2,12 +2,8 @@ package com.udid.ui.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.RotateDrawable
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
@@ -17,38 +13,46 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.udid.R
 import com.udid.databinding.ActivityLostCardBinding
+import com.udid.model.DropDownRequest
 import com.udid.model.DropDownResult
+import com.udid.model.Fields
+import com.udid.model.Filters
+import com.udid.model.GenerateOtpRequest
+import com.udid.model.UserData
 import com.udid.ui.adapter.BottomSheetAdapter
+import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
+import com.udid.utilities.EncryptionModel
+import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
-import com.udid.utilities.Utility
+import com.udid.utilities.Utility.rotateDrawable
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.hideView
 import com.udid.utilities.showView
+import com.udid.utilities.toast
 import com.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.io.IOException
 
 class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
 
     private var mBinding: ActivityLostCardBinding? = null
-    private var viewModel= ViewModel()
+    private var viewModel = ViewModel()
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetAdapter: BottomSheetAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
-    private var reasonToUpdateAadhaarList = ArrayList<DropDownResult>()
-    private var reasonToUpdateAadhaarId: String? = null
-    private var identityProofList = ArrayList<DropDownResult>()
-    private var identityProofId: String? = null
+    private var reasonToLostCardList = ArrayList<DropDownResult>()
+    private var reasonToLostCardId: String? = null
+
     var body: MultipartBody.Part? = null
 
     override val layoutId: Int
@@ -61,54 +65,152 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
     }
 
     override fun setVariables() {
+        mBinding?.ivProfile?.let {
+            Glide.with(this)
+                .load(
+                    getPreferenceOfLogin(
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).photo_path
+                )
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
+                .into(it)
+        }
     }
 
     override fun setObservers() {
+        viewModel.dropDownResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
+                reasonToLostCardList.clear()
+                reasonToLostCardList.add(
+                    DropDownResult(
+                        "0",
+                        getString(R.string.reason_to_lost_card_card_not_received)
+                    )
+                )
+                reasonToLostCardList.addAll(userResponseModel._result)
+                bottomSheetAdapter?.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.generateOtpLoginResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                mBinding?.llOtp?.showView()
+                mBinding?.scrollView?.post {
+                    mBinding?.scrollView?.fullScroll(View.FOCUS_DOWN)
+                }
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.lostCardResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+                startActivity(
+                    Intent(this, UpdateRequestActivity::class.java)
+                        .putExtra(AppConstants.UPDATE_REQUEST, getString(R.string.submit_lost_card))
+                )
+//                onBackPressedDispatcher.onBackPressed()
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.errors.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
+        }
+
     }
 
     inner class ClickActions {
-        fun backPress(view: View){
+        fun backPress(view: View) {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        fun submit(view: View){
-            onBackPressedDispatcher.onBackPressed()
-        }
-        fun generateOtp(view: View) {
+        fun submit(view: View) {
             if (valid()) {
-                mBinding?.clParent?.let { Utility.showSnackbar(it, "Done OTP") }
+                if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
+                    lostCardApi()
+                } else {
+                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
+                }
             }
         }
+
+        fun generateOtp(view: View) {
+            if (valid()) {
+                generateOtpApi()
+            }
+        }
+
         fun uploadFile(view: View) {
             checkStoragePermission(this@LostCardActivity)
         }
 
 
         fun reasonToUpdate(view: View) {
-            showBottomSheetDialog("reason_to_update_name")
+            showBottomSheetDialog("reason_to_lost_card")
         }
     }
 
-    private fun valid(): Boolean {
-        val lostCardReason = mBinding?.etLostCardReason?.text?.toString()
-        val fileName = mBinding?.etFileName?.text?.toString()
+    private fun lostCardApi() {
+        viewModel.getLostCard(
+            context = this,
+            applicationNumber = EncryptionModel.aesEncrypt(
+                getPreferenceOfLogin(
+                    this,
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).application_number.toString()
+            ).toRequestBody(MultipartBody.FORM),
+            reason = EncryptionModel.aesEncrypt(reasonToLostCardId.toString())
+                .toRequestBody(MultipartBody.FORM),
+            otherReason = EncryptionModel.aesEncrypt(
+                mBinding?.etAnyOtherReason?.text.toString().trim().toString()
+            )
+                .toRequestBody(MultipartBody.FORM),
+            otp = EncryptionModel.aesEncrypt(mBinding?.etEnterOtp?.text.toString().trim())
+                .toRequestBody(MultipartBody.FORM),
+            type = "mobile".toRequestBody(MultipartBody.FORM),
+            document = body
+        )
+    }
 
-//        if (fileName==getString(R.string.no_file_chosen)) {
-//            mBinding?.clParent?.let { Utility.showSnackbar(it,"Please Upload Supporting Document.") }
-//            return false
-//        }
-        if (lostCardReason == "Reason to Lost Card/Card Not Received") {
-            mBinding?.clParent?.let {
-                Utility.showSnackbar(
-                    it,
-                    "Please select reason"
+    private fun reasonToLostCardListApi() {
+        viewModel.getDropDown(
+            this, DropDownRequest(
+                Fields(reason = "reason"),
+                model = "Updationreason",
+                filters = Filters(
+                    status = 1,
+                    request_code = "LC"
+                ),
+                type = "mobile",
+                order = "DESC"
+            )
+        )
+    }
+
+    private fun generateOtpApi() {
+        viewModel.getGenerateOtpLoginApi(
+            this,
+            GenerateOtpRequest(
+                application_number = JSEncryptService.encrypt(
+                    getPreferenceOfLogin(
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).application_number.toString()
                 )
-            }
-            return false
-        }
-
-        return true
+            )
+        )
     }
+
     private fun showBottomSheetDialog(type: String) {
         bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_state, null)
@@ -129,10 +231,11 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
         val selectedTextView: TextView?
         // Initialize based on type
         when (type) {
-
-            "reason_to_update_name" -> {
-//                reasonToUpdateNameListApi()
-                selectedList = reasonToUpdateAadhaarList
+            "reason_to_lost_card" -> {
+                if (reasonToLostCardList.isEmpty()) {
+                    reasonToLostCardListApi()
+                }
+                selectedList = reasonToLostCardList
                 selectedTextView = mBinding?.etLostCardReason
             }
 
@@ -144,20 +247,28 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
             // Handle state item click
             selectedTextView?.text = selectedItem
             when (type) {
-                "identity_proof" -> {
-                    identityProofId = id
-                }
+                "reason_to_lost_card" -> {
+                    when (selectedItem) {
+                        "Any other " -> {
+                            mBinding?.tvAnyOtherReason?.showView()
+                            mBinding?.etAnyOtherReason?.showView()
+                            reasonToLostCardId = id
+                        }
 
-                "reason_to_update_name" -> {
-                    if(selectedItem == "Any other "){
-                        mBinding?.tvAnyOtherReason?.showView()
-                        mBinding?.etAnyOtherReason?.showView()
+                        "Reason to Lost Card/Card Not Received" -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            selectedTextView?.text = ""
+                            mBinding?.etAnyOtherReason?.setText("")
+                        }
+
+                        else -> {
+                            mBinding?.tvAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.hideView()
+                            mBinding?.etAnyOtherReason?.setText("")
+                            reasonToLostCardId = id
+                        }
                     }
-                    else {
-                        mBinding?.tvAnyOtherReason?.hideView()
-                        mBinding?.etAnyOtherReason?.hideView()
-                    }
-                    reasonToUpdateAadhaarId = id
                 }
             }
             selectedTextView?.setTextColor(ContextCompat.getColor(this, R.color.black))
@@ -191,40 +302,21 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
         bottomSheetDialog?.show()
     }
 
-    private fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {
-        drawable?.mutate() // Mutate the drawable to avoid affecting other instances
-
-        val rotateDrawable = RotateDrawable()
-        rotateDrawable.drawable = drawable
-        rotateDrawable.fromDegrees = 0f
-        rotateDrawable.toDegrees = angle
-        rotateDrawable.level = 10000 // Needed to apply the rotation
-
-        return rotateDrawable
-    }
-
-
-    private fun uploadImage(file: File) {
-        lifecycleScope.launch {
-            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            body =
-                MultipartBody.Part.createFormData(
-                    "document_name",
-                    file.name, reqFile
+    private fun valid(): Boolean {
+        if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_upload_supporting_document)) }
+            return false
+        } else if (mBinding?.etLostCardReason?.text.toString().trim().isEmpty()) {
+            mBinding?.clParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.please_select_reason_to_surrender_card)
                 )
-//            viewModel.getProfileUploadFile(
-//                context = this@AddAscadStateActivity,
-//                document_name = body,
-//                user_id = getPreferenceOfScheme(
-//                    this@AddAscadStateActivity,
-//                    AppConstants.SCHEME,
-//                    Result::class.java
-//                )?.user_id,
-//                table_name = getString(R.string.ascad_state).toRequestBody(
-//                    MultipartBody.FORM
-//                ),
-//            )
+            }
+            return false
         }
+
+        return true
     }
 
     @SuppressLint("Range")
@@ -263,13 +355,13 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent, "Format not supported") }
+                            mBinding?.let { showSnackbar(it.clParent, getString(R.string.format_not_supported)) }
                         }
                     }
                 }
@@ -301,7 +393,7 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
                                     mBinding?.let {
                                         showSnackbar(
                                             it.clParent,
-                                            "File size exceeds 5 MB"
+                                            getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }
                                 }
@@ -313,37 +405,23 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
         }
     }
 
+    private fun uploadImage(file: File) {
+        lifecycleScope.launch {
+            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            body =
+                MultipartBody.Part.createFormData(
+                    "document",
+                    file.name, reqFile
+                )
+        }
+    }
+
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(this, uri)
         body = MultipartBody.Part.createFormData(
-            "document_name",
+            "document",
             documentName,
             requestBody
         )
-//        viewModel.getProfileUploadFile(
-//            context = this,
-//            document_name = body,
-//            user_id = getPreferenceOfScheme(this, AppConstants.SCHEME, Result::class.java)?.user_id,
-//            table_name = getString(R.string.ascad_state).toRequestBody(MultipartBody.FORM),
-//        )
-    }
-
-    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
-        val contentResolver: ContentResolver = context.contentResolver
-        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
-        val file = File(context.cacheDir, tempFileName)
-
-        try {
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                file.outputStream().use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            // Handle the error appropriately
-        }
-
-        return file.asRequestBody("application/pdf".toMediaType())
     }
 }
