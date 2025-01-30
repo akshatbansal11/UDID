@@ -171,6 +171,7 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
 
     fun compressFile(inputFile: File) {
         lifecycleScope.launch {
+            println("size ${inputFile.length()}}")
             when (val result = fileCompressor.compressFile(inputFile)) {
                 is FileCompressor.CompressionResult.Success -> {
                     val compressedFile = result.compressedFile

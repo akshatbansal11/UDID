@@ -132,7 +132,16 @@ class AppealActivity : BaseActivity<ActivityAppealBinding>() {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageFile = saveImageToFile(imageBitmap)
                     photoFile = imageFile
-                    mBinding?.etFileName?.text = photoFile?.name
+
+                    val fileSizeInBytes = photoFile?.length() ?: 0
+                    if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                        mBinding?.etFileName?.text = photoFile?.name
+                        uploadImage(photoFile!!)
+                    } else {
+                        compressFile(photoFile!!) // Compress if size exceeds limit
+                        mBinding?.etFileName?.text = photoFile?.name
+                        uploadImage(photoFile!!)
+                    }
                 }
 
                 PICK_IMAGE -> {
@@ -143,30 +152,24 @@ class AppealActivity : BaseActivity<ActivityAppealBinding>() {
 
                         val fileExtension =
                             filePath?.substringAfterLast('.', "").orEmpty().lowercase()
-                        // Validate file extension
                         if (fileExtension in listOf("png", "jpg", "jpeg")) {
                             val file = filePath?.let { File(it) }
-
-                            // Check file size (5 MB = 5 * 1024 * 1024 bytes)
-                            file?.let {
-                                val fileSizeInMB = it.length() / (1024 * 1024.0) // Convert to MB
-                                if (fileSizeInMB <= 5) {
-                                    mBinding?.etFileName?.text = file.name
-//                                    mBinding?.llUploadOne?.showView()
-//                                    mBinding?.ivPicOne?.setImageURI(selectedImageUri)
-                                    uploadImage(it)
-                                } else {
-                                    mBinding?.let {
-                                        showSnackbar(
-                                            it.clParent,
-                                            getString(R.string.file_size_exceeds_5_mb)
-                                        )
-                                    }
-                                }
+                            val fileSizeInBytes = file?.length() ?: 0
+                            if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                                mBinding?.etFileName?.text = file?.name
+                                uploadImage(file!!)
+                            } else {
+                                compressFile(file!!) // Compress if size exceeds limit
+                                mBinding?.etFileName?.text = file.name
+                                uploadImage(file)
                             }
                         } else {
-                            mBinding?.let { showSnackbar(it.clParent,
-                                getString(R.string.format_not_supported)) }
+                            mBinding?.clParent?.let {
+                                showSnackbar(
+                                    it,
+                                    getString(R.string.format_not_supported)
+                                )
+                            }
                         }
                     }
                 }
@@ -178,7 +181,6 @@ class AppealActivity : BaseActivity<ActivityAppealBinding>() {
                             MediaStore.MediaColumns.SIZE
                         )
 
-
                         val cursor = contentResolver.query(uri, projection, null, null, null)
                         cursor?.use {
                             if (it.moveToFirst()) {
@@ -186,18 +188,14 @@ class AppealActivity : BaseActivity<ActivityAppealBinding>() {
                                     it.getString(it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
                                 val fileSizeInBytes =
                                     it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE))
-                                val fileSizeInMB =
-                                    fileSizeInBytes / (1024 * 1024.0) // Convert to MB
-
-                                // Validate file size (5 MB = 5 * 1024 * 1024 bytes)
-                                if (fileSizeInMB <= 5) {
+                                println(fileSizeInBytes)
+                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                                     uploadDocument(documentName, uri)
                                     mBinding?.etFileName?.text = documentName
-//                                    mBinding?.ivPicOne?.setImageResource(R.drawable.ic_pdf)
                                 } else {
-                                    mBinding?.let {
+                                    mBinding?.clParent?.let {
                                         showSnackbar(
-                                            it.clParent,
+                                            it,
                                             getString(R.string.file_size_exceeds_5_mb)
                                         )
                                     }

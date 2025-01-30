@@ -356,6 +356,8 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
                                 uploadImage(file!!)
                             } else {
                                 compressFile(file!!) // Compress if size exceeds limit
+                                mBinding?.etFileName?.text = file.name
+                                uploadImage(file)
                             }
                         } else {
                             mBinding?.clParent?.let {
@@ -382,13 +384,17 @@ class LostCardActivity : BaseActivity<ActivityLostCardBinding>() {
                                     it.getString(it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
                                 val fileSizeInBytes =
                                     it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE))
-
+                                println(fileSizeInBytes)
                                 if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                                     uploadDocument(documentName, uri)
                                     mBinding?.etFileName?.text = documentName
                                 } else {
-                                    val tempFile = File(cacheDir, documentName)
-                                    compressFile(tempFile) // Compress if size exceeds limit
+                                    mBinding?.clParent?.let {
+                                        showSnackbar(
+                                            it,
+                                            getString(R.string.file_size_exceeds_5_mb)
+                                        )
+                                    }
                                 }
                             }
                         }
