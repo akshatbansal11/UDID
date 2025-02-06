@@ -150,6 +150,29 @@
                         android:text="@string/na"
                         android:textColor="#6B6B6B"
                         android:textSize="@dimen/sp_14" />
+                    <TextView
+                        android:id="@+id/tvEnrollmentNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_7"
+                        android:fontFamily="@font/opensans_semibold"
+                        android:text="@string/enrollment_no"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_16" />
+
+                    <TextView
+                        android:id="@+id/etEnrollmentNo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_7"
+                        android:background="@drawable/curve_stroke_thin_grey"
+                        android:fontFamily="@font/opensans_regular"
+                        android:paddingHorizontal="@dimen/dp_10"
+                        android:paddingVertical="@dimen/dp_8"
+                        android:singleLine="true"
+                        android:text="@string/na"
+                        android:textColor="#6B6B6B"
+                        android:textSize="@dimen/sp_14" />
 
                     <TextView
                         android:id="@+id/tvNameOfApplication"
@@ -395,6 +418,33 @@
 
                     <TextView
                         android:id="@+id/etAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_7"
+                        android:background="@drawable/curve_stroke_thin_grey"
+                        android:paddingHorizontal="@dimen/dp_10"
+                        android:paddingVertical="@dimen/dp_8"
+                        android:fontFamily="@font/opensans_regular"
+                        android:text="@string/na"
+                        android:gravity="top"
+                        android:maxLength="500"
+                        android:minLines="2"
+                        android:overScrollMode="always"
+                        android:textColor="#6B6B6B"
+                        android:textSize="@dimen/sp_14" />
+
+                    <TextView
+                        android:id="@+id/tvHospitalName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_7"
+                        android:fontFamily="@font/opensans_semibold"
+                        android:text="@string/hospital_name_"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_16" />
+
+                    <TextView
+                        android:id="@+id/etHospitalName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/dp_7"

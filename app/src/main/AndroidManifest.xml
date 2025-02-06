@@ -38,18 +38,15 @@
         <activity
             android:name=".ui.activity.WebViewActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false"/>
         <activity
             android:name=".ui.activity.LanguageActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false"/>
         <activity
             android:name=".ui.activity.AppealActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false"/>
         <activity
             android:name=".ui.activity.SplashActivity"
             android:exported="true">
@@ -62,99 +59,82 @@
         <activity
             android:name=".ui.activity.RenewalCardActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.SurrenderCardActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false"/>
         <activity
             android:name=".ui.activity.UserDataActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activity.FeedbackAndQueryActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false"/>
         <activity
             android:name=".ui.activity.UpdateEmailIDActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.UpdateMobileNumberActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.UpdateDateOfBirthActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.UpdateAadharNumberActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.UpdateNameActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:exported="false" />
         <activity
             android:name=".ui.activity.ScannerActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.TrackYourCardActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.DashboardActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.PwdLoginActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.UpdateRequestActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.ApplicationStatusActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.LostCardActivity"
+            android:configChanges="keyboardHidden|orientation"
             android:exported="false" />
         <activity
             android:name=".ui.activity.PwdApplicationViewActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.MyAccountActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.OnboardingScreenActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.LoginActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="false" />
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
@@ -173,5 +153,4 @@
                 android:resource="@xml/provider_paths" />
         </provider>
     </application>
-
 </manifest>

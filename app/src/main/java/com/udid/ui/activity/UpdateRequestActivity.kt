@@ -83,68 +83,63 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
             mBinding?.tvContext?.text =
                 getString(R.string.you_have_already_applied_the_admin_will_approve_your_request)
             mBinding?.llSubmitRequest?.hideView()
-        }else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.surrender_n_card)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.surrender_n_card)) {
             mBinding?.tvHeading?.text = getString(R.string.surrender_n_card)
             mBinding?.tvContext?.text =
                 getString(R.string.you_have_already_applied_the_admin_will_approve_your_request)
             mBinding?.llSubmitRequest?.hideView()
-        }else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.appeal)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.appeal)) {
             mBinding?.tvHeading?.text = getString(R.string.appeal)
             mBinding?.tvContext?.text =
                 getString(R.string.you_have_already_applied_the_admin_will_approve_your_request)
             mBinding?.llSubmitRequest?.hideView()
-        }else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.renewal_card)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.renewal_card)) {
             mBinding?.tvHeading?.text = getString(R.string.renewal_card)
             mBinding?.tvContext?.text =
                 getString(R.string.you_have_already_applied_the_admin_will_approve_your_request)
             mBinding?.llSubmitRequest?.hideView()
-        }else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.lost_card_card_not_recieved)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.lost_card_card_not_recieved)) {
             mBinding?.tvHeading?.text = getString(R.string.lost_card_card_not_recieved)
             mBinding?.tvContext?.text =
-                getString(R.string.you_have_already_applied_the_admin_will_approve_your_request)
+                getString(R.string.your_request_successfully_submitted_you_will_receive_udid_card_shortly)
             mBinding?.llSubmitRequest?.hideView()
         } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_name)) {
             mBinding?.tvHeading?.text = getString(R.string.update_n_name)
             mBinding?.tvStatus?.text = getString(R.string.your_updated_name_will_be_updated)
             mBinding?.tvContext?.hideView()
-        }
-        else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_email_id)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_email_id)) {
             mBinding?.tvHeading?.text = getString(R.string.email_id_)
             mBinding?.tvStatus?.text = getString(R.string.your_updated_email_id_will_be_updated)
             mBinding?.tvContext?.hideView()
-        }
-        else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_date_of_birth)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_date_of_birth)) {
             mBinding?.tvHeading?.text = getString(R.string.date_of_birth_)
             mBinding?.tvStatus?.text =
                 getString(R.string.your_updated_date_of_birth_will_be_updated)
             mBinding?.tvContext?.hideView()
-        }
-        else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_aadhaar_number)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_aadhaar_number)) {
             mBinding?.tvHeading?.text = getString(R.string.aadhaar_number)
             mBinding?.tvStatus?.text =
                 getString(R.string.your_updated_aadhaar_number_will_be_updated)
             mBinding?.tvContext?.hideView()
-        }
-        else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_appeal)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_appeal)) {
             mBinding?.tvHeading?.text = getString(R.string.appeal)
             mBinding?.tvStatus?.text = getString(R.string.your_appeal_will_be_updated)
             mBinding?.tvContext?.hideView()
-        }
-        else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_renewal_card)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_renewal_card)) {
             mBinding?.tvHeading?.text = getString(R.string.renewal_card)
             mBinding?.tvStatus?.text = getString(R.string.your_renewal_card_will_be_updated)
             mBinding?.tvContext?.hideView()
-        }
-        else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_lost_card)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_lost_card)) {
             mBinding?.tvHeading?.text = getString(R.string.lost_card_card_not_recieved)
             mBinding?.tvStatus?.text =
                 getString(R.string.your_lost_card_card_not_recieved_will_be_updated)
             mBinding?.tvContext?.hideView()
-        }
-        else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_surrender_card)) {
+        } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_surrender_card)) {
             mBinding?.tvHeading?.text = getString(R.string.surrender_n_card)
-            mBinding?.tvStatus?.text = getString(R.string.your_surrender_card_will_be_updated)
+            mBinding?.tvStatus?.text = getString(R.string.you_have_already_applied_the_admin_will_approve_your_request)
             mBinding?.tvContext?.hideView()
+            mBinding?.tvSuccessfully?.hideView()
+            mBinding?.tvSuccessfully?.text = getString(R.string.download_surrender_receipts)
         }
     }
 
@@ -153,7 +148,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
 
     inner class ClickActions {
         fun backPress(view: View) {
-            startActivity(Intent(this@UpdateRequestActivity,DashboardActivity::class.java))
+            startActivity(Intent(this@UpdateRequestActivity, DashboardActivity::class.java))
             finishAffinity()
         }
 
@@ -184,6 +179,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                         )
                     }
                 }
+
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_mobile_number) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
@@ -209,6 +205,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                         )
                     }
                 }
+
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_email_id) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
@@ -234,6 +231,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                         )
                     }
                 }
+
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_date_of_birth) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
@@ -259,6 +257,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                         )
                     }
                 }
+
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_update_aadhaar_number) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
@@ -284,13 +283,14 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                         )
                     }
                 }
+
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_renewal_card) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
-                        "notUpdate",
+                        "noEncryptionWithRequestType",
                         AppConstants.SUBMIT_RENEWAL_CARD,
                         getString(R.string.renewal_card),
-                        null
+                        7
                     ) { result ->
                         result.fold(
                             onSuccess = { file ->
@@ -309,6 +309,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                         )
                     }
                 }
+
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_appeal) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
@@ -334,13 +335,14 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                         )
                     }
                 }
+
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_surrender_card) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
-                        "notUpdate",
+                        "noEncryptionWithRequestType",
                         AppConstants.SUBMIT_SURRENDER_CARD,
                         getString(R.string.surrender_n_card),
-                        null
+                        8
                     ) { result ->
                         result.fold(
                             onSuccess = { file ->
@@ -359,12 +361,13 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                         )
                     }
                 }
+
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_lost_card) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
                         "noEncryptionWithRequestType",
                         AppConstants.SUBMIT_LOST_CARD,
-                        getString(R.string.lost_card_card_not_recieved),
+                        "lost_card",
                         6
                     ) { result ->
                         result.fold(
@@ -388,7 +391,14 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
         }
     }
 
-    fun downloadApplication(context: Context, isFrom : String,baseUrl: String, fileName: String, requestType: Int?,completion: (Result<File>) -> Unit) {
+    fun downloadApplication(
+        context: Context,
+        isFrom: String,
+        baseUrl: String,
+        fileName: String,
+        requestType: Int?,
+        completion: (Result<File>) -> Unit,
+    ) {
         showLoader(context)
 
         val url = baseUrl.toHttpUrlOrNull() ?: run {
@@ -413,6 +423,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                     put("type", "mobile")
                     put("request_type", requestType)
                 }
+
                 "noEncryption" -> {
                     put(
                         "application_number",
@@ -424,6 +435,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                     )
                     put("type", "mobile")
                 }
+
                 "noEncryptionWithRequestType" -> {
                     put(
                         "application_number",
@@ -436,6 +448,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                     put("request_type", requestType)
                     put("type", "mobile")
                 }
+
                 else -> {
                     put(
                         "application_number", JSEncryptService.encrypt(
@@ -451,6 +464,8 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
             }
         }.toString()
 
+        Log.e("Data:", requestBody)
+
         val client = OkHttpClient()
         val request = Request.Builder()
             .url(url)
@@ -460,12 +475,17 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
             .addHeader("Authorization", UDID.getToken())
             .addHeader("Content-Type", "application/json")
             .build()
-
+        println(UDID.getToken())
+        println(request)
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 dismissLoader()
-                mBinding?.clParent?.let { showSnackbar(it,
-                    getString(R.string.failed_to_download, e.localizedMessage)) }
+                mBinding?.clParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.failed_to_download, e.localizedMessage)
+                    )
+                }
                 completion(Result.failure(e))
             }
 
@@ -478,31 +498,58 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                             if (data != null) {
                                 convertToPDF(fileName, data, completion)
                             } else {
-                                mBinding?.clParent?.let { showSnackbar(it, getString(R.string.no_data_received)) }
+                                mBinding?.clParent?.let {
+                                    showSnackbar(
+                                        it,
+                                        getString(R.string.no_data_received)
+                                    )
+                                }
                                 completion(Result.failure(Exception("No data received")))
                             }
                         }
+
                         else -> {
-                            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.unexpected_response, response.code.toString())) }
+                            mBinding?.clParent?.let {
+                                showSnackbar(
+                                    it,
+                                    getString(
+                                        R.string.unexpected_response,
+                                        response.code.toString()
+                                    )
+                                )
+                            }
                         }
                     }
                 } else {
                     when (response.code) {
                         400, 403, 404 -> {
-                            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.request_failed, response.message)) }
+                            mBinding?.clParent?.let {
+                                showSnackbar(
+                                    it,
+                                    getString(R.string.request_failed, response.message)
+                                )
+                            }
                             completion(Result.failure(Exception("Request failed: ${response.message}")))
                         }
+
                         401 -> {
                             mBinding?.clParent?.let { showSnackbar(it, response.message) }
                             UDID.closeAndRestartApplication()
                             completion(Result.failure(Exception(response.message)))
                         }
+
                         500 -> {
                             mBinding?.clParent?.let { showSnackbar(it, response.message) }
                             completion(Result.failure(Exception(response.message)))
                         }
+
                         else -> {
-                            mBinding?.clParent?.let { showSnackbar(it, getString(R.string.unexpected_error, response.message)) }
+                            mBinding?.clParent?.let {
+                                showSnackbar(
+                                    it,
+                                    getString(R.string.unexpected_error, response.message)
+                                )
+                            }
                         }
                     }
                 }
@@ -510,7 +557,11 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
         })
     }
 
-    private fun convertToPDF(fileName :String,data: ByteArray, completion: (Result<File>) -> Unit) {
+    private fun convertToPDF(
+        fileName: String,
+        data: ByteArray,
+        completion: (Result<File>) -> Unit,
+    ) {
         try {
             val temporaryDirectory = File(this.cacheDir, "pdfs")
             if (!temporaryDirectory.exists()) {
@@ -554,7 +605,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivity(Intent(this@UpdateRequestActivity,DashboardActivity::class.java))
+        startActivity(Intent(this@UpdateRequestActivity, DashboardActivity::class.java))
         finishAffinity()
     }
 }

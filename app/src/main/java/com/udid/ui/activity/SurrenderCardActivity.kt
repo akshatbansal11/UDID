@@ -28,6 +28,7 @@ import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.EncryptionModel
 import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences
 import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility.rotateDrawable
@@ -105,8 +106,14 @@ class SurrenderCardActivity : BaseActivity<ActivitySurrenderCardBinding>() {
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 toast(userResponseModel.message)
+                if (getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java) != null) {
+                    Preferences.setPreference(this, AppConstants.LOGIN_DATA, getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java).copy(
+                        surrenderrequest = 1
+                    ))
+                }
                 startActivity(Intent(this, UpdateRequestActivity::class.java)
                     .putExtra(AppConstants.UPDATE_REQUEST, getString(R.string.submit_surrender_card)))
+
             } else {
                 mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
             }

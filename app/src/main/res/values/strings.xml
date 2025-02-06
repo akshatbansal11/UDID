@@ -47,7 +47,7 @@
     <string name="na">NA</string>
 
 
-    <string name="name_of_application">Name Of Application</string>
+    <string name="name_of_application">Name Of Applicant</string>
     <string name="gender_">Gender</string>
     <string name="camera_permission">You need to enable camera access and storage permission to access this</string>
     <string name="date_of_birth_">Date Of Birth</string>
@@ -98,6 +98,7 @@
     <string name="photo">Photo<font fgcolor="#FF3D00">*</font></string>
     <string name="is_your_treating_hospital_in_other_state_district">Is your treating hospital in other State/District ?<font fgcolor="#FF3D00">*</font></string>
     <string name="hospital_name">Hospital Name<font fgcolor="#FF3D00">*</font></string>
+    <string name="hospital_name_">Hospital Name</string>
     <string name="hospital_treating_district">Hospital Treating District<font fgcolor="#FF3D00">*</font></string>
     <string name="select_hospital_treating_state_uts">Select Hospital Treating State / UTs<font fgcolor="#FF3D00">*</font></string>
     <string name="hospital_treating_state_uts">Hospital Treating State / UTs<font fgcolor="#FF3D00">*</font></string>
@@ -270,4 +271,8 @@
     <string name="continue_">Continue</string>
     <string name="language">Language</string>
     <string name="choose_language">Choose Language</string>
+    <string name="reason_to_update_date_of_birth_">Reason to Update Date of Birth</string>
+    <string name="your_request_successfully_submitted_you_will_receive_udid_card_shortly">Your request successfully submitted. You will receive UDID Card Shortly.</string>
+    <string name="download_surrender_receipts">Download Surrender Receipts</string>
+    <string name="enrollment_no">Enrollment No</string>
 </resources>

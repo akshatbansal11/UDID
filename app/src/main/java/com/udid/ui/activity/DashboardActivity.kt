@@ -54,28 +54,10 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
         get() = R.layout.activity_dashboard
 
     override fun initView() {
-// add  if (Utility.isDarkMode(this)) {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//        } else {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//        } in base activity
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         trackerAdapter()
-//        val isDarkMode = Utility.isDarkMode(this)
-//        mBinding?.leftDrawerMenu?.themeSwitch?.isChecked = isDarkMode
-//        mBinding?.leftDrawerMenu?.themeSwitch?.setOnCheckedChangeListener { _, isChecked ->
-//            if (isChecked) {
-//                // Enable dark mode
-//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//            } else {
-//                // Enable light mode
-//                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//            }
-//            // Save preference in SharedPreferences
-//            Utility.saveThemeMode(this, isChecked)
-//        }
     }
 
     override fun setVariables() {
@@ -99,35 +81,23 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
         }
 
         mBinding?.contentNav?.ivSetting?.setOnClickListener {
-            if (mBinding?.drawerLayout?.isDrawerOpen(GravityCompat.START) == true) {
-                mBinding?.drawerLayout?.closeDrawer(GravityCompat.END)
+            if (mBinding?.drawerLayout?.isDrawerOpen(GravityCompat.END) == true) {
+                mBinding?.drawerLayout?.closeDrawer(GravityCompat.START)
             } else {
-                mBinding?.drawerLayout?.openDrawer(GravityCompat.START)
+                mBinding?.drawerLayout?.openDrawer(GravityCompat.END)
             }
         }
-        mBinding?.leftDrawerMenu?.llLanguage?.setOnClickListener {
+        mBinding?.contentNav?.ivLanguage?.setOnClickListener {
             startActivity(Intent(this,LanguageActivity::class.java))
         }
 
         mBinding?.leftDrawerMenu?.llPrivacyPolicyHeading?.setOnClickListener {
             startActivity(Intent(this,WebViewActivity::class.java)
                 .putExtra(AppConstants.WEB_URL,"privacy_policy"))
-//            startActivity(
-//                Intent(
-//                    Intent.ACTION_VIEW,
-//                    Uri.parse("https://www.swavlambancard.gov.in/privacy-policy?view-type=mobile")
-//                )
-//            )
         }
         mBinding?.leftDrawerMenu?.llTermsAndConditionHeading?.setOnClickListener{
             startActivity(Intent(this,WebViewActivity::class.java)
                 .putExtra(AppConstants.WEB_URL,"terms_and_conditions"))
-//            startActivity(
-//                Intent(
-//                    Intent.ACTION_VIEW,
-//                    Uri.parse("https://www.swavlambancard.gov.in/terms-and-conditions?view-type=mobile")
-//                )
-//            )
         }
     }
 
@@ -305,7 +275,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
             .addHeader("Authorization", UDID.getToken())
             .addHeader("Content-Type", "application/json")
             .build()
-
+        println(UDID.getToken())
+        println(request)
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 dismissLoader()

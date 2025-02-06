@@ -31,10 +31,11 @@ object ServiceGeneratorLogin {
             val logInterceptor = HttpLoggingInterceptor()
             logInterceptor.level = HttpLoggingInterceptor.Level.BODY
             if (!httpClient.interceptors().contains(interceptor)) {
-                httpClient.addInterceptor(MyOkHttpInterceptor(authToken))
+                httpClient.addInterceptor(MyOkHttpInterceptor())
                 httpClient.addInterceptor(logInterceptor)
                 builder.client(httpClient.build())
-                retrofit = builder.build() } }
+                retrofit = builder.build() }
+        }
         return retrofit!!.create(serviceClass) }
 
 
@@ -44,18 +45,16 @@ object ServiceGeneratorLogin {
 
         return OkHttpClient.Builder()
             .addInterceptor(logInterceptor)
-            .readTimeout(180, TimeUnit.SECONDS)
-            .connectTimeout(180, TimeUnit.SECONDS)
-            .writeTimeout(180, TimeUnit.SECONDS)
+            .readTimeout(300, TimeUnit.SECONDS)
+            .connectTimeout(300, TimeUnit.SECONDS)
+            .writeTimeout(300, TimeUnit.SECONDS)
             .build()
     }
 
-    class MyOkHttpInterceptor internal constructor(private val tokenServer: String) : Interceptor {
+    class MyOkHttpInterceptor internal constructor() : Interceptor {
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response {
             val originalRequest = chain.request()
-            Log.e("tokenServer" , "aaa $tokenServer")
-            val token = tokenServer// get token logic
                 val newRequest = originalRequest.newBuilder()
                     .header("Content-Type", "text/plain")
                     .build()

@@ -23,7 +23,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import org.json.JSONObject
+import retrofit2.Response
 import java.net.SocketTimeoutException
 
 open class ViewModel : ViewModel() {
@@ -48,6 +50,7 @@ open class ViewModel : ViewModel() {
     var appealResult = MutableLiveData<CommonResponse>()
     var renewCardResult = MutableLiveData<CommonResponse>()
     var logoutResult = MutableLiveData<CommonResponse>()
+    var downloadApplicationResult = MutableLiveData<ByteArray?>()
     val errors = MutableLiveData<String>()
 
     fun init() {
@@ -72,7 +75,7 @@ open class ViewModel : ViewModel() {
         }
     }
 
-    fun getLoginApi(context: Context, request: String) {
+    fun getLoginApi(context: Context, request: RequestBody) {
         networkCheck(context, true)
         job = scope.launch {
             try {
@@ -186,13 +189,12 @@ open class ViewModel : ViewModel() {
         }
     }
 
-    fun getMyAccount(context: Context, request: String) {
+    fun getMyAccount(context: Context, request: RequestBody) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
         job = scope.launch {
             try {
                 val response = repository.getMyAccount(request)
-
                 Log.e("response", response.toString())
                 when (response.isSuccessful) {
                     true -> {
@@ -1149,6 +1151,78 @@ open class ViewModel : ViewModel() {
                     errors.postValue("Time out Please try again")
                 }
                 dismissLoader()
+            }
+        }
+    }
+
+    fun downloadApplication(
+        context: Context,
+        request: RequestBody
+    ) {
+        // Check network status and show loading
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                // Make the API call to download the file
+                val response = repository.downloadApplication(request)
+
+                Log.e("response", response.toString())
+
+                if (response.isSuccessful) {
+                    // If the response is successful and status code is 200 or 201
+                    if (response.code() in 200..201) {
+                        val data = response.body()?.bytes()
+                        downloadApplicationResult.postValue(data)
+                    }
+                } else {
+                    // Handle error scenarios based on response code
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                // Catch exceptions and handle accordingly
+                handleException(e)
+            } finally {
+                // Dismiss loader regardless of success or failure
+                dismissLoader()
+            }
+        }
+    }
+    // Handle error scenarios based on HTTP response codes
+    private fun handleError(response: Response<ResponseBody>) {
+        try {
+            // Parse error body to extract the error message
+            val errorBody = response.errorBody()?.string()?.let { JSONObject(it) }
+            val errorMessage = errorBody?.getString("message") ?: "Unknown Error"
+
+            when (response.code()) {
+                400, 403, 404 -> {
+                    errors.postValue(errorMessage)
+                }
+                401 -> {
+                    errors.postValue(errorMessage)
+                    // Close and restart application on 401 (Unauthorized)
+                    UDID.closeAndRestartApplication()
+                }
+                500 -> {
+                    errors.postValue("Internal Server Error")
+                }
+                else -> {
+                    errors.postValue("Unexpected Error")
+                }
+            }
+        } catch (e: Exception) {
+            errors.postValue("Error parsing error response: ${e.message}")
+        }
+    }
+
+    // Handle exceptions that occur during the network call
+    private fun handleException(exception: Exception) {
+        when (exception) {
+            is SocketTimeoutException -> {
+                errors.postValue("Timeout: Please try again")
+            }
+            else -> {
+                errors.postValue("An error occurred: ${exception.message}")
             }
         }
     }

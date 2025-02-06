@@ -1,10 +1,13 @@
 package com.udid.ui.activity
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.View
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.udid.R
 import com.udid.databinding.ActivityMyAccountBinding
+import com.udid.model.MyAccountData
 import com.udid.model.UserData
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
@@ -12,12 +15,17 @@ import com.udid.utilities.EncryptionModel
 import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.Utility
 import com.udid.utilities.Utility.convertDate
+import com.udid.utilities.Utility.dateConvertToFormat
+import com.udid.utilities.hideView
+import com.udid.utilities.showView
 import com.udid.viewModel.ViewModel
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
 class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
     private var mBinding: ActivityMyAccountBinding? = null
-    private var viewModel= ViewModel()
+    private var viewModel = ViewModel()
     override val layoutId: Int
         get() = R.layout.activity_my_account
 
@@ -32,17 +40,20 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
                 context,
                 AppConstants.LOGIN_DATA,
                 UserData::class.java
-            ).application_number.toString()
+            ).application_number.toString().trim()
         )
         myAccountJson.put(
             "type",
             "mobile"
         )
-        viewModel.getMyAccount(this@MyAccountActivity, EncryptionModel.aesEncrypt(myAccountJson.toString()))
+        viewModel.getMyAccount(
+            this@MyAccountActivity,
+            EncryptionModel.aesEncrypt(myAccountJson.toString()).toRequestBody("text/plain".toMediaTypeOrNull())
+        )
     }
 
     inner class ClickActions {
-        fun backPress(view: View){
+        fun backPress(view: View) {
             onBackPressedDispatcher.onBackPressed()
         }
     }
@@ -53,16 +64,18 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
             Glide.with(this)
                 .load(
                     getPreferenceOfLogin(
-                    this,
-                    AppConstants.LOGIN_DATA,
-                    UserData::class.java
-                ).photo_path)
+                        this,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).photo_path
+                )
                 .placeholder(R.drawable.ic_profile)
                 .error(R.drawable.ic_profile)
                 .into(it)
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun setObservers() {
         viewModel.myAccountResult.observe(this) {
             val userResponseModel = it
@@ -74,22 +87,64 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
                             userResponseModel.message
                         )
                     }
-                }
-                else {
+                } else {
                     val data =
                         JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result))
+                    val gson = Gson()
+                    val userData = gson.fromJson(data.toString(), MyAccountData::class.java)
                     Log.d("Decrypted Data : ", data.toString())
-                    mBinding?.etUdidNo?.text= data.getString("udid_number").ifEmpty { getString(R.string.na) }
-                    mBinding?.etNameOfApplication?.text=data.getString("full_name").ifEmpty { getString(R.string.na) }
-                    mBinding?.etDOB?.text=data.getString("dob").ifEmpty { "NA" }
-                    mBinding?.etUdidGenerationDate?.text=convertDate(data.getString("certificate_generate_date")).ifEmpty { getString(R.string.na) }
-                    mBinding?.etAadhaarNo?.text=Utility.maskAadharNumber(data.getString("aadhaar_no")).ifEmpty { getString(R.string.na) }
-                    mBinding?.etGender?.text=data.getString("gender").ifEmpty { getString(R.string.na) }
-                    mBinding?.tvBlindness?.text=data.getString("disability_types").ifEmpty { getString(R.string.na) }
-                    mBinding?.etDisabilityPercentage?.text= data.getString("final_disability_percentage").ifEmpty { getString(R.string.na) }
-                    mBinding?.etMobile?.text=data.getString("mobile").ifEmpty { getString(R.string.na) }
-                    mBinding?.etEmailID?.text=data.getString("email").ifEmpty { getString(R.string.na) }
-                    mBinding?.etAddress?.text=data.getString("current_address").ifEmpty { getString(R.string.na) }
+                    if(userData.udid_number.isNullOrEmpty()){
+                        mBinding?.etUdidNo?.hideView()
+                        mBinding?.tvUdidNo?.hideView()
+                        mBinding?.tvUdidGenerationDate?.hideView()
+                        mBinding?.etUdidGenerationDate?.hideView()
+                        mBinding?.tvPermanentTemporary?.hideView()
+                        mBinding?.etPermanentTemporary?.hideView()
+                        mBinding?.tvDisabilityPercentage?.hideView()
+                        mBinding?.etDisabilityPercentage?.hideView()
+                        mBinding?.tvEnrollmentNo?.showView()
+                        mBinding?.etEnrollmentNo?.showView()
+                        mBinding?.tvHospitalName?.showView()
+                        mBinding?.etHospitalName?.showView()
+                    }
+                    else{
+                        mBinding?.etUdidNo?.showView()
+                        mBinding?.tvUdidNo?.showView()
+                        mBinding?.tvUdidGenerationDate?.showView()
+                        mBinding?.etUdidGenerationDate?.showView()
+                        mBinding?.tvPermanentTemporary?.showView()
+                        mBinding?.etPermanentTemporary?.showView()
+                        mBinding?.tvDisabilityPercentage?.showView()
+                        mBinding?.etDisabilityPercentage?.showView()
+                        mBinding?.tvEnrollmentNo?.hideView()
+                        mBinding?.etEnrollmentNo?.hideView()
+                        mBinding?.tvHospitalName?.hideView()
+                        mBinding?.etHospitalName?.hideView()
+                    }
+                    mBinding?.etEnrollmentNo?.text = if(userData.application_number.isNullOrEmpty()) getString(R.string.na) else userData.application_number
+                    mBinding?.etHospitalName?.text = if(userData.hospital?.hospital_name.isNullOrEmpty())getString(R.string.na) else userData.hospital?.hospital_name
+                    mBinding?.etUdidNo?.text = if(userData.udid_number.isNullOrEmpty()) getString(R.string.na) else userData.udid_number
+                    mBinding?.etNameOfApplication?.text = if(userData.full_name.isNullOrEmpty()) getString(R.string.na) else userData.full_name
+                    mBinding?.etDOB?.text = if(userData.dob.isNullOrEmpty()) getString(R.string.na) else dateConvertToFormat(userData.dob)
+                    mBinding?.etUdidGenerationDate?.text = if(userData.certificate_generate_date.isNullOrEmpty()) getString(R.string.na) else convertDate(userData.certificate_generate_date.toString())
+                    mBinding?.etAadhaarNo?.text =if(userData.aadhaar_no.isNullOrEmpty()) getString(R.string.na) else Utility.maskAadharNumber(userData.aadhaar_no.toString())
+                    mBinding?.etGender?.text = if(userData.gender.isNullOrEmpty()) getString(R.string.na) else userData.gender
+                    mBinding?.tvBlindness?.text = if(userData.disability_types.isNullOrEmpty()) getString(R.string.na) else userData.disability_types
+                    mBinding?.etDisabilityPercentage?.text = if(userData.final_disability_percentage?.toString().isNullOrEmpty()) getString(R.string.na) else userData.final_disability_percentage.toString()
+                    mBinding?.etPermanentTemporary?.text = if(userData.disability_condition_category.isNullOrEmpty()) getString(R.string.na) else userData.disability_condition_category
+                    if(userData.disability_condition_category == "Temporary") {
+                        mBinding?.etValidity?.text =
+                            dateConvertToFormat(userData.pwd_card_expiry_date).ifEmpty { getString(R.string.na) }
+                    }
+                    else{
+                        mBinding?.etValidity?.hideView()
+                        mBinding?.tvValidity?.hideView()
+                    }
+                    mBinding?.etMobile?.text = if(userData.mobile?.toString().isNullOrEmpty()) getString(R.string.na) else userData.mobile.toString().ifEmpty { getString(R.string.na) }
+                    mBinding?.etEmailID?.text = if(userData.email.isNullOrEmpty()) getString(R.string.na) else userData.email
+                    mBinding?.etAddress?.text = userData.current_address.plus(", ").plus(userData.state?.name)
+                        .plus(", ").plus(userData.district?.district_name).plus(", ").plus(userData.subdistrict?.subdistrict_name)
+                        .plus(", ").plus(userData.current_pincode)
                 }
             }
         }

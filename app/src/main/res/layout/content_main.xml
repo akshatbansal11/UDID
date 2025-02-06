@@ -31,14 +31,25 @@
                 android:textStyle="bold" />
 
             <ImageView
+                android:id="@+id/ivLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_language"
+                android:layout_toStartOf="@id/ivSetting"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="@dimen/dp_5"
+                android:layout_marginVertical="30dp"/>
+
+            <ImageView
                 android:id="@+id/ivSetting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_setting"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginHorizontal="30dp"
-                android:layout_marginVertical="@dimen/dp_30"/>
+                android:layout_marginEnd="30dp"
+                android:layout_marginVertical="35dp"/>
 
         </RelativeLayout>
 

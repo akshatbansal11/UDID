@@ -3,7 +3,6 @@ package com.udid.repository
 import com.udid.model.ApplicationStatusRequest
 import com.udid.model.ApplicationStatusResponse
 import com.udid.model.CommonResponse
-import com.udid.model.LogoutRequest
 import com.udid.model.DropDownRequest
 import com.udid.model.DropDownResponse
 import com.udid.model.GenerateOtpRequest
@@ -15,8 +14,8 @@ import com.udid.services.ServiceGenerator
 import com.udid.services.ServiceGeneratorLogin
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Response
-import java.io.File
 
 object Repository {
 
@@ -34,11 +33,11 @@ object Repository {
             return repository!!
         }
 
-    suspend fun getLogin(request: String): Response<LoginResponse> {
+    suspend fun getLogin(request: RequestBody): Response<LoginResponse> {
         return apiLogin.getLogin(request)
     }
 
-    suspend fun getMyAccount(request: String): Response<MyAccountResponse> {
+    suspend fun getMyAccount(request: RequestBody): Response<MyAccountResponse> {
         return api.getMyAccount(request)
     }
 
@@ -250,6 +249,11 @@ object Repository {
             applicationNumber,
             type
         )
+    }
+
+    suspend fun downloadApplication(
+        request: RequestBody): Response<ResponseBody> {
+        return api.downloadApplication(request)
     }
 }
 

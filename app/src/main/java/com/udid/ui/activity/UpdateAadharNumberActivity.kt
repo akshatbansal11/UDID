@@ -34,6 +34,7 @@ import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.EncryptionModel
 import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences
 import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility
@@ -136,6 +137,13 @@ class UpdateAadharNumberActivity : BaseActivity<ActivityUpdateAadharNumberBindin
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 toast(userResponseModel.message)
+                if (getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java) != null) {
+                    Preferences.setPreference(this, AppConstants.LOGIN_DATA, getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java).copy(
+                        updaterequest = getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java).updaterequest?.copy(
+                            AadhaarNumber = 1 // Replace with the new value
+                        )
+                    ))
+                }
                 startActivity(
                     Intent(this, UpdateRequestActivity::class.java)
                         .putExtra(AppConstants.UPDATE_REQUEST,

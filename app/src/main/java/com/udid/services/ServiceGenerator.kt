@@ -54,9 +54,8 @@ object ServiceGenerator {
         override fun intercept(chain: Interceptor.Chain): Response {
             val originalRequest = chain.request()
             Log.e("tokenServer" , "aaa $tokenServer")
-            val token = tokenServer// get token logic
             val newRequest = originalRequest.newBuilder()
-                .header("Authorization", token)
+                .header("Authorization", tokenServer)
                 .header("Accept", "text/plain")
                 .build()
             return chain.proceed(newRequest)

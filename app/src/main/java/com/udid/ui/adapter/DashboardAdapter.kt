@@ -68,7 +68,7 @@ class DashboardAdapter(
                             context,
                             AppConstants.LOGIN_DATA,
                             UserData::class.java
-                        ).updaterequest.Name == 1
+                        ).updaterequest?.Name == 1
                     ) {
                         context.startActivity(
                             Intent(context, UpdateRequestActivity::class.java)
@@ -89,7 +89,7 @@ class DashboardAdapter(
                             context,
                             AppConstants.LOGIN_DATA,
                             UserData::class.java
-                        ).updaterequest.AadhaarNumber == 1
+                        ).updaterequest?.AadhaarNumber == 1
                     ) {
                         context.startActivity(
                             Intent(context, UpdateRequestActivity::class.java)
@@ -115,7 +115,7 @@ class DashboardAdapter(
                             context,
                             AppConstants.LOGIN_DATA,
                             UserData::class.java
-                        ).updaterequest.DateOfBirth == 1
+                        ).updaterequest?.DateOfBirth == 1
                     ) {
                         context.startActivity(
                             Intent(context, UpdateRequestActivity::class.java)
@@ -141,7 +141,7 @@ class DashboardAdapter(
                             context,
                             AppConstants.LOGIN_DATA,
                             UserData::class.java
-                        ).updaterequest.Mobile == 1
+                        ).updaterequest?.Mobile == 1
                     ) {
                         context.startActivity(
                             Intent(context, UpdateRequestActivity::class.java)
@@ -167,7 +167,7 @@ class DashboardAdapter(
                             context,
                             AppConstants.LOGIN_DATA,
                             UserData::class.java
-                        ).updaterequest.Email == 1
+                        ).updaterequest?.Email == 1
                     ) {
                         context.startActivity(
                             Intent(context, UpdateRequestActivity::class.java)
@@ -257,7 +257,7 @@ class DashboardAdapter(
                             context,
                             AppConstants.LOGIN_DATA,
                             UserData::class.java
-                        ).appealrequest == 1
+                        ).appealrequest == 0
                     ) {
                         context.startActivity(
                             Intent(context, UpdateRequestActivity::class.java)
@@ -413,6 +413,7 @@ class DashboardAdapter(
 
             context.getString(R.string.feedback_query) -> {
                 holder.mBinding.llParent.setOnClickListener {
+                    context.toast("message\":\"Your query has been submitted successfully. The admin will take action soondjdjdjdjdjjdjdjdjdjdjdjdjjdjjd")
                     context.startActivity(Intent(context, FeedbackAndQueryActivity::class.java))
                 }
             }

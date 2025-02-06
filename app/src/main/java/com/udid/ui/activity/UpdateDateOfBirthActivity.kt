@@ -36,6 +36,7 @@ import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.EncryptionModel
 import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences
 import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility
@@ -109,7 +110,8 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
             val userResponseModel = it
             if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
                 reasonToUpdateDobList.clear()
-                reasonToUpdateDobList.add(DropDownResult("0",getString(R.string.reason_to_update_date_of_birth)))
+                reasonToUpdateDobList.add(DropDownResult("0",
+                    getString(R.string.reason_to_update_date_of_birth_)))
                 reasonToUpdateDobList.addAll(userResponseModel._result)
                 bottomSheetAdapter?.notifyDataSetChanged()
             }
@@ -131,6 +133,13 @@ class UpdateDateOfBirthActivity : BaseActivity<ActivityUpdateDateOfBirthBinding>
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 toast(userResponseModel.message)
+                if (getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java) != null) {
+                    Preferences.setPreference(this, AppConstants.LOGIN_DATA, getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java).copy(
+                        updaterequest = getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java).updaterequest?.copy(
+                            DateOfBirth = 1 // Replace with the new value
+                        )
+                    ))
+                }
                 startActivity(
                     Intent(this, UpdateRequestActivity::class.java)
                         .putExtra(AppConstants.UPDATE_REQUEST,

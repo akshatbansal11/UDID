@@ -13,7 +13,7 @@
         android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:openDrawer="start">
+        tools:openDrawer="end">
 
         <include
             android:id="@+id/content_nav"
@@ -24,7 +24,7 @@
             layout="@layout/sidebar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="start" />
+            android:layout_gravity="end" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

@@ -13,7 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.udid.R
 
 fun Context.toast(message: String){
-    Toast.makeText(this, message, Toast.LENGTH_LONG ).show()
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 }
 
 fun Activity.makeStatusBarTransparent() {

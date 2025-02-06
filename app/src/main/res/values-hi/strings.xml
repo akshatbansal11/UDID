@@ -41,7 +41,7 @@
     <string name="udid_number">यूडीआईडी संख्या</string>
     <string name="udid_generation_date">यूडीआईडी निर्माण तिथि</string>
     <string name="na">एनए</string>
-    <string name="name_of_application">आवेदन का नाम</string>
+    <string name="name_of_application">आवेदक का नाम</string>
     <string name="gender_">लिंग</string>
     <string name="camera_permission">कैमरा एक्सेस और स्टोरेज अनुमति सक्षम करने की आवश्यकता है</string>
     <string name="date_of_birth_">जन्म तिथि</string>
@@ -92,6 +92,7 @@
     <string name="photo">फोटो<font fgcolor="#FF3D00">*</font></string>
     <string name="is_your_treating_hospital_in_other_state_district">क्या आपका इलाज करने वाला अस्पताल अन्य राज्य/जिले में है? <font fgcolor="#FF3D00">*</font></string>
     <string name="hospital_name">अस्पताल का नाम<font fgcolor="#FF3D00">*</font></string>
+    <string name="hospital_name_">अस्पताल का नाम</string>
     <string name="hospital_treating_district">उपचार करने वाले अस्पताल का जिला<font fgcolor="#FF3D00">*</font></string>
     <string name="select_hospital_treating_state_uts">उपचार करने वाले अस्पताल का राज्य / केंद्र शासित प्रदेश चुनें<font fgcolor="#FF3D00">*</font></string>
     <string name="hospital_treating_state_uts">उपचार करने वाले अस्पताल का राज्य / केंद्र शासित प्रदेश<font fgcolor="#FF3D00">*</font></string>
@@ -260,6 +261,10 @@
     <string name="continue_">जारी रखें</string>
     <string name="language">भाषा</string>
     <string name="choose_language">भाषा चुनें</string>
+    <string name="reason_to_update_date_of_birth_">जन्मतिथि अद्यतन करने का कारण</string>
+    <string name="your_request_successfully_submitted_you_will_receive_udid_card_shortly">आपका अनुरोध सफलतापूर्वक सबमिट हो गया. आपको शीघ्र ही यूडीआईडी ​​कार्ड प्राप्त होगा</string>
+    <string name="download_surrender_receipts">समर्पण रसीदें डाउनलोड करें</string>
+    <string name="enrollment_no">नामांकन संख्या</string>
 
 
 </resources>

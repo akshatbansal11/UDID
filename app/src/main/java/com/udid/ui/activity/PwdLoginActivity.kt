@@ -19,13 +19,24 @@ import com.udid.utilities.BaseActivity
 import com.udid.utilities.EncryptionModel
 import com.udid.utilities.PrefEntities
 import com.udid.utilities.Preferences
+import com.udid.utilities.UDID
 import com.udid.utilities.Utility
+import com.udid.utilities.Utility.dateConvertToFormat
 import com.udid.utilities.Utility.getPreferenceString
 import com.udid.utilities.Utility.showSnackbar
 import com.udid.utilities.crypt.EncryptionHelper
 import com.udid.utilities.toast
 import com.udid.viewModel.ViewModel
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import org.json.JSONObject
+import java.io.IOException
 import java.util.Calendar
 
 class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
@@ -50,10 +61,10 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                     AppConstants.USERNAME
                 ).let { EncryptionHelper.decrypt(it) }
             )
-            mBinding?.etDob?.text = getPreferenceString(
+            mBinding?.etDob?.text = dateConvertToFormat(getPreferenceString(
                 this,
                 AppConstants.PASSWORD
-            ).let { EncryptionHelper.decrypt(it) }
+            ).let { EncryptionHelper.decrypt(it) })
             date=getPreferenceString(
                 this,
                 AppConstants.PASSWORD
@@ -156,11 +167,11 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                                 userData.surrenderrequest,
                                 userData.lostcardrequest,
                                 UpdateRequest(
-                                    userData.updaterequest.Name,
-                                    userData.updaterequest.Email,
-                                    userData.updaterequest.Mobile,
-                                    userData.updaterequest.AadhaarNumber,
-                                    userData.updaterequest.DateOfBirth
+                                    userData.updaterequest?.Name,
+                                    userData.updaterequest?.Email,
+                                    userData.updaterequest?.Mobile,
+                                    userData.updaterequest?.AadhaarNumber,
+                                    userData.updaterequest?.DateOfBirth
                                 )
                             )
                         )
@@ -193,17 +204,20 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
 
         fun login(view: View) {
             if (valid()) {
-
                 val loginRequestJson = JSONObject().apply {
                     put("application_number", mBinding?.etEnrollment?.text.toString().trim())
-//                    put("type","mobile")
                     put("dob", date)
+                    put("type", "mobile")
                 }
+                val encryptedString = EncryptionModel.aesEncrypt(loginRequestJson.toString())
+                val requestBody = encryptedString.toRequestBody("text/plain".toMediaTypeOrNull())
                 viewModel.getLoginApi(
                     this@PwdLoginActivity,
-                    EncryptionModel.aesEncrypt(loginRequestJson.toString())
+                    requestBody
                 )
-                Log.e("Decrypted Data" ,EncryptionModel.aesDecrypt(EncryptionModel.aesEncrypt(loginRequestJson.toString())))
+
+                Log.e("Decrypted Data" ,EncryptionModel.aesDecrypt(encryptedString))
+                Log.e("Encrypted Data" ,encryptedString)
             }
         }
     }
@@ -238,10 +252,16 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
             context,
             android.R.style.Theme_Holo_Light_Dialog_MinWidth,
             { _, selectedYear, selectedMonth, selectedDay ->
-                val adjustedMonth = selectedMonth + 1 // Months are 0-based
-                Log.d("Date", "onDateSet: MM/dd/yyyy: $adjustedMonth/$selectedDay/$selectedYear")
-                date = "$selectedYear-$adjustedMonth-$selectedDay"
-                editText.text = "$selectedDay/$adjustedMonth/$selectedYear"
+                val formattedMonth =
+                    String.format("%02d", selectedMonth + 1) // Add 1 to month and format
+                val formattedDay =
+                    String.format("%02d", selectedDay) // Format day as two digits if needed
+                Log.d(
+                    "Date",
+                    "onDateSet: MM/dd/yyyy: $formattedMonth/$formattedDay/$selectedYear"
+                )
+                date = "$selectedYear-$formattedMonth-$formattedDay"
+                mBinding?.etDob?.text = "$formattedDay/$formattedMonth/$selectedYear"
             },
             year, month, day
         )

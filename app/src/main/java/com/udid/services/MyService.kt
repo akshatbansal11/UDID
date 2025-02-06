@@ -3,7 +3,6 @@ package com.udid.services
 import com.udid.model.ApplicationStatusRequest
 import com.udid.model.ApplicationStatusResponse
 import com.udid.model.CommonResponse
-import com.udid.model.LogoutRequest
 import com.udid.model.DropDownRequest
 import com.udid.model.DropDownResponse
 import com.udid.model.GenerateOtpRequest
@@ -12,12 +11,13 @@ import com.udid.model.MyAccountResponse
 import com.udid.model.OTPResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
-import java.io.File
 
 const val LOGIN = "login"
 const val GENERATE_OTP_LOGIN = "getotp"
@@ -35,15 +35,18 @@ const val FEEDBACK_QUERY = "contactUs"
 const val APPEAL = "saveAppeal"
 const val RENEW_CARD = "renewcard"
 const val LOGOUT = "logout"
+const val DOWNLOAD_APPLICATION = "downloadApplication"
 
 interface MyService {
 
+    @Headers("Content-Type: text/plain")
     @POST(LOGIN)
-    suspend fun getLogin(@Body request: String): Response<LoginResponse>
+    suspend fun getLogin(@Body request: RequestBody): Response<LoginResponse>
     @POST(GENERATE_OTP_LOGIN)
     suspend fun getOtpLogin(@Body request: GenerateOtpRequest): Response<OTPResponse>
+    @Headers("Content-Type: text/plain")
     @POST(MY_ACCOUNT)
-    suspend fun getMyAccount(@Body request: String): Response<MyAccountResponse>
+    suspend fun getMyAccount(@Body request: RequestBody): Response<MyAccountResponse>
     @POST(APP_STATUS)
     suspend fun getAppStatus(@Body request: ApplicationStatusRequest): Response<ApplicationStatusResponse>
     @POST(DROP_DOWN)
@@ -169,5 +172,9 @@ interface MyService {
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("type") type: RequestBody?,
     ):Response<CommonResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(DOWNLOAD_APPLICATION)
+    suspend fun downloadApplication(@Body request: RequestBody): Response<ResponseBody>
 }
 

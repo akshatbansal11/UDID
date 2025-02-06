@@ -22,12 +22,14 @@ import com.udid.model.DropDownResult
 import com.udid.model.Fields
 import com.udid.model.Filters
 import com.udid.model.GenerateOtpRequest
+import com.udid.model.Order
 import com.udid.model.UserData
 import com.udid.ui.adapter.BottomSheetAdapter
 import com.udid.utilities.AppConstants
 import com.udid.utilities.BaseActivity
 import com.udid.utilities.EncryptionModel
 import com.udid.utilities.JSEncryptService
+import com.udid.utilities.Preferences
 import com.udid.utilities.Preferences.getPreferenceOfLogin
 import com.udid.utilities.URIPathHelper
 import com.udid.utilities.Utility.rotateDrawable
@@ -161,9 +163,13 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 toast(userResponseModel.message)
+                if (getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java) != null) {
+                    Preferences.setPreference(this, AppConstants.LOGIN_DATA, getPreferenceOfLogin(this, AppConstants.LOGIN_DATA, UserData::class.java).copy(
+                        renewalrequest = 0
+                    ))
+                }
                 startActivity(Intent(this, UpdateRequestActivity::class.java)
                     .putExtra(AppConstants.UPDATE_REQUEST, getString(R.string.submit_renewal_card)))
-//                onBackPressedDispatcher.onBackPressed()
             } else {
                 mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
             }
@@ -253,6 +259,7 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
             model = "Subdistricts",
             filters = Filters(district_code = districtId),
             fields = Fields(subdistrict_code = "subdistrict_name"),
+            order = Order(subdistrict_name = "ASC"),
             type = "mobile"
         ))
     }

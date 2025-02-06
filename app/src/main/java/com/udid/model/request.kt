@@ -49,11 +49,6 @@ data class ApplicationStatusRequest(
     val type: String = "mobile"
 )
 
-data class LogoutRequest(
-    val application_number: String,
-    val type: String = "mobile"
-)
-
 data class PwdApplication(
     var applicantFullName: String = "",
     var applicantMobileNo: String = "",
