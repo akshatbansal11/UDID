@@ -127,7 +127,8 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
             mBinding?.tvContext?.hideView()
         } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_renewal_card)) {
             mBinding?.tvHeading?.text = getString(R.string.renewal_card)
-            mBinding?.tvStatus?.text = getString(R.string.your_renewal_card_will_be_updated)
+            mBinding?.tvStatus?.text =
+                getString(R.string.you_have_already_sent_a_renewal_request_please_contact_the_cmo)
             mBinding?.tvContext?.hideView()
         } else if (intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_lost_card)) {
             mBinding?.tvHeading?.text = getString(R.string.lost_card_card_not_recieved)
@@ -287,7 +288,7 @@ class UpdateRequestActivity : BaseActivity<ActivityUpdateRequestBinding>() {
                 intent.extras?.getString(AppConstants.UPDATE_REQUEST) == getString(R.string.submit_renewal_card) -> {
                     downloadApplication(
                         this@UpdateRequestActivity,
-                        "noEncryptionWithRequestType",
+                        "",
                         AppConstants.SUBMIT_RENEWAL_CARD,
                         getString(R.string.renewal_card),
                         7

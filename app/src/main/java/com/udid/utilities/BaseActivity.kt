@@ -128,10 +128,20 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Utility.getPreferenceString(this, AppConstants.LANGUAGE) == "en") {
-            Utility.setLocale(this, AppConstants.LANGUAGE_CODE_ENGLISH)
-        } else {
+        if (Utility.getPreferenceString(this, AppConstants.LANGUAGE) == "hi") {
             Utility.setLocale(this, AppConstants.LANGUAGE_CODE_HINDI)
+            Utility.savePreferencesString(
+                this,
+                AppConstants.LANGUAGE,
+                "hi"
+            )
+        } else {
+            Utility.setLocale(this, AppConstants.LANGUAGE_CODE_ENGLISH)
+            Utility.savePreferencesString(
+                this,
+                AppConstants.LANGUAGE,
+                "en"
+            )
         }
 //        if (Utility.isDarkMode(this)) {
 //            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

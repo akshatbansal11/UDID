@@ -215,7 +215,7 @@ class DashboardAdapter(
                             context,
                             AppConstants.LOGIN_DATA,
                             UserData::class.java
-                        ).renewalrequest == 1
+                        ).renewalrequest == 0
                     ) {
                         context.startActivity(
                             Intent(context, UpdateRequestActivity::class.java)
@@ -413,7 +413,6 @@ class DashboardAdapter(
 
             context.getString(R.string.feedback_query) -> {
                 holder.mBinding.llParent.setOnClickListener {
-                    context.toast("message\":\"Your query has been submitted successfully. The admin will take action soondjdjdjdjdjjdjdjdjdjdjdjdjjdjjd")
                     context.startActivity(Intent(context, FeedbackAndQueryActivity::class.java))
                 }
             }

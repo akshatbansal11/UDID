@@ -313,6 +313,17 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
                 )
             }
             2 ->{
+//                println(getPreferenceOfLogin(
+//                    this@RenewalCardActivity,
+//                    AppConstants.LOGIN_DATA,
+//                    UserData::class.java
+//                ).application_number.toString())
+//                println(mBinding?.etPermanentAddress?.text.toString().trim())
+//                println(stateId.toString())
+//                println(districtId.toString())
+//                println(subDistrictId.toString())
+//                println(mBinding?.etPincode?.text.toString().trim())
+//                println(hospitalId.toString())
                 viewModel.getRenewCard(
                     context = this@RenewalCardActivity,
                     applicationNumber = EncryptionModel.aesEncrypt(
@@ -682,7 +693,7 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
             val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             body =
                 MultipartBody.Part.createFormData(
-                    "document",
+                    "address_proof_file",
                     file.name, reqFile
                 )
         }
@@ -691,7 +702,7 @@ class RenewalCardActivity : BaseActivity<ActivityRenewalCardBinding>() {
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(this, uri)
         body = MultipartBody.Part.createFormData(
-            "document",
+            "address_proof_file",
             documentName,
             requestBody
         )

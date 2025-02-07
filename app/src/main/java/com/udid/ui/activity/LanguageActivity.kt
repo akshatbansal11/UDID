@@ -19,27 +19,7 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
     override fun initView() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
-        if (Utility.getPreferenceString(this, AppConstants.LANGUAGE) == "en") {
-            mBinding?.tvEnglish?.setCompoundDrawablesWithIntrinsicBounds(
-                0,
-                0,
-                R.drawable.radio_button_checked,
-                0
-            );
-            mBinding?.tvEnglish?.setTextColor(resources.getColor(R.color.darkBlue))
-            mBinding?.tvHindi?.setCompoundDrawablesWithIntrinsicBounds(
-                0,
-                0,
-                R.drawable.radio_button_unchecked,
-                0
-            );
-            mBinding?.tvHindi?.setTextColor(resources.getColor(R.color.black))
-            Utility.savePreferencesString(
-                this@LanguageActivity,
-                AppConstants.LANGUAGE,
-                "en"
-            )
-        } else {
+        if (Utility.getPreferenceString(this, AppConstants.LANGUAGE) == "hi") {
             mBinding?.tvHindi?.setCompoundDrawablesWithIntrinsicBounds(
                 0,
                 0,
@@ -58,6 +38,26 @@ class LanguageActivity : BaseActivity<ActivityLanguageBinding>() {
                 this@LanguageActivity,
                 AppConstants.LANGUAGE,
                 "hi"
+            )
+        } else {
+            mBinding?.tvEnglish?.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                R.drawable.radio_button_checked,
+                0
+            );
+            mBinding?.tvEnglish?.setTextColor(resources.getColor(R.color.darkBlue))
+            mBinding?.tvHindi?.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                R.drawable.radio_button_unchecked,
+                0
+            );
+            mBinding?.tvHindi?.setTextColor(resources.getColor(R.color.black))
+            Utility.savePreferencesString(
+                this@LanguageActivity,
+                AppConstants.LANGUAGE,
+                "en"
             )
         }
     }

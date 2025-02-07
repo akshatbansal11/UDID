@@ -5,14 +5,18 @@ import android.app.Application
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.util.Base64
 import android.util.Log
 import com.udid.services.LOGIN
 import com.udid.ui.activity.LoginActivity
 import com.udid.ui.activity.PwdLoginActivity
+import com.udid.utilities.Utility.setLocale
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.util.Locale
 
 class UDID : Application() {
 

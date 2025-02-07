@@ -4,16 +4,27 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.udid.R
 
 fun Context.toast(message: String){
-    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    val inflater = LayoutInflater.from(applicationContext)
+    val layout = inflater.inflate(R.layout.custom_toast, null)
+
+    val textView = layout.findViewById<TextView>(R.id.custom_toast_text)
+    textView.text = message
+
+    val toast = Toast(applicationContext)
+    toast.duration = Toast.LENGTH_LONG
+    toast.view = layout
+    toast.show()
 }
 
 fun Activity.makeStatusBarTransparent() {

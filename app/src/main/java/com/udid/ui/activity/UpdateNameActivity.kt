@@ -361,7 +361,7 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
     }
 
     private fun valid(): Boolean {
-        if (mBinding?.etCurrentName?.text.toString().isEmpty()) {
+        if (mBinding?.etUpdatedName?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
                 showSnackbar(it, getString(R.string.please_enter_the_updated_name))
             }

@@ -172,7 +172,7 @@
     <string name="privacy_policy">गोपनीयता नीति</string>
     <string name="menu">मेनू</string>
     <string name="lost_card_card_not_received">खोया हुआ कार्ड / कार्ड प्राप्त नहीं हुआ</string>
-    <string name="a_six_digit_otp_will_be_sent_to_your_registered_mobile_no">आपके पंजीकृत मोबाइल नंबर पर छह अंकों का ओटीपी भेजा जाएगा।</string>
+    <string name="a_four_digit_otp_will_be_sent_to_your_registered_mobile_no">आपके पंजीकृत मोबाइल नंबर पर चार अंकों का ओटीपी भेजा जाएगा।</string>
     <string name="enter_the_otp">ओटीपी दर्ज करें</string>
     <string name="aadhaar_no_">आधार नंबर</string>
     <string name="permanent_temporary">स्थायी/अस्थायी</string>
@@ -265,6 +265,7 @@
     <string name="your_request_successfully_submitted_you_will_receive_udid_card_shortly">आपका अनुरोध सफलतापूर्वक सबमिट हो गया. आपको शीघ्र ही यूडीआईडी ​​कार्ड प्राप्त होगा</string>
     <string name="download_surrender_receipts">समर्पण रसीदें डाउनलोड करें</string>
     <string name="enrollment_no">नामांकन संख्या</string>
+    <string name="you_have_already_sent_a_renewal_request_please_contact_the_cmo">आपने नवीनीकरण अनुरोध पहले ही भेज दिया है. कृपया सीएमओ से संपर्क करें</string>
 
 
 </resources>

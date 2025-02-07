@@ -180,7 +180,7 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="menu">MENU</string>
     <string name="lost_card_card_not_received">Lost Card/Card Not Received</string>
-    <string name="a_six_digit_otp_will_be_sent_to_your_registered_mobile_no">A six digit OTP will be sent to your registered mobile no.</string>
+    <string name="a_four_digit_otp_will_be_sent_to_your_registered_mobile_no">A four digit OTP will be sent to your registered mobile no.</string>
     <string name="enter_the_otp">Enter the OTP</string>
     <string name="aadhaar_no_">Aadhaar No.</string>
     <string name="permanent_temporary">Permanent/Temporary</string>
@@ -275,4 +275,5 @@
     <string name="your_request_successfully_submitted_you_will_receive_udid_card_shortly">Your request successfully submitted. You will receive UDID Card Shortly.</string>
     <string name="download_surrender_receipts">Download Surrender Receipts</string>
     <string name="enrollment_no">Enrollment No</string>
+    <string name="you_have_already_sent_a_renewal_request_please_contact_the_cmo">You have already sent a renewal request. Please contact the CMO</string>
 </resources>

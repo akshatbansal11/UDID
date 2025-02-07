@@ -71,9 +71,6 @@ android {
         create("product"){
             dimension = "full"
             buildConfigField ("String", "API_BASE_URL", "\"http://134.209.222.136:86/\"")
-//            buildConfigField 'String', 'WEB_BASE_URL', '"https://templesnet.com/"'
-//            buildConfigField 'String', 'RZP_API_KEY', '"rzp_test_xmAF4mhT1iSMZ6"'
-//            manifestPlaceholders["razorPayApiKey"] = "rzp_test_xmAF4mhT1iSMZ6"
         }
         create("local"){
             dimension = "full"
