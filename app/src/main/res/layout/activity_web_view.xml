@@ -6,7 +6,7 @@
     <data>
         <variable
             name="ClickAction"
-            type="com.udid.ui.activity.WebViewActivity.ClickActions" />
+            type="com.swavlambancard.udid.ui.activity.WebViewActivity.ClickActions" />
     </data>
 
     <LinearLayout

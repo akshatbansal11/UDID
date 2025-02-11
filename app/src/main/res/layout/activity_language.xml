@@ -7,7 +7,7 @@
 
         <variable
             name="ClickAction"
-            type="com.udid.ui.activity.LanguageActivity.ClickActions" />
+            type="com.swavlambancard.udid.ui.activity.LanguageActivity.ClickActions" />
     </data>
 
     <RelativeLayout

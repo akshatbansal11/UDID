@@ -6,7 +6,7 @@
 
         <variable
             name="ClickAction"
-            type="com.udid.ui.activity.ScannerActivity.ClickActions" />
+            type="com.swavlambancard.udid.ui.activity.ScannerActivity.ClickActions" />
     </data>
 
     <RelativeLayout

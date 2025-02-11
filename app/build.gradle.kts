@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.udid"
+    namespace = "com.swavlambancard.udid"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.udid"
+        applicationId = "com.swavlambancard.udid"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -70,7 +70,7 @@ android {
     productFlavors {
         create("product"){
             dimension = "full"
-            buildConfigField ("String", "API_BASE_URL", "\"http://134.209.222.136:86/\"")
+            buildConfigField ("String", "API_BASE_URL_PRODUCTION", "\"https://swavlambancard.gov.in/\"")
         }
         create("local"){
             dimension = "full"

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="ClickAction"
+            type="com.swavlambancard.udid.ui.activity.PersonalProfileActivity.ClickActions" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".ui.activity.PersonalProfileActivity">
+
+        <RelativeLayout
+            android:id="@+id/rlToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/va_bg_application_view"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/ll1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivBackPress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_20"
+                    android:onClick="@{ClickAction::backPress}"
+                    android:src="@drawable/ic_back" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvWelcome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/dp_5"
+                    android:text="@string/pwd_applications_view"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sp_20"
+                    app:fontFamily="@font/poppins_semi_bold" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <HorizontalScrollView
+
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="@dimen/dp_10"
+            android:scrollbars="none"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rlToolbar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/view"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/dp_1"
+                    android:layout_marginTop="50dp"
+                    android:background="@drawable/va_bg_blue_line"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/llPersonalDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="-13dp"
+                    android:onClick="@{ClickAction::personalDetails}"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/view">
+
+                    <ImageView
+                        android:id="@+id/ivPD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/va_blue_ellipse" />
+
+                    <TextView
+                        android:id="@+id/tvPD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/personal_details"
+                        android:textAlignment="center" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llProofOfId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="53dp"
+                    android:layout_marginBottom="-13dp"
+                    android:onClick="@{ClickAction::proofOfId}"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toTopOf="@id/view"
+                    app:layout_constraintStart_toEndOf="@id/llPersonalDetails">
+
+                    <TextView
+                        android:id="@+id/tvPOI"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/proof_of_identity_card"
+                        android:textAlignment="center" />
+
+                    <ImageView
+                        android:id="@+id/ivPOI"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/va_orange_ellipse" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llProofOfCAdd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="53dp"
+                    android:layout_marginTop="-13dp"
+                    android:onClick="@{ClickAction::proofOfCorrespondId}"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toEndOf="@id/llProofOfId"
+                    app:layout_constraintTop_toBottomOf="@id/view">
+
+                    <ImageView
+                        android:id="@+id/ivPOCA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/va_ellipse_orange_down" />
+
+                    <TextView
+                        android:id="@+id/tvPOCA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/proof_of_correspondence_address"
+                        android:textAlignment="center" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llDisabilityDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="53dp"
+                    android:layout_marginBottom="-13dp"
+                    android:onClick="@{ClickAction::disabilityDetails}"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toTopOf="@id/view"
+                    app:layout_constraintStart_toEndOf="@id/llProofOfCAdd">
+
+                    <TextView
+                        android:id="@+id/tvDD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/disability_details"
+                        android:textAlignment="center" />
+
+                    <ImageView
+                        android:id="@+id/ivDD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/va_orange_ellipse" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llHospitalAssesment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="53dp"
+                    android:layout_marginTop="-13dp"
+                    android:layout_marginEnd="10dp"
+                    android:onClick="@{ClickAction::hospitalAssessments}"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toEndOf="@id/llDisabilityDetails"
+                    app:layout_constraintTop_toBottomOf="@id/view">
+
+                    <ImageView
+                        android:id="@+id/ivHA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/va_ellipse_orange_down" />
+
+                    <TextView
+                        android:id="@+id/tvHA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="@dimen/dp_10"
+                        android:text="@string/hospital_for_assessment"
+                        android:textAlignment="center" />
+
+
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </HorizontalScrollView>
+
+        <FrameLayout
+            android:id="@+id/fragFrame"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

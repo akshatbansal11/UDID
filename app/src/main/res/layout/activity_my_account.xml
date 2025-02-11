@@ -5,7 +5,7 @@
     <data>
         <variable
             name="ClickAction"
-            type="com.udid.ui.activity.MyAccountActivity.ClickActions" />
+            type="com.swavlambancard.udid.ui.activity.MyAccountActivity.ClickActions" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

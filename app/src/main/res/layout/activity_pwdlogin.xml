@@ -9,11 +9,11 @@
 
         <variable
             name="ClickAction"
-            type="com.udid.ui.activity.PwdLoginActivity.ClickActions" />
+            type="com.swavlambancard.udid.ui.activity.PwdLoginActivity.ClickActions" />
 
         <variable
             name="viewModel"
-            type="com.udid.viewModel.ViewModel" />
+            type="com.swavlambancard.udid.viewModel.ViewModel" />
     </data>
 
     <ScrollView
@@ -162,7 +162,7 @@
                         android:id="@+id/checkBoxRememberMe"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:buttonTint="@color/grey"
+                        app:buttonTint="@color/darkBlue"
                         android:padding="8dp"
                         android:text="@string/remember_me"
                         android:textColor="@color/black"

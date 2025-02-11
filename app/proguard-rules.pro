@@ -40,7 +40,7 @@
 -dontwarn javax.**
 
 
--keep class com.udid.model.** {*;}
+-keep class com.swavlambancard.udid1.model.** {*;}
 -keepclassmembers,allowshrinking,allowobfuscation interface * {
     @retrofit2.http.* <methods>;
 }
