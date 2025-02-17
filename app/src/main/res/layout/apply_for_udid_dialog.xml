@@ -1,264 +1,278 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="@dimen/dp_10"
-    android:background="@drawable/curve_dialog"
-    android:orientation="vertical"
-    android:elevation="@dimen/dp_3"
-    android:padding="15dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/dialogTitle"
+    <data>
+
+    </data>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingBottom="10dp"
-        android:text="@string/apply_for_udid"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_margin="@dimen/dp_10"
+        android:background="@drawable/curve_dialog"
+        android:orientation="vertical"
+        android:elevation="@dimen/dp_3"
+        android:padding="15dp">
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/radio_option1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:fontFamily="@font/poppins_bold"
-            android:layout_marginBottom="@dimen/dp_5"
-            android:textSize="@dimen/sp_14"
-            app:buttonTint="@color/radioBrown"
-            android:text="@string/i_have_never_obtained_any_disability_certificate_udid_card_issued_through_udid_portal_or_any_other_platform_means" />
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/radio_option2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:fontFamily="@font/poppins_bold"
-            android:layout_marginBottom="@dimen/dp_5"
-            android:textSize="@dimen/sp_14"
-            app:buttonTint="@color/radioBrown"
-            android:text="@string/i_do_not_have_disability_certificate_udid_card_issued_through_udid_portal_but_i_have_a_disability_certificate_issued_through_other_platform_means_for_example_physically_manually_issued_disability_certificate" />
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/radio_option3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:fontFamily="@font/poppins_bold"
-            android:layout_marginBottom="@dimen/dp_5"
-            android:textSize="@dimen/sp_14"
-            app:buttonTint="@color/radioBrown"
-            android:text="@string/i_have_applied_for_disability_certificate_udid_card_but_my_udid_application_was_rejected" />
-
-        <LinearLayout
-            android:id="@+id/llUdidCardReject"
+        <TextView
+            android:id="@+id/dialogTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_marginHorizontal="@dimen/dp_20"
-            android:layout_marginVertical="@dimen/dp_5">
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvEnrollment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/enrollment_number_udid_number"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_15"
-                app:fontFamily="@font/opensans_semibold" />
-
-            <EditText
-                android:id="@+id/etEnrollment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_5"
-                android:background="@drawable/curve_stroke_thin_grey"
-                android:fontFamily="@font/opensans_regular"
-                android:imeOptions="actionNext"
-                android:padding="@dimen/dp_10"
-                android:maxLength="21"
-                android:paddingVertical="@dimen/dp_10"
-                android:singleLine="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_15" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvDob"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:text="@string/date_of_birth"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_15"
-                app:fontFamily="@font/opensans_semibold" />
-
-            <TextView
-                android:id="@+id/etDob"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_5"
-                android:background="@drawable/curve_stroke_thin_grey"
-                android:fontFamily="@font/opensans_regular"
-                android:hint="@string/dd_mm_yyyy"
-                android:padding="@dimen/dp_10"
-                android:paddingVertical="10dp"
-                android:singleLine="true"
-                android:textColor="@color/black"
-                android:textColorHint="#6B6B6B"
-                android:textSize="@dimen/sp_15"
-                app:drawableEndCompat="@drawable/ic_date_of_birth" />
-        </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/radio_option4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:text="@string/apply_for_udid"
             android:textColor="@color/black"
-            android:fontFamily="@font/poppins_bold"
-            android:layout_marginBottom="@dimen/dp_5"
-            android:textSize="@dimen/sp_14"
-            app:buttonTint="@color/radioBrown"
-            android:text="@string/i_have_obtained_disability_certificate_udid_card_but_require_a_new_udid_card_because" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <LinearLayout
-            android:id="@+id/llUdidCard"
+        <RadioGroup
+            android:id="@+id/radioGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:paddingHorizontal="16dp">
+            android:orientation="vertical">
 
-            <!-- CheckBox 1 -->
-            <CheckBox
-                android:id="@+id/checkbox_expired"
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/radio_option1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="My Disability Certificate/UDID Card has expired*."
-                android:textStyle="bold"
-                android:textSize="14sp"/>
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:textSize="@dimen/sp_14"
+                app:buttonTint="@color/radioBrown"
+                android:text="@string/i_have_never_obtained_any_disability_certificate_udid_card_issued_through_udid_portal_or_any_other_platform_means" />
 
-            <!-- CheckBox 2 -->
-            <CheckBox
-                android:id="@+id/checkbox_lost"
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/radio_option2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="My Disability Certificate/UDID Card is lost"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:textSize="@dimen/sp_14"
+                app:buttonTint="@color/radioBrown"
+                android:text="@string/i_do_not_have_disability_certificate_udid_card_issued_through_udid_portal_but_i_have_a_disability_certificate_issued_through_other_platform_means_for_example_physically_manually_issued_disability_certificate" />
 
-            <!-- CheckBox 3 -->
-            <CheckBox
-                android:id="@+id/checkbox_disability_incorrect"
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/radio_option3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Disability/ Other Detail is incorrect"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:textSize="@dimen/sp_14"
+                app:buttonTint="@color/radioBrown"
+                android:text="@string/i_have_applied_for_disability_certificate_udid_card_but_my_udid_application_was_rejected" />
 
-            <!-- CheckBox 4 -->
-            <CheckBox
-                android:id="@+id/checkbox_details_incorrect"
+            <LinearLayout
+                android:id="@+id/llUdidCardReject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_5">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvEnrollment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enrollment_number_udid_number"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15"
+                    app:fontFamily="@font/opensans_semibold" />
+
+                <EditText
+                    android:id="@+id/etEnrollment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/curve_stroke_thin_grey"
+                    android:fontFamily="@font/opensans_regular"
+                    android:imeOptions="actionNext"
+                    android:padding="@dimen/dp_10"
+                    android:maxLength="21"
+                    android:paddingVertical="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDob"
+                    android:layout_width="wrap_content"
+                    android:clickable="true"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:text="@string/date_of_birth"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15"
+                    app:fontFamily="@font/opensans_semibold" />
+
+                <TextView
+                    android:id="@+id/etDob"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/curve_stroke_thin_grey"
+                    android:fontFamily="@font/opensans_regular"
+                    android:hint="@string/dd_mm_yyyy"
+                    android:padding="@dimen/dp_10"
+                    android:paddingVertical="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="#6B6B6B"
+                    android:textSize="@dimen/sp_15"
+                    app:drawableEndCompat="@drawable/ic_date_of_birth" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/radio_option4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Details are incorrect"
-                android:textStyle="bold"
-                android:textSize="14sp"/>
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:textSize="@dimen/sp_14"
+                app:buttonTint="@color/radioBrown"
+                android:text="@string/i_have_obtained_disability_certificate_udid_card_but_require_a_new_udid_card_because" />
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/llUdidCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:paddingHorizontal="16dp">
 
-        <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/radio_option5"
+                <!-- CheckBox 1 -->
+                <CheckBox
+                    android:id="@+id/checkbox_expired"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Disability Certificate/UDID Card has expired*."
+                    android:textStyle="bold"
+                    android:buttonTint="@color/darkBlue"
+                    android:textSize="14sp" />
+
+                <!-- CheckBox 2 -->
+                <CheckBox
+                    android:id="@+id/checkbox_lost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Disability Certificate/UDID Card is lost"
+                    android:textStyle="bold"
+                    android:buttonTint="@color/darkBlue"
+                    android:textSize="14sp" />
+
+                <!-- CheckBox 3 -->
+                <CheckBox
+                    android:id="@+id/checkbox_disability_incorrect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Disability/ Other Detail is incorrect"
+                    android:textStyle="bold"
+                    android:buttonTint="@color/darkBlue"
+                    android:textSize="14sp" />
+
+                <!-- CheckBox 4 -->
+                <CheckBox
+                    android:id="@+id/checkbox_details_incorrect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Details are incorrect"
+                    android:textStyle="bold"
+                    android:buttonTint="@color/darkBlue"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/radio_option5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_bold"
+                android:layout_marginBottom="@dimen/dp_5"
+                android:textSize="@dimen/sp_14"
+                app:buttonTint="@color/radioBrown"
+                android:text="@string/i_have_applied_for_disability_certificate_udid_card_but_my_udid_application_is_still_pending" />
+
+            <LinearLayout
+                android:id="@+id/llUdidCardPending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginHorizontal="@dimen/dp_20"
+                android:layout_marginVertical="@dimen/dp_5">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvEnrollmentPending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/enrollment_number_udid_number"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15"
+                    app:fontFamily="@font/opensans_semibold" />
+
+                <EditText
+                    android:id="@+id/etEnrollmentPending"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/curve_stroke_thin_grey"
+                    android:fontFamily="@font/opensans_regular"
+                    android:imeOptions="actionNext"
+                    android:padding="@dimen/dp_10"
+                    android:maxLength="21"
+                    android:paddingVertical="@dimen/dp_10"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvDobPending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_10"
+                    android:text="@string/date_of_birth"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_15"
+                    app:fontFamily="@font/opensans_semibold" />
+
+                <TextView
+                    android:id="@+id/etDobPending"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_5"
+                    android:background="@drawable/curve_stroke_thin_grey"
+                    android:fontFamily="@font/opensans_regular"
+                    android:hint="@string/dd_mm_yyyy"
+                    android:padding="@dimen/dp_10"
+                    android:paddingVertical="10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHint="#6B6B6B"
+                    android:textSize="@dimen/sp_15"
+                    app:drawableEndCompat="@drawable/ic_date_of_birth" />
+            </LinearLayout>
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tvSubmit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:fontFamily="@font/poppins_bold"
-            android:layout_marginBottom="@dimen/dp_5"
-            android:textSize="@dimen/sp_14"
-            app:buttonTint="@color/radioBrown"
-            android:text="@string/i_have_applied_for_disability_certificate_udid_card_but_my_udid_application_is_still_pending" />
-
-        <LinearLayout
-            android:id="@+id/llUdidCardPending"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_marginHorizontal="@dimen/dp_20"
-            android:layout_marginVertical="@dimen/dp_5">
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvEnrollmentPending"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/enrollment_number_udid_number"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_15"
-                app:fontFamily="@font/opensans_semibold" />
-
-            <EditText
-                android:id="@+id/etEnrollmentPending"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_5"
-                android:background="@drawable/curve_stroke_thin_grey"
-                android:fontFamily="@font/opensans_regular"
-                android:imeOptions="actionNext"
-                android:padding="@dimen/dp_10"
-                android:maxLength="21"
-                android:paddingVertical="@dimen/dp_10"
-                android:singleLine="true"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_15" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvDobPending"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_10"
-                android:text="@string/date_of_birth"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_15"
-                app:fontFamily="@font/opensans_semibold" />
-
-            <TextView
-                android:id="@+id/etDobPending"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_5"
-                android:background="@drawable/curve_stroke_thin_grey"
-                android:fontFamily="@font/opensans_regular"
-                android:hint="@string/dd_mm_yyyy"
-                android:padding="@dimen/dp_10"
-                android:paddingVertical="10dp"
-                android:singleLine="true"
-                android:textColor="@color/black"
-                android:textColorHint="#6B6B6B"
-                android:textSize="@dimen/sp_15"
-                app:drawableEndCompat="@drawable/ic_date_of_birth" />
-        </LinearLayout>
-    </RadioGroup>
-
-    <TextView
-        android:id="@+id/tvSubmit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dp_10"
-        android:layout_marginBottom="@dimen/dp_10"
-        android:layout_marginHorizontal="@dimen/dp_15"
-        android:background="@drawable/curve_fill_blue"
-        android:elevation="@dimen/dp_5"
-        android:layout_gravity="center"
-        android:paddingHorizontal="@dimen/dp_50"
-        android:paddingVertical="@dimen/dp_12"
-        android:text="@string/submit"
-        android:textAlignment="center"
-        android:textColor="@color/white" />
-</LinearLayout>
+            android:layout_marginTop="@dimen/dp_10"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_marginHorizontal="@dimen/dp_15"
+            android:background="@drawable/curve_fill_blue"
+            android:elevation="@dimen/dp_5"
+            android:layout_gravity="center"
+            android:paddingHorizontal="@dimen/dp_50"
+            android:paddingVertical="@dimen/dp_12"
+            android:text="@string/submit"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</layout>
