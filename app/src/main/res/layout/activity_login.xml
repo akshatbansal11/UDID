@@ -102,6 +102,22 @@
                     android:textAlignment="center"
                     android:textColor="@color/white" />
 
+                <TextView
+                    android:id="@+id/tvApplyForUDID"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvScannerPage"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginVertical="@dimen/dp_20"
+                    android:background="@drawable/curve_fill_blue"
+                    android:elevation="@dimen/dp_5"
+                    android:onClick="@{ClickAction::applyForUDID}"
+                    android:paddingHorizontal="@dimen/dp_45"
+                    android:paddingVertical="@dimen/dp_15"
+                    android:text="@string/apply_for_udid"
+                    android:textAlignment="center"
+                    android:textColor="@color/white" />
+
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>

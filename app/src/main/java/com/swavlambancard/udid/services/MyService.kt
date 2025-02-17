@@ -197,7 +197,7 @@ interface MyService {
     ): Response<CommonResponse>
 
     @Multipart
-    @Headers("Content-Type: application/json")
+//    @Headers("Content-Type: application/json")
     @POST(LOGOUT)
     suspend fun logout(
         @Part("application_number") applicationNumber: RequestBody?,

@@ -1,179 +1,140 @@
 package com.swavlambancard.udid.ui.fragments
 
-import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.RotateDrawable
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
+import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.swavlambancard.udid.R
-import com.swavlambancard.udid.databinding.FragmentPersonalDetailsBinding
 import com.swavlambancard.udid.databinding.FragmentProofOfIDBinding
+import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
+import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
+import com.swavlambancard.udid.utilities.URIPathHelper
+import com.swavlambancard.udid.utilities.Utility.rotateDrawable
+import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
+import com.swavlambancard.udid.viewModel.ViewModel
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 
 class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     private lateinit var sharedViewModel: SharedDataViewModel
+    private var viewModel = ViewModel()
     private var mBinding: FragmentProofOfIDBinding? = null
-    private lateinit var bottomSheetDialog: BottomSheetDialog
-    private lateinit var stateAdapter: BottomSheetAdapter
+    private var bottomSheetDialog: BottomSheetDialog? = null
+    private var bottomSheetAdapter: BottomSheetAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
-    private var districtId: String? = null // Store selected state
+    private var identityProofList = ArrayList<DropDownResult>()
+    private var identityProofListYes = ArrayList<DropDownResult>()
+    private var identityProofId: String? = null
+    var body: MultipartBody.Part? = null
+    private var document = 0
 
-    private val guardian = listOf(
-        DropDownResult(id = "1", name = "Father"),
-        DropDownResult(id = "2", name = "Mother"),
-        DropDownResult(id = "3", name = "Guardian")
-    )
-    private var gender: Int = 0
+    private var aadhaarTag: Int = 0
     override val layoutId: Int
         get() = R.layout.fragment_proof_of_i_d
 
 
     override fun init() {
         mBinding = viewDataBinding
+        mBinding?.clickAction = ClickActions()
+        viewModel.init()
+        sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
+        identityProofApi()
+    }
 
-        if (mBinding?.rbYes?.isChecked == true) {
-            mBinding?.tvAadhaar?.showView()
-            mBinding?.etAadhaarNo?.showView()
-            mBinding?.checkboxConfirm?.showView()
-            mBinding?.tvAadhaarNo?.hideView()
-            mBinding?.etAadhaarEnrollment?.hideView()
-            mBinding?.tvUploadAadhaarEnrollment?.hideView()
-            mBinding?.llApplicantPhotoAadhaar?.hideView()
-            mBinding?.tvSlipIvSize?.hideView()
-        } else if (mBinding?.rbNo?.isChecked == true) {
-            mBinding?.tvAadhaar?.hideView()
-            mBinding?.etAadhaarNo?.hideView()
-            mBinding?.checkboxConfirm?.hideView()
-            mBinding?.tvAadhaarNo?.showView()
-            mBinding?.etAadhaarEnrollment?.showView()
-            mBinding?.tvUploadAadhaarEnrollment?.showView()
-            mBinding?.llApplicantPhotoAadhaar?.showView()
-            mBinding?.tvSlipIvSize?.showView()
-        } else {
-            mBinding?.tvAadhaar?.hideView()
-            mBinding?.etAadhaarNo?.hideView()
-            mBinding?.checkboxConfirm?.hideView()
-            mBinding?.tvAadhaarNo?.hideView()
-            mBinding?.etAadhaarEnrollment?.hideView()
-            mBinding?.tvUploadAadhaarEnrollment?.hideView()
-            mBinding?.llApplicantPhotoAadhaar?.hideView()
-            mBinding?.tvSlipIvSize?.hideView()
-        }
+    override fun setVariables() {
+    }
 
-
-        mBinding?.rgAadhaar?.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId) {
-                R.id.rbYes -> {
-                    mBinding?.tvAadhaar?.showView()
-                    mBinding?.etAadhaarNo?.showView()
-                    mBinding?.checkboxConfirm?.showView()
-                    mBinding?.tvAadhaarNo?.hideView()
-                    mBinding?.etAadhaarEnrollment?.hideView()
-                    mBinding?.tvUploadAadhaarEnrollment?.hideView()
-                    mBinding?.llApplicantPhotoAadhaar?.hideView()
-                    mBinding?.tvSlipIvSize?.hideView()
-                    gender = 1
-                }
-
-                R.id.rbNo -> {
-                    mBinding?.tvAadhaar?.hideView()
-                    mBinding?.etAadhaarNo?.hideView()
-                    mBinding?.checkboxConfirm?.hideView()
-                    mBinding?.tvAadhaarNo?.showView()
-                    mBinding?.etAadhaarEnrollment?.showView()
-                    mBinding?.tvUploadAadhaarEnrollment?.showView()
-                    mBinding?.llApplicantPhotoAadhaar?.showView()
-                    mBinding?.tvSlipIvSize?.showView()
-                    gender = 2
-                }
-
-                else -> {
-                    gender = 0
+    override fun setObservers() {
+        viewModel.dropDownResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
+                if (userResponseModel.model == "Identityproofs") {
+                    identityProofList.clear()
+                    identityProofList.add(
+                        DropDownResult(
+                            "0",
+                            getString(R.string.select_identity_proof)
+                        )
+                    )
+                    identityProofList.addAll(userResponseModel._result)
+                    identityProofListYes.addAll(userResponseModel._result)
+                    bottomSheetAdapter?.notifyDataSetChanged()
                 }
             }
-            sharedViewModel.userData.value?.aadhaarCard = gender
-
         }
+        viewModel.errors.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
+        }
+    }
 
-
-
-
-        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedDataViewModel::class.java)
-        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
-            if (userData.aadhaarCard == 1) {
-                mBinding?.rbYes?.isChecked = true
-                mBinding?.tvAadhaar?.showView()
-                mBinding?.etAadhaarNo?.showView()
-                mBinding?.checkboxConfirm?.showView()
-                mBinding?.tvAadhaarNo?.hideView()
-                mBinding?.etAadhaarEnrollment?.hideView()
-                mBinding?.tvUploadAadhaarEnrollment?.hideView()
-                mBinding?.llApplicantPhotoAadhaar?.hideView()
-                mBinding?.tvSlipIvSize?.hideView()
-            } else if (userData.aadhaarCard == 2) {
-                mBinding?.rbNo?.isChecked = true
-                mBinding?.tvAadhaar?.hideView()
-                mBinding?.etAadhaarNo?.hideView()
-                mBinding?.checkboxConfirm?.hideView()
-                mBinding?.tvAadhaarNo?.showView()
-                mBinding?.etAadhaarEnrollment?.showView()
-                mBinding?.tvUploadAadhaarEnrollment?.showView()
-                mBinding?.llApplicantPhotoAadhaar?.showView()
-                mBinding?.tvSlipIvSize?.showView()
-            } else {
-                mBinding?.rbYes?.isChecked = false
-                mBinding?.rbNo?.isChecked = false
-                mBinding?.tvAadhaar?.hideView()
-                mBinding?.etAadhaarNo?.hideView()
-                mBinding?.checkboxConfirm?.hideView()
-                mBinding?.tvAadhaarNo?.hideView()
-                mBinding?.etAadhaarEnrollment?.hideView()
-                mBinding?.tvUploadAadhaarEnrollment?.hideView()
-                mBinding?.llApplicantPhotoAadhaar?.hideView()
-                mBinding?.tvSlipIvSize?.hideView()
+    inner class ClickActions {
+        fun next(view: View) {
+            if (valid()) {
+                mBinding?.llParent?.let { showSnackbar(it, "Done OTP") }
             }
-            mBinding?.etAadhaarNo?.setText(userData.aadhaarNo)
-            mBinding?.etAadhaarEnrollment?.setText(userData.aadhaarEnrollment)
-            mBinding?.tvIdentityProof?.setText(userData.identityProof)
-            if (!userData.identityProof.isNullOrEmpty()) {
-                mBinding?.tvIdentityProof?.setTextColor(Color.parseColor("#000000"))
-            }
-            mBinding?.checkboxConfirm?.isChecked = userData.aadhaarCheckBox == 1
         }
 
+        fun rbYes(view: View) {
+            aadhaarTag = 1
+            identityProofListYes.remove(DropDownResult("8", "Aadhaar Card"))
+            mBinding?.llYesAadhaarCard?.showView()
+            mBinding?.llNoAadhaarCard?.hideView()
 
-
-        mBinding?.etAadhaarNo?.addTextChangedListener {
-            sharedViewModel.userData.value?.aadhaarNo = it.toString()
-        }
-        mBinding?.checkboxConfirm?.setOnCheckedChangeListener { group, checkedId ->
-            sharedViewModel.userData.value?.aadhaarCheckBox = if (checkedId) 1 else 0
-        }
-
-        mBinding?.etAadhaarEnrollment?.addTextChangedListener {
-            sharedViewModel.userData.value?.aadhaarEnrollment = it.toString()
-        }
-        mBinding?.tvIdentityProof?.addTextChangedListener {
-            sharedViewModel.userData.value?.identityProof = it.toString()
         }
 
-        mBinding?.tvIdentityProof?.setOnClickListener {
-            showBottomSheetDialog("Guardian")
+        fun rbNo(view: View) {
+            aadhaarTag = 2
+            identityProofList.clear()
+            identityProofList.add(DropDownResult("0", getString(R.string.select_identity_proof)))
+            identityProofList.add(DropDownResult("8", "Aadhaar Card"))
+            mBinding?.llYesAadhaarCard?.hideView()
+            mBinding?.llNoAadhaarCard?.showView()
         }
 
+        fun identityProof(view: View) {
+            showBottomSheetDialog("identity_proof")
+        }
+
+        fun uploadFileIdentityProof(view: View) {
+            document = 1
+            checkStoragePermission(requireContext())
+        }
+
+        fun uploadFileAadhaarEnrollmentSlip(view: View) {
+            document = 2
+            checkStoragePermission(requireContext())
+        }
+    }
+
+    private fun identityProofApi() {
+        viewModel.getDropDown(
+            requireContext(), DropDownRequest(
+                Fields(id = "identity_name"),
+                model = "Identityproofs",
+                type = "mobile"
+            )
+        )
     }
 
     private fun showBottomSheetDialog(type: String) {
@@ -188,49 +149,75 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         val close = view.findViewById<TextView>(R.id.tvClose)
 
         close.setOnClickListener {
-            bottomSheetDialog.dismiss()
+            bottomSheetDialog?.dismiss()
         }
 
         // Define a variable for the selected list and TextView
         val selectedList: List<DropDownResult>
-        val selectedTextView: TextView
+        val selectedTextView: TextView?
         // Initialize based on type
         when (type) {
-            "Guardian" -> {
-                selectedList = guardian
-                selectedTextView = mBinding!!.tvIdentityProof
+            "identity_proof" -> {
+                if (identityProofList.isEmpty()) {
+                    identityProofApi()
+                }
+                val list: ArrayList<DropDownResult> = when (aadhaarTag) {
+                    1 -> {
+                        identityProofListYes
+                    }
+                    2 -> {
+                        identityProofList
+                    }
+                    else -> {
+                        identityProofList
+                    }
+                }
+                selectedList = list
+                selectedTextView = mBinding?.etIdentityProof
             }
 
             else -> return
         }
 
         // Set up the adapter
-        stateAdapter = BottomSheetAdapter(requireContext(), selectedList) { selectedItem, id ->
-            // Handle state item click
-            selectedTextView.text = selectedItem
-                districtId = id
-            selectedTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-            bottomSheetDialog.dismiss()
-        }
-
-
+        bottomSheetAdapter =
+            BottomSheetAdapter(requireContext(), selectedList) { selectedItem, id ->
+                // Handle state item click
+                selectedTextView?.text = selectedItem
+                when (type) {
+                    "identity_proof" -> {
+                        if (selectedItem == "Select Identity Proof") {
+                            selectedTextView?.text = ""
+                        } else {
+                            identityProofId = id
+                        }
+                    }
+                }
+                selectedTextView?.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.black
+                    )
+                )
+                bottomSheetDialog?.dismiss()
+            }
 
         layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         rvBottomSheet.layoutManager = layoutManager
-        rvBottomSheet.adapter = stateAdapter
-        bottomSheetDialog.setContentView(view)
+        rvBottomSheet.adapter = bottomSheetAdapter
+        bottomSheetDialog?.setContentView(view)
 
 
         // Rotate drawable
         val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_down)
         var rotatedDrawable = rotateDrawable(drawable, 180f)
-        selectedTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, rotatedDrawable, null)
+        selectedTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, rotatedDrawable, null)
 
         // Set a dismiss listener to reset the view visibility
-        bottomSheetDialog.setOnDismissListener {
+        bottomSheetDialog?.setOnDismissListener {
             rotatedDrawable = rotateDrawable(drawable, 0f)
-            selectedTextView.setCompoundDrawablesWithIntrinsicBounds(
+            selectedTextView?.setCompoundDrawablesWithIntrinsicBounds(
                 null,
                 null,
                 rotatedDrawable,
@@ -239,25 +226,180 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         }
 
         // Show the bottom sheet
-        bottomSheetDialog.show()
+        bottomSheetDialog?.show()
     }
 
-    private fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {
-        drawable?.mutate() // Mutate the drawable to avoid affecting other instances
-
-        val rotateDrawable = RotateDrawable()
-        rotateDrawable.drawable = drawable
-        rotateDrawable.fromDegrees = 0f
-        rotateDrawable.toDegrees = angle
-        rotateDrawable.level = 10000 // Needed to apply the rotation
-
-        return rotateDrawable
+    private fun valid(): Boolean {
+        if (aadhaarTag == 0) {
+            mBinding?.llParent?.let { showSnackbar(it, "do you have aadhaar card?") }
+            return false
+        } else if (aadhaarTag == 1) {
+            if (mBinding?.etAadhaarNo?.text.toString().isEmpty()) {
+                mBinding?.llParent?.let { showSnackbar(it, "Enter aadhaar number") }
+                return false
+            } else if (mBinding?.checkboxConfirm?.isChecked != true) {
+                mBinding?.llParent?.let { showSnackbar(it, "Please select checkbox.") }
+                return false
+            }
+        } else if (aadhaarTag == 2) {
+            if (mBinding?.etAadhaarEnrollment?.text.toString().trim().isEmpty()) {
+                mBinding?.llParent?.let { showSnackbar(it, "Enter aadhaar enrollment number") }
+                return false
+            } else if (mBinding?.etFileNameEnrollmentSlip?.text.toString().trim().isEmpty()) {
+                mBinding?.llParent?.let { showSnackbar(it, "Upload aadhaar enrollment slip") }
+                return false
+            }
+        }
+        if (mBinding?.etIdentityProof?.text.toString().trim().isEmpty()) {
+            mBinding?.llParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.please_select_identity_proof)
+                )
+            }
+            return false
+        }
+        if (mBinding?.etFileNameIdentityProof?.text.toString().trim().isEmpty()) {
+            mBinding?.llParent?.let {
+                showSnackbar(it, getString(R.string.please_upload_supporting_document))
+            }
+            return false
+        }
+        return true
     }
 
-    override fun setVariables() {
+    @SuppressLint("Range")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                CAPTURE_IMAGE_REQUEST -> {
+                    val imageBitmap = data?.extras?.get("data") as Bitmap
+                    val imageFile = saveImageToFile(imageBitmap)
+                    photoFile = imageFile
+                    if (document == 1) {
+                        val fileSizeInBytes = photoFile?.length() ?: 0
+                        if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                            mBinding?.etFileNameIdentityProof?.text = photoFile?.name
+//                            uploadImage(photoFile!!)
+                        } else {
+                            compressFile(photoFile!!) // Compress if size exceeds limit
+                            mBinding?.etFileNameIdentityProof?.text = photoFile?.name
+//                            uploadImage(photoFile!!)
+                        }
+                    } else if (document == 2) {
+                        val fileSizeInBytes = photoFile?.length() ?: 0
+                        if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                            mBinding?.etFileNameEnrollmentSlip?.text = photoFile?.name
+//                            uploadImage(photoFile!!)
+                        } else {
+                            compressFile(photoFile!!) // Compress if size exceeds limit
+                            mBinding?.etFileNameEnrollmentSlip?.text = photoFile?.name
+//                            uploadImage(photoFile!!)
+                        }
+                    }
+                }
+
+                PICK_IMAGE -> {
+                    val selectedImageUri = data?.data
+                    if (selectedImageUri != null) {
+                        val uriPathHelper = URIPathHelper()
+                        val filePath = uriPathHelper.getPath(requireContext(), selectedImageUri)
+
+                        val fileExtension =
+                            filePath?.substringAfterLast('.', "").orEmpty().lowercase()
+                        if (fileExtension in listOf("png", "jpg", "jpeg")) {
+                            val file = filePath?.let { File(it) }
+                            val fileSizeInBytes = file?.length() ?: 0
+                            if (document == 1) {
+                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                                    mBinding?.etFileNameIdentityProof?.text = file?.name
+//                                    uploadImage(file!!)
+                                } else {
+                                    compressFile(file!!) // Compress if size exceeds limit
+                                    mBinding?.etFileNameIdentityProof?.text = file.name
+//                                    uploadImage(file)
+                                }
+                            } else if (document == 2) {
+                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                                    mBinding?.etFileNameEnrollmentSlip?.text = file?.name
+//                                    uploadImage(file!!)
+                                } else {
+                                    compressFile(file!!) // Compress if size exceeds limit
+                                    mBinding?.etFileNameEnrollmentSlip?.text = file.name
+//                                    uploadImage(file)
+                                }
+                            }
+                        } else {
+                            mBinding?.llParent?.let {
+                                showSnackbar(
+                                    it,
+                                    getString(R.string.format_not_supported)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                REQUEST_iMAGE_PDF -> {
+                    data?.data?.let { uri ->
+                        val projection = arrayOf(
+                            MediaStore.MediaColumns.DISPLAY_NAME,
+                            MediaStore.MediaColumns.SIZE
+                        )
+
+                        val cursor = requireContext().contentResolver.query(
+                            uri,
+                            projection,
+                            null,
+                            null,
+                            null
+                        )
+                        cursor?.use {
+                            if (it.moveToFirst()) {
+                                val documentName =
+                                    it.getString(it.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME))
+                                val fileSizeInBytes =
+                                    it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE))
+                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+//                                    uploadDocument(documentName, uri)
+                                    if (document == 1)
+                                        mBinding?.etFileNameIdentityProof?.text = documentName
+                                    else if (document == 2)
+                                        mBinding?.etFileNameEnrollmentSlip?.text = documentName
+                                } else {
+                                    mBinding?.llParent?.let {
+                                        showSnackbar(
+                                            it,
+                                            getString(R.string.file_size_exceeds_5_mb)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    override fun setObservers() {
+    private fun uploadImage(file: File) {
+        lifecycleScope.launch {
+            val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            body =
+                MultipartBody.Part.createFormData(
+                    "address_proof_file",
+                    file.name, reqFile
+                )
+        }
     }
 
+    private fun uploadDocument(documentName: String?, uri: Uri) {
+        val requestBody = convertToRequestBody(requireContext(), uri)
+        body = MultipartBody.Part.createFormData(
+            "address_proof_file",
+            documentName,
+            requestBody
+        )
+    }
 }

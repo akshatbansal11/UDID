@@ -193,10 +193,7 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
         }
     }
 
-    private fun calenderOpen(
-        context: Context,
-        editText: TextView,
-    ) {
+    private fun calenderOpen(context: Context, editText: TextView) {
         val cal: Calendar = Calendar.getInstance()
 
         // Parse the date from editText if it contains a valid date

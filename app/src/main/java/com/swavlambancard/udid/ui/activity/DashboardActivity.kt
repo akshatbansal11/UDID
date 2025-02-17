@@ -228,7 +228,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
             )
         )
 
-        menuValidate()
+//        menuValidate()
         dashboardAdapter = DashboardAdapter(this, dashboardList)
         gridLayoutManager = GridLayoutManager(this, 3)
         mBinding?.contentNav?.rvApplicationStatus?.layoutManager = gridLayoutManager

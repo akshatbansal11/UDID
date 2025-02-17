@@ -58,12 +58,6 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
     private val fileCompressor by lazy { FileCompressor(applicationContext) }
     var allAccepted: Boolean = false
 
-    @Inject
-    protected lateinit var mApplication: UDID
-
-    @Inject
-    protected lateinit var mRepository: Repository
-
     val CAPTURE_IMAGE_REQUEST = 1
 
     private var STORAGE_STORAGE_REQUEST_CODE = 61
@@ -71,17 +65,11 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
     val PICK_IMAGE = 2
     private val REQUEST_iMAGE_GALLERY = 3
 
-    private var biometricPrompt: BiometricPrompt? = null
-    private lateinit var executor: Executor
-    private lateinit var callBack: BiometricPrompt.AuthenticationCallback
-    private var keyguardManager: KeyguardManager? = null
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
 
     var uriTemp: Uri? = null
 
-    //    var currentImagePath: String? = null
-//    var mCurrentPhotoPath: String? = null
     var photoFile: File? = null
     var file: File? = null
 
@@ -89,22 +77,13 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
 
     var isPDF: Boolean = false
 
-    val cameraImageUri: Uri by lazy {
-        val file = File(applicationContext.filesDir, "captured_image.jpg")
-        FileProvider.getUriForFile(
-            applicationContext,
-            "com.udid.provider",
-            file
-        )
-    }
-
     fun showLoader(context: Context) {
-        com.swavlambancard.udid.utilities.ProcessDialog.start(context)
+        ProcessDialog.start(context)
     }
 
     fun dismissLoader() {
-        if (com.swavlambancard.udid.utilities.ProcessDialog.isShowing())
-            com.swavlambancard.udid.utilities.ProcessDialog.dismiss()
+        if (ProcessDialog.isShowing())
+            ProcessDialog.dismiss()
     }
 
     private var pdf = ArrayList<File>()
@@ -129,11 +108,6 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
                 "en"
             )
         }
-//        if (Utility.isDarkMode(this)) {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-//        } else {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//        }
         context = this
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         window.statusBarColor = ContextCompat.getColor(this, R.color.darkBlue)
@@ -237,7 +211,6 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
             Log.e("DEBUG", "${it.key} = ${it.value}")
             if (!it.value) {
                 allAccepted = false
-                context = context
                 showDialogOK(getString(R.string.camera_permission)) { dialog, which ->
                     when (which) {
                         DialogInterface.BUTTON_POSITIVE -> context?.let { it1 ->
@@ -342,8 +315,8 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
     }
 
     private fun showDialogOK(message: String, okListener: DialogInterface.OnClickListener) {
-        val dialog = android.app.AlertDialog.Builder(this);
-        dialog.setCancelable(false);
+        val dialog = android.app.AlertDialog.Builder(this)
+        dialog.setCancelable(false)
         dialog.setMessage(message)
             .setPositiveButton(getString(R.string.ok), okListener)
             .setNegativeButton(getString(R.string.cancel), okListener)

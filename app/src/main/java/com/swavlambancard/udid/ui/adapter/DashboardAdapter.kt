@@ -23,6 +23,7 @@ import com.swavlambancard.udid.ui.activity.DashboardActivity
 import com.swavlambancard.udid.ui.activity.FeedbackAndQueryActivity
 import com.swavlambancard.udid.ui.activity.LostCardActivity
 import com.swavlambancard.udid.ui.activity.MyAccountActivity
+import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.activity.RenewalCardActivity
 import com.swavlambancard.udid.ui.activity.SurrenderCardActivity
 import com.swavlambancard.udid.ui.activity.TrackYourCardActivity
@@ -279,7 +280,7 @@ class DashboardAdapter(
 
             context.getString(R.string.update_personal_profile) -> {
                 holder.mBinding.llParent.setOnClickListener {
-                    context.toast(context.getString(R.string.coming_soon))
+                    context.startActivity(Intent(context, PersonalProfileActivity::class.java))
                 }
             }
 

@@ -195,7 +195,7 @@ object Utility {
         savePreferencesString(activity, "locale", languageCode)
     }
 
-    fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable? {
+    fun rotateDrawable(drawable: Drawable?, angle: Float): Drawable {
         drawable?.mutate() // Mutate the drawable to avoid affecting other instances
 
         val rotateDrawable = RotateDrawable()
@@ -273,7 +273,7 @@ object Utility {
             val targetFormat: DateFormat = SimpleDateFormat("dd MMM, yyyy")
             val date: Date = originalFormat.parse(dateString)
 
-            targetFormat.format(date).toUpperCase()
+            targetFormat.format(date).uppercase(Locale.getDefault())
         } catch (e: Exception) {
             ""
         }
@@ -296,7 +296,7 @@ object Utility {
             val targetFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
             val date: Date = originalFormat.parse(dateString)
 
-            targetFormat.format(date).toUpperCase()
+            targetFormat.format(date).uppercase(Locale.getDefault())
         } catch (e: Exception) {
             ""
         }
@@ -309,7 +309,7 @@ object Utility {
             val targetFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'00:00:00'+'00:00")
             val date: Date = originalFormat.parse(dateString)
 
-            targetFormat.format(date).toUpperCase()
+            targetFormat.format(date).uppercase(Locale.getDefault())
         } catch (e: Exception) {
             ""
         }
@@ -431,7 +431,7 @@ object Utility {
             Log.d("Time----", TimeZone.getDefault().toString())
             val pasTime = dateFormat.parse(dateString)
             //dateFormat.timeZone = TimeZone.getDefault();
-            val msDiff = Calendar.getInstance().timeInMillis - pasTime.time;
+            val msDiff = Calendar.getInstance().timeInMillis - pasTime.time
             val calDiff = Calendar.getInstance()
             calDiff.timeInMillis = msDiff
             val msg = "${calDiff.get(Calendar.YEAR) - 1970} year, " +
@@ -464,7 +464,7 @@ object Utility {
                 dateFormat = SimpleDateFormat("MM-dd-yyyy")
             }
 
-            return dateFormat?.format(pasTime).toString()
+            return dateFormat.format(pasTime).toString()
         } catch (e: Exception) {
 
         }
@@ -644,7 +644,7 @@ object Utility {
         //File file = new File(Environment.getExternalStorageDirectory() + "/inpaint/"+"seconds"+".png");
         try {
             outStream = FileOutputStream(file!!)
-            mBitmap.compress(Bitmap.CompressFormat.PNG, 100, outStream)
+            mBitmap.compress(CompressFormat.PNG, 100, outStream)
             outStream.flush()
             outStream.close()
 
@@ -788,7 +788,7 @@ object Utility {
     }
 
 
-    fun getPreferencesArrayList(context: Context, key: String): ArrayList<String>? {
+    fun getPreferencesArrayList(context: Context, key: String): ArrayList<String> {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val set = sharedPreferences.getStringSet(key, null)
         val list = ArrayList<String>()
@@ -828,7 +828,7 @@ object Utility {
         return sharedPreferences.getInt(key, 0)
     }
 
-    fun getPreferenceBoolean(context: Context?, key: String): Boolean? {
+    fun getPreferenceBoolean(context: Context?, key: String): Boolean {
         val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         return sp.getBoolean(key, false)
     }
@@ -956,7 +956,7 @@ object Utility {
 
 
     fun checkPhonePermission(context: Context): Boolean {
-        val result = ContextCompat.checkSelfPermission(context!!, Manifest.permission.CALL_PHONE)
+        val result = ContextCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE)
         return result == PackageManager.PERMISSION_GRANTED
     }
 
@@ -1014,9 +1014,9 @@ object Utility {
     fun changeLocale(context: Context): Context {
         var ctx = context
         if (getPreferenceString(context, AppConstants.LOCALE) != "") {
-            val res = context.resources;
-            val dm = res?.displayMetrics;
-            val conf = res?.configuration;
+            val res = context.resources
+            val dm = res?.displayMetrics
+            val conf = res?.configuration
             conf?.setLocale(
                 Locale(
                     getPreferenceString(
@@ -1024,11 +1024,11 @@ object Utility {
                         AppConstants.LOCALE
                     )
                 )
-            ); // API 17+ only.
-            res.updateConfiguration(conf, dm);
-            ctx = context.createConfigurationContext(conf!!);
+            ) // API 17+ only.
+            res.updateConfiguration(conf, dm)
+            ctx = context.createConfigurationContext(conf!!)
         }
-        return ctx;
+        return ctx
     }
 
     class Run {
@@ -1202,7 +1202,7 @@ object Utility {
                 super.updateDrawState(ds)
                 ds.isUnderlineText = false
                 ds.color = ContextCompat.getColor(context, R.color.white)
-                view.highlightColor = Color.TRANSPARENT;
+                view.highlightColor = Color.TRANSPARENT
             }
 
             override fun onClick(widget: View) {
@@ -1362,7 +1362,8 @@ object Utility {
                 SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH)
             val targetFormat: DateFormat = SimpleDateFormat("dd MMM yyyy")
             val date: Date = originalFormat.parse(dateString)
-            val formattedDate: String = targetFormat.format(date).toString().toUpperCase()
+            val formattedDate: String = targetFormat.format(date).toString()
+                .uppercase(Locale.getDefault())
             formattedDate
         } catch (e: Exception) {
             ""
@@ -1375,7 +1376,8 @@ object Utility {
                 SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
             val targetFormat: DateFormat = SimpleDateFormat("dd MMM yyyy")
             val date: Date = originalFormat.parse(dateString)
-            val formattedDate: String = targetFormat.format(date).toString().toUpperCase()
+            val formattedDate: String = targetFormat.format(date).toString()
+                .uppercase(Locale.getDefault())
             formattedDate
         } catch (e: Exception) {
             ""
@@ -1388,7 +1390,8 @@ object Utility {
                 SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH)
             val targetFormat: DateFormat = SimpleDateFormat("dd MMM yyyy")
             val date: Date = originalFormat.parse(dateString)
-            val formattedDate: String = targetFormat.format(date).toString().toUpperCase()
+            val formattedDate: String = targetFormat.format(date).toString()
+                .uppercase(Locale.getDefault())
             formattedDate
         } catch (e: Exception) {
             ""
@@ -1647,7 +1650,7 @@ object Utility {
 //    }
      fun showConfirmationAlertDialog(
     context: Context,
-    callback: com.swavlambancard.udid.callBack.DialogCallback
+    callback: DialogCallback
     ) {
         val dialog = Dialog(context, android.R.style.Theme_Translucent_NoTitleBar)
         dialog.setCancelable(true)
@@ -1717,10 +1720,10 @@ object Utility {
         return finalFileSize > maxFileSize
     }
 
-    fun highlightTextString(completeText: String, searchText: String): CharSequence? {
-        val temp = completeText.toLowerCase()
+    fun highlightTextString(completeText: String, searchText: String): CharSequence {
+        val temp = completeText.lowercase(Locale.getDefault())
         val highlightText = SpannableStringBuilder(completeText)
-        val pattern: Pattern = Pattern.compile(searchText.toLowerCase())
+        val pattern: Pattern = Pattern.compile(searchText.lowercase(Locale.getDefault()))
         val matcher: Matcher = pattern.matcher(temp)
         while (matcher.find()) {
             val styleSpan = StyleSpan(Typeface.BOLD)
@@ -1729,7 +1732,7 @@ object Utility {
         return highlightText
     }
 
-    fun getBitmapFromPath(filePath: String?): File? {
+    fun getBitmapFromPath(filePath: String?): File {
 
         val imageFile = File(filePath)
         val fout: OutputStream = FileOutputStream(imageFile)
@@ -1861,7 +1864,8 @@ object Utility {
 
             var format1 = SimpleDateFormat("dd MMM yyyy")
             val date: Date = format.parse(dateStr)
-            val formattedDate: String = format1.format(date).toString().toUpperCase()
+            val formattedDate: String = format1.format(date).toString()
+                .uppercase(Locale.getDefault())
 
             return formattedDate
         } catch (ex: Exception) {

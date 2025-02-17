@@ -1,9 +1,10 @@
 package com.swavlambancard.udid.utilities
 
+import FileCompressor
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
-import android.app.KeyguardManager
+import android.content.ContentResolver
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -11,7 +12,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.hardware.biometrics.BiometricPrompt
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -34,24 +34,27 @@ import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import com.google.android.material.snackbar.Snackbar
 import com.swavlambancard.udid.R
-import com.swavlambancard.udid.repository.Repository
 import com.swavlambancard.udid.utilities.BaseActivity.Companion
 import com.swavlambancard.udid.utilities.BaseActivity.Companion.REQUEST_PERMISSION_CODE
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.Executor
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import javax.inject.Inject
 
 abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
     private val permissions = arrayOf(
@@ -59,272 +62,98 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.CAMERA
     )
-
-    var allAccepted :Boolean= false
-
-    @Inject
-    protected lateinit var mApplication: UDID
-
-    @Inject
-    protected lateinit var mRepository: Repository
+    private val fileCompressor by lazy { FileCompressor(requireContext()) }
+    var allAccepted: Boolean = false
 
     val CAPTURE_IMAGE_REQUEST = 1
 
     private var STORAGE_STORAGE_REQUEST_CODE = 61
     val REQUEST_iMAGE_PDF = 20
     val PICK_IMAGE = 2
+    var isFrom = 0
     private val REQUEST_iMAGE_GALLERY = 3
 
-    private var biometricPrompt: BiometricPrompt? = null
-    private lateinit var executor: Executor
-    private lateinit var callBack: BiometricPrompt.AuthenticationCallback
-    private var keyguardManager: KeyguardManager? = null
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
 
     var uriTemp: Uri? = null
-    //    var currentImagePath: String? = null
-//    var mCurrentPhotoPath: String? = null
+
     var photoFile: File? = null
     var file: File? = null
-
 
     var isPDF: Boolean = false
     lateinit var viewDataBinding: T
 
     @get:LayoutRes
     abstract val layoutId: Int
-    val cameraImageUri: Uri by lazy {
-        val file = File(requireActivity().filesDir, "captured_image.jpg")
-        FileProvider.getUriForFile(
-            requireActivity(),
-            "com.udid.provider",
-            file
-        )
-    }
-    val takePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
-        if (isSuccess) {
-            startCrop(cameraImageUri)
-        } else {
-            Toast.makeText(requireContext(), "Camera capture failed", Toast.LENGTH_SHORT).show()
-        }
-    }
 
-    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
-        if (result.isSuccessful) {
-            val croppedImageUri = result.uriContent
-            croppedImageUri?.let { displayImageWithWatermark(it) }
-        } else {
-            result.error?.printStackTrace()
-            Toast.makeText(requireContext(), "Error cropping image: ${result.error?.message}", Toast.LENGTH_SHORT).show()
-        }
-
-    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-        viewDataBinding= DataBindingUtil.inflate(inflater,layoutId,container,false)
+        viewDataBinding = DataBindingUtil.inflate(inflater, layoutId, container, false)
+        if (Utility.getPreferenceString(requireContext(), AppConstants.LANGUAGE) == "hi") {
+            Utility.setLocale(requireContext(), AppConstants.LANGUAGE_CODE_HINDI)
+            Utility.savePreferencesString(
+                requireContext(),
+                AppConstants.LANGUAGE,
+                "hi"
+            )
+        } else {
+            Utility.setLocale(requireContext(), AppConstants.LANGUAGE_CODE_ENGLISH)
+            Utility.savePreferencesString(
+                requireContext(),
+                AppConstants.LANGUAGE,
+                "en"
+            )
+        }
         init()
         setObservers()
         return viewDataBinding.root
-       /* setObservers()
-        return init(inflater, container, savedInstanceState)*/
     }
 
     abstract fun init()
 
- /*   abstract fun init(
-        inflater: LayoutInflater?,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View?*/
     abstract fun setVariables()
 
     abstract fun setObservers()
 
 
-    fun View.showStringSnackbar(message: String) {
-        Snackbar.make(this, message, Snackbar.LENGTH_LONG).also { snackbar ->
-            snackbar.view.setBackgroundColor(Color.parseColor("#F16622"))
-            snackbar.setActionTextColor(Color.WHITE)
-            snackbar.setAction(R.string.Ok) {
-                snackbar.dismiss()
+    fun isFileSizeWithinLimit(fileSizeInBytes: Long, maxSizeInKB: Double): Boolean {
+        val fileSizeInKB = fileSizeInBytes / 1024.0 // Convert bytes to KB
+        return fileSizeInKB <= maxSizeInKB
+    }
+
+    fun compressFile(inputFile: File) {
+        lifecycleScope.launch {
+            println("size ${inputFile.length()}}")
+            when (val result = fileCompressor.compressFile(inputFile)) {
+                is FileCompressor.CompressionResult.Success -> {
+                    val compressedFile = result.compressedFile
+                    println("Original size: ${inputFile.length() / 1024}KB")
+                    println("Compressed size: ${compressedFile.length() / 1024}KB")
+                    // Use the compressed file
+                    photoFile = compressedFile
+                }
+
+                is FileCompressor.CompressionResult.Error -> {
+                    println("Compression failed: ${result.message}")
+                }
+
+                else -> {}
             }
-        }.show()
-    }
-
-    open fun hideKeyboard(activity: Activity) {
-        try {
-            val inputManager: InputMethodManager = activity
-                .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            val currentFocusedView = activity.currentFocus
-            if (currentFocusedView != null) {
-                inputManager.hideSoftInputFromWindow(
-                    currentFocusedView.windowToken,
-                    InputMethodManager.HIDE_NOT_ALWAYS
-                )
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
-    protected open fun getLanguageLocalize(lang: String?, context: Context) {
-        val config = context.resources.configuration
-        val locale = Locale(lang)
-        Locale.setDefault(locale)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            config.setLocale(locale)
-            context.resources.updateConfiguration(config, null)
-        } else {
-            config.locale = locale
-            context.resources.updateConfiguration(config, null)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            config.setLocale(locale)
-            config.setLayoutDirection(locale)
-            context.resources
-                .updateConfiguration(config, context.resources.displayMetrics)
-            context.createConfigurationContext(config)
-        } else {
-            context.resources
-                .updateConfiguration(config, context.resources.displayMetrics)
-        }
-    }
-    fun showLoader() {
-        com.swavlambancard.udid.utilities.ProcessDialog.start(BaseActivity.context)
+    private fun hasCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
-    fun dismissLoader() {
-        if (com.swavlambancard.udid.utilities.ProcessDialog.isShowing())
-            com.swavlambancard.udid.utilities.ProcessDialog.dismiss()
-    }
-
-
-    fun isArabicLang():Boolean{
-        return  com.swavlambancard.udid.utilities.Preferences.getPreference(requireContext(), com.swavlambancard.udid.utilities.PrefEntities.selected_language).equals("ar")
-    }
-
-    open fun isUserLogin(): Boolean {
-        return com.swavlambancard.udid.utilities.Preferences.getPreference(requireContext(), com.swavlambancard.udid.utilities.PrefEntities.USER_DETAILS).isNotEmpty()
-    }
-
-    open fun isValidPassword(password: String?): Boolean {
-        val pattern: Pattern
-        val PASSWORD_PATTERN = "(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,15}"
-        pattern = Pattern.compile(PASSWORD_PATTERN)
-        val matcher: Matcher = pattern.matcher(password)
-        return matcher.matches()
-    }
-
-
-    fun showToast(message: String?) {
-        Toast.makeText(requireContext().applicationContext, message, Toast.LENGTH_SHORT).show()
-    }
-//    private fun displayImageWithWatermark(imageUri: Uri) {
-//        val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-//
-////        val imageBitmap = addWatermark(imageBitmap)
-//        val imageSizeInBytes = getImageSizeInBytes(imageBitmap)
-//        val imageSize = formatImageSize(imageSizeInBytes)
-//        if (imageSizeInBytes > 5 * 1024 * 1024) {
-//            Toast.makeText(requireContext(), "Upload an image size less than 5MB", Toast.LENGTH_SHORT).show()
-//        } else {
-//            showImage(imageBitmap)
-//            Toast.makeText(requireContext(), "Image size: $imageSize", Toast.LENGTH_SHORT).show()
-//        }
-//    }
-
-    private fun addWatermark(bitmap: Bitmap): Bitmap {
-        val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-        val canvas = android.graphics.Canvas(mutableBitmap)
-
-        val paint = android.graphics.Paint().apply {
-            color = android.graphics.Color.WHITE
-            textSize = 100f
-            isAntiAlias = true
-            style = android.graphics.Paint.Style.FILL
-        }
-
-        val watermark = "Lat: $latitude, Long: $longitude"
-        val x = 10f
-        val y = mutableBitmap.height - 10f
-        canvas.drawText(watermark, x, y, paint)
-
-        return rotateImage(mutableBitmap, 0f)
-    }
-
-    private fun rotateImage(source: Bitmap, degree: Float): Bitmap {
-        val matrix = android.graphics.Matrix()
-        matrix.postRotate(degree)
-
-        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
-    }
-
-
-    private fun getImageSizeInBytes(bitmap: Bitmap): Long {
-        val stream = java.io.ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-        return stream.size().toLong()
-    }
-
-    private fun formatImageSize(sizeInBytes: Long): String {
-        val sizeInKB = sizeInBytes / 1024
-        return if (sizeInKB < 1024) {
-            "$sizeInKB KB"
-        } else {
-            val sizeInMB = sizeInKB / 1024
-            "$sizeInMB MB"
-        }
-    }
-
-    fun startCrop(uri: Uri) {
-        cropImage.launch(
-            CropImageContractOptions(
-                uri = uri,
-                cropImageOptions = CropImageOptions(
-                    guidelines = CropImageView.Guidelines.ON,
-                    outputCompressFormat = Bitmap.CompressFormat.PNG
-                )
-            )
-        )
-
-    }
-
-    open fun showImage(bitmap: Bitmap) {
-        // In your child activity, override requireContext() method to set the image view
-        // For example: binding.imgViewer.setImageBitmap(bitmap)
-    }
-
-    fun hasCameraPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-    }
-
-    fun hasLocationPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-    }
-
-    fun requestPermissions() {
-        val permissionsToRequest = mutableListOf<String>()
-
-        if (!hasCameraPermission()) {
-            permissionsToRequest.add(Manifest.permission.CAMERA)
-        }
-        if (!hasLocationPermission()) {
-            permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-
-        if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                permissionsToRequest.toTypedArray(),
-                REQUEST_PERMISSION_CODE
-            )
-        }
-    }
-    fun requestCameraPermissions() {
+    private fun requestCameraPermissions() {
         val permissionsToRequest = mutableListOf<String>()
 
         if (!hasCameraPermission()) {
@@ -333,14 +162,14 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
 
 
         if (permissionsToRequest.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+            requestPermissions(
                 permissionsToRequest.toTypedArray(),
                 REQUEST_PERMISSION_CODE
             )
         }
     }
-    fun checkStoragePermission(context:Context) {
+
+    fun checkStoragePermission(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionLauncher.launch(
                 arrayOf(
@@ -358,6 +187,7 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
             )
         }
     }
+
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -374,16 +204,18 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
                                 it1
                             )
                         }
+
                         DialogInterface.BUTTON_NEGATIVE -> dialog.dismiss()
                     }
                 }
             }
         }
-        Log.d("ALLACCEPTED",allAccepted.toString())
-        if (allAccepted) BaseActivity.context?.let { openCamera(it) } else return@registerForActivityResult
+        Log.d("ALLACCEPTED", allAccepted.toString())
+        if (allAccepted) BaseActivity.context?.let { openCamera(it, isFrom) } else return@registerForActivityResult
     }
+
     fun saveImageToFile(bitmap: Bitmap): File {
-        val filesDir = requireActivity().filesDir
+        val filesDir = context?.filesDir
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFile = File(filesDir, "IMG_$timestamp.jpg")
 
@@ -394,27 +226,33 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
 
         return imageFile
     }
-    fun openCamera(context:Context) {
+
+    private fun openCamera(context: Context,isFrom :Int) {
         val dialog = Dialog(context, android.R.style.Theme_Translucent_NoTitleBar)
 
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.dialog_camera)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window!!.setLayout(
+        dialog.window?.setLayout(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        dialog.window!!.setGravity(Gravity.CENTER)
+        dialog.window?.setGravity(Gravity.CENTER)
 
         val cross: ImageView = dialog.findViewById(R.id.ivCross)
         val camera: TextView = dialog.findViewById(R.id.tvCamera)
         val gallery: TextView = dialog.findViewById(R.id.tvGallery)
         val pdf: TextView = dialog.findViewById(R.id.tvPdf)
 
-
-        pdf.setOnClickListener {
-            openOnlyPdfAccordingToPosition()
-            dialog.dismiss()
+        if(isFrom == 1) {
+            pdf.hideView()
+        }
+        else{
+            pdf.showView()
+            pdf.setOnClickListener {
+                openOnlyPdfAccordingToPosition()
+                dialog.dismiss()
+            }
         }
 
         camera.setOnClickListener {
@@ -437,18 +275,21 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
         dialog.show()
 
     }
+
     private fun dispatchTakePictureIntent() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(cameraIntent, CAPTURE_IMAGE_REQUEST)
 
     }
-    fun openOnlyPdfAccordingToPosition() {
+
+    private fun openOnlyPdfAccordingToPosition() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "application/pdf"
         }
         startActivityForResult(intent, REQUEST_iMAGE_PDF)
     }
+
     private fun openGallery() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Use ACTION_OPEN_DOCUMENT for Android 13+
@@ -463,26 +304,33 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
             startActivityForResult(intent, PICK_IMAGE)
         }
     }
-    private fun displayImageWithWatermark(imageUri: Uri) {
-        val imageBitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, imageUri)
 
-//        val imageBitmap = addWatermark(imageBitmap)
-        val imageSizeInBytes = getImageSizeInBytes(imageBitmap)
-        val imageSize = formatImageSize(imageSizeInBytes)
-        if (imageSizeInBytes > 5 * 1024 * 1024) {
-            Toast.makeText(requireContext(), "Upload an image size less than 5MB", Toast.LENGTH_SHORT).show()
-        } else {
-            showImage(imageBitmap)
-            Toast.makeText(requireContext(), "Image size: $imageSize", Toast.LENGTH_SHORT).show()
-        }
-    }
     private fun showDialogOK(message: String, okListener: DialogInterface.OnClickListener) {
-        val dialog = android.app.AlertDialog.Builder(context);
+        val dialog = android.app.AlertDialog.Builder(requireContext())
         dialog.setCancelable(false);
         dialog.setMessage(message)
             .setPositiveButton(getString(R.string.ok), okListener)
             .setNegativeButton(getString(R.string.cancel), okListener)
             .create()
             .show()
+    }
+
+    fun convertToRequestBody(context: Context, uri: Uri): RequestBody {
+        val contentResolver: ContentResolver = context.contentResolver
+        val tempFileName = "temp_${System.currentTimeMillis()}.pdf"
+        val file = File(context.cacheDir, tempFileName)
+
+        try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                file.outputStream().use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            // Handle the error appropriately
+        }
+
+        return file.asRequestBody("application/pdf".toMediaType())
     }
 }

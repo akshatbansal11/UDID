@@ -17,7 +17,7 @@ import com.swavlambancard.udid.utilities.BaseActivity
 
 class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     private var mBinding: ActivityPersonalProfileBinding? = null
-    private var currentFragment: androidx.fragment.app.Fragment? = null
+    private var currentFragment: Fragment? = null
     private lateinit var sharedViewModel: SharedDataViewModel
 
     override val layoutId: Int
@@ -30,7 +30,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         sharedViewModel = ViewModelProvider(this)[SharedDataViewModel::class.java]
 
         // Set dummy data to ViewModel
-        sharedViewModel.userData.value = getDummyData()
+//        sharedViewModel.userData.value = getDummyData()
         replaceFragment(PersonalDetailFragment())
     }
 
