@@ -404,7 +404,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                     if (selectedItem == "Choose Village / Block") {
                         selectedTextView?.text = ""
                     } else {
-                        subDistrictId = id
+                        villageId = id
                     }
                 }
                 "pincode" ->{
@@ -450,7 +450,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
     private fun valid(): Boolean {
         if (mBinding?.etNatureDocumentAddressProof?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let { showSnackbar(it,
-                "Please select nature of document.") }
+                getString(R.string.please_select_nature_of_document)) }
             return false
         } else if (mBinding?.etFileName?.text.toString().isEmpty()) {
             mBinding?.llParent?.let {
@@ -459,14 +459,14 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
             return false
         }else if (mBinding?.etAddress?.text.toString().isEmpty()) {
             mBinding?.llParent?.let {
-                showSnackbar(it, "Please enter correspondence address.")
+                showSnackbar(it, getString(R.string.please_enter_correspondence_address))
             }
             return false
         } else if (mBinding?.etState?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
-                    "Please select state / UTs."
+                    getString(R.string.please_select_state_uts)
                 )
             }
             return false
@@ -474,14 +474,14 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
-                    "Please select District."
+                    getString(R.string.please_select_district)
                 )
             }
             return false
         } else if (mBinding?.etSubDistrict?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(it,
-                    "Please select city / sub district / tehsil.")
+                    getString(R.string.please_select_city_sub_district_tehsil))
             }
             return false
         }

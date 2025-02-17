@@ -140,7 +140,6 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
                 dialog.dismiss()
             }
         }
-
         dialog.show()
     }
 }

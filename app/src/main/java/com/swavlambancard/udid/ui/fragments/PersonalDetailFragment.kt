@@ -405,7 +405,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                     getString(R.string.name_of_guardian_caretaker_)
                             }
                         }
-                        context?.toast(guardianId.toString())
+//                        context?.toast(guardianId.toString())
                     }
 
                     "relationWithPerson" -> {

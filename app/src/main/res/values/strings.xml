@@ -323,4 +323,9 @@
     <string name="choose_village_block">Choose Village / Block</string>
     <string name="choose_pincode">Choose Pincode</string>
     <string name="choose_state_uts_">Choose State / UTs</string>
+    <string name="please_select_nature_of_document">Please select nature of document.</string>
+    <string name="please_enter_correspondence_address">Please enter correspondence address.</string>
+    <string name="please_select_state_uts">Please select state / UTs.</string>
+    <string name="please_select_district">Please select District.</string>
+    <string name="please_select_city_sub_district_tehsil">Please select city / sub district / tehsil.</string>
 </resources>
