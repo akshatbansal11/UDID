@@ -91,17 +91,17 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
         mBinding?.leftDrawerMenu?.llPrivacyPolicyHeading?.setOnClickListener {
             startActivity(
                 Intent(this, WebViewActivity::class.java).putExtra(
-                        AppConstants.WEB_URL,
-                        "privacy_policy"
-                    )
+                    AppConstants.WEB_URL,
+                    "privacy_policy"
+                )
             )
         }
         mBinding?.leftDrawerMenu?.llTermsAndConditionHeading?.setOnClickListener {
             startActivity(
                 Intent(this, WebViewActivity::class.java).putExtra(
-                        AppConstants.WEB_URL,
-                        "terms_and_conditions"
-                    )
+                    AppConstants.WEB_URL,
+                    "terms_and_conditions"
+                )
             )
         }
     }
