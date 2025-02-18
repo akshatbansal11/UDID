@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,7 @@ import com.swavlambancard.udid.databinding.FragmentPersonalDetailsBinding
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
+import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.URIPathHelper
@@ -85,7 +87,10 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-//        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+//        sharedViewModel.userData.value?.applicantFullName = mBinding?.etApplicantFullName?.text.toString().trim()
+        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+            mBinding?.etApplicantFullName?.setText(userData.applicantFullName)
+        }
 //            mBinding?.etApplicantFullName?.setText(userData.applicantFullName)
 //            mBinding?.etApplicantMobileNo?.setText(userData.applicantMobileNo)
 //            mBinding?.etApplicantEmailId?.setText(userData.applicantEmail)
@@ -117,10 +122,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 //        }
 //
 //        // Save data when fields change
-//        mBinding?.etApplicantFullName?.addTextChangedListener {
-//            sharedViewModel.userData.value?.applicantFullName = it.toString()
-//        }
-//
+          mBinding?.etApplicantFullName?.addTextChangedListener {
+                sharedViewModel.userData.value?.applicantFullName = it.toString()
+          }
 //        mBinding?.etApplicantMobileNo?.addTextChangedListener {
 //            sharedViewModel.userData.value?.applicantMobileNo = it.toString()
 //        }
@@ -208,9 +212,10 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
     inner class ClickActions {
         fun next(view: View) {
-            if (valid()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Done OTP") }
-            }
+            (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
+//            if (valid()) {
+//                mBinding?.llParent?.let { showSnackbar(it, "Done OTP") }
+//            }
         }
 
         fun edit(view: View){
@@ -454,78 +459,84 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
     private fun valid(): Boolean {
         if (mBinding?.etApplicantFullName?.text?.toString().isNullOrEmpty()) {
-            mBinding?.llParent?.let { showSnackbar(it, "Please enter Applicant's Full Name.") }
+            mBinding?.llParent?.let { showSnackbar(it,
+                getString(R.string.please_enter_applicant_s_full_name)) }
             return false
         }
         else if (mBinding?.etStateName?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
-                    "Please select state."
+                    getString(R.string.please_select_state)
                 )
             }
             return false
         }
         else if (mBinding?.etApplicantMobileNo?.text?.toString().isNullOrEmpty()) {
             mBinding?.llParent?.let {
-                showSnackbar(it, "Mobile number is required.")
+                showSnackbar(it, getString(R.string.mobile_number_is_required))
             }
             return false
         } else if (mBinding?.etApplicantMobileNo?.text?.toString()?.length != 10) {
             mBinding?.llParent?.let {
-                showSnackbar(it, "Mobile number must be exactly 10 digits.")
+                showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
             }
             return false
         } else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
-            mBinding?.llParent?.let { showSnackbar(it, "Please select date of birth.") }
+            mBinding?.llParent?.let { showSnackbar(it, getString(R.string.please_select_date_of_birth)) }
             return false
         } else if (guardianId == "0") {
-            mBinding?.llParent?.let { showSnackbar(it, "Please select gender.") }
+            mBinding?.llParent?.let { showSnackbar(it, getString(R.string.please_select_gender)) }
             return false
         } else if (mBinding?.etApplicantsFMGName?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
-                    "Please select guardian relation."
+                    getString(R.string.please_select_guardian_relation)
                 )
             }
             return false
         } else if (guardianId == "1") {
             if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please enter father name.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_enter_father_name)) }
                 return false
             } else if (mBinding?.etContactNoOfGuardian?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please enter contact number.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_enter_contact_number)) }
                 return false
             }
             return false
         } else if (guardianId == "2") {
             if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please enter mother name.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_enter_mother_name)) }
                 return false
             } else if (mBinding?.etContactNoOfGuardian?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please enter contact number.") }
+                mBinding?.llParent?.let { showSnackbar(it, getString(R.string.please_enter_contact_number)) }
                 return false
             }
         } else if (guardianId == "3") {
             if (mBinding?.etRelationWithPerson?.text.toString().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please select Relation with Person.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_select_relation_with_person)) }
                 return false
             } else if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please enter guardian name.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_enter_guardian_name)) }
                 return false
             } else if (mBinding?.etContactNoOfGuardian?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please enter contact number.") }
+                mBinding?.llParent?.let { showSnackbar(it, getString(R.string.please_enter_contact_number)) }
                 return false
             }
         } else if (mBinding?.etFileNamePhoto?.text.toString().isEmpty()) {
             mBinding?.llParent?.let {
-                showSnackbar(it, "Please Upload Photo")
+                showSnackbar(it, getString(R.string.please_upload_photo))
             }
             return false
         } else if (mBinding?.etFileNameSignature?.text.toString().isEmpty()) {
             mBinding?.llParent?.let {
-                showSnackbar(it, "Please Upload Signature")
+                showSnackbar(it, getString(R.string.please_upload_signature))
             }
             return false
         }

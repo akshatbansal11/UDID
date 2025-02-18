@@ -10,6 +10,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +30,8 @@ import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
+import com.swavlambancard.udid.utilities.hideView
+import com.swavlambancard.udid.utilities.showView
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
@@ -213,6 +217,20 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         fun uploadFile(view: View) {
             checkStoragePermission(requireContext())
         }
+        fun rbYes(view: View){
+            mBinding?.tvDisabilitySince?.hideView()
+            mBinding?.etDisabilitySince?.hideView()
+        }
+        fun rbNo(view: View){
+            mBinding?.tvDisabilitySince?.showView()
+            mBinding?.etDisabilitySince?.showView()
+        }
+        fun rbDisabilityCertificateYes(view: View){
+            mBinding?.llDisabilityCertificateYes?.showView()
+        }
+        fun rbDisabilityCertificateNo(view: View){
+            mBinding?.llDisabilityCertificateYes?.hideView()
+        }
         fun dateOfIssuanceOfCertificate(view: View) {
             mBinding?.etDateOfIssuanceOfCertificate?.let { calenderOpen(requireContext(), it) }
         }
@@ -395,21 +413,25 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
 
     private fun valid(): Boolean {
         if (mBinding?.etDisabilityType?.text?.toString().isNullOrEmpty()) {
-            mBinding?.llParent?.let { showSnackbar(it, "Please select Disability type.") }
+            mBinding?.llParent?.let { showSnackbar(it,
+                getString(R.string.please_select_disability_type)) }
             return false
         }
         else if (disabilityByBirthTag == 0) {
-            mBinding?.llParent?.let { showSnackbar(it, "Please Check Disability by Birth yes/no.") }
+            mBinding?.llParent?.let { showSnackbar(it,
+                getString(R.string.please_check_disability_by_birth_yes_no)) }
             return false
         }
         else if(disabilityByBirthTag == 2) {
             if (mBinding?.etDisabilityDueTo?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please select Disability Since.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_select_disability_since)) }
                 return false
             }
         }
         else if (disabilityCertificateTag == 0) {
-            mBinding?.llParent?.let { showSnackbar(it, "Please select Do you have disability Certificate yes/no.") }
+            mBinding?.llParent?.let { showSnackbar(it,
+                getString(R.string.please_select_do_you_have_disability_certificate_yes_no)) }
             return false
         }
         else if(disabilityCertificateTag == 1) {
@@ -420,17 +442,25 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 return false
             }
             else if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please enter sr. no. / registration no. of certificate.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_enter_sr_no_registration_no_of_certificate)) }
                 return false
             }
             else if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please select date of issuance of certificate.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_select_date_of_issuance_of_certificate)) }
                 return false
             }
             else if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please select details of issuing authority.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_select_details_of_issuing_authority)) }
                 return false
             }
+            else if(mBinding?.etDisabilityPercentage?.text.toString().trim().isNotEmpty() &&
+                (mBinding?.etDisabilityPercentage?.text.toString() > 0.toString() || mBinding?.etDisabilityPercentage?.text.toString() < 100.toString()))
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.enter_a_number_between_1_and_100)) }
+            return false
         }
         return true
     }

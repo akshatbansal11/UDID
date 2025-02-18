@@ -231,22 +231,25 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
 
     private fun valid(): Boolean {
         if (aadhaarTag == 0) {
-            mBinding?.llParent?.let { showSnackbar(it, "do you have aadhaar card?") }
+            mBinding?.llParent?.let { showSnackbar(it, getString(R.string.do_you_have_aadhaar_card_)) }
             return false
         } else if (aadhaarTag == 1) {
             if (mBinding?.etAadhaarNo?.text.toString().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Enter aadhaar number") }
+                mBinding?.llParent?.let { showSnackbar(it, getString(R.string.enter_aadhaar_number)) }
                 return false
             } else if (mBinding?.checkboxConfirm?.isChecked != true) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please select checkbox.") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.please_select_checkbox)) }
                 return false
             }
         } else if (aadhaarTag == 2) {
             if (mBinding?.etAadhaarEnrollment?.text.toString().trim().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Enter aadhaar enrollment number") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.enter_aadhaar_enrollment_number)) }
                 return false
             } else if (mBinding?.etFileNameEnrollmentSlip?.text.toString().trim().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Upload aadhaar enrollment slip") }
+                mBinding?.llParent?.let { showSnackbar(it,
+                    getString(R.string.upload_aadhaar_enrollment_slip_)) }
                 return false
             }
         }

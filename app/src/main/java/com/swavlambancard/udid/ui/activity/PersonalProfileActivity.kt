@@ -9,7 +9,7 @@ import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.ActivityPersonalProfileBinding
 import com.swavlambancard.udid.model.PwdApplication
 import com.swavlambancard.udid.ui.fragments.DisabilityDetailFragment
-import com.swavlambancard.udid.ui.fragments.HospitalAssesmentFragment
+import com.swavlambancard.udid.ui.fragments.HospitalAssessmentFragment
 import com.swavlambancard.udid.ui.fragments.PersonalDetailFragment
 import com.swavlambancard.udid.ui.fragments.ProofOfAddressFragment
 import com.swavlambancard.udid.ui.fragments.ProofOfIDFragment
@@ -101,7 +101,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
             mBinding?.horizontalScrollView?.smoothScrollTo(750, 0)
         }
         fun hospitalAssessments(view: View){
-            replaceFragment(HospitalAssesmentFragment())
+            replaceFragment(HospitalAssessmentFragment())
             mBinding?.horizontalScrollView?.smoothScrollTo(2050, 0)
         }
     }
@@ -111,7 +111,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         finish()
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    fun replaceFragment(fragment: Fragment) {
         currentFragment = fragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragFrame, fragment)
@@ -170,7 +170,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                 mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this,R.color.DarkBlue))
                 mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this,R.color.orange))
             }
-            is HospitalAssesmentFragment -> {
+            is HospitalAssessmentFragment -> {
                 mBinding?.ivPD?.setImageResource(R.drawable.va_ellipse_orange_down)
                 mBinding?.ivPOI?.setImageResource(R.drawable.va_orange_ellipse)
                 mBinding?.ivPOCA?.setImageResource(R.drawable.va_ellipse_orange_down)
