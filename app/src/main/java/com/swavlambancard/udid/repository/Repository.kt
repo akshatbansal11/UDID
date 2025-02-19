@@ -2,6 +2,7 @@ package com.swavlambancard.udid.repository
 
 import com.swavlambancard.udid.model.ApplicationStatusRequest
 import com.swavlambancard.udid.model.ApplicationStatusResponse
+import com.swavlambancard.udid.model.CodeDropDownRequest
 import com.swavlambancard.udid.model.CommonResponse
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResponse
@@ -9,6 +10,8 @@ import com.swavlambancard.udid.model.GenerateOtpRequest
 import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
+import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.UploadFileResponse
 import com.swavlambancard.udid.services.MyService
 import com.swavlambancard.udid.services.ServiceGenerator
 import com.swavlambancard.udid.services.ServiceGeneratorLogin
@@ -51,6 +54,12 @@ object Repository {
 
     suspend fun getDropDown(request: DropDownRequest): Response<DropDownResponse> {
         return api.getDropDown(request)
+    }
+    suspend fun getCodeDropDown(request: CodeDropDownRequest): Response<DropDownResponse> {
+        return api.getCodeDropDown(request)
+    }
+    suspend fun getPincodeDropDown(request: PincodeRequest): Response<DropDownResponse> {
+        return api.getPincodeDropDown(request)
     }
 
     suspend fun updateName(
@@ -274,6 +283,16 @@ object Repository {
     suspend fun downloadDoctorDiagnosisSheet(
         request: RequestBody): Response<ResponseBody> {
         return api.downloadDoctorDiagnosisSheet(request)
+    }
+
+    suspend fun uploadFile(
+        documentType: RequestBody?,
+        document: MultipartBody.Part?
+    ): Response<UploadFileResponse> {
+        return api.getUploadFile(
+            documentType,
+            document
+        )
     }
 }
 

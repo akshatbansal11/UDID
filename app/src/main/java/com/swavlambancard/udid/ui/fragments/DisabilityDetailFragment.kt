@@ -10,8 +10,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -24,9 +22,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.FragmentDisabilityDetailsBinding
+import com.swavlambancard.udid.model.CodeDropDownRequest
+import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
+import com.swavlambancard.udid.model.Fields
+import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
+import com.swavlambancard.udid.ui.adapter.MultipleSelectionBottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
+import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
@@ -38,9 +42,9 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.util.Calendar
-
 
 class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>() {
     private lateinit var sharedViewModel: SharedDataViewModel
@@ -48,30 +52,22 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     private var mBinding: FragmentDisabilityDetailsBinding? = null
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetAdapter: BottomSheetAdapter? = null
+    private var multipleSelectionBottomSheetAdapter: MultipleSelectionBottomSheetAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
     var body: MultipartBody.Part? = null
+    private var disabilityCertificateName: String? = null
+    private var listName: String? = null
     var date: String? = null
     private var disabilityByBirthTag: Int = 0
-    private var disabilityCertificateTag : Int = 0
+    private var disabilityCertificateTag: Int = 0
     private var disabilityTypeList = ArrayList<DropDownResult>()
-    private var disabilityTypeId: String? = null
+    private var matchItemDisabilityTypeList = arrayListOf<DropDownResult>()
+    private var disabilityTypeId = arrayListOf<String>()
     private var disabilitySinceList = ArrayList<DropDownResult>()
     private var disabilitySinceId: String? = null
-    private val disabilityDueToList = listOf(
-        DropDownResult(id = "0", name = "Select Disability Due To"),
-        DropDownResult(id = "1", name = "Accident"),
-        DropDownResult(id = "2", name = "Congenital"),
-        DropDownResult(id = "3", name = "Diseases"),
-        DropDownResult(id = "4", name = "Hereditary"),
-        DropDownResult(id = "5", name = "Infection"),
-        DropDownResult(id = "6", name = "Medicine")
-    )
+    private val disabilityDueToList = ArrayList<DropDownResult>()
     private var disabilityDueToId: String? = null
-    private val detailsOfIssuingAuthorityList = listOf(
-        DropDownResult(id = "0", name = "Select Issuing Authority"),
-        DropDownResult(id = "1", name = "Chief Medical Office"),
-        DropDownResult(id = "2", name = "Medical Authority"),
-    )
+    private val detailsOfIssuingAuthorityList = ArrayList<DropDownResult>()
     private var detailsOfIssuingAuthorityId: String? = null
     override val layoutId: Int
         get() = R.layout.fragment_disability_details
@@ -80,7 +76,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
-        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedDataViewModel::class.java)
+        sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
 //        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
 //            mBinding?.tvDisabilityType?.setText(userData.disabilityType)
 //            if (!userData.disabilityType.isNullOrEmpty()) {
@@ -189,19 +185,71 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     }
 
     override fun setObservers() {
-//        viewModel.dropDownResult.observe(this) {
-//            val userResponseModel = it
-//            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
-//                when (userResponseModel.model) {
-//                    "States" -> {
-//                        disabilityTypeList.clear()
-//                        disabilityTypeList.add(DropDownResult("0", getString(R.string.select_state_name)))
-//                        disabilityTypeList.addAll(userResponseModel._result)
-//                    }
-//                }
-//                bottomSheetAdapter?.notifyDataSetChanged()
-//            }
-//        }
+        viewModel.dropDownResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
+                when (userResponseModel.model) {
+                    "Disabilitytypes" -> {
+                        disabilityTypeList.clear()
+                        disabilityTypeList.addAll(userResponseModel._result)
+                    }
+                }
+                multipleSelectionBottomSheetAdapter?.notifyDataSetChanged()
+            }
+        }
+
+        viewModel.codeDropDownResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
+                if (listName == "disabilityDueTo") {
+                    disabilityDueToList.clear()
+                    disabilityDueToList.add(
+                        DropDownResult(
+                            "0",
+                            getString(R.string.select_disability_due_to)
+                        )
+                    )
+                    disabilityDueToList.addAll(userResponseModel._result)
+
+                } else if (listName == "disabilitySince") {
+                    disabilitySinceList.clear()
+                    disabilitySinceList.add(
+                        DropDownResult(
+                            "0",
+                            getString(R.string.select_disability_since)
+                        )
+                    )
+                    disabilitySinceList.addAll(userResponseModel._result)
+
+                } else if (listName == "detailsOfIssuingAuthority") {
+                    detailsOfIssuingAuthorityList.clear()
+                    detailsOfIssuingAuthorityList.add(
+                        DropDownResult(
+                            "0",
+                            getString(R.string.select_issuing_authority)
+                        )
+                    )
+                    detailsOfIssuingAuthorityList.addAll(userResponseModel._result)
+
+                }
+                bottomSheetAdapter?.notifyDataSetChanged()
+            }
+        }
+        viewModel.uploadFile.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null) {
+                if (userResponseModel._resultflag == 0) {
+                    mBinding?.llParent?.let { it1 ->
+                        showSnackbar(
+                            it1,
+                            userResponseModel.message
+                        )
+                    }
+                } else {
+                    disabilityCertificateName = userResponseModel._result.file_name
+                }
+            }
+        }
 
         viewModel.errors.observe(this) {
             mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
@@ -211,44 +259,142 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     inner class ClickActions {
         fun next(view: View) {
             if (valid()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Done OTP") }
+                (requireActivity() as PersonalProfileActivity).replaceFragment(
+                    HospitalAssessmentFragment()
+                )
             }
         }
+
+        fun back(view: View) {
+            (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
+        }
+
         fun uploadFile(view: View) {
             checkStoragePermission(requireContext())
         }
-        fun rbYes(view: View){
+
+        fun rbYes(view: View) {
             mBinding?.tvDisabilitySince?.hideView()
             mBinding?.etDisabilitySince?.hideView()
         }
-        fun rbNo(view: View){
+
+        fun rbNo(view: View) {
             mBinding?.tvDisabilitySince?.showView()
             mBinding?.etDisabilitySince?.showView()
         }
-        fun rbDisabilityCertificateYes(view: View){
+
+        fun rbDisabilityCertificateYes(view: View) {
             mBinding?.llDisabilityCertificateYes?.showView()
         }
-        fun rbDisabilityCertificateNo(view: View){
+
+        fun rbDisabilityCertificateNo(view: View) {
             mBinding?.llDisabilityCertificateYes?.hideView()
         }
+
         fun dateOfIssuanceOfCertificate(view: View) {
             mBinding?.etDateOfIssuanceOfCertificate?.let { calenderOpen(requireContext(), it) }
         }
+
         fun disabilityType(view: View) {
-            showBottomSheetDialog("disabilityType")
+            selectBottomDialog()
         }
 
         fun disabilityDueTo(view: View) {
+            listName = "disabilityDueTo"
             showBottomSheetDialog("disabilityDueTo")
         }
 
         fun disabilitySince(view: View) {
+            listName = "disabilitySince"
             showBottomSheetDialog("disabilitySince")
         }
 
         fun detailsOfIssuingAuthority(view: View) {
+            listName = "detailsOfIssuingAuthority"
             showBottomSheetDialog("detailsOfIssuingAuthority")
         }
+    }
+
+    private fun disabilityTypeApi() {
+        viewModel.getDropDown(
+            requireContext(), DropDownRequest(
+                model = "Disabilitytypes",
+                fields = Fields(id = "disability_type"),
+                type = "mobile"
+            )
+        )
+    }
+
+    private fun disabilityDueToApi() {
+        viewModel.getCodeDropDown(
+            requireContext(), CodeDropDownRequest(
+                listname = "getDisabilityDueto",
+                type = "mobile"
+            )
+        )
+    }
+
+    private fun issuingAuthorityApi() {
+        viewModel.getCodeDropDown(
+            requireContext(), CodeDropDownRequest(
+                listname = "getAuthority",
+                type = "mobile"
+            )
+        )
+    }
+
+    private fun disabilitySinceApi() {
+        viewModel.getCodeDropDown(
+            requireContext(), CodeDropDownRequest(
+                listname = "getYearlist",
+                type = "mobile"
+            )
+        )
+    }
+
+    private fun selectBottomDialog() {
+        val dialog = BottomSheetDialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_state, null)
+
+        val tvClose = view.findViewById<TextView>(R.id.tvClose)
+        if (disabilityTypeList.isEmpty()) {
+            disabilityTypeApi()
+        }
+        setAdapter(view, disabilityTypeList)
+        tvClose.setOnClickListener {
+            dialog.dismiss()
+            matchItemDisabilityTypeList = multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
+            if (matchItemDisabilityTypeList.size < 0)
+                mBinding?.etDisabilityType?.text = matchItemDisabilityTypeList.joinToString(", ") { it.name }
+             else {
+                mBinding?.etDisabilityType?.hint = getString(R.string.choose_disability_types)
+            }
+        }
+        dialog.setCancelable(false)
+        dialog.setContentView(view)
+        dialog.show()
+    }
+
+    private fun setAdapter(
+        view: View,
+        list: ArrayList<DropDownResult>,
+
+        ) {
+        val rvBottomSheet = view.findViewById<RecyclerView>(R.id.rvBottomSheet)
+        layoutManager = LinearLayoutManager(requireContext())
+        rvBottomSheet.layoutManager = layoutManager
+        multipleSelectionBottomSheetAdapter = MultipleSelectionBottomSheetAdapter(
+            requireContext(),
+            list,
+            matchItemDisabilityTypeList,
+        ) {
+            if (disabilityTypeId.contains(it)) {
+                disabilityTypeId.remove(it)
+            } else {
+                disabilityTypeId.add(it)
+            }
+        }
+        rvBottomSheet.adapter = multipleSelectionBottomSheetAdapter
     }
 
     private fun calenderOpen(
@@ -317,23 +463,26 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         val selectedList: List<DropDownResult>
         val selectedTextView: TextView?
         when (type) {
-            "disabilityType" -> {
-//                if (disabilityTypeList.isEmpty()) {
-//                    stateListApi()
-//                }
-                selectedList = disabilityTypeList
-                selectedTextView = mBinding?.etDisabilityType
-            }
             "disabilityDueTo" -> {
+                if (disabilityDueToList.isEmpty()) {
+                    disabilityDueToApi()
+                }
                 selectedList = disabilityDueToList
                 selectedTextView = mBinding?.etDisabilityDueTo
             }
 
             "disabilitySince" -> {
+                if (disabilitySinceList.isEmpty()) {
+                    disabilitySinceApi()
+                }
                 selectedList = disabilitySinceList
                 selectedTextView = mBinding?.etDisabilitySince
             }
+
             "detailsOfIssuingAuthority" -> {
+                if (detailsOfIssuingAuthorityList.isEmpty()) {
+                    issuingAuthorityApi()
+                }
                 selectedList = detailsOfIssuingAuthorityList
                 selectedTextView = mBinding?.etSelectIssuingAuthority
             }
@@ -345,13 +494,6 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             BottomSheetAdapter(requireContext(), selectedList) { selectedItem, id ->
                 selectedTextView?.text = selectedItem
                 when (type) {
-                    "disabilityType" -> {
-                        if (selectedItem == "Select State Name") {
-                            selectedTextView?.text = ""
-                        } else {
-                            disabilityTypeId = id
-                        }
-                    }
                     "disabilityDueTo" -> {
                         if (selectedItem == "Select Disability Due To") {
                             selectedTextView?.text = ""
@@ -367,6 +509,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             disabilitySinceId = id
                         }
                     }
+
                     "detailsOfIssuingAuthority" -> {
                         if (selectedItem == "Select Issuing Authority") {
                             selectedTextView?.text = ""
@@ -413,53 +556,78 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
 
     private fun valid(): Boolean {
         if (mBinding?.etDisabilityType?.text?.toString().isNullOrEmpty()) {
-            mBinding?.llParent?.let { showSnackbar(it,
-                getString(R.string.please_select_disability_type)) }
+            mBinding?.llParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.please_select_disability_type)
+                )
+            }
             return false
-        }
-        else if (disabilityByBirthTag == 0) {
-            mBinding?.llParent?.let { showSnackbar(it,
-                getString(R.string.please_check_disability_by_birth_yes_no)) }
+        } else if (disabilityByBirthTag == 0) {
+            mBinding?.llParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.please_check_disability_by_birth_yes_no)
+                )
+            }
             return false
-        }
-        else if(disabilityByBirthTag == 2) {
+        } else if (disabilityByBirthTag == 2) {
             if (mBinding?.etDisabilityDueTo?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it,
-                    getString(R.string.please_select_disability_since)) }
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_select_disability_since)
+                    )
+                }
                 return false
             }
-        }
-        else if (disabilityCertificateTag == 0) {
-            mBinding?.llParent?.let { showSnackbar(it,
-                getString(R.string.please_select_do_you_have_disability_certificate_yes_no)) }
+        } else if (disabilityCertificateTag == 0) {
+            mBinding?.llParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.please_select_do_you_have_disability_certificate_yes_no)
+                )
+            }
             return false
-        }
-        else if(disabilityCertificateTag == 1) {
+        } else if (disabilityCertificateTag == 1) {
             if (mBinding?.etFileName?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(it, "Please Upload Photo")
                 }
                 return false
-            }
-            else if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it,
-                    getString(R.string.please_enter_sr_no_registration_no_of_certificate)) }
+            } else if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_enter_sr_no_registration_no_of_certificate)
+                    )
+                }
                 return false
-            }
-            else if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it,
-                    getString(R.string.please_select_date_of_issuance_of_certificate)) }
+            } else if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_select_date_of_issuance_of_certificate)
+                    )
+                }
                 return false
-            }
-            else if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it,
-                    getString(R.string.please_select_details_of_issuing_authority)) }
+            } else if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_select_details_of_issuing_authority)
+                    )
+                }
                 return false
-            }
-            else if(mBinding?.etDisabilityPercentage?.text.toString().trim().isNotEmpty() &&
-                (mBinding?.etDisabilityPercentage?.text.toString() > 0.toString() || mBinding?.etDisabilityPercentage?.text.toString() < 100.toString()))
-                mBinding?.llParent?.let { showSnackbar(it,
-                    getString(R.string.enter_a_number_between_1_and_100)) }
+            } else if (mBinding?.etDisabilityPercentage?.text.toString().trim().isNotEmpty() &&
+                (mBinding?.etDisabilityPercentage?.text.toString() > 0.toString() || mBinding?.etDisabilityPercentage?.text.toString() < 100.toString())
+            )
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.enter_a_number_between_1_and_100)
+                    )
+                }
             return false
         }
         return true
@@ -477,12 +645,11 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                         mBinding?.etFileName?.text = photoFile?.name
-//                            uploadImage(photoFile!!)
                     } else {
                         compressFile(photoFile!!) // Compress if size exceeds limit
                         mBinding?.etFileName?.text = photoFile?.name
-//                            uploadImage(photoFile!!)
                     }
+                    uploadImage(photoFile!!)
                 }
 
                 PICK_IMAGE -> {
@@ -498,12 +665,11 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             val fileSizeInBytes = file?.length() ?: 0
                             if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                                 mBinding?.etFileName?.text = file?.name
-//                                    uploadImage(file!!)
                             } else {
                                 compressFile(file!!) // Compress if size exceeds limit
                                 mBinding?.etFileName?.text = file.name
-//                                    uploadImage(file)
                             }
+                            uploadImage(file!!)
                         } else {
                             mBinding?.llParent?.let {
                                 showSnackbar(
@@ -536,7 +702,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                                 val fileSizeInBytes =
                                     it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE))
                                 if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-//                                    uploadDocument(documentName, uri)
+                                    uploadDocument(documentName, uri)
                                     mBinding?.etFileName?.text = documentName
                                 } else {
                                     mBinding?.llParent?.let {
@@ -559,7 +725,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             body =
                 MultipartBody.Part.createFormData(
-                    "address_proof_file",
+                    "document",
                     file.name, reqFile
                 )
         }
@@ -568,9 +734,18 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(requireContext(), uri)
         body = MultipartBody.Part.createFormData(
-            "address_proof_file",
+            "document",
             documentName,
             requestBody
+        )
+        uploadFileApi()
+    }
+
+    private fun uploadFileApi() {
+        viewModel.uploadFile(
+            requireContext(),
+            EncryptionModel.aesEncrypt("disability_cert_doc").toRequestBody(MultipartBody.FORM),
+            body
         )
     }
 }

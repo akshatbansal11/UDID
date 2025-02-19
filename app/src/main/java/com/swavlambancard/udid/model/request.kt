@@ -13,6 +13,12 @@ data class OnBoardingImageData(
     val description: String
 )
 
+data class PincodeRequest(
+    val model: String,
+    val district_code: String,
+    val type: String,
+)
+
 data class DropDownRequest(
     val fields: Fields,
     val filters: Filters?= null,
@@ -26,14 +32,16 @@ data class Fields(
     val state_code: String?= null,
     val id: String?= null,
     val subdistrict_code: String?= null,
-    val district_code: String?= null
+    val district_code: String?= null,
+    val village_code: String?= null
 )
 
 data class Filters(
     val request_code: String?= null,
     val status: Int?= null,
     val district_code: String?= null,
-    val state_code: String?= null
+    val state_code: String?= null,
+    val subdistrict_code: String?= null
 )
 
 data class Order(
@@ -47,6 +55,11 @@ data class GenerateOtpRequest(
 data class ApplicationStatusRequest(
     val application_number: String,
     val type: String = "mobile"
+)
+
+data class CodeDropDownRequest(
+    val type: String,
+    val listname: String
 )
 
 data class PwdApplication(

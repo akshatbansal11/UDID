@@ -37,7 +37,6 @@ data class DropDownResult(
     val name: String
 )
 
-
 data class OTPResponse(
     val _resultflag: Int,
     val message: String,
@@ -178,4 +177,14 @@ data class UpdateRequest(
     val Mobile: Int?,
     val AadhaarNumber: Int?,
     val DateOfBirth: Int?
+)
+
+data class UploadFileResponse(
+    val _result: UploadFileResult,
+    val _resultflag: Int,
+    val message: String
+)
+
+data class UploadFileResult(
+    val file_name: String
 )

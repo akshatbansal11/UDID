@@ -2,6 +2,7 @@ package com.swavlambancard.udid.services
 
 import com.swavlambancard.udid.model.ApplicationStatusRequest
 import com.swavlambancard.udid.model.ApplicationStatusResponse
+import com.swavlambancard.udid.model.CodeDropDownRequest
 import com.swavlambancard.udid.model.CommonResponse
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResponse
@@ -9,6 +10,8 @@ import com.swavlambancard.udid.model.GenerateOtpRequest
 import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
+import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.UploadFileResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -37,9 +40,9 @@ const val RENEW_CARD = "renewcard"
 const val LOGOUT = "logout"
 const val DOWNLOAD_APPLICATION = "downloadApplication"
 const val DOWNLOAD_RECEIPT = "downloadApplicationReciept"
-const val DOWNLOAD_YOUR_E_DISABILITY_CERTIFICATE = "https://swavlambancard.gov.in/api/rest/downloadCertificate"
-const val DOWNLOAD_YOUR_UDID_CARD = "https://swavlambancard.gov.in/api/rest/downloadUdidCard"
-const val DOWNLOAD_DOCTOR_DIAGNOSIS_SHEET = "https://swavlambancard.gov.in/api/rest/downloadDoctorDiagonstics"
+const val DOWNLOAD_YOUR_E_DISABILITY_CERTIFICATE = "downloadCertificate"
+const val DOWNLOAD_YOUR_UDID_CARD = "downloadUdidCard"
+const val DOWNLOAD_DOCTOR_DIAGNOSIS_SHEET = "downloadDoctorDiagonstics"
 const val SUBMIT_UPDATED_NAME = "https://swavlambancard.gov.in/api/rest/downloadUpdateNameReciept"
 const val SUBMIT_AADHAAR_NUMBER = "https://swavlambancard.gov.in/api/rest/downloadUpdateNameReciept"
 const val SUBMIT_MOBILE_NUMBER = "https://swavlambancard.gov.in/api/rest/downloadUpdateNameReciept"
@@ -49,6 +52,9 @@ const val SUBMIT_RENEWAL_CARD = "https://swavlambancard.gov.in/api/rest/download
 const val SUBMIT_APPEAL = "https://swavlambancard.gov.in/api/rest/downloadAppealReciept"
 const val SUBMIT_SURRENDER_CARD = "https://swavlambancard.gov.in/api/rest/downloadUpdateSurrenderReciept"
 const val SUBMIT_LOST_CARD= "https://swavlambancard.gov.in/api/rest/downloadUpdateLostCardReciept"
+const val GET_CODE_DROP_DOWN= "getCodeDropdown"
+const val PINCODE_DROP_DOWN= "getPincodeDropdown"
+const val UPLOAD_FILE= "uploadFile"
 
 interface MyService {
 
@@ -71,6 +77,14 @@ interface MyService {
     @Headers("Content-Type: application/json")
     @POST(DROP_DOWN)
     suspend fun getDropDown(@Body request: DropDownRequest): Response<DropDownResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(GET_CODE_DROP_DOWN)
+    suspend fun getCodeDropDown(@Body request: CodeDropDownRequest): Response<DropDownResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(PINCODE_DROP_DOWN)
+    suspend fun getPincodeDropDown(@Body request: PincodeRequest): Response<DropDownResponse>
 
     @Multipart
     @POST(UPDATE_NAME)
@@ -223,5 +237,15 @@ interface MyService {
     @Headers("Content-Type: application/json")
     @POST(DOWNLOAD_DOCTOR_DIAGNOSIS_SHEET)
     suspend fun downloadDoctorDiagnosisSheet(@Body request: RequestBody): Response<ResponseBody>
+
+    @Multipart
+    @Headers("Content-Type: application/json")
+    @POST(UPLOAD_FILE)
+    suspend fun getUploadFile(
+        @Part("document_type") documentType: RequestBody?,
+        @Part document : MultipartBody.Part?
+    ): Response<UploadFileResponse>
 }
+
+
 

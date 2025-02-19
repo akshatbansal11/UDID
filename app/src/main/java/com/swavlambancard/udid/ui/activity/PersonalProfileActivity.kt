@@ -26,7 +26,6 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     override fun initView() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
-        // Initialize ViewModel
         sharedViewModel = ViewModelProvider(this)[SharedDataViewModel::class.java]
 
         // Set dummy data to ViewModel

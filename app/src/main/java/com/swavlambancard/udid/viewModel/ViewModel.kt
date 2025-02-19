@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.model.ApplicationStatusRequest
 import com.swavlambancard.udid.model.ApplicationStatusResponse
+import com.swavlambancard.udid.model.CodeDropDownRequest
 import com.swavlambancard.udid.model.CommonResponse
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResponse
@@ -16,6 +17,8 @@ import com.swavlambancard.udid.model.GenerateOtpRequest
 import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
+import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.UploadFileResponse
 import com.swavlambancard.udid.repository.Repository
 import com.swavlambancard.udid.utilities.CommonUtils
 import com.swavlambancard.udid.utilities.ProcessDialog
@@ -47,6 +50,8 @@ open class ViewModel : ViewModel() {
     var myAccountResult = MutableLiveData<MyAccountResponse>()
     var appStatusResult = MutableLiveData<ApplicationStatusResponse>()
     var dropDownResult = MutableLiveData<DropDownResponse>()
+    var codeDropDownResult = MutableLiveData<DropDownResponse>()
+    var pincodeDropDownResult = MutableLiveData<DropDownResponse>()
     var updateNameResult = MutableLiveData<CommonResponse>()
     var updateMobileResult = MutableLiveData<CommonResponse>()
     var updateAadhaarResult = MutableLiveData<CommonResponse>()
@@ -58,6 +63,7 @@ open class ViewModel : ViewModel() {
     var appealResult = MutableLiveData<CommonResponse>()
     var renewCardResult = MutableLiveData<CommonResponse>()
     var logoutResult = MutableLiveData<CommonResponse>()
+    var uploadFile = MutableLiveData<UploadFileResponse>()
     private val _downloadResult = MutableLiveData<Result<File>>()
     val downloadResult: LiveData<Result<File>> get() = _downloadResult
     val errors = MutableLiveData<String>()
@@ -329,6 +335,120 @@ open class ViewModel : ViewModel() {
                         when (response.code()) {
                             200, 201 -> {
                                 dropDownResult.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun getCodeDropDown(context: Context, request: CodeDropDownRequest) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.getCodeDropDown(request)
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                codeDropDownResult.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun getPincodeDropDown(context: Context, request: PincodeRequest) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.getPincodeDropDown(request)
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                pincodeDropDownResult.postValue(response.body())
                                 dismissLoader()
                             }
                         }
@@ -1164,6 +1284,70 @@ open class ViewModel : ViewModel() {
         }
     }
 
+    fun uploadFile(
+        context: Context,
+        documentType: RequestBody?,
+        document: MultipartBody.Part?,
+    ) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.uploadFile(
+                    documentType,
+                    document
+                )
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                uploadFile.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
     fun downloadApplication(context: Context, request: RequestBody) {
         networkCheck(context, true)
         scope.launch {
@@ -1184,7 +1368,6 @@ open class ViewModel : ViewModel() {
             }
         }
     }
-
     fun downloadReceipt(context: Context, request: RequestBody) {
         networkCheck(context, true)
         scope.launch {
@@ -1205,7 +1388,6 @@ open class ViewModel : ViewModel() {
             }
         }
     }
-
     fun downloadEDisabilityCertificate(context: Context, request: RequestBody) {
         networkCheck(context, true)
         scope.launch {
@@ -1246,7 +1428,6 @@ open class ViewModel : ViewModel() {
             }
         }
     }
-
     fun downloadDoctorDiagnosisSheet(context: Context, request: RequestBody) {
         networkCheck(context, true)
         scope.launch {

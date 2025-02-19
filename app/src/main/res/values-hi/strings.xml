@@ -357,4 +357,5 @@
     <string name="i_hereby_declare_that_all_particulars_stated_above_are_true_to_the_best_of_my_knowledge_and_belief">I hereby declare that all particulars stated above are true to the best of my knowledge and belief, and no material information has been concealed or misstated. I further state that if any inaccuracy is detected in the application, I shall be liable to forfeiture of any benefits derived and other action as per law. *</string>
     <string name="hospital_for_assessment_issue_of_udid_card_disability_certificate">Hospital for assessment/issue of UDID card /disability certificate</string>
     <string name="choose_hospital_treating_district">Choose Hospital Treating District</string>
+    <string name="please_select_sub_district_first">Please select Sub-District First.</string>
 </resources>

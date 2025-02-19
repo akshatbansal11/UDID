@@ -180,7 +180,6 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
                      bindingDialog.etDob.text=""
 
                  }
-
              }
          }
 
