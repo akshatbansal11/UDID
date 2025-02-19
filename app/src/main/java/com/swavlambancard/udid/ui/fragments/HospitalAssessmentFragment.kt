@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -194,9 +195,11 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     }
     inner class ClickActions {
         fun submit(view: View) {
-            if (sharedViewModel.valid()) {
-                startActivity(Intent(requireContext(),LoginActivity::class.java))
-            }
+            val dialog = ThankYouDialog()
+            dialog.show((context as AppCompatActivity).supportFragmentManager, "ThankYouDialog")
+//            if (sharedViewModel.valid()) {
+//                startActivity(Intent(requireContext(),LoginActivity::class.java))
+//            }
         }
 
         fun cancel(view: View){
