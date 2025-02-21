@@ -39,7 +39,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         mBinding?.clickAction = ClickActions()
         sharedViewModel = ViewModelProvider(this)[SharedDataViewModel::class.java]
         sharedViewModel?.init()
-        editApi()
+//        editApi()
     }
 
 

@@ -25,7 +25,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.File
 
-class ThankYouDialog : DialogFragment() {
+class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
 
     private var mBinding: DialogThankYouBinding? = null
     private var viewModel = ViewModel()
@@ -34,7 +34,7 @@ class ThankYouDialog : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         mBinding = DialogThankYouBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -48,6 +48,7 @@ class ThankYouDialog : DialogFragment() {
         }
         mBinding?.clickAction = ClickActions()
         viewModel.init()
+        mBinding?.tvEnrollmentNo?.text = "Enrollment No: $applicationNumber"
         observer()
     }
 
@@ -80,7 +81,8 @@ class ThankYouDialog : DialogFragment() {
         }
 
         fun downloadApplication(view: View){
-            startDownload(getString(R.string.application))
+//            startDownload(getString(R.string.application))
+            mBinding?.flParent?.let { showSnackbar(it,"Downloaded") }
         }
 
         fun downloadReceipt(view: View){
