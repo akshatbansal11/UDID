@@ -306,7 +306,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 selectedTextView?.text = selectedItem
                 when (type) {
                     "state" -> {
-                        if (selectedItem == "Select State Name") {
+                        if (selectedItem == "Select Hospital Treating State / UTs") {
                             selectedTextView?.text = ""
                             mBinding?.etHospitalTreatingDistrict?.text = ""
                             districtList.clear()
@@ -317,7 +317,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     }
 
                     "district" -> {
-                        if (selectedItem == "Select District Name") {
+                        if (selectedItem == "Choose Hospital Treating District") {
                             selectedTextView?.text = ""
                             mBinding?.etHospitalName?.text = ""
                             hospitalList.clear()

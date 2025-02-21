@@ -30,6 +30,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     private var currentFragment: Fragment? = null
     private var sharedViewModel: SharedDataViewModel? = null
     private var isFrom: String? = null
+    var check: Int? = null
     override val layoutId: Int
         get() = R.layout.activity_personal_profile
 
@@ -39,6 +40,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         sharedViewModel = ViewModelProvider(this)[SharedDataViewModel::class.java]
         sharedViewModel?.init()
         isFrom = intent.extras?.getString(AppConstants.IS_FROM)
+        check = intent.extras?.getInt(AppConstants.CHECK)
         if (isFrom == "login") {
             replaceFragment(PersonalDetailFragment())
         } else {

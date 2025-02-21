@@ -22,6 +22,7 @@ class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>
     override val layoutId: Int
         get() = R.layout.activity_apply_for_udid_form
     var date: String? = null
+    private var isFrom: Int? = null
     private var mBinding: ActivityApplyForUdidFormBinding? = null
 
     override fun initView() {
@@ -33,18 +34,20 @@ class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>
         mBinding?.etDobPending?.setOnClickListener {
             calenderOpen(this@ApplyForUdidFormActivity, mBinding?.etDobPending!!)
         }
-        mBinding?.radioGroup?.setOnCheckedChangeListener { radioGroup, checkedButton ->
+        mBinding?.radioGroup?.setOnCheckedChangeListener { _, checkedButton ->
             when (checkedButton) {
                 R.id.radio_option1 -> {
                     mBinding?.llUdidCardReject?.hideView()
                     mBinding?.llUdidCardPending?.hideView()
                     mBinding?.llUdidCard?.hideView()
+                    isFrom = 1
                 }
 
                 R.id.radio_option2 -> {
                     mBinding?.llUdidCardReject?.hideView()
                     mBinding?.llUdidCardPending?.hideView()
                     mBinding?.llUdidCard?.hideView()
+                    isFrom = 2
                 }
 
                 R.id.radio_option3 -> {
@@ -85,7 +88,8 @@ class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>
             } else {
 
                 startActivity(Intent(this, PersonalProfileActivity::class.java)
-                    .putExtra(AppConstants.IS_FROM,"login"))
+                    .putExtra(AppConstants.IS_FROM,"login")
+                    .putExtra(AppConstants.CHECK,isFrom))
             }
         }
     }
