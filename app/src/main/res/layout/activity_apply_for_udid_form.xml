@@ -70,9 +70,8 @@
             app:layout_constraintTop_toBottomOf="@+id/clToolbar">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="@dimen/dp_10"
-            android:background="@drawable/curve_dialog"
             android:orientation="vertical"
             android:elevation="@dimen/dp_3"
             android:padding="15dp">

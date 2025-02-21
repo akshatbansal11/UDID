@@ -5,25 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.RadioButton
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.swavlambancard.udid.R
-import com.swavlambancard.udid.databinding.ActivityApplyForUdidBinding
 import com.swavlambancard.udid.databinding.ActivityApplyForUdidFormBinding
+import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseActivity
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
 import java.util.Calendar
 
-class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding> (){
+class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>() {
 
     override val layoutId: Int
         get() = R.layout.activity_apply_for_udid_form
@@ -31,51 +25,54 @@ class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>
     private var mBinding: ActivityApplyForUdidFormBinding? = null
 
     override fun initView() {
-    mBinding=viewDataBinding
-        mBinding?.etDob?.setOnClickListener{
+        mBinding = viewDataBinding
+        mBinding?.clickAction = ClickActions()
+        mBinding?.etDob?.setOnClickListener {
             calenderOpen(this@ApplyForUdidFormActivity, mBinding?.etDob!!)
         }
-        mBinding?.etDobPending?.setOnClickListener{
+        mBinding?.etDobPending?.setOnClickListener {
             calenderOpen(this@ApplyForUdidFormActivity, mBinding?.etDobPending!!)
         }
         mBinding?.radioGroup?.setOnCheckedChangeListener { radioGroup, checkedButton ->
-            when(checkedButton){
+            when (checkedButton) {
                 R.id.radio_option1 -> {
                     mBinding?.llUdidCardReject?.hideView()
                     mBinding?.llUdidCardPending?.hideView()
                     mBinding?.llUdidCard?.hideView()
                 }
+
                 R.id.radio_option2 -> {
                     mBinding?.llUdidCardReject?.hideView()
                     mBinding?.llUdidCardPending?.hideView()
                     mBinding?.llUdidCard?.hideView()
                 }
+
                 R.id.radio_option3 -> {
                     mBinding?.llUdidCardReject?.showView()
                     mBinding?.llUdidCardPending?.hideView()
                     mBinding?.llUdidCard?.hideView()
-                    date=""
-                    mBinding?.etDobPending?.text=""
-                    mBinding?.etDob?.text=""
+                    date = ""
+                    mBinding?.etDobPending?.text = ""
+                    mBinding?.etDob?.text = ""
                 }
+
                 R.id.radio_option4 -> {
                     mBinding?.llUdidCardReject?.hideView()
                     mBinding?.llUdidCardPending?.hideView()
                     mBinding?.llUdidCard?.showView()
                 }
+
                 R.id.radio_option5 -> {
                     mBinding?.llUdidCardReject?.hideView()
                     mBinding?.llUdidCardPending?.showView()
                     mBinding?.llUdidCard?.hideView()
-                    date=""
-                    mBinding?.etDobPending?.text=""
-                    mBinding?.etDob?.text=""
+                    date = ""
+                    mBinding?.etDobPending?.text = ""
+                    mBinding?.etDob?.text = ""
 
                 }
             }
         }
-
-
         mBinding?.tvSubmit?.setOnClickListener {
             val selectedRadioButtonId = mBinding?.radioGroup?.checkedRadioButtonId
             if (selectedRadioButtonId == -1) {
@@ -87,15 +84,18 @@ class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>
                 }
             } else {
 
-                startActivity(Intent(this, PersonalProfileActivity::class.java))
+                startActivity(Intent(this, PersonalProfileActivity::class.java)
+                    .putExtra(AppConstants.IS_FROM,"login"))
             }
         }
     }
-  inner class ClickActions{
-      fun backPress(view: View) {
-          onBackPressedDispatcher.onBackPressed()
-      }
-  }
+
+    inner class ClickActions {
+        fun backPress(view: View) {
+            onBackPressedDispatcher.onBackPressed()
+        }
+    }
+
     override fun setVariables() {
 
     }
@@ -103,6 +103,7 @@ class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>
     override fun setObservers() {
 
     }
+
     private fun calenderOpen(context: Context, editText: TextView) {
         val cal: Calendar = Calendar.getInstance()
         Log.d("Calendar", "tvDob clicked")

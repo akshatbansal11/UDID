@@ -45,7 +45,6 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
     }
 
     override fun setVariables() {
-        mBinding?.tvApplyForUDID?.text = readRawTextFile(R.raw.udid_string)
     }
 
     override fun setObservers() {

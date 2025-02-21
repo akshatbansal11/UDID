@@ -27,8 +27,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             startActivity(Intent(this@LoginActivity,ScannerActivity::class.java))
         }
         fun applyForUDID(view: View){
-            startActivity(Intent(this@LoginActivity,ApplyForUdidActivity::class.java)
-                .putExtra(AppConstants.IS_FROM,"login"))
+            startActivity(Intent(this@LoginActivity,ApplyForUdidActivity::class.java))
         }
         fun backPress(view: View){
             onBackPressedDispatcher.onBackPressed()
