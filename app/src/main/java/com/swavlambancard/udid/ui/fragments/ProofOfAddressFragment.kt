@@ -70,7 +70,24 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-//        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+
+            mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName
+            addressProofId = userData.natureDocumentAddressProofCode
+            mBinding?.etNatureDocumentAddressProof?.text = userData.documentAddressProofPhoto
+            mBinding?.etAddress?.setText(userData.address)
+            mBinding?.etState?.text = userData.stateName
+            mBinding?.etDistrict?.text = userData.districtName
+            mBinding?.etSubDistrict?.text = userData.subDistrictName
+            mBinding?.etVillage?.text = userData.villageName
+            mBinding?.etPincode?.text = userData.pincodeName
+            stateId = userData.stateCode
+            districtId = userData.districtCode
+            subDistrictId = userData.subDistrictCode
+            villageId = userData.villageCode
+            pincodeId = userData.pincodeCode
+
+        }
 //            mBinding?.tvNatureDocument?.setText(userData.documentAddressProof)
 //            if (!userData.documentAddressProof.isNullOrEmpty()) {
 //                mBinding?.tvNatureDocument?.setTextColor(Color.parseColor("#000000"))
@@ -123,35 +140,6 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
 //        mBinding?.tvPincode?.addTextChangedListener {
 //            sharedViewModel.userData.value?.pincode = it.toString()
 //        }
-//
-//
-//        //ClickListener
-//        mBinding?.tvNatureDocument?.setOnClickListener {
-//            showBottomSheetDialog("Nature")
-//        }
-//        mBinding?.tvState?.setOnClickListener {
-//            showBottomSheetDialog("State")
-//        }
-//        mBinding?.tvDistrict?.setOnClickListener {
-//            showBottomSheetDialog("District")
-//        }
-//        mBinding?.tvCity?.setOnClickListener {
-//            showBottomSheetDialog("City")
-//        }
-//        mBinding?.tvVillage?.setOnClickListener {
-//            showBottomSheetDialog("Village")
-//        }
-//        mBinding?.tvPincode?.setOnClickListener {
-//            showBottomSheetDialog("Pin")
-//        }
-
-//        mBinding?.tvHead?.setOnClickListener {
-//            sharedViewModel.userData.value?.let { userData ->
-//                // Process all data here
-//                Toast.makeText(context, "Data Submitted: $userData ", Toast.LENGTH_LONG).show()
-//            }
-//        }
-
     }
 
     override fun setVariables() {
@@ -164,9 +152,15 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 when (userResponseModel.model) {
                     "Naturedocuments" -> {
                         addressProofList.clear()
-                        addressProofList.add(DropDownResult("0", getString(R.string.select_nature_of_document)))
+                        addressProofList.add(
+                            DropDownResult(
+                                "0",
+                                getString(R.string.select_nature_of_document)
+                            )
+                        )
                         addressProofList.addAll(userResponseModel._result)
                     }
+
                     "States" -> {
                         stateList.clear()
                         stateList.add(DropDownResult("0", getString(R.string.choose_state_uts_)))
@@ -189,6 +183,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                         )
                         subDistrictList.addAll(userResponseModel._result)
                     }
+
                     "Villages" -> {
                         villageList.clear()
                         villageList.add(
@@ -228,6 +223,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                     }
                 } else {
                     addressProofName = userResponseModel._result.file_name
+                    mBinding?.etFileName?.text = userResponseModel._result.file_name
                 }
             }
         }
@@ -239,7 +235,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
     inner class ClickActions {
         fun next(view: View) {
             if (valid()) {
-                (requireActivity() as PersonalProfileActivity).replaceFragment(DisabilityDetailFragment())
+                (requireActivity() as PersonalProfileActivity).replaceFragment(
+                    DisabilityDetailFragment()
+                )
             }
         }
 
@@ -418,37 +416,36 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
             }
 
             "district" -> {
-                if (districtList.isEmpty()) {
+//                if (districtList.isEmpty()) {
                     districtListApi()
-                }
+//                }
                 selectedList = districtList
                 selectedTextView = mBinding?.etDistrict
             }
 
             "subDistrict" -> {
-                if (subDistrictList.isEmpty()) {
+//                if (subDistrictList.isEmpty()) {
                     subDistrictListApi()
-                }
+//                }
                 selectedList = subDistrictList
                 selectedTextView = mBinding?.etSubDistrict
             }
 
             "village" -> {
-                if (villageList.isEmpty()) {
+//                if (villageList.isEmpty()) {
                     villageApi()
-                }
+//                }
                 selectedList = villageList
                 selectedTextView = mBinding?.etVillage
             }
 
             "pincode" -> {
-                if (pincodeList.isEmpty()) {
+//                if (pincodeList.isEmpty()) {
                     pincodeListApi()
-                }
+//                }
                 selectedList = pincodeList
                 selectedTextView = mBinding?.etPincode
             }
-
             else -> return
         }
 
@@ -462,6 +459,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             mBinding?.etNatureDocumentAddressProof?.text = ""
                         } else {
                             addressProofId = id
+                            sharedViewModel.userData.value?.natureDocumentAddressProofCode = id
                         }
                     }
 
@@ -472,6 +470,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             districtList.clear()
                         } else {
                             stateId = id
+                            sharedViewModel.userData.value?.stateCode = id
                         }
                     }
 
@@ -482,6 +481,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             subDistrictList.clear()
                         } else {
                             districtId = id
+                            sharedViewModel.userData.value?.districtCode = id
                         }
                     }
 
@@ -490,6 +490,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             selectedTextView?.text = ""
                         } else {
                             subDistrictId = id
+                            sharedViewModel.userData.value?.subDistrictCode = id
                         }
                     }
 
@@ -498,6 +499,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             selectedTextView?.text = ""
                         } else {
                             villageId = id
+                            sharedViewModel.userData.value?.villageCode = id
                         }
                     }
 
@@ -507,6 +509,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             mBinding?.etPincode?.text = ""
                         } else {
                             pincodeId = id
+                            sharedViewModel.userData.value?.pincodeCode = id
                         }
                     }
                 }
@@ -607,10 +610,8 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                     photoFile = imageFile
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                        mBinding?.etFileName?.text = photoFile?.name
                     } else {
                         compressFile(photoFile!!) // Compress if size exceeds limit
-                        mBinding?.etFileName?.text = photoFile?.name
                     }
                     uploadImage(photoFile!!)
                 }
@@ -627,10 +628,8 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             val file = filePath?.let { File(it) }
                             val fileSizeInBytes = file?.length() ?: 0
                             if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                                mBinding?.etFileName?.text = file?.name
                             } else {
                                 compressFile(file!!) // Compress if size exceeds limit
-                                mBinding?.etFileName?.text = file.name
                             }
                             uploadImage(file!!)
                         } else {
@@ -666,7 +665,6 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                                     it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE))
                                 if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                                     uploadDocument(documentName, uri)
-                                    mBinding?.etFileName?.text = documentName
                                 } else {
                                     mBinding?.llParent?.let {
                                         showSnackbar(

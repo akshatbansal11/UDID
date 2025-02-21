@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -62,7 +63,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     private var disabilityCertificateTag: Int = 0
     private var disabilityTypeList = ArrayList<DropDownResult>()
     private var matchItemDisabilityTypeList = arrayListOf<DropDownResult>()
-    private var disabilityTypeId = arrayListOf<String>()
+    private var disabilityTypeId :ArrayList<String>?= null
     private var disabilitySinceList = ArrayList<DropDownResult>()
     private var disabilitySinceId: String? = null
     private val disabilityDueToList = ArrayList<DropDownResult>()
@@ -77,111 +78,111 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-//        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
-//            mBinding?.tvDisabilityType?.setText(userData.disabilityType)
-//            if (!userData.disabilityType.isNullOrEmpty()) {
-//                mBinding?.tvDisabilityType?.setTextColor(Color.parseColor("#000000"))
-//            }
-//            mBinding?.tvDueTo?.setText(userData.disabilityDue)
-//            if (!userData.disabilityDue.isNullOrEmpty()) {
-//                mBinding?.tvDueTo?.setTextColor(Color.parseColor("#000000"))
-//            }
-//            if (userData.disabilityBirth == 1) {
-//                mBinding?.rbYes?.isChecked = true
-//                mBinding?.tvApplicantMotherName?.hideView()
-//                mBinding?.tvDisabilitySince?.hideView()
-//            } else if (userData.disabilityBirth == 2) {
-//                mBinding?.rbNo?.isChecked = true
-//                mBinding?.tvApplicantMotherName?.showView()
-//                mBinding?.tvDisabilitySince?.showView()
-//            } else {
-//                mBinding?.rbYes?.isChecked = false
-//                mBinding?.rbNo?.isChecked = false
-//                mBinding?.tvApplicantMotherName?.hideView()
-//                mBinding?.tvDisabilitySince?.hideView()
-//            }
-//            mBinding?.tvDisabilitySince?.setText(userData.disabilitySince)
-//            if (!userData.disabilitySince.isNullOrEmpty()) {
-//                mBinding?.tvDisabilitySince?.setTextColor(Color.parseColor("#000000"))
-//            }
-//        }
-//        if (mBinding?.rbNo?.isChecked == true) {
-//            mBinding?.tvApplicantMotherName?.showView()
-//            mBinding?.tvDisabilitySince?.showView()
-//        } else {
-//            mBinding?.tvApplicantMotherName?.hideView()
-//            mBinding?.tvDisabilitySince?.hideView()
-//        }
-//        mBinding?.rgBirth?.setOnCheckedChangeListener { group, checkedId ->
-//            when (checkedId) {
-//                R.id.rbYes -> {
-//                    mBinding?.tvApplicantMotherName?.hideView()
-//                    mBinding?.tvDisabilitySince?.hideView()
-//                    gender = 1
-//                }
-//                R.id.rbNo -> {
-//                    mBinding?.tvApplicantMotherName?.showView()
-//                    mBinding?.tvDisabilitySince?.showView()
-//                    gender = 2
-//                }
-//
-//                else -> {
-//                    gender = 0
-//                }
-//            }
-//            sharedViewModel.userData.value?.disabilityBirth = gender
-//        }
-//        mBinding?.tvDisabilityType?.addTextChangedListener {
-//            sharedViewModel.userData.value?.disabilityType = it.toString()
-//        }
-//        mBinding?.tvDueTo?.addTextChangedListener {
-//            sharedViewModel.userData.value?.disabilityDue = it.toString()
-//        }
-//        mBinding?.tvDisabilitySince?.addTextChangedListener {
-//            sharedViewModel.userData.value?.disabilitySince = it.toString()
-//        }
-//        mBinding?.tvDisabilityType?.setOnClickListener {
-//            showBottomSheetDialog("Type")
-//        }
-//        mBinding?.tvDueTo?.setOnClickListener {
-//            showBottomSheetDialog("Due")
-//        }
-//        mBinding?.tvDisabilitySince?.setOnClickListener {
-//            showBottomSheetDialog("Since")
-//        }
-    }
 
-    override fun setVariables() {
+        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+            when (userData.disabilityBirth) {
+                1->{
+                    mBinding?.rbYes?.isChecked = true
+                    mBinding?.tvDisabilitySince?.hideView()
+                    mBinding?.etDisabilitySince?.hideView()
+                }
+                2->{
+                    mBinding?.rbNo?.isChecked = true
+                    mBinding?.tvDisabilitySince?.showView()
+                    mBinding?.etDisabilitySince?.showView()
+                }
+                else->{
+                    mBinding?.rbYes?.isChecked = false
+                    mBinding?.rbNo?.isChecked = false
+                    mBinding?.tvDisabilitySince?.hideView()
+                    mBinding?.etDisabilitySince?.hideView()
+                }
+            }
+            when (userData.haveDisabilityCertificate) {
+                1->{
+                    mBinding?.rbDisabilityCertificateYes?.isChecked = true
+                    mBinding?.llDisabilityCertificateYes?.showView()
+                }
+                2->{
+                    mBinding?.rbDisabilityCertificateYes?.isChecked = true
+                    mBinding?.llDisabilityCertificateYes?.hideView()
+                }
+                else->{
+                    mBinding?.rbYes?.isChecked = false
+                    mBinding?.rbNo?.isChecked = false
+                    mBinding?.llDisabilityCertificateYes?.hideView()
+                }
+            }
+            mBinding?.etDisabilityType?.text = userData.disabilityTypeName
+            disabilityTypeId = userData.disabilityTypeCode
+            mBinding?.etDisabilityDueTo?.text = userData.disabilityDueToName
+            disabilityDueToId = userData.disabilityDueToCode
+            mBinding?.etDisabilitySince?.text = userData.disabilitySinceName
+            disabilitySinceId = userData.disabilitySinceCode
+            mBinding?.etFileName?.text = userData.uploadDisabilityCertificate
+            disabilityCertificateName = userData.uploadDisabilityCertificate
+            mBinding?.etRegistrationNoOfCertificate?.setText(userData.serialNumber)
+            mBinding?.etDateOfIssuanceOfCertificate?.text = userData.dateOfCertificate
+            mBinding?.etSelectIssuingAuthority?.text = userData.detailOfAuthorityName
+            detailsOfIssuingAuthorityId = userData.detailOfAuthorityCode
+            mBinding?.etDisabilityPercentage?.setText(userData.disabilityPercentage)
+        }
+
         mBinding?.rgDisabilityByBirth?.setOnCheckedChangeListener { _, checkedId ->
             disabilityByBirthTag = when (checkedId) {
                 R.id.rbYes -> {
                     1
                 }
-
                 R.id.rbNo -> {
                     2
                 }
-
                 else -> {
                     0
                 }
             }
+            sharedViewModel.userData.value?.disabilityBirth = disabilityByBirthTag
         }
         mBinding?.rgDisabilityCertificate?.setOnCheckedChangeListener { _, checkedId ->
             disabilityCertificateTag = when (checkedId) {
                 R.id.rbDisabilityCertificateYes -> {
                     1
                 }
-
                 R.id.rbDisabilityCertificateNo -> {
                     2
                 }
-
                 else -> {
                     0
                 }
             }
+            sharedViewModel.userData.value?.haveDisabilityCertificate = disabilityCertificateTag
         }
+        mBinding?.etDisabilityType?.addTextChangedListener {
+            sharedViewModel.userData.value?.disabilityTypeName = it.toString()
+        }
+        mBinding?.etDisabilityDueTo?.addTextChangedListener {
+            sharedViewModel.userData.value?.disabilityDueToName = it.toString()
+        }
+        mBinding?.etDisabilitySince?.addTextChangedListener {
+            sharedViewModel.userData.value?.disabilitySinceName = it.toString()
+        }
+        mBinding?.etFileName?.addTextChangedListener {
+            sharedViewModel.userData.value?.uploadDisabilityCertificate = it.toString()
+        }
+        mBinding?.etRegistrationNoOfCertificate?.addTextChangedListener {
+            sharedViewModel.userData.value?.serialNumber = it.toString()
+        }
+        mBinding?.etDateOfIssuanceOfCertificate?.addTextChangedListener {
+            sharedViewModel.userData.value?.dateOfCertificate = it.toString()
+        }
+        mBinding?.etSelectIssuingAuthority?.addTextChangedListener {
+            sharedViewModel.userData.value?.detailOfAuthorityName = it.toString()
+        }
+        mBinding?.etDisabilityPercentage?.addTextChangedListener {
+            sharedViewModel.userData.value?.disabilityPercentage = it.toString()
+        }
+    }
+
+    override fun setVariables() {
     }
 
     override fun setObservers() {
@@ -247,6 +248,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     }
                 } else {
                     disabilityCertificateName = userResponseModel._result.file_name
+                    mBinding?.etFileName?.text = userResponseModel._result.file_name
                 }
             }
         }
@@ -362,24 +364,21 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         }
         setAdapter(view, disabilityTypeList)
         tvClose.setOnClickListener {
-            dialog.dismiss()
+            sharedViewModel.userData.value?.disabilityTypeCode = disabilityTypeId
             matchItemDisabilityTypeList = multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
-            if (matchItemDisabilityTypeList.size < 0)
+            if (matchItemDisabilityTypeList.size > 0)
                 mBinding?.etDisabilityType?.text = matchItemDisabilityTypeList.joinToString(", ") { it.name }
              else {
                 mBinding?.etDisabilityType?.hint = getString(R.string.choose_disability_types)
             }
+            dialog.dismiss()
         }
         dialog.setCancelable(false)
         dialog.setContentView(view)
         dialog.show()
     }
 
-    private fun setAdapter(
-        view: View,
-        list: ArrayList<DropDownResult>,
-
-        ) {
+    private fun setAdapter(view: View, list: ArrayList<DropDownResult>) {
         val rvBottomSheet = view.findViewById<RecyclerView>(R.id.rvBottomSheet)
         layoutManager = LinearLayoutManager(requireContext())
         rvBottomSheet.layoutManager = layoutManager
@@ -388,19 +387,16 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             list,
             matchItemDisabilityTypeList,
         ) {
-            if (disabilityTypeId.contains(it)) {
-                disabilityTypeId.remove(it)
+            if (disabilityTypeId?.contains(it) == true) {
+                disabilityTypeId?.remove(it)
             } else {
-                disabilityTypeId.add(it)
+                disabilityTypeId?.add(it)
             }
         }
         rvBottomSheet.adapter = multipleSelectionBottomSheetAdapter
     }
 
-    private fun calenderOpen(
-        context: Context,
-        editText: TextView,
-    ) {
+    private fun calenderOpen(context: Context, editText: TextView) {
         val cal: Calendar = Calendar.getInstance()
 
         // Parse the date from editText if it contains a valid date
@@ -499,6 +495,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             selectedTextView?.text = ""
                         } else {
                             disabilityDueToId = id
+                            sharedViewModel.userData.value?.disabilityDueToCode = disabilityDueToId.toString()
                         }
                     }
 
@@ -507,6 +504,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             selectedTextView?.text = ""
                         } else {
                             disabilitySinceId = id
+                            sharedViewModel.userData.value?.disabilitySinceCode = disabilitySinceId.toString()
                         }
                     }
 
@@ -515,6 +513,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             selectedTextView?.text = ""
                         } else {
                             detailsOfIssuingAuthorityId = id
+                            sharedViewModel.userData.value?.detailOfAuthorityCode = detailsOfIssuingAuthorityId.toString()
                         }
                     }
                 }
@@ -644,10 +643,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     photoFile = imageFile
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                        mBinding?.etFileName?.text = photoFile?.name
                     } else {
                         compressFile(photoFile!!) // Compress if size exceeds limit
-                        mBinding?.etFileName?.text = photoFile?.name
                     }
                     uploadImage(photoFile!!)
                 }
@@ -664,10 +661,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             val file = filePath?.let { File(it) }
                             val fileSizeInBytes = file?.length() ?: 0
                             if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                                mBinding?.etFileName?.text = file?.name
                             } else {
                                 compressFile(file!!) // Compress if size exceeds limit
-                                mBinding?.etFileName?.text = file.name
                             }
                             uploadImage(file!!)
                         } else {
@@ -703,7 +698,6 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                                     it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE))
                                 if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                                     uploadDocument(documentName, uri)
-                                    mBinding?.etFileName?.text = documentName
                                 } else {
                                     mBinding?.llParent?.let {
                                         showSnackbar(

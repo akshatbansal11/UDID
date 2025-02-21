@@ -6,6 +6,8 @@ import com.swavlambancard.udid.model.CodeDropDownRequest
 import com.swavlambancard.udid.model.CommonResponse
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResponse
+import com.swavlambancard.udid.model.EditProfileRequest
+import com.swavlambancard.udid.model.EditProfileResponse
 import com.swavlambancard.udid.model.GenerateOtpRequest
 import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
@@ -55,6 +57,8 @@ const val SUBMIT_LOST_CARD= "https://swavlambancard.gov.in/api/rest/downloadUpda
 const val GET_CODE_DROP_DOWN= "getCodeDropdown"
 const val PINCODE_DROP_DOWN= "getPincodeDropdown"
 const val UPLOAD_FILE= "uploadFile"
+const val EDIT_APPLICATION= "editApplication"
+const val SAVE_PWD_FORM= "savePWDForm"
 
 interface MyService {
 
@@ -88,7 +92,6 @@ interface MyService {
 
     @Multipart
     @POST(UPDATE_NAME)
-    @Headers("Content-Type: application/json")
     suspend fun updateName(
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("name") name: RequestBody?,
@@ -113,7 +116,6 @@ interface MyService {
 
     @Multipart
     @POST(UPDATE_AADHAAR)
-    @Headers("Content-Type: application/json")
     suspend fun updateAadhaar(
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("aadhaar_no") aadhaarNo: RequestBody?,
@@ -127,7 +129,6 @@ interface MyService {
 
     @Multipart
     @POST(UPDATE_DOB)
-    @Headers("Content-Type: application/json")
     suspend fun updateDob(
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("dob") dob: RequestBody?,
@@ -161,7 +162,6 @@ interface MyService {
 
     @Multipart
     @POST(LOST_CARD)
-    @Headers("Content-Type: application/json")
     suspend fun lostCard(
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("reason") reason: RequestBody?,
@@ -172,7 +172,6 @@ interface MyService {
     ):Response<CommonResponse>
 
     @Multipart
-    @Headers("Content-Type: application/json")
     @POST(FEEDBACK_QUERY)
     suspend fun feedBack(
         @Part("full_name") fullName: RequestBody?,
@@ -186,7 +185,6 @@ interface MyService {
 
     @Multipart
     @POST(APPEAL)
-    @Headers("Content-Type: application/json")
     suspend fun appeal(
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("reason") reason: RequestBody?,
@@ -195,7 +193,6 @@ interface MyService {
     ):Response<CommonResponse>
 
     @Multipart
-    @Headers("Content-Type: application/json")
     @POST(RENEW_CARD)
     suspend fun getRenewCard(
         @Part("application_number") applicationNumber: RequestBody?,
@@ -211,7 +208,6 @@ interface MyService {
     ): Response<CommonResponse>
 
     @Multipart
-//    @Headers("Content-Type: application/json")
     @POST(LOGOUT)
     suspend fun logout(
         @Part("application_number") applicationNumber: RequestBody?,
@@ -239,11 +235,49 @@ interface MyService {
     suspend fun downloadDoctorDiagnosisSheet(@Body request: RequestBody): Response<ResponseBody>
 
     @Multipart
-    @Headers("Content-Type: application/json")
     @POST(UPLOAD_FILE)
     suspend fun getUploadFile(
         @Part("document_type") documentType: RequestBody?,
         @Part document : MultipartBody.Part?
+    ): Response<UploadFileResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(EDIT_APPLICATION)
+    suspend fun editApplication(@Body request: EditProfileRequest): Response<EditProfileResponse>
+
+    @Multipart
+    @POST(SAVE_PWD_FORM)
+    suspend fun savePwdForm(
+        //Personal Details
+        @Part("full_name") fullName: RequestBody?,
+        @Part("full_name_i18n") regionalFullName: RequestBody?,
+        @Part("regional_language") regionalLanguage: RequestBody?,
+        @Part("mobile") mobile: RequestBody?,
+        @Part("email") email: RequestBody?,
+        @Part("dob") dob: RequestBody?,
+        @Part("gender") gender: RequestBody?,//=>M/F/T
+        @Part("guardian_relation") guardianRelation: RequestBody?,//Mother/Father/Guardian
+        @Part("father_name") fatherName: RequestBody?,
+        @Part("mother_name") motherName: RequestBody?,
+        @Part("guardian_name") guardianName: RequestBody?,
+        @Part("guardian_contact") guardianContact: RequestBody?,
+        @Part("photo") photo: RequestBody?,
+        @Part("sign") sign: RequestBody?,
+        // Proof id Identity Card
+        @Part("aadhaar_no") aadhaarNo: RequestBody?,
+        @Part("share_aadhar_info") shareAadhaarInfo: RequestBody?,//0/1
+        @Part("aadhar_enrollment_slip") aadhaarEnrollmentSlip: RequestBody?,
+        @Part("identitity_proof_id") identitityProofId: RequestBody?,
+        @Part("identitity_proof_file") identitityProofFile: RequestBody?,
+        //Address For Correspondence
+        @Part("address_proof_id") addressProofId: RequestBody?,
+        @Part("address_proof_file") addressProofFile: RequestBody?,
+        @Part("current_address") currentAddress: RequestBody?,
+        @Part("current_state_code") currentStateCode: RequestBody?,
+        @Part("current_district_code") currentDistrictCode: RequestBody?,
+        @Part("current_subdistrict_code") currentSubdistrictCode: RequestBody?,
+        @Part("current_village_code") currentVillageCode: RequestBody?,
+        @Part("current_village_code") currentPincode: RequestBody?,
     ): Response<UploadFileResponse>
 }
 

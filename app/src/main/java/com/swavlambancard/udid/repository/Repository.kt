@@ -6,6 +6,8 @@ import com.swavlambancard.udid.model.CodeDropDownRequest
 import com.swavlambancard.udid.model.CommonResponse
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResponse
+import com.swavlambancard.udid.model.EditProfileRequest
+import com.swavlambancard.udid.model.EditProfileResponse
 import com.swavlambancard.udid.model.GenerateOtpRequest
 import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
@@ -289,9 +291,16 @@ object Repository {
         documentType: RequestBody?,
         document: MultipartBody.Part?
     ): Response<UploadFileResponse> {
-        return api.getUploadFile(
+        return apiLogin.getUploadFile(
             documentType,
             document
+        )
+    }
+    suspend fun editApplication(
+        request: EditProfileRequest
+    ): Response<EditProfileResponse> {
+        return api.editApplication(
+            request
         )
     }
 }

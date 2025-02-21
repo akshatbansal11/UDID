@@ -5,12 +5,12 @@ import java.io.Serializable
 data class DashboardData(
     val title: String,
     val image: Int,
-): Serializable
+) : Serializable
 
 data class OnBoardingImageData(
     val imageResId: Int, // Resource ID of the image
     val title: String,
-    val description: String
+    val description: String,
 )
 
 data class PincodeRequest(
@@ -21,125 +21,123 @@ data class PincodeRequest(
 
 data class DropDownRequest(
     val fields: Fields,
-    val filters: Filters?= null,
+    val filters: Filters? = null,
     val model: String,
     val type: String,
-    val order: Any?= null
+    val order: Any? = null,
 )
 
 data class Fields(
-    val reason: String?= null,
-    val state_code: String?= null,
-    val id: String?= null,
-    val subdistrict_code: String?= null,
-    val district_code: String?= null,
-    val village_code: String?= null
+    val reason: String? = null,
+    val state_code: String? = null,
+    val id: String? = null,
+    val subdistrict_code: String? = null,
+    val district_code: String? = null,
+    val village_code: String? = null,
 )
 
 data class Filters(
-    val request_code: String?= null,
-    val status: Int?= null,
-    val district_code: String?= null,
-    val state_code: String?= null,
-    val subdistrict_code: String?= null
+    val request_code: String? = null,
+    val status: Int? = null,
+    val district_code: String? = null,
+    val state_code: String? = null,
+    val subdistrict_code: String? = null,
 )
 
 data class Order(
-    val subdistrict_name :String?= null
+    val subdistrict_name: String? = null,
 )
 
 data class GenerateOtpRequest(
     val application_number: String?,
-    val type: String = "mobile"
+    val type: String = "mobile",
 )
+
 data class ApplicationStatusRequest(
     val application_number: String,
-    val type: String = "mobile"
+    val type: String = "mobile",
 )
 
 data class CodeDropDownRequest(
     val type: String,
-    val listname: String
+    val listname: String,
 )
 
 data class PwdApplication(
-    var applicantFullName: String = "",
-    var applicantMobileNo: String = "",
-    var applicantEmail: String = "",
-    var applicantDob: String = "",
-    var gender: Int = 0,
-    var guardian: String = "",
-    var photo: Int = 0,
-    var sign: Int = 0,
-    var aadhaarCard: Int = 0,
-    var aadhaarNo: String = "",
-    var aadhaarCheckBox: Int = 0,
-    var aadhaarEnrollment: String = "",
-    var aadhaarUploadSlip: Int = 0,
-    var identityProof: String = "",
-    var identityProofSlip: Int = 0,
-    var documentAddressProof: String = "",
-    var documentAddressProofPhoto: Int = 0,
-    var documentAddress: String = "",
-    var state: String = "",
-    var district: String = "",
-    var city: String = "",
-    var village: String = "",
-    var pincode: String = "",
-    var disabilityType: String = "",
-    var disabilityDue: String = "",
-    var disabilityBirth: Int = 0,
-    var disabilitySince: String = "",
-    var treatingHospital: Int = 0,
-    var hospitalState: String = "",
-    var hospitalDistrict: String = "",
-    var hospitalName: String = "",
-    var hospitalCheckBox: Int = 0
-) {
-    fun validate(): List<String> {
-        val errors = mutableListOf<String>()
 
-        if (applicantFullName.isBlank()) errors.add("Applicant name cannot be empty.")
-        if (!applicantMobileNo.matches(Regex("^\\d{10}$"))) errors.add("Mobile number must be a 10-digit number.")
-        if (applicantDob.isBlank()) errors.add("Date of birth cannot be empty.")
-        if (gender !in 1..2) errors.add("Gender must be 1 (Male) or 2 (Female).")
-        if (guardian.isBlank()) errors.add("Guardian name cannot be empty.")
-        if (photo <= 0) errors.add("Photo must be uploaded.")
-        if (sign <= 0) errors.add("Signature must be uploaded.")
-        if (aadhaarCard <= 0) {
-            errors.add("Please select Aadhaar Information.")
+    //aes encryption
+    //disability type multiple array of string to json string and then encrypt
+    //Personal Details
+    var applicantFullName: String? = null,// full_name
+    var full_name_i18n: String? = null,// full_name_i18n
+    var applicantMobileNo: String? = null,//mobile
+    var stateName: String? = null,//current_state_code
+    var stateCode: String? = null,//current_state_code
+    var applicantEmail: String? = null,//email
+    var applicantDob: String? = null,//dob
+    var gender: String? =null,// [gender] =>M/F/T
+    var applicantsFMGName: String? =null,//[guardian_relation]=>mother/father/guardian
+    var applicantsFMGCode: String? =null,//[guardian_relation]=>mother/father/guardian
+    var fatherName: String ?= null,//father_name
+    var motherName: String ?= null,//mother_name
+    var guardianName: String ?= null,//guardian_name
+    var relationWithPersonName: String ?= null,// [relation_pwd] => Self
+    var relationWithPersonCode: String ?= null,// [relation_pwd] => Self
+    var guardianContact: String ?= null,//guardian_contact
+    var photo: String? =null,//photo
+    var sign: String? =null,//signature_thumb_print
+    // Proof id Identity Card
+    var aadhaarNo: String ?= null,//aadhaar_no
+    var aadhaarCheckBox: Int? =null,//[share_aadhar_info] => 0/1
+    var aadhaarTag: Int? =null,
+    var aadhaarEnrollmentNo: String ?= null,//aadhar_enrollment_no
+    var aadhaarEnrollmentUploadSlip: String? =null,//aadhar_enrollment_slip
+    var identityProofId: String ?= null,//identitity_proof_id
+    var identityProofName: String ?= null,//identitity_proof_id
+    var identityProofUpload: String? =null,//identitity_proof_file
 
-        }else if(aadhaarCard==1){
-            if (!aadhaarNo.matches(Regex("^\\d{12}$"))) errors.add("Aadhaar number must be a 12-digit number.")
-            if (aadhaarCheckBox != 1) errors.add("Aadhaar checkbox must be checked.")
-        }else{
-            if (aadhaarEnrollment.isBlank()) errors.add("Aadhaar enrollment details cannot be empty.")
-            if (aadhaarUploadSlip <= 0) errors.add("Aadhaar upload slip must be uploaded.")
-        }
-        if (identityProof.isBlank()) errors.add("Identity proof type cannot be empty.")
-        if (identityProofSlip <= 0) errors.add("Identity proof slip must be uploaded.")
-        if (documentAddressProof.isBlank()) errors.add("Address proof type cannot be empty.")
-        if (documentAddressProofPhoto <= 0) errors.add("Address proof photo must be uploaded.")
-        if (documentAddress.isBlank()) errors.add("Address cannot be empty.")
-        if (state.isBlank()) errors.add("State cannot be empty.")
-        if (district.isBlank()) errors.add("District cannot be empty.")
-        if (city.isBlank()) errors.add("City cannot be empty.")
-        if (village.isBlank()) errors.add("Village cannot be empty.")
-        if (!pincode.matches(Regex("^\\d{6}$"))) errors.add("Pincode must be a 6-digit number.")
-        if (disabilityType.isBlank()) errors.add("Disability type cannot be empty.")
-        if (disabilityDue.isBlank()) errors.add("Disability due reason cannot be empty.")
-        if (disabilityBirth != 1 && disabilityBirth != 2) {
-            errors.add("Disability birth must be 1 (Yes) or 0 (No).")
-        }else if(disabilityBirth == 2){
-            if (disabilitySince.isBlank()) errors.add("Disability since date cannot be empty.")
-        }
-        if (treatingHospital == 1) {
-            if (hospitalState.isBlank()) errors.add("Hospital state cannot be empty.")
-            if (hospitalDistrict.isBlank()) errors.add("Hospital district cannot be empty.")
-        }
-        if (hospitalName.isBlank()) errors.add("Hospital name cannot be empty.")
-        if (hospitalCheckBox != 1) errors.add("Hospital checkbox must be checked.")
+    //Address For Correspondence
+    var natureDocumentAddressProofName: String ?= null,//address_proof_id
+    var natureDocumentAddressProofCode: String ?= null,//address_proof_id
+    var documentAddressProofPhoto: String? =null,//address_proof_file
+    var address: String? =null,//current_address
+    var stateName1: String ?= null,//current_state_code
+    var stateCode1: String ?= null,//current_state_code
+    var districtName: String ?= null,//current_district_code
+    var districtCode: String ?= null,//current_district_code
+    var subDistrictName: String ?= null,//current_subdistrict_code
+    var subDistrictCode: String ?= null,//current_subdistrict_code
+    var villageName: String ?= null,//current_village_code
+    var villageCode: String ?= null,//current_village_code
+    var pincodeName: String ?= null,//current_pincode
+    var pincodeCode: String ?= null,//current_pincode
+    //Disability Details
+    var disabilityTypeName: String ?= null,//[disability_type_id] => 11
+    var disabilityTypeCode: ArrayList<String> ?= null,//[disability_type_id] => 11
+    var disabilityDueToName: String ?= null,// [disability_due_to] => Accident
+    var disabilityDueToCode: String ?= null,// [disability_due_to] => Accident
+    var disabilityBirth: Int? =null,//[disability_since_birth] => Since(No)/Birth(Yes)
+    var disabilitySinceName: String ?= null,//[disability_since] => 2022
+    var disabilitySinceCode: String ?= null,//[disability_since] => 2022
+    var uploadDisabilityCertificate: String? =null,// disability_cert_doc
+    var detailOfAuthorityName: String? =null,// [detail_of_authority] => Medical Authority
+    var detailOfAuthorityCode: String? =null,// [detail_of_authority] => Medical Authority
+    var serialNumber: String? =null,//  [serial_number] => FD3245
+    var haveDisabilityCertificate: Int? =null,// [have_disability_cert] => 1(yes)/0(no)
+    var dateOfCertificate: String ?= null,// [date_of_certificate] => 01/08/2023
+    var disabilityPercentage: String ?= null,//[disability_per] => 30%
+    //Hospital for assessment/issue of UDID card /disability certificate
+    var treatingHospitalTag: Int? =null,//is_hospital_treating_other_state => 0/1
+    var hospitalStateId: String ?= null,//hospital_treating_state_code
+    var hospitalStateName: String ?= null,//hospital_treating_state_code
+    var hospitalDistrictId: String ?= null,//hospital_treating_district_code
+    var hospitalDistrictName: String ?= null,//hospital_treating_district_code
+    var hospitalNameId: String ?= null,
+    var hospitalNameName: String ?= null,//hospital_treating_id
+    var hospitalCheckBox: Int? =null,//declaration =>0/1
+)
 
-        return errors
-    }
-}
+data class EditProfileRequest(
+    val application_number: String,
+    val type: String
+)

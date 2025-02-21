@@ -8,8 +8,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -59,7 +57,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
     private var signatureName: String? = null
     var isEditable = false
     private var document = 0
-    private var genderTag: Int = 0
+    private var genderTag: String = "O"
     private var stateList = ArrayList<DropDownResult>()
     private var stateId: String? = null
     private var relationWithPersonList = ArrayList<DropDownResult>()
@@ -68,9 +66,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
     private var guardianId: String? = null
     private val guardianList = listOf(
         DropDownResult(id = "0", name = "Select Relation with PWD"),
-        DropDownResult(id = "1", name = "Father"),
-        DropDownResult(id = "2", name = "Mother"),
-        DropDownResult(id = "3", name = "Guardian")
+        DropDownResult(id = "father", name = "Father"),
+        DropDownResult(id = "mother", name = "Mother"),
+        DropDownResult(id = "guardian", name = "Guardian")
     )
 
     override val layoutId: Int
@@ -84,104 +82,138 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             mBinding?.etApplicantFullName?.setText(userData.applicantFullName)
-        }
-
-//            mBinding?.etApplicantMobileNo?.setText(userData.applicantMobileNo)
-//            mBinding?.etApplicantEmailId?.setText(userData.applicantEmail)
-//            Log.d("DOB",userData.applicantDob)
-//            mBinding?.etApplicantDateOfBirth?.text = userData.applicantDob
-////                convertDate(userData.applicantDob)
-//            mBinding?.etApplicantDateOfBirth?.text = userData.applicantDob
-//            mBinding?.tvGuardian?.setText(userData.guardian)
-//            if(!userData.guardian.isNullOrEmpty()){
-//                mBinding?.tvGuardian?.setTextColor(Color.parseColor("#000000"))
-//            }
-//            when (userData.gender) {
-//                1 -> {
-//                    mBinding?.rbMale?.isChecked=true
-//                }
-//                2 -> {
-//                    mBinding?.rbFemale?.isChecked=true
-//                }
-//                3 -> {
-//                    mBinding?.rbTransgender?.isChecked=true
-//                }
-//                else -> {
-//                    mBinding?.rbMale?.isChecked=false
-//                    mBinding?.rbFemale?.isChecked=false
-//                    mBinding?.rbTransgender?.isChecked=false
-//                }
-//            }
-//
-//        }
-//
-//        // Save data when fields change
-        mBinding?.etApplicantFullName?.addTextChangedListener {
-            sharedViewModel.userData.value?.applicantFullName = it.toString()
-        }
-//        mBinding?.etApplicantMobileNo?.addTextChangedListener {
-//            sharedViewModel.userData.value?.applicantMobileNo = it.toString()
-//        }
-//
-//        mBinding?.etApplicantEmailId?.addTextChangedListener {
-//            sharedViewModel.userData.value?.applicantEmail = it.toString()
-//        }
-//
-////        mBinding?.etApplicantDateOfBirth?.addTextChangedListener {
-////            sharedViewModel.userData.value?.applicantDob = etApplicantDateOfBirth.toString()
-////        }
-//
-//        mBinding?.tvGuardian?.addTextChangedListener {
-//            sharedViewModel.userData.value?.guardian = it.toString()
-//        }
-//
-//        mBinding?.rgGender?.setOnCheckedChangeListener { group, checkedId ->
-//            gender =when (checkedId) {
-//                R.id.rbMale -> 1
-//                R.id.rbFemale -> 2
-//                R.id.rbTransgender -> 3
-//                else->0
-//            }
-//            sharedViewModel.userData.value?.gender =gender
-//        }
-//
-//        mBinding?.etApplicantDateOfBirth?.setOnClickListener {
-//            openCalendar("etApplicantDateOfBirth", mBinding?.etApplicantDateOfBirth!!)
-//        }
-//        mBinding?.tvGuardian?.setOnClickListener {
-//            showBottomSheetDialog("Guardian")
-//        }
-//        mBinding?.tvChooseFile?.setOnClickListener {
-//            sign=0
-//            checkStoragePermission(requireContext())
-//        }
-//        mBinding?.tvChooseFileSign?.setOnClickListener {
-//            sign=1
-//            checkStoragePermission(requireContext())
-//        }
-
-    }
-
-    override fun setVariables() {
-        mBinding?.rgGender?.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.rbMale -> {
-                    genderTag = 1
+            mBinding?.etApplicantNameInRegionalLanguage?.setText(userData.full_name_i18n)
+            mBinding?.etApplicantMobileNo?.setText(userData.applicantMobileNo)
+            mBinding?.etApplicantEmailId?.setText(userData.applicantEmail)
+            mBinding?.etApplicantDateOfBirth?.text = userData.applicantDob
+            stateId = userData.stateCode
+            mBinding?.etStateName?.text = userData.stateName
+            when (userData.gender) {
+                "M" -> {
+                    mBinding?.rbMale?.isChecked = true
                 }
 
-                R.id.rbFemale -> {
-                    genderTag = 2
+                "F" -> {
+                    mBinding?.rbFemale?.isChecked = true
                 }
 
-                R.id.rbTransgender -> {
-                    genderTag = 3
+                "T" -> {
+                    mBinding?.rbTransgender?.isChecked = true
                 }
 
                 else -> {
-                    genderTag = 0
+                    mBinding?.rbMale?.isChecked = false
+                    mBinding?.rbFemale?.isChecked = false
+                    mBinding?.rbTransgender?.isChecked = false
                 }
             }
+            when (userData.applicantsFMGCode) {
+                "0" -> {
+                    mBinding?.etApplicantsFMGName?.text = ""
+                    mBinding?.llParentInfo?.hideView()
+                }
+
+                "father" -> {
+                    mBinding?.llParentInfo?.showView()
+                    mBinding?.tvRelationWithPerson?.hideView()
+                    mBinding?.etRelationWithPerson?.hideView()
+                    mBinding?.tvApplicantNameFMG?.text =
+                        getString(R.string.applicant_father_s_name)
+                    mBinding?.etApplicantNameFMG?.hint =
+                        getString(R.string.applicant_father_s_name_)
+                }
+
+                "mother" -> {
+                    mBinding?.llParentInfo?.showView()
+                    mBinding?.tvRelationWithPerson?.hideView()
+                    mBinding?.etRelationWithPerson?.hideView()
+                    mBinding?.tvApplicantNameFMG?.text =
+                        getString(R.string.applicant_mother_s_name)
+                    mBinding?.etApplicantNameFMG?.hint =
+                        getString(R.string.applicant_mother_s_name_)
+                }
+
+                "guardian" -> {
+                    mBinding?.llParentInfo?.showView()
+                    mBinding?.tvRelationWithPerson?.showView()
+                    mBinding?.etRelationWithPerson?.showView()
+                    mBinding?.tvApplicantNameFMG?.text =
+                        getString(R.string.name_of_guardian_caretaker)
+                    mBinding?.etApplicantNameFMG?.hint =
+                        getString(R.string.name_of_guardian_caretaker_)
+                }
+            }
+            mBinding?.etApplicantsFMGName?.text = userData.applicantsFMGName
+            guardianId = userData.applicantsFMGCode
+
+            if (userData.relationWithPersonCode != "Self") {
+                mBinding?.llSelf?.showView()
+            } else {
+                mBinding?.llSelf?.hideView()
+            }
+            mBinding?.etRelationWithPerson?.text = userData.relationWithPersonName
+            relationWithPersonId = userData.relationWithPersonCode
+
+            mBinding?.etFileNamePhoto?.text = userData.photo
+            mBinding?.etFileNameSignature?.text = userData.sign
         }
+
+        mBinding?.etApplicantFullName?.addTextChangedListener {
+            sharedViewModel.userData.value?.applicantFullName = it.toString()
+        }
+        mBinding?.etStateName?.addTextChangedListener {
+            sharedViewModel.userData.value?.stateName = it.toString()
+        }
+        mBinding?.etApplicantNameInRegionalLanguage?.addTextChangedListener {
+            sharedViewModel.userData.value?.full_name_i18n = it.toString()
+        }
+        mBinding?.etApplicantMobileNo?.addTextChangedListener {
+            sharedViewModel.userData.value?.applicantMobileNo = it.toString()
+        }
+        mBinding?.etApplicantEmailId?.addTextChangedListener {
+            sharedViewModel.userData.value?.applicantEmail = it.toString()
+        }
+        mBinding?.etApplicantDateOfBirth?.addTextChangedListener {
+            sharedViewModel.userData.value?.applicantDob = it.toString()
+        }
+        mBinding?.rgGender?.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.rbMale -> {
+                    genderTag = "M"
+                }
+
+                R.id.rbFemale -> {
+                    genderTag = "F"
+                }
+
+                R.id.rbTransgender -> {
+                    genderTag = "T"
+                }
+
+                else -> {
+                    genderTag = "O"
+                }
+            }
+            sharedViewModel.userData.value?.gender = genderTag
+        }
+        mBinding?.etApplicantsFMGName?.addTextChangedListener {
+            sharedViewModel.userData.value?.applicantsFMGName = it.toString()
+        }
+        mBinding?.etContactNoOfGuardian?.addTextChangedListener {
+            sharedViewModel.userData.value?.guardianContact = it.toString()
+        }
+        mBinding?.etRelationWithPerson?.addTextChangedListener {
+            sharedViewModel.userData.value?.relationWithPersonName = it.toString()
+        }
+        mBinding?.etFileNamePhoto?.addTextChangedListener {
+            sharedViewModel.userData.value?.photo = it.toString()
+        }
+        mBinding?.etFileNameSignature?.addTextChangedListener {
+            sharedViewModel.userData.value?.sign = it.toString()
+        }
+    }
+
+    override fun setVariables() {
     }
 
     override fun setObservers() {
@@ -191,7 +223,12 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 when (userResponseModel.model) {
                     "States" -> {
                         stateList.clear()
-                        stateList.add(DropDownResult("0", getString(R.string.select_state_name)))
+                        stateList.add(
+                            DropDownResult(
+                                "0",
+                                getString(R.string.select_state_name)
+                            )
+                        )
                         stateList.addAll(userResponseModel._result)
                     }
                 }
@@ -225,8 +262,10 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 } else {
                     if (document == 1) {
                         photoName = userResponseModel._result.file_name
+                        mBinding?.etFileNamePhoto?.text = userResponseModel._result.file_name
                     } else if (document == 2) {
                         signatureName = userResponseModel._result.file_name
+                        mBinding?.etFileNameSignature?.text = userResponseModel._result.file_name
                     }
                 }
             }
@@ -406,6 +445,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                             selectedTextView?.text = ""
                         } else {
                             stateId = id
+                            sharedViewModel.userData.value?.stateCode = stateId.toString()
                             mBinding?.tvApplicantNameInRegionalLanguage?.showView()
                             mBinding?.etApplicantNameInRegionalLanguage?.showView()
                         }
@@ -420,6 +460,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
                             "Father" -> {
                                 guardianId = id
+                                sharedViewModel.userData.value?.applicantsFMGCode =
+                                    guardianId.toString()
                                 mBinding?.llParentInfo?.showView()
                                 mBinding?.tvRelationWithPerson?.hideView()
                                 mBinding?.etRelationWithPerson?.hideView()
@@ -431,6 +473,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
                             "Mother" -> {
                                 guardianId = id
+                                sharedViewModel.userData.value?.applicantsFMGCode =
+                                    guardianId.toString()
                                 mBinding?.llParentInfo?.showView()
                                 mBinding?.tvRelationWithPerson?.hideView()
                                 mBinding?.etRelationWithPerson?.hideView()
@@ -442,6 +486,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
                             "Guardian" -> {
                                 guardianId = id
+                                sharedViewModel.userData.value?.applicantsFMGCode =
+                                    guardianId.toString()
                                 mBinding?.llParentInfo?.showView()
                                 mBinding?.tvRelationWithPerson?.showView()
                                 mBinding?.etRelationWithPerson?.showView()
@@ -451,14 +497,28 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                     getString(R.string.name_of_guardian_caretaker_)
                             }
                         }
-//                        context?.toast(guardianId.toString())
                     }
 
                     "relationWithPerson" -> {
-                        if (selectedItem == "Select Relation with PWD") {
-                            selectedTextView?.text = ""
-                        } else {
-                            relationWithPersonId = id
+                        when (selectedItem) {
+                            "Select Relation with PWD" -> {
+                                mBinding?.llSelf?.showView()
+                                selectedTextView?.text = ""
+                            }
+
+                            "Self" -> {
+                                mBinding?.llSelf?.hideView()
+                                relationWithPersonId = id
+                                sharedViewModel.userData.value?.relationWithPersonCode =
+                                    relationWithPersonId.toString()
+                            }
+
+                            else -> {
+                                mBinding?.llSelf?.showView()
+                                relationWithPersonId = id
+                                sharedViewModel.userData.value?.relationWithPersonCode =
+                                    relationWithPersonId.toString()
+                            }
                         }
                     }
                 }
@@ -481,7 +541,12 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         // Rotate drawable
         val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_arrow_down)
         var rotatedDrawable = rotateDrawable(drawable, 180f)
-        selectedTextView?.setCompoundDrawablesWithIntrinsicBounds(null, null, rotatedDrawable, null)
+        selectedTextView?.setCompoundDrawablesWithIntrinsicBounds(
+            null,
+            null,
+            rotatedDrawable,
+            null
+        )
 
         // Set a dismiss listener to reset the view visibility
         bottomSheetDialog?.setOnDismissListener {
@@ -499,6 +564,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
     }
 
     private fun valid(): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
         if (mBinding?.etApplicantFullName?.text?.toString().isNullOrEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
@@ -525,6 +591,22 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
             }
             return false
+        } else if (mBinding?.etApplicantEmailId?.text?.toString().isNullOrEmpty()) {
+            mBinding?.llParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.please_enter_an_email_address)
+                )
+            }
+            return false
+        } else if (!mBinding?.etApplicantEmailId?.text.toString().trim().matches(emailRegex)) {
+            mBinding?.llParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.please_enter_a_valid_email_address)
+                )
+            }
+            return false
         } else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
@@ -533,7 +615,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 )
             }
             return false
-        } else if (guardianId == "0") {
+        } else if (genderTag == "O") {
             mBinding?.llParent?.let { showSnackbar(it, getString(R.string.please_select_gender)) }
             return false
         } else if (mBinding?.etApplicantsFMGName?.text.toString().trim().isEmpty()) {
@@ -544,7 +626,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 )
             }
             return false
-        } else if (guardianId == "1") {
+        } else if (guardianId == "father") {
             if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -563,7 +645,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 return false
             }
             return false
-        } else if (guardianId == "2") {
+        } else if (guardianId == "mother") {
             if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -581,7 +663,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
                 return false
             }
-        } else if (guardianId == "3") {
+        } else if (guardianId == "guardian") {
             if (mBinding?.etRelationWithPerson?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -590,29 +672,32 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     )
                 }
                 return false
-            } else if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_enter_guardian_name)
-                    )
+            } else if (relationWithPersonId != "Self") {
+                if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(
+                            it,
+                            getString(R.string.please_enter_guardian_name)
+                        )
+                    }
+                    return false
+                } else if (mBinding?.etContactNoOfGuardian?.text?.toString().isNullOrEmpty()) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(
+                            it,
+                            getString(R.string.please_enter_contact_number)
+                        )
+                    }
+                    return false
                 }
-                return false
-            } else if (mBinding?.etContactNoOfGuardian?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_enter_contact_number)
-                    )
-                }
-                return false
             }
-        } else if (mBinding?.etFileNamePhoto?.text.toString().isEmpty()) {
+        } else if (mBinding?.etFileNamePhoto?.text.toString().trim().isEmpty()) {
+
             mBinding?.llParent?.let {
                 showSnackbar(it, getString(R.string.please_upload_photo))
             }
             return false
-        } else if (mBinding?.etFileNameSignature?.text.toString().isEmpty()) {
+        } else if (mBinding?.etFileNameSignature?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(it, getString(R.string.please_upload_signature))
             }
@@ -630,27 +715,12 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageFile = saveImageToFile(imageBitmap)
                     photoFile = imageFile
-                    if (document == 1) {
-                        val fileSizeInBytes = photoFile?.length() ?: 0
-                        if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                            mBinding?.etFileNamePhoto?.text = photoFile?.name
-                            uploadImage(photoFile!!)
-                        } else {
-                            compressFile(photoFile!!) // Compress if size exceeds limit
-                            mBinding?.etFileNamePhoto?.text = photoFile?.name
-                            uploadImage(photoFile!!)
-                        }
-                    } else if (document == 2) {
-                        val fileSizeInBytes = photoFile?.length() ?: 0
-                        if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                            mBinding?.etFileNameSignature?.text = photoFile?.name
-                            uploadImage(photoFile!!)
-                        } else {
-                            compressFile(photoFile!!) // Compress if size exceeds limit
-                            mBinding?.etFileNameSignature?.text = photoFile?.name
-                            uploadImage(photoFile!!)
-                        }
+                    val fileSizeInBytes = photoFile?.length() ?: 0
+                    if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                    } else {
+                        compressFile(photoFile!!) // Compress if size exceeds limit
                     }
+                    uploadImage(photoFile!!)
                 }
 
                 PICK_IMAGE -> {
@@ -664,25 +734,15 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                         if (fileExtension in listOf("png", "jpg", "jpeg")) {
                             val file = filePath?.let { File(it) }
                             val fileSizeInBytes = file?.length() ?: 0
-                            if (document == 1) {
-                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                                    mBinding?.etFileNamePhoto?.text = file?.name
-                                    uploadImage(file!!)
-                                } else {
-                                    compressFile(file!!) // Compress if size exceeds limit
-                                    mBinding?.etFileNamePhoto?.text = file.name
-                                    uploadImage(file)
-                                }
-                            } else if (document == 2) {
-                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                                    mBinding?.etFileNameSignature?.text = file?.name
-                                    uploadImage(file!!)
-                                } else {
-                                    compressFile(file!!) // Compress if size exceeds limit
-                                    mBinding?.etFileNameSignature?.text = file.name
-                                    uploadImage(file)
-                                }
+                            if (isFileSizeWithinLimit(
+                                    fileSizeInBytes,
+                                    500.0
+                                )
+                            ) { // 500 KB limit
+                            } else {
+                                compressFile(file!!) // Compress if size exceeds limit
                             }
+                            uploadImage(file!!)
                         } else {
                             mBinding?.llParent?.let {
                                 showSnackbar(
@@ -716,11 +776,11 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 EncryptionModel.aesEncrypt("photo").toRequestBody(MultipartBody.FORM),
                 body
             )
-        }
-        else if(document == 2){
+        } else if (document == 2) {
             viewModel.uploadFile(
                 requireContext(),
-                EncryptionModel.aesEncrypt("signature_thumb_print").toRequestBody(MultipartBody.FORM),
+                EncryptionModel.aesEncrypt("signature_thumb_print")
+                    .toRequestBody(MultipartBody.FORM),
                 body
             )
         }

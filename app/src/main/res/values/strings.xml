@@ -288,20 +288,20 @@
     <string name="female">Female</string>
     <string name="transgender">Transgender</string>
     <string name="select_relation_with_pwd">Select Relation with PWD</string>
-    <string name="relation_with_person">Relation with Person*</string>
-    <string name="applicant_mother_s_name">Applicant Mother\'s Name*</string>
+    <string name="relation_with_person">Relation with Person<font fgcolor="#FF3D00">*</font></string>
+    <string name="applicant_mother_s_name">Applicant Mother\'s Name<font fgcolor="#FF3D00">*</font></string>
     <string name="applicant_mother_s_name_">Applicant Mother\'s Name</string>
-    <string name="contact_no_of_guardian_caretaker">Contact No. of Guardian/Caretaker*</string>
+    <string name="contact_no_of_guardian_caretaker">Contact No. of Guardian/Caretaker<font fgcolor="#FF3D00">*</font></string>
     <string name="contact_no_of_guardian_caretaker_">Contact No. of Guardian / Caretaker</string>
     <string name="only_jpeg_jpg_and_png_image_with_size_5_kb_to_100_kb">(Only jpeg, jpg and png image with size 5 KB to 100 KB allowed and Photo image Width and Height less than 800px allowed) NOTE: Please upload a recent photograph)</string>
     <string name="signature_thumb_other_print">Signature/ Thumb /Other Print</string>
     <string name="only_jpeg_jpg_and_png_image_with_size_3_kb_to_30_kb_allowed">(Only jpeg, jpg and png image with size 3 KB to 30 KB allowed)</string>
-    <string name="applicant_father_s_name">Applicant Father\'s Name*</string>
+    <string name="applicant_father_s_name">Applicant Father\'s Name<font fgcolor="#FF3D00">*</font></string>
     <string name="applicant_father_s_name_">Applicant Father\'s Name</string>
-    <string name="name_of_guardian_caretaker">Name of Guardian / Caretaker *</string>
+    <string name="name_of_guardian_caretaker">Name of Guardian / Caretaker<font fgcolor="#FF3D00">*</font></string>
     <string name="name_of_guardian_caretaker_">Name of Guardian / Caretaker</string>
     <string name="apply_for_udid">Apply For UDID</string>
-    <string name="i_have_read_and_understood_the_process">I have read and understood the process. *</string>
+    <string name="i_have_read_and_understood_the_process">I have read and understood the process.<font fgcolor="#FF3D00">*</font></string>
     <string name="you_must_check_the_box_to_confirm_that_you_have_read_and_understood_the_process">You must check the box to confirm that you have read and understood the process.</string>
     <string name="i_have_never_obtained_any_disability_certificate_udid_card_issued_through_udid_portal_or_any_other_platform_means">I have never obtained any Disability Certificate/UDID Card issued through UDID Portal or any other platform/means.</string>
     <string name="i_do_not_have_disability_certificate_udid_card_issued_through_udid_portal_but_i_have_a_disability_certificate_issued_through_other_platform_means_for_example_physically_manually_issued_disability_certificate">I do not have Disability Certificate/UDID Card issued through UDID Portal but I have a disability certificate issued through other platform/means; for example, physically/manually issued disability certificate.</string>
@@ -311,13 +311,13 @@
     <string name="please_select_an_option">Please select an option</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="i_agree_to_share_aadhaar_information_with_govt_department">I agree to share Aadhaar information with Govt. Department.*</string>
+    <string name="i_agree_to_share_aadhaar_information_with_govt_department">I agree to share Aadhaar information with Govt. Department.<font fgcolor="#FF3D00">*</font></string>
     <string name="aadhaar_enrollment_number_">Aadhaar Enrollment Number</string>
     <string name="no_file_chosen_only_jpeg_jpg_png_and_pdf_with_size_10_kb_to_500_kb_allowed">(No file chosen(Only jpeg, jpg, png and pdf with size 10 KB to 500 KB allowed)</string>
     <string name="only_jpeg_jpg_png_and_pdf_with_size_10_kb_to_500_kb_allowed">(Only jpeg, jpg, png and pdf with size 10 KB to 500 KB allowed)</string>
     <string name="address_for_correspondence">Address for Correspondence</string>
     <string name="select_nature_of_document">Select Nature of Document</string>
-    <string name="choose_state_uts">Choose State / UTs*</string>
+    <string name="choose_state_uts">Choose State / UTs<font fgcolor="#FF3D00">*</font></string>
     <string name="choose_district">Choose District</string>
     <string name="choose_city_sub_district_tehsil">Choose City / Sub District / Tehsil</string>
     <string name="choose_village_block">Choose Village / Block</string>
@@ -332,12 +332,12 @@
     <string name="choose_disability_types">Choose Disability Types</string>
     <string name="select_disability_due_to">Select Disability Due To</string>
     <string name="select_disability_since">Select Disability Since</string>
-    <string name="do_you_have_disability_certificate">Do you have disability Certificate? *</string>
-    <string name="upload_disability_certificate">Upload Disability Certificate *</string>
-    <string name="sr_no_registration_no_of_certificate">Sr. No. / Registration No of Certificate*</string>
+    <string name="do_you_have_disability_certificate">Do you have disability Certificate?<font fgcolor="#FF3D00">*</font></string>
+    <string name="upload_disability_certificate">Upload Disability Certificate<font fgcolor="#FF3D00">*</font></string>
+    <string name="sr_no_registration_no_of_certificate">Sr. No. / Registration No of Certificate<font fgcolor="#FF3D00">*</font></string>
     <string name="sr_no_registration_no_of_certificate_">Sr. No. / Registration No of Certificate</string>
-    <string name="date_of_issuance_of_certificate">Date of Issuance of Certificate*</string>
-    <string name="details_of_issuing_authority">Details of Issuing Authority*</string>
+    <string name="date_of_issuance_of_certificate">Date of Issuance of Certificate<font fgcolor="#FF3D00">*</font></string>
+    <string name="details_of_issuing_authority">Details of Issuing Authority<font fgcolor="#FF3D00">*</font></string>
     <string name="select_issuing_authority">Select Issuing Authority</string>
     <string name="disability_percentage_">Disability Percentage (%)</string>
     <string name="please_select_disability_type">Please select Disability type.</string>
@@ -365,8 +365,14 @@
     <string name="please_select_checkbox">Please select checkbox.</string>
     <string name="enter_aadhaar_enrollment_number">Enter aadhaar enrollment number</string>
     <string name="upload_aadhaar_enrollment_slip_">Upload aadhaar enrollment slip</string>
-    <string name="i_hereby_declare_that_all_particulars_stated_above_are_true_to_the_best_of_my_knowledge_and_belief">I hereby declare that all particulars stated above are true to the best of my knowledge and belief, and no material information has been concealed or misstated. I further state that if any inaccuracy is detected in the application, I shall be liable to forfeiture of any benefits derived and other action as per law. *</string>
+    <string name="i_hereby_declare_that_all_particulars_stated_above_are_true_to_the_best_of_my_knowledge_and_belief">I hereby declare that all particulars stated above are true to the best of my knowledge and belief, and no material information has been concealed or misstated. I further state that if any inaccuracy is detected in the application, I shall be liable to forfeiture of any benefits derived and other action as per law.<font fgcolor="#FF3D00">*</font></string>
     <string name="hospital_for_assessment_issue_of_udid_card_disability_certificate">Hospital for assessment/issue of UDID card /disability certificate</string>
     <string name="choose_hospital_treating_district">Choose Hospital Treating District</string>
     <string name="please_select_sub_district_first">Please select Sub-District First.</string>
+    <string name="thank_you">Thank you</string>
+    <string name="your_updated_application_has_been_submitted_successfully">Your updated application has been submitted successfully.</string>
+    <string name="you_can_use_this_application_number">You can use this Application Number/</string>
+    <string name="enrolmentnumber29100000022071690637">EnrolmentNumber29100000022071690637</string>
+    <string name="to_track_your_application_status">to track your application status.</string>
+    <string name="thanks_amp_regards_nudid_support"><![CDATA[Thanks & Regards,\nUDID Support]]></string>
 </resources>

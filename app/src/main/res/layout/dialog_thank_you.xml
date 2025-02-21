@@ -3,10 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="ClickAction"
+            type="com.swavlambancard.udid.ui.fragments.ThankYouDialog.ClickActions" />
     </data>
 
     <FrameLayout
+        android:id="@+id/flParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -18,7 +21,6 @@
             android:layout_gravity="center_vertical"
             app:cardElevation="15dp"
             app:cardCornerRadius="10dp"
-            android:clipToOutline="true"
             android:layout_marginHorizontal="@dimen/dp_20"
             app:cardBackgroundColor="@color/white">
 
@@ -41,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Thank you"
+                    android:text="@string/thank_you"
                     android:textColor="#1EA40E"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -51,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Your updated application has been submitted successfully."
+                    android:text="@string/your_updated_application_has_been_submitted_successfully"
                     android:textColor="@android:color/black"
                     android:textSize="16sp" />
 
@@ -60,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:text="You can use this Application Number/ "
+                    android:text="@string/you_can_use_this_application_number"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
@@ -68,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="EnrolmentNumber29100000022071690637"
+                    android:text="@string/enrolmentnumber29100000022071690637"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
@@ -76,7 +78,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="to track your application status."
+                    android:text="@string/to_track_your_application_status"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
@@ -85,7 +87,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Thanks &amp; Regards,\nUDID Support"
+                    android:text="@string/thanks_amp_regards_nudid_support"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
@@ -94,8 +96,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
+                    android:onClick="@{ClickAction::downloadApplication}"
                     android:backgroundTint="@color/DarkBlue"
-                    android:text="Download Application"
+                    android:text="@string/download_application"
                     android:textColor="@android:color/white" />
 
                 <Button
@@ -103,8 +106,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:onClick="@{ClickAction::downloadReceipt}"
                     android:backgroundTint="@color/DarkBlue"
-                    android:text="Download Receipt"
+                    android:text="@string/download_receipt"
                     android:textColor="@android:color/white" />
             </LinearLayout>
 
@@ -116,6 +120,7 @@
             android:layout_height="60dp"
             android:layout_gravity="end|top"
             android:layout_marginTop="@dimen/dp_20"
+            android:onClick="@{ClickAction::close}"
             android:contentDescription="Close Button"
             android:elevation="12dp"
             android:padding="8dp"

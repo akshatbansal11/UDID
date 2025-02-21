@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,8 +54,8 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     private var identityProofName: String? = null
     private var enrollmentSlipName: String? = null
     private var document = 0
-
     private var aadhaarTag: Int = 0
+
     override val layoutId: Int
         get() = R.layout.fragment_proof_of_i_d
 
@@ -65,6 +66,78 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
         identityProofApi()
+
+        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+            when (userData.aadhaarTag) {
+                2 -> {
+                    mBinding?.rbNo?.isChecked = true
+                    mBinding?.llYesAadhaarCard?.hideView()
+                    mBinding?.llNoAadhaarCard?.showView()
+                }
+
+                1 -> {
+                    mBinding?.rbYes?.isChecked = true
+                    mBinding?.llYesAadhaarCard?.showView()
+                    mBinding?.llNoAadhaarCard?.hideView()
+                }
+                else -> {
+                    mBinding?.rbNo?.isChecked = false
+                    mBinding?.rbYes?.isChecked = false
+                    mBinding?.llYesAadhaarCard?.hideView()
+                    mBinding?.llNoAadhaarCard?.hideView()
+                }
+            }
+            when(userData.aadhaarCheckBox) {
+                0 -> {
+                    mBinding?.checkboxConfirm?.isChecked = false
+                }
+
+                1 -> {
+                    mBinding?.checkboxConfirm?.isChecked = true
+                }
+            }
+            mBinding?.etAadhaarNo?.setText(userData.aadhaarNo)
+            mBinding?.etAadhaarEnrollment?.setText(userData.aadhaarEnrollmentNo)
+            mBinding?.etIdentityProof?.text = userData.identityProofName
+            identityProofId = userData.identityProofId
+            mBinding?.etFileNameIdentityProof?.text = userData.aadhaarEnrollmentUploadSlip
+            mBinding?.etFileNameEnrollmentSlip?.text = userData.aadhaarEnrollmentUploadSlip
+        }
+
+        mBinding?.rgAadhaar?.setOnCheckedChangeListener { _, checkedId ->
+            aadhaarTag = when (checkedId) {
+                R.id.rbNo -> {
+                    2
+                }
+
+                R.id.rbYes -> {
+                    1
+                }
+
+                else -> {
+                    0
+                }
+            }
+            sharedViewModel.userData.value?.aadhaarTag = aadhaarTag
+        }
+        mBinding?.checkboxConfirm?.setOnCheckedChangeListener { _, isChecked ->
+            sharedViewModel.userData.value?.aadhaarCheckBox = if (isChecked) 1 else 0
+        }
+        mBinding?.etAadhaarNo?.addTextChangedListener {
+            sharedViewModel.userData.value?.aadhaarNo = it.toString()
+        }
+        mBinding?.etAadhaarEnrollment?.addTextChangedListener {
+            sharedViewModel.userData.value?.aadhaarEnrollmentNo = it.toString()
+        }
+        mBinding?.etFileNameEnrollmentSlip?.addTextChangedListener {
+            sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip = it.toString()
+        }
+        mBinding?.etIdentityProof?.addTextChangedListener {
+            sharedViewModel.userData.value?.identityProofName = it.toString()
+        }
+        mBinding?.etFileNameIdentityProof?.addTextChangedListener {
+            sharedViewModel.userData.value?.identityProofUpload = it.toString()
+        }
     }
 
     override fun setVariables() {
@@ -102,8 +175,10 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 } else {
                     if (document == 1) {
                         identityProofName = userResponseModel._result.file_name
+                        mBinding?.etFileNameIdentityProof?.text = userResponseModel._result.file_name
                     } else if (document == 2) {
                         enrollmentSlipName = userResponseModel._result.file_name
+                        mBinding?.etFileNameEnrollmentSlip?.text = userResponseModel._result.file_name
                     }
                 }
             }
@@ -223,6 +298,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                             selectedTextView?.text = ""
                         } else {
                             identityProofId = id
+                            sharedViewModel.userData.value?.identityProofId = identityProofId
                         }
                     }
                 }
@@ -271,7 +347,8 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 )
             }
             return false
-        } else if (aadhaarTag == 1) {
+        }
+        else if (aadhaarTag == 1) {
             if (mBinding?.etAadhaarNo?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -335,25 +412,12 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageFile = saveImageToFile(imageBitmap)
                     photoFile = imageFile
-                    if (document == 1) {
-                        val fileSizeInBytes = photoFile?.length() ?: 0
-                        if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                            mBinding?.etFileNameIdentityProof?.text = photoFile?.name
-                        } else {
-                            compressFile(photoFile!!) // Compress if size exceeds limit
-                            mBinding?.etFileNameIdentityProof?.text = photoFile?.name
-                        }
-                        uploadImage(photoFile!!)
-                    } else if (document == 2) {
-                        val fileSizeInBytes = photoFile?.length() ?: 0
-                        if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                            mBinding?.etFileNameEnrollmentSlip?.text = photoFile?.name
-                        } else {
-                            compressFile(photoFile!!) // Compress if size exceeds limit
-                            mBinding?.etFileNameEnrollmentSlip?.text = photoFile?.name
-                        }
-                        uploadImage(photoFile!!)
+                    val fileSizeInBytes = photoFile?.length() ?: 0
+                    if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                    } else {
+                        compressFile(photoFile!!) // Compress if size exceeds limit
                     }
+                    uploadImage(photoFile!!)
                 }
 
                 PICK_IMAGE -> {
@@ -367,24 +431,11 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                         if (fileExtension in listOf("png", "jpg", "jpeg")) {
                             val file = filePath?.let { File(it) }
                             val fileSizeInBytes = file?.length() ?: 0
-                            if (document == 1) {
-                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                                    mBinding?.etFileNameIdentityProof?.text = file?.name
-                                } else {
-                                    compressFile(file!!) // Compress if size exceeds limit
-                                    mBinding?.etFileNameIdentityProof?.text = file.name
-                                }
-                                uploadImage(file!!)
-                            } else if (document == 2) {
-                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                                    mBinding?.etFileNameEnrollmentSlip?.text = file?.name
-
-                                } else {
-                                    compressFile(file!!) // Compress if size exceeds limit
-                                    mBinding?.etFileNameEnrollmentSlip?.text = file.name
-                                }
-                                uploadImage(file!!)
+                            if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                            } else {
+                                compressFile(file!!) // Compress if size exceeds limit
                             }
+                            uploadImage(file!!)
                         } else {
                             mBinding?.llParent?.let {
                                 showSnackbar(
@@ -418,10 +469,6 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                                     it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE))
                                 if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                                     uploadDocument(documentName, uri)
-                                    if (document == 1)
-                                        mBinding?.etFileNameIdentityProof?.text = documentName
-                                    else if (document == 2)
-                                        mBinding?.etFileNameEnrollmentSlip?.text = documentName
                                 } else {
                                     mBinding?.llParent?.let {
                                         showSnackbar(

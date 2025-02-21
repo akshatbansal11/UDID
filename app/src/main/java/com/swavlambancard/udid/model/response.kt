@@ -33,8 +33,8 @@ data class DropDownResponse(
 )
 
 data class DropDownResult(
-    val id: String,
-    val name: String
+    var id: String,
+    var name: String
 )
 
 data class OTPResponse(
@@ -187,4 +187,62 @@ data class UploadFileResponse(
 
 data class UploadFileResult(
     val file_name: String
+)
+
+data class EditProfileResponse(
+    val _result: String,
+    val _resultflag: Int,
+    val message: String
+)
+
+data class EditApplication(
+    val aadhaar_no: String,
+    val aadhar_enrollment_no: Any,
+    val aadhar_enrollment_slip: Any,
+    val aadhar_info: Int,
+    val address_proof_file: String,
+    val address_proof_id: Int,
+    val application_number: String,
+    val application_status: Int,
+    val current_address: String,
+    val current_district_code: Int,
+    val current_pincode: Int,
+    val current_state_code: Int,
+    val current_subdistrict_code: Int,
+    val current_village_code: Any,
+    val date_of_certificate: Any,
+    val detail_of_authority: Any,
+    val disability_cert_doc: String,
+    val disability_due_to: String,
+    val disability_per: Any,
+    val disability_since: String,
+    val disability_since_birth: String,
+    val disability_type_id: String,
+    val dob: String,
+    val email: String,
+    val employment_status: Any,
+    val father_name: String,
+    val full_name: String,
+    val full_name_i18n: String,
+    val gender: String,
+    val guardian_contact: Long,
+    val guardian_name: String,
+    val guardian_relation: String,
+    val have_disability_cert: Boolean,
+    val hospital_treating_district_code: Any,
+    val hospital_treating_id: Int,
+    val hospital_treating_state_code: Any,
+    val identitity_proof_file: String,
+    val identitity_proof_id: Int,
+    val income: Any,
+    val is_hospital_treating_other_state: Boolean,
+    val mobile: Long,
+    val mother_name: Any,
+    val photo: String,
+    val qualification_id: Any,
+    val regional_language: String,
+    val relation_pwd: String,
+    val serial_number: String,
+    val share_aadhar_info: Int,
+    val signature_thumb_print: String
 )

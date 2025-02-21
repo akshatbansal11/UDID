@@ -149,12 +149,13 @@
                 android:layout_marginTop="@dimen/dp_7"
                 android:background="@drawable/curve_stroke_thin_grey"
                 android:fontFamily="@font/opensans_regular"
+                android:hint="@string/select_hospital_name"
                 android:onClick="@{ClickAction::hospitalName}"
                 android:paddingHorizontal="@dimen/dp_10"
                 android:paddingVertical="@dimen/dp_5"
                 android:singleLine="true"
-                android:text="@string/select_hospital_name"
-                android:textColor="@color/grey"
+                android:textColor="@color/black"
+                android:textColorHint="@color/grey"
                 app:drawableEndCompat="@drawable/ic_arrow_down" />
 
             <LinearLayout
@@ -170,7 +171,7 @@
                     android:buttonTint="@color/radioBrown" />
 
                 <TextView
-                    android:id="@+id/tv_checkbox_title"
+                    android:id="@+id/tvCheckboxTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
