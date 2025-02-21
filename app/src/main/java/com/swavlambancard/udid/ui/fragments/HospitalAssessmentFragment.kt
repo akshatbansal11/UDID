@@ -190,6 +190,10 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
 
         fun no(view: View) {
             mBinding?.llTreatingHospital?.hideView()
+            mBinding?.etHospitalTreatingState?.text = ""
+            mBinding?.etHospitalTreatingDistrict?.text = ""
+            stateId = 0.toString()
+            districtId = 0.toString()
         }
 
         fun hospitalTreatingState(view: View) {
