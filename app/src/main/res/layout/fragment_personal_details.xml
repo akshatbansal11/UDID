@@ -136,15 +136,15 @@
                     android:id="@+id/etApplicantNameInRegionalLanguage"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.9"
                     android:background="@drawable/curve_all_corner_grey"
+                    android:clickable="false"
+                    android:focusable="false"
                     android:fontFamily="@font/opensans_regular"
                     android:hint="@string/applicant_s_name_in_hindi_"
                     android:paddingHorizontal="@dimen/dp_10"
                     android:paddingVertical="@dimen/dp_5"
                     android:singleLine="true"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:layout_weight="0.9"
                     android:textColor="@color/black"
                     android:textColorHint="@color/grey"
                     android:textSize="@dimen/sp_16"
@@ -154,10 +154,10 @@
                     android:id="@+id/ivEdit"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_edit"
-                    android:onClick="@{ClickAction::edit}"
+                    android:layout_gravity="center"
                     android:layout_weight="0.1"
-                    android:layout_gravity="center"/>
+                    android:onClick="@{ClickAction::edit}"
+                    android:src="@drawable/ic_edit" />
             </LinearLayout>
 
             <TextView
@@ -362,56 +362,64 @@
                     android:textColorHint="@color/grey"
                     app:drawableEndCompat="@drawable/ic_arrow_down" />
 
-                <TextView
-                    android:id="@+id/tvApplicantNameFMG"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_7"
-                    android:fontFamily="@font/opensans_semibold"
-                    android:text="@string/applicant_mother_s_name"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/sp_16" />
-
-                <EditText
-                    android:id="@+id/etApplicantNameFMG"
+                <LinearLayout
+                    android:id="@+id/llSelf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/curve_all_corner_grey"
-                    android:fontFamily="@font/opensans_regular"
-                    android:hint="@string/applicant_mother_s_name_"
-                    android:maxLength="50"
-                    android:paddingHorizontal="@dimen/dp_10"
-                    android:paddingVertical="@dimen/dp_5"
-                    android:singleLine="true"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/grey"
-                    android:textSize="@dimen/sp_16" />
-
-                <TextView
-                    android:id="@+id/tvContactNoOfGuardian"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dp_7"
-                    android:fontFamily="@font/opensans_semibold"
-                    android:text="@string/contact_no_of_guardian_caretaker"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/sp_16" />
+                    android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/etContactNoOfGuardian"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/curve_all_corner_grey"
-                    android:fontFamily="@font/opensans_regular"
-                    android:hint="@string/contact_no_of_guardian_caretaker_"
-                    android:inputType="number"
-                    android:maxLength="10"
-                    android:paddingHorizontal="@dimen/dp_10"
-                    android:paddingVertical="@dimen/dp_5"
-                    android:singleLine="true"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/grey"
-                    android:textSize="@dimen/sp_16" />
+                    <TextView
+                        android:id="@+id/tvApplicantNameFMG"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_7"
+                        android:fontFamily="@font/opensans_semibold"
+                        android:text="@string/applicant_mother_s_name"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_16" />
+
+                    <EditText
+                        android:id="@+id/etApplicantNameFMG"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/curve_all_corner_grey"
+                        android:fontFamily="@font/opensans_regular"
+                        android:hint="@string/applicant_mother_s_name_"
+                        android:maxLength="50"
+                        android:paddingHorizontal="@dimen/dp_10"
+                        android:paddingVertical="@dimen/dp_5"
+                        android:singleLine="true"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/grey"
+                        android:textSize="@dimen/sp_16" />
+
+                    <TextView
+                        android:id="@+id/tvContactNoOfGuardian"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_7"
+                        android:fontFamily="@font/opensans_semibold"
+                        android:text="@string/contact_no_of_guardian_caretaker"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_16" />
+
+                    <EditText
+                        android:id="@+id/etContactNoOfGuardian"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/curve_all_corner_grey"
+                        android:fontFamily="@font/opensans_regular"
+                        android:hint="@string/contact_no_of_guardian_caretaker_"
+                        android:inputType="number"
+                        android:maxLength="10"
+                        android:paddingHorizontal="@dimen/dp_10"
+                        android:paddingVertical="@dimen/dp_5"
+                        android:singleLine="true"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/grey"
+                        android:textSize="@dimen/sp_16" />
+                </LinearLayout>
             </LinearLayout>
 
             <TextView

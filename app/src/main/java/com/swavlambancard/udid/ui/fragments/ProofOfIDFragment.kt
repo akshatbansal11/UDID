@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,8 +21,10 @@ import com.swavlambancard.udid.databinding.FragmentProofOfIDBinding
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
+import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
+import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
@@ -33,6 +36,7 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 
@@ -47,9 +51,11 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     private var identityProofListYes = ArrayList<DropDownResult>()
     private var identityProofId: String? = null
     var body: MultipartBody.Part? = null
+    private var identityProofName: String? = null
+    private var enrollmentSlipName: String? = null
     private var document = 0
-
     private var aadhaarTag: Int = 0
+
     override val layoutId: Int
         get() = R.layout.fragment_proof_of_i_d
 
@@ -60,6 +66,78 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
         identityProofApi()
+
+        sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
+            when (userData.aadhaarTag) {
+                2 -> {
+                    mBinding?.rbNo?.isChecked = true
+                    mBinding?.llYesAadhaarCard?.hideView()
+                    mBinding?.llNoAadhaarCard?.showView()
+                }
+
+                1 -> {
+                    mBinding?.rbYes?.isChecked = true
+                    mBinding?.llYesAadhaarCard?.showView()
+                    mBinding?.llNoAadhaarCard?.hideView()
+                }
+                else -> {
+                    mBinding?.rbNo?.isChecked = false
+                    mBinding?.rbYes?.isChecked = false
+                    mBinding?.llYesAadhaarCard?.hideView()
+                    mBinding?.llNoAadhaarCard?.hideView()
+                }
+            }
+            when(userData.aadhaarCheckBox) {
+                0 -> {
+                    mBinding?.checkboxConfirm?.isChecked = false
+                }
+
+                1 -> {
+                    mBinding?.checkboxConfirm?.isChecked = true
+                }
+            }
+            mBinding?.etAadhaarNo?.setText(userData.aadhaarNo)
+            mBinding?.etAadhaarEnrollment?.setText(userData.aadhaarEnrollmentNo)
+            mBinding?.etIdentityProof?.text = userData.identityProofName
+            identityProofId = userData.identityProofId
+            mBinding?.etFileNameIdentityProof?.text = userData.aadhaarEnrollmentUploadSlip
+            mBinding?.etFileNameEnrollmentSlip?.text = userData.aadhaarEnrollmentUploadSlip
+        }
+
+        mBinding?.rgAadhaar?.setOnCheckedChangeListener { _, checkedId ->
+            aadhaarTag = when (checkedId) {
+                R.id.rbNo -> {
+                    2
+                }
+
+                R.id.rbYes -> {
+                    1
+                }
+
+                else -> {
+                    0
+                }
+            }
+            sharedViewModel.userData.value?.aadhaarTag = aadhaarTag
+        }
+        mBinding?.checkboxConfirm?.setOnCheckedChangeListener { _, isChecked ->
+            sharedViewModel.userData.value?.aadhaarCheckBox = if (isChecked) 1 else 0
+        }
+        mBinding?.etAadhaarNo?.addTextChangedListener {
+            sharedViewModel.userData.value?.aadhaarNo = it.toString()
+        }
+        mBinding?.etAadhaarEnrollment?.addTextChangedListener {
+            sharedViewModel.userData.value?.aadhaarEnrollmentNo = it.toString()
+        }
+        mBinding?.etFileNameEnrollmentSlip?.addTextChangedListener {
+            sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip = it.toString()
+        }
+        mBinding?.etIdentityProof?.addTextChangedListener {
+            sharedViewModel.userData.value?.identityProofName = it.toString()
+        }
+        mBinding?.etFileNameIdentityProof?.addTextChangedListener {
+            sharedViewModel.userData.value?.identityProofUpload = it.toString()
+        }
     }
 
     override fun setVariables() {
@@ -83,6 +161,28 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 }
             }
         }
+
+        viewModel.uploadFile.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null) {
+                if (userResponseModel._resultflag == 0) {
+                    mBinding?.llParent?.let { it1 ->
+                        showSnackbar(
+                            it1,
+                            userResponseModel.message
+                        )
+                    }
+                } else {
+                    if (document == 1) {
+                        identityProofName = userResponseModel._result.file_name
+                        mBinding?.etFileNameIdentityProof?.text = userResponseModel._result.file_name
+                    } else if (document == 2) {
+                        enrollmentSlipName = userResponseModel._result.file_name
+                        mBinding?.etFileNameEnrollmentSlip?.text = userResponseModel._result.file_name
+                    }
+                }
+            }
+        }
         viewModel.errors.observe(this) {
             mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
         }
@@ -91,8 +191,14 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     inner class ClickActions {
         fun next(view: View) {
             if (valid()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Done OTP") }
+                (requireActivity() as PersonalProfileActivity).replaceFragment(
+                    ProofOfAddressFragment()
+                )
             }
+        }
+
+        fun back(view: View) {
+            (requireActivity() as PersonalProfileActivity).replaceFragment(PersonalDetailFragment())
         }
 
         fun rbYes(view: View) {
@@ -165,9 +271,11 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     1 -> {
                         identityProofListYes
                     }
+
                     2 -> {
                         identityProofList
                     }
+
                     else -> {
                         identityProofList
                     }
@@ -190,6 +298,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                             selectedTextView?.text = ""
                         } else {
                             identityProofId = id
+                            sharedViewModel.userData.value?.identityProofId = identityProofId
                         }
                     }
                 }
@@ -231,22 +340,48 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
 
     private fun valid(): Boolean {
         if (aadhaarTag == 0) {
-            mBinding?.llParent?.let { showSnackbar(it, "do you have aadhaar card?") }
+            mBinding?.llParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.do_you_have_aadhaar_card_)
+                )
+            }
             return false
-        } else if (aadhaarTag == 1) {
+        }
+        else if (aadhaarTag == 1) {
             if (mBinding?.etAadhaarNo?.text.toString().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Enter aadhaar number") }
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.enter_aadhaar_number)
+                    )
+                }
                 return false
             } else if (mBinding?.checkboxConfirm?.isChecked != true) {
-                mBinding?.llParent?.let { showSnackbar(it, "Please select checkbox.") }
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_select_checkbox)
+                    )
+                }
                 return false
             }
         } else if (aadhaarTag == 2) {
             if (mBinding?.etAadhaarEnrollment?.text.toString().trim().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Enter aadhaar enrollment number") }
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.enter_aadhaar_enrollment_number)
+                    )
+                }
                 return false
             } else if (mBinding?.etFileNameEnrollmentSlip?.text.toString().trim().isEmpty()) {
-                mBinding?.llParent?.let { showSnackbar(it, "Upload aadhaar enrollment slip") }
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.upload_aadhaar_enrollment_slip_)
+                    )
+                }
                 return false
             }
         }
@@ -277,27 +412,12 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageFile = saveImageToFile(imageBitmap)
                     photoFile = imageFile
-                    if (document == 1) {
-                        val fileSizeInBytes = photoFile?.length() ?: 0
-                        if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                            mBinding?.etFileNameIdentityProof?.text = photoFile?.name
-//                            uploadImage(photoFile!!)
-                        } else {
-                            compressFile(photoFile!!) // Compress if size exceeds limit
-                            mBinding?.etFileNameIdentityProof?.text = photoFile?.name
-//                            uploadImage(photoFile!!)
-                        }
-                    } else if (document == 2) {
-                        val fileSizeInBytes = photoFile?.length() ?: 0
-                        if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                            mBinding?.etFileNameEnrollmentSlip?.text = photoFile?.name
-//                            uploadImage(photoFile!!)
-                        } else {
-                            compressFile(photoFile!!) // Compress if size exceeds limit
-                            mBinding?.etFileNameEnrollmentSlip?.text = photoFile?.name
-//                            uploadImage(photoFile!!)
-                        }
+                    val fileSizeInBytes = photoFile?.length() ?: 0
+                    if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                    } else {
+                        compressFile(photoFile!!) // Compress if size exceeds limit
                     }
+                    uploadImage(photoFile!!)
                 }
 
                 PICK_IMAGE -> {
@@ -311,25 +431,11 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                         if (fileExtension in listOf("png", "jpg", "jpeg")) {
                             val file = filePath?.let { File(it) }
                             val fileSizeInBytes = file?.length() ?: 0
-                            if (document == 1) {
-                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                                    mBinding?.etFileNameIdentityProof?.text = file?.name
-//                                    uploadImage(file!!)
-                                } else {
-                                    compressFile(file!!) // Compress if size exceeds limit
-                                    mBinding?.etFileNameIdentityProof?.text = file.name
-//                                    uploadImage(file)
-                                }
-                            } else if (document == 2) {
-                                if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-                                    mBinding?.etFileNameEnrollmentSlip?.text = file?.name
-//                                    uploadImage(file!!)
-                                } else {
-                                    compressFile(file!!) // Compress if size exceeds limit
-                                    mBinding?.etFileNameEnrollmentSlip?.text = file.name
-//                                    uploadImage(file)
-                                }
+                            if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
+                            } else {
+                                compressFile(file!!) // Compress if size exceeds limit
                             }
+                            uploadImage(file!!)
                         } else {
                             mBinding?.llParent?.let {
                                 showSnackbar(
@@ -362,11 +468,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                                 val fileSizeInBytes =
                                     it.getLong(it.getColumnIndex(MediaStore.MediaColumns.SIZE))
                                 if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
-//                                    uploadDocument(documentName, uri)
-                                    if (document == 1)
-                                        mBinding?.etFileNameIdentityProof?.text = documentName
-                                    else if (document == 2)
-                                        mBinding?.etFileNameEnrollmentSlip?.text = documentName
+                                    uploadDocument(documentName, uri)
                                 } else {
                                     mBinding?.llParent?.let {
                                         showSnackbar(
@@ -388,18 +490,38 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             body =
                 MultipartBody.Part.createFormData(
-                    "address_proof_file",
+                    "document",
                     file.name, reqFile
                 )
         }
+        uploadFileApi()
     }
 
     private fun uploadDocument(documentName: String?, uri: Uri) {
         val requestBody = convertToRequestBody(requireContext(), uri)
         body = MultipartBody.Part.createFormData(
-            "address_proof_file",
+            "document",
             documentName,
             requestBody
         )
+        uploadFileApi()
+    }
+
+    private fun uploadFileApi() {
+        if (document == 1) {
+            viewModel.uploadFile(
+                requireContext(),
+                EncryptionModel.aesEncrypt("identitity_proof_file")
+                    .toRequestBody(MultipartBody.FORM),
+                body
+            )
+        } else if (document == 2) {
+            viewModel.uploadFile(
+                requireContext(),
+                EncryptionModel.aesEncrypt("aadhar_enrollment_slip")
+                    .toRequestBody(MultipartBody.FORM),
+                body
+            )
+        }
     }
 }

@@ -1,24 +1,35 @@
 package com.swavlambancard.udid.ui.activity
 
+import android.util.Log
 import android.view.View
-import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.Gson
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.ActivityPersonalProfileBinding
-import com.swavlambancard.udid.model.PwdApplication
+import com.swavlambancard.udid.model.EditApplication
+import com.swavlambancard.udid.model.EditProfileRequest
+import com.swavlambancard.udid.model.MyAccountData
+import com.swavlambancard.udid.model.UserData
 import com.swavlambancard.udid.ui.fragments.DisabilityDetailFragment
-import com.swavlambancard.udid.ui.fragments.HospitalAssesmentFragment
+import com.swavlambancard.udid.ui.fragments.HospitalAssessmentFragment
 import com.swavlambancard.udid.ui.fragments.PersonalDetailFragment
 import com.swavlambancard.udid.ui.fragments.ProofOfAddressFragment
 import com.swavlambancard.udid.ui.fragments.ProofOfIDFragment
+import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseActivity
+import com.swavlambancard.udid.utilities.EncryptionModel
+import com.swavlambancard.udid.utilities.JSEncryptService
+import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
+import com.swavlambancard.udid.utilities.Utility
+import com.swavlambancard.udid.viewModel.SharedDataViewModel
+import org.json.JSONObject
 
 class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     private var mBinding: ActivityPersonalProfileBinding? = null
     private var currentFragment: Fragment? = null
-    private lateinit var sharedViewModel: SharedDataViewModel
+    private var sharedViewModel: SharedDataViewModel? = null
 
     override val layoutId: Int
         get() = R.layout.activity_personal_profile
@@ -26,58 +37,37 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     override fun initView() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
-        // Initialize ViewModel
         sharedViewModel = ViewModelProvider(this)[SharedDataViewModel::class.java]
-
-        // Set dummy data to ViewModel
-//        sharedViewModel.userData.value = getDummyData()
-        replaceFragment(PersonalDetailFragment())
-    }
-
-    private fun getDummyData(): PwdApplication {
-        return PwdApplication(
-            applicantFullName = "John Doe",
-            applicantMobileNo = "9876543210",
-            applicantEmail = "john.doe@example.com",
-            applicantDob = "1990-01-01",
-            gender = 1, // 1 for Male, 2 for Female
-            guardian = "Jane Doe",
-            photo = 1, // Assuming 1 means the photo is uploaded
-            sign = 1, // Assuming 1 means the signature is uploaded
-            aadhaarCard = 1,
-            aadhaarNo = "123456789012",
-            aadhaarCheckBox = 1,
-            aadhaarEnrollment = "Enrollment123",
-            aadhaarUploadSlip = 1,
-            identityProof = "Driving License",
-            identityProofSlip = 1,
-            documentAddressProof = "Electricity Bill",
-            documentAddressProofPhoto = 1,
-            documentAddress = "123 Main Street",
-            state = "StateName",
-            district = "DistrictName",
-            city = "CityName",
-            village = "VillageName",
-            pincode = "123456",
-            disabilityType = "Visual Impairment",
-            disabilityDue = "Since Birth",
-            disabilityBirth = 1,
-            disabilitySince = "1990-01-01",
-            treatingHospital = 1,
-            hospitalState = "HospitalState",
-            hospitalDistrict = "HospitalDistrict",
-            hospitalName = "XYZ Hospital",
-            hospitalCheckBox = 1
-        )
+        sharedViewModel?.init()
+        editApi()
     }
 
 
     override fun setVariables() {
-        // Initialize variables here if needed
     }
 
     override fun setObservers() {
-        // Set observers for LiveData or other reactive programming if needed
+        sharedViewModel?.editProfileResult?.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel != null) {
+                if (userResponseModel._resultflag == 0) {
+                    mBinding?.clParent?.let { it1 ->
+                        Utility.showSnackbar(
+                            it1,
+                            userResponseModel.message
+                        )
+                    }
+                } else {
+                    val data =
+                        JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result))
+                    val gson = Gson()
+                    val userData = gson.fromJson(data.toString(), EditApplication::class.java)
+                    Log.d("Decrypted Data EditProfile : ", data.toString())
+                        sharedViewModel?.userData?.value?.applicantFullName = userData.full_name
+                    replaceFragment(PersonalDetailFragment())
+                }
+            }
+        }
     }
 
     inner class ClickActions {
@@ -85,25 +75,45 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
             finish()
             onBackPressedDispatcher.onBackPressed()
         }
-        fun personalDetails(view: View){
+
+        fun personalDetails(view: View) {
             replaceFragment(PersonalDetailFragment())
         }
-        fun proofOfId(view: View){
+
+        fun proofOfId(view: View) {
             replaceFragment(ProofOfIDFragment())
             mBinding?.horizontalScrollView?.smoothScrollTo(55, 0)
         }
-        fun proofOfCorrespondId(view: View){
+
+        fun proofOfCorrespondId(view: View) {
             replaceFragment(ProofOfAddressFragment())
             mBinding?.horizontalScrollView?.smoothScrollTo(330, 0)
         }
-        fun disabilityDetails(view: View){
+
+        fun disabilityDetails(view: View) {
             replaceFragment(DisabilityDetailFragment())
             mBinding?.horizontalScrollView?.smoothScrollTo(750, 0)
         }
-        fun hospitalAssessments(view: View){
-            replaceFragment(HospitalAssesmentFragment())
+
+        fun hospitalAssessments(view: View) {
+            replaceFragment(HospitalAssessmentFragment())
             mBinding?.horizontalScrollView?.smoothScrollTo(2050, 0)
         }
+    }
+
+    private fun editApi() {
+        sharedViewModel?.editApplication(
+            this, EditProfileRequest(
+                JSEncryptService.encrypt(
+                    getPreferenceOfLogin(
+                        context,
+                        AppConstants.LOGIN_DATA,
+                        UserData::class.java
+                    ).application_number.toString().trim()
+                ).toString(),
+                JSEncryptService.encrypt("mobile").toString()
+            )
+        )
     }
 
     override fun onBackPressed() {
@@ -111,7 +121,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         finish()
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    fun replaceFragment(fragment: Fragment) {
         currentFragment = fragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragFrame, fragment)
@@ -128,60 +138,65 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                 mBinding?.ivPOCA?.setImageResource(R.drawable.va_ellipse_orange_down)
                 mBinding?.ivDD?.setImageResource(R.drawable.va_orange_ellipse)
                 mBinding?.ivHA?.setImageResource(R.drawable.va_ellipse_orange_down)
-                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this,R.color.DarkBlue))
-                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this,R.color.orange))
+                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this, R.color.DarkBlue))
+                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
             }
+
             is ProofOfIDFragment -> {
                 mBinding?.ivPD?.setImageResource(R.drawable.va_ellipse_orange_down)
                 mBinding?.ivPOI?.setImageResource(R.drawable.va_blue_ellipse_up)
                 mBinding?.ivPOCA?.setImageResource(R.drawable.va_ellipse_orange_down)
                 mBinding?.ivDD?.setImageResource(R.drawable.va_orange_ellipse)
                 mBinding?.ivHA?.setImageResource(R.drawable.va_ellipse_orange_down)
-                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this,R.color.DarkBlue))
-                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this,R.color.orange))
+                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this, R.color.DarkBlue))
+                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
             }
+
             is ProofOfAddressFragment -> {
                 mBinding?.ivPD?.setImageResource(R.drawable.va_ellipse_orange_down)
                 mBinding?.ivPOI?.setImageResource(R.drawable.va_orange_ellipse)
                 mBinding?.ivPOCA?.setImageResource(R.drawable.va_blue_ellipse)
                 mBinding?.ivDD?.setImageResource(R.drawable.va_orange_ellipse)
                 mBinding?.ivHA?.setImageResource(R.drawable.va_ellipse_orange_down)
-                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this,R.color.DarkBlue))
-                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this,R.color.orange))
+                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this, R.color.DarkBlue))
+                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
             }
+
             is DisabilityDetailFragment -> {
                 mBinding?.ivPD?.setImageResource(R.drawable.va_ellipse_orange_down)
                 mBinding?.ivPOI?.setImageResource(R.drawable.va_orange_ellipse)
                 mBinding?.ivPOCA?.setImageResource(R.drawable.va_ellipse_orange_down)
                 mBinding?.ivDD?.setImageResource(R.drawable.va_blue_ellipse_up)
                 mBinding?.ivHA?.setImageResource(R.drawable.va_ellipse_orange_down)
-                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this,R.color.DarkBlue))
-                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this,R.color.orange))
+                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this, R.color.DarkBlue))
+                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
             }
-            is HospitalAssesmentFragment -> {
+
+            is HospitalAssessmentFragment -> {
                 mBinding?.ivPD?.setImageResource(R.drawable.va_ellipse_orange_down)
                 mBinding?.ivPOI?.setImageResource(R.drawable.va_orange_ellipse)
                 mBinding?.ivPOCA?.setImageResource(R.drawable.va_ellipse_orange_down)
                 mBinding?.ivDD?.setImageResource(R.drawable.va_orange_ellipse)
                 mBinding?.ivHA?.setImageResource(R.drawable.va_blue_ellipse)
-                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this,R.color.orange))
-                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this,R.color.DarkBlue))
+                mBinding?.tvPD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvPOI?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this, R.color.DarkBlue))
             }
+
             else -> {}
         }
     }

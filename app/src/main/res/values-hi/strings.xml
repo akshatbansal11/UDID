@@ -94,7 +94,7 @@
     <string name="hospital_name">अस्पताल का नाम<font fgcolor="#FF3D00">*</font></string>
     <string name="hospital_name_">अस्पताल का नाम</string>
     <string name="hospital_treating_district">उपचार करने वाले अस्पताल का जिला<font fgcolor="#FF3D00">*</font></string>
-    <string name="select_hospital_treating_state_uts">उपचार करने वाले अस्पताल का राज्य / केंद्र शासित प्रदेश चुनें<font fgcolor="#FF3D00">*</font></string>
+    <string name="select_hospital_treating_state_uts">उपचार करने वाले अस्पताल का राज्य / केंद्र शासित प्रदेश चुनें</string>
     <string name="hospital_treating_state_uts">उपचार करने वाले अस्पताल का राज्य / केंद्र शासित प्रदेश<font fgcolor="#FF3D00">*</font></string>
     <string name="disability_type_start">विकलांगता का प्रकार<font fgcolor="#FF3D00">*</font></string>
     <string name="disability_due_to_star">विकलांगता का कारण<font fgcolor="#FF3D00">*</font></string>
@@ -278,20 +278,20 @@
     <string name="female">महिला</string>
     <string name="transgender">ट्रांसजेंडर</string>
     <string name="select_relation_with_pwd">पीडब्ल्यूडी के साथ संबंध चुनें</string>
-    <string name="relation_with_person">व्यक्ति के साथ संबंध*</string>
-    <string name="applicant_mother_s_name">आवेदक की माता का नाम*</string>
+    <string name="relation_with_person">व्यक्ति के साथ संबंध<font fgcolor="#FF3D00">*</font></string>
+    <string name="applicant_mother_s_name">आवेदक की माता का नाम<font fgcolor="#FF3D00">*</font></string>
     <string name="applicant_mother_s_name_">आवेदक की माता का नाम</string>
-    <string name="contact_no_of_guardian_caretaker">अभिभावक/देखभालकर्ता का संपर्क नंबर*</string>
+    <string name="contact_no_of_guardian_caretaker">अभिभावक/देखभालकर्ता का संपर्क नंबर<font fgcolor="#FF3D00">*</font></string>
     <string name="contact_no_of_guardian_caretaker_">अभिभावक / देखभालकर्ता का संपर्क नंबर</string>
     <string name="only_jpeg_jpg_and_png_image_with_size_5_kb_to_100_kb">(केवल jpeg, jpg और png छवियाँ जिनका आकार 5 KB से 100 KB हो और फोटो की चौड़ाई और ऊँचाई 800px से कम हो, अनुमत हैं) नोट: कृपया हाल की तस्वीर अपलोड करें</string>
     <string name="signature_thumb_other_print">हस्ताक्षर / अंगूठे का निशान / अन्य छाप</string>
     <string name="only_jpeg_jpg_and_png_image_with_size_3_kb_to_30_kb_allowed">(केवल jpeg, jpg और png छवियाँ जिनका आकार 3 KB से 30 KB हो, अनुमत हैं)</string>
-    <string name="applicant_father_s_name">आवेदक के पिता का नाम*</string>
+    <string name="applicant_father_s_name">आवेदक के पिता का नाम<font fgcolor="#FF3D00">*</font></string>
     <string name="applicant_father_s_name_">आवेदक के पिता का नाम</string>
-    <string name="name_of_guardian_caretaker">अभिभावक / देखभालकर्ता का नाम *</string>
+    <string name="name_of_guardian_caretaker">अभिभावक / देखभालकर्ता का नाम <font fgcolor="#FF3D00">*</font></string>
     <string name="name_of_guardian_caretaker_">अभिभावक / देखभालकर्ता का नाम</string>
     <string name="apply_for_udid">यूडीआईडी के लिए आवेदन करें</string>
-    <string name="i_have_read_and_understood_the_process">मैंने प्रक्रिया पढ़ ली है और समझ ली है। *</string>
+    <string name="i_have_read_and_understood_the_process">मैंने प्रक्रिया पढ़ ली है और समझ ली है। <font fgcolor="#FF3D00">*</font></string>
     <string name="you_must_check_the_box_to_confirm_that_you_have_read_and_understood_the_process">आपको यह पुष्टि करने के लिए बॉक्स चेक करना होगा कि आपने प्रक्रिया पढ़ ली है और समझ ली है।</string>
     <string name="i_have_never_obtained_any_disability_certificate_udid_card_issued_through_udid_portal_or_any_other_platform_means">मैंने कभी भी यूडीआईडी पोर्टल या किसी अन्य माध्यम से विकलांगता प्रमाणपत्र/यूडीआईडी कार्ड प्राप्त नहीं किया है।</string>
     <string name="i_do_not_have_disability_certificate_udid_card_issued_through_udid_portal_but_i_have_a_disability_certificate_issued_through_other_platform_means_for_example_physically_manually_issued_disability_certificate">मेरे पास यूडीआईडी पोर्टल के माध्यम से जारी विकलांगता प्रमाणपत्र/यूडीआईडी कार्ड नहीं है, लेकिन मेरे पास अन्य माध्यमों से जारी विकलांगता प्रमाणपत्र है, उदाहरण के लिए, भौतिक/मैन्युअल रूप से जारी विकलांगता प्रमाणपत्र।</string>
@@ -301,17 +301,68 @@
     <string name="please_select_an_option">कृपया एक विकल्प चुनें</string>
     <string name="yes">हाँ</string>
     <string name="no">नहीं</string>
-    <string name="i_agree_to_share_aadhaar_information_with_govt_department">मैं आधार जानकारी को सरकारी विभाग के साथ साझा करने के लिए सहमत हूँ। *</string>
+    <string name="i_agree_to_share_aadhaar_information_with_govt_department">मैं आधार जानकारी को सरकारी विभाग के साथ साझा करने के लिए सहमत हूँ।<font fgcolor="#FF3D00">*</font></string>
     <string name="aadhaar_enrollment_number_">आधार नामांकन संख्या</string>
     <string name="no_file_chosen_only_jpeg_jpg_png_and_pdf_with_size_10_kb_to_500_kb_allowed">(कोई फ़ाइल नहीं चुनी गई (केवल jpeg, jpg, png और pdf जिनका आकार 10 KB से 500 KB हो, अनुमत हैं)</string>
     <string name="only_jpeg_jpg_png_and_pdf_with_size_10_kb_to_500_kb_allowed">(केवल jpeg, jpg, png और pdf जिनका आकार 10 KB से 500 KB हो, अनुमत हैं)</string>
     <string name="address_for_correspondence">पत्राचार के लिए पता</string>
     <string name="select_nature_of_document">दस्तावेज़ की प्रकृति चुनें</string>
-    <string name="choose_state_uts">राज्य / केंद्र शासित प्रदेश चुनें *</string>
+    <string name="choose_state_uts">राज्य / केंद्र शासित प्रदेश चुनें<font fgcolor="#FF3D00">*</font></string>
     <string name="choose_district">जिला चुनें</string>
     <string name="choose_city_sub_district_tehsil">नगर / उप-जिला / तहसील चुनें</string>
     <string name="choose_village_block">गाँव / ब्लॉक चुनें</string>
     <string name="choose_pincode">पिनकोड चुनें</string>
     <string name="choose_state_uts_">राज्य / केंद्र शासित प्रदेश चुनें</string>
-
+    <string name="please_select_nature_of_document">कृपया दस्तावेज़ की प्रकृति चुनें।</string>
+    <string name="please_enter_correspondence_address">कृपया पत्राचार का पता दर्ज करें।</string>
+    <string name="please_select_state_uts">कृपया राज्य / केंद्र शासित प्रदेश चुनें।</string>
+    <string name="please_select_district">कृपया जिला चुनें।</string>
+    <string name="please_select_city_sub_district_tehsil">कृपया शहर / उप जिला / तहसील चुनें।</string>
+    <string name="disability_details_in_case_of_multiple_disabilities_please_choose_2_or_more_out_of_the_20_disabilities">विकलांगता विवरण (कई विकलांगताओं के मामले में, कृपया 20 विकलांगताओं में से 2 या अधिक चुनें)</string>
+    <string name="choose_disability_types">विकलांगता प्रकार चुनें</string>
+    <string name="select_disability_due_to">विकलांगता का कारण चुनें</string>
+    <string name="select_disability_since">विकलांगता की तारीख चुनें</string>
+    <string name="do_you_have_disability_certificate">क्या आपके पास विकलांगता प्रमाण पत्र है?<font fgcolor="#FF3D00">*</font></string>
+    <string name="upload_disability_certificate">विकलांगता प्रमाण पत्र अपलोड करें<font fgcolor="#FF3D00">*</font></string>
+    <string name="sr_no_registration_no_of_certificate">क्रमांक / प्रमाण पत्र का पंजीकरण संख्या<font fgcolor="#FF3D00">*</font></string>
+    <string name="sr_no_registration_no_of_certificate_">क्रमांक / प्रमाण पत्र का पंजीकरण संख्या</string>
+    <string name="date_of_issuance_of_certificate">प्रमाण पत्र जारी होने की तारीख<font fgcolor="#FF3D00">*</font></string>
+    <string name="details_of_issuing_authority">जारी करने वाली प्राधिकरण का विवरण<font fgcolor="#FF3D00">*</font></string>
+    <string name="select_issuing_authority">जारी करने वाली प्राधिकरण चुनें</string>
+    <string name="disability_percentage_">विकलांगता प्रतिशत (%)</string>
+    <string name="please_select_disability_type">कृपया विकलांगता प्रकार चुनें।</string>
+    <string name="please_check_disability_by_birth_yes_no">क्या विकलांगता जन्म से है? हां/नहीं</string>
+    <string name="please_select_disability_since">कृपया विकलांगता की तारीख चुनें।</string>
+    <string name="please_select_do_you_have_disability_certificate_yes_no">कृपया विकलांगता प्रमाण पत्र है या नहीं चुनें।</string>
+    <string name="please_enter_sr_no_registration_no_of_certificate">कृपया प्रमाण पत्र का क्रमांक / पंजीकरण संख्या दर्ज करें।</string>
+    <string name="please_select_date_of_issuance_of_certificate">कृपया प्रमाण पत्र जारी होने की तारीख चुनें।</string>
+    <string name="please_select_details_of_issuing_authority">कृपया जारी करने वाली प्राधिकरण का विवरण चुनें।</string>
+    <string name="enter_a_number_between_1_and_100">1 और 100 के बीच कोई संख्या दर्ज करें</string>
+    <string name="please_enter_applicant_s_full_name">कृपया आवेदक का पूरा नाम दर्ज करें।</string>
+    <string name="please_select_state">कृपया राज्य चुनें।</string>
+    <string name="mobile_number_is_required">मोबाइल नंबर आवश्यक है।</string>
+    <string name="please_select_gender">कृपया लिंग चुनें</string>
+    <string name="please_select_guardian_relation">कृपया अभिभावक संबंध चुनें।</string>
+    <string name="please_enter_father_name">कृपया पिता का नाम दर्ज करें।</string>
+    <string name="please_enter_contact_number">कृपया संपर्क नंबर दर्ज करें।</string>
+    <string name="please_enter_mother_name">कृपया माँ का नाम दर्ज करें।</string>
+    <string name="please_select_relation_with_person">कृपया व्यक्ति से संबंध चुनें।</string>
+    <string name="please_enter_guardian_name">कृपया अभिभावक का नाम दर्ज करें।</string>
+    <string name="please_upload_photo">कृपया फोटो अपलोड करें</string>
+    <string name="please_upload_signature">कृपया हस्ताक्षर अपलोड करें</string>
+    <string name="do_you_have_aadhaar_card_">क्या आपके पास आधार कार्ड है?</string>
+    <string name="enter_aadhaar_number">कृपया आधार नंबर दर्ज करें</string>
+    <string name="please_select_checkbox">कृपया चेकबॉक्स चुनें।</string>
+    <string name="enter_aadhaar_enrollment_number">कृपया आधार नामांकन नंबर दर्ज करें</string>
+    <string name="upload_aadhaar_enrollment_slip_">कृपया आधार नामांकन पर्ची अपलोड करें</string>
+    <string name="i_hereby_declare_that_all_particulars_stated_above_are_true_to_the_best_of_my_knowledge_and_belief">मैं यहां घोषित करता हूँ कि उपरोक्त सभी विवरण मेरी सर्वश्रेष्ठ जानकारी और विश्वास के अनुसार सत्य हैं, और कोई महत्वपूर्ण जानकारी छुपाई या गलत नहीं बताई गई है। मैं यह भी कहता हूँ कि यदि आवेदन में कोई असमानता पाई जाती है, तो मैं प्राप्त लाभों को रद्द किए जाने और कानून के अनुसार अन्य कार्रवाई के लिए उत्तरदायी रहूँगा। *</string>
+    <string name="hospital_for_assessment_issue_of_udid_card_disability_certificate">मूल्यांकन के लिए अस्पताल / UDID कार्ड / विकलांगता प्रमाण पत्र जारी करने के लिए अस्पताल</string>
+    <string name="choose_hospital_treating_district">चिकित्सा करने वाले अस्पताल का जिला चुनें</string>
+    <string name="please_select_sub_district_first">Please select Sub-District First.</string>
+    <string name="thank_you">Thank you</string>
+    <string name="your_updated_application_has_been_submitted_successfully">Your updated application has been submitted successfully.</string>
+    <string name="you_can_use_this_application_number">You can use this Application Number/</string>
+    <string name="enrolmentnumber29100000022071690637">EnrolmentNumber29100000022071690637</string>
+    <string name="to_track_your_application_status">to track your application status.</string>
+    <string name="thanks_amp_regards_nudid_support"><![CDATA[Thanks & Regards,\nUDID Support]]></string>
 </resources>

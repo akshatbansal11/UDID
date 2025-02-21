@@ -3,7 +3,6 @@ package com.swavlambancard.udid.ui.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -12,11 +11,6 @@ import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.DashboardItemBinding
 import com.swavlambancard.udid.model.DashboardData
 import com.swavlambancard.udid.model.UserData
-import com.swavlambancard.udid.services.DOWNLOAD_APPLICATION
-import com.swavlambancard.udid.services.DOWNLOAD_DOCTOR_DIAGNOSIS_SHEET
-import com.swavlambancard.udid.services.DOWNLOAD_RECEIPT
-import com.swavlambancard.udid.services.DOWNLOAD_YOUR_E_DISABILITY_CERTIFICATE
-import com.swavlambancard.udid.services.DOWNLOAD_YOUR_UDID_CARD
 import com.swavlambancard.udid.ui.activity.AppealActivity
 import com.swavlambancard.udid.ui.activity.ApplicationStatusActivity
 import com.swavlambancard.udid.ui.activity.DashboardActivity
@@ -35,7 +29,6 @@ import com.swavlambancard.udid.ui.activity.UpdateNameActivity
 import com.swavlambancard.udid.ui.activity.UpdateRequestActivity
 import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
-import com.swavlambancard.udid.utilities.toast
 
 class DashboardAdapter(
     private val context: Context,

@@ -180,7 +180,6 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
                      bindingDialog.etDob.text=""
 
                  }
-
              }
          }
 
@@ -200,7 +199,6 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
                 dialog.dismiss()
             }
         }
-
         dialog.show()
     }
     @SuppressLint("SetTextI18n")

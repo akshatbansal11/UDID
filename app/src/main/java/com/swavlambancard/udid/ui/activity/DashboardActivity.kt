@@ -246,21 +246,23 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
             )
             put("type", "mobile")
         }.toString()
-        if (isFrom == getString(R.string.application)) viewModel.downloadApplication(
-            this, requestBody.toRequestBody("application/json".toMediaType())
-        )
-        else if (isFrom == getString(R.string.receipt)) viewModel.downloadReceipt(
-            this, requestBody.toRequestBody("application/json".toMediaType())
-        )
-        else if (isFrom == getString(R.string.your_e_disability_certificate)) viewModel.downloadEDisabilityCertificate(
-            this, requestBody.toRequestBody("application/json".toMediaType())
-        )
-        else if (isFrom == getString(R.string.your_e_udid_card)) viewModel.downloadUdidCard(
-            this, requestBody.toRequestBody("application/json".toMediaType())
-        )
-        else if (isFrom == getString(R.string.doctor_diagnosis_sheet)) viewModel.downloadDoctorDiagnosisSheet(
-            this, requestBody.toRequestBody("application/json".toMediaType())
-        )
+        when (isFrom) {
+            getString(R.string.application) -> viewModel.downloadApplication(
+                this, requestBody.toRequestBody("application/json".toMediaType())
+            )
+            getString(R.string.receipt) -> viewModel.downloadReceipt(
+                this, requestBody.toRequestBody("application/json".toMediaType())
+            )
+            getString(R.string.your_e_disability_certificate) -> viewModel.downloadEDisabilityCertificate(
+                this, requestBody.toRequestBody("application/json".toMediaType())
+            )
+            getString(R.string.your_e_udid_card) -> viewModel.downloadUdidCard(
+                this, requestBody.toRequestBody("application/json".toMediaType())
+            )
+            getString(R.string.doctor_diagnosis_sheet) -> viewModel.downloadDoctorDiagnosisSheet(
+                this, requestBody.toRequestBody("application/json".toMediaType())
+            )
+        }
     }
 
     private fun openPDF(pdfFile: File) {
