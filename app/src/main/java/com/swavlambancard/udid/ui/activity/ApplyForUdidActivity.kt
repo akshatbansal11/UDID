@@ -63,8 +63,9 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
 
         fun submit(view: View) {
             if (mBinding?.cbUdidForm?.isChecked == true) {
-                mBinding?.clParent?.hideView()
-                showUdidDialog()
+//                mBinding?.clParent?.hideView()
+//                showUdidDialog()
+                startActivity(Intent(this@ApplyForUdidActivity, ApplyForUdidFormActivity::class.java))
             }
             else
                 mBinding?.clParent?.let {

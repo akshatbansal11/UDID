@@ -175,7 +175,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     inner class ClickActions {
         fun submit(view: View) {
 //            if (valid()) {
-                val dialog = ThankYouDialog()
+                val dialog = ThankYouDialog("12345678900987")
                 dialog.show((context as AppCompatActivity).supportFragmentManager, "ThankYouDialog")
 //            }
         }
