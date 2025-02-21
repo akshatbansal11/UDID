@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.swavlambancard.udid.model.EditProfileRequest
 import com.swavlambancard.udid.model.EditProfileResponse
 import com.swavlambancard.udid.model.PwdApplication
+import com.swavlambancard.udid.model.SavePWDFormResponse
 import com.swavlambancard.udid.repository.Repository
 import com.swavlambancard.udid.utilities.CommonUtils
 import com.swavlambancard.udid.utilities.ProcessDialog
@@ -17,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import okhttp3.RequestBody
 import org.json.JSONObject
 import java.net.SocketTimeoutException
 
@@ -26,6 +28,7 @@ class SharedDataViewModel : ViewModel() {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var job: Job? = null
     var editProfileResult = MutableLiveData<EditProfileResponse>()
+    var savePWDFormResult = MutableLiveData<SavePWDFormResponse>()
     val userData = MutableLiveData(PwdApplication()) // Initialize with default fields
     val errors = MutableLiveData<String>()
     init {
@@ -108,6 +111,153 @@ class SharedDataViewModel : ViewModel() {
                     }
                 }
             } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun savePWDForm(
+        context: Context,
+        fullName: RequestBody?,
+        regionalFullName: RequestBody?,
+        regionalLanguage: RequestBody?,
+        mobile: RequestBody?,
+        email: RequestBody?,
+        dob: RequestBody?,
+        gender: RequestBody?,//=>M/F/T
+        guardianRelation: RequestBody?,//Mother/Father/Guardian
+        fatherName: RequestBody?,
+        motherName: RequestBody?,
+        guardianName: RequestBody?,
+        guardianContact: RequestBody?,
+        photo: RequestBody?,
+        sign: RequestBody?,
+        // Proof id Identity Card
+        aadhaarNo: RequestBody?,
+        shareAadhaarInfo: RequestBody?,//0/1
+        aadhaarEnrollmentSlip: RequestBody?,
+        identityProofId: RequestBody?,
+        identityProofFile: RequestBody?,
+        //Address For Correspondence
+        addressProofId: RequestBody?,
+        addressProofFile: RequestBody?,
+        currentAddress: RequestBody?,
+        currentStateCode: RequestBody?,
+        currentDistrictCode: RequestBody?,
+        currentSubDistrictCode: RequestBody?,
+        currentVillageCode: RequestBody?,
+        currentPincode: RequestBody?,
+        //Disability Details
+        disabilityTypeId: RequestBody?,
+        disabilityDueTo: RequestBody?,
+        disabilitySinceBirth: RequestBody?,//Since(No)/Birth(Yes)
+        disabilitySince: RequestBody?,
+        haveDisabilityCert: RequestBody?,//1(yes)/0(no)
+        disabilityCertDoc: RequestBody?,
+        serialNumber: RequestBody?,
+        dateOfCertificate: RequestBody?,
+        detailOfAuthority: RequestBody?,
+        disabilityPer: RequestBody?,
+        //Hospital for assessment
+        isHospitalTreatingOtherState: RequestBody?,//=> 0/1
+        hospitalTreatingStateCode: RequestBody?,
+        hospitalTreatingDistrictCode: RequestBody?,
+        declaration: RequestBody?,//=>0/1
+    ) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.savePwdForm(
+                    fullName,
+                    regionalFullName,
+                    regionalLanguage,
+                    mobile,
+                    email,
+                    dob,
+                    gender,
+                    guardianRelation,
+                    fatherName,
+                    motherName,
+                    guardianName,
+                    guardianContact,
+                    photo,
+                    sign,
+                    aadhaarNo,
+                    shareAadhaarInfo,
+                    aadhaarEnrollmentSlip,
+                    identityProofId,
+                    identityProofFile,
+                    addressProofId,
+                    addressProofFile,
+                    currentAddress,
+                    currentStateCode,
+                    currentDistrictCode,
+                    currentSubDistrictCode,
+                    currentVillageCode,
+                    currentPincode,
+                    disabilityTypeId,
+                    disabilityDueTo,
+                    disabilitySinceBirth,
+                    disabilitySince,
+                    haveDisabilityCert,
+                    disabilityCertDoc,
+                    serialNumber,
+                    dateOfCertificate,
+                    detailOfAuthority,
+                    disabilityPer,
+                    isHospitalTreatingOtherState,
+                    hospitalTreatingStateCode,
+                    hospitalTreatingDistrictCode,
+                    declaration
+                )
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                savePWDFormResult.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            }
+            catch (e: Exception) {
                 if (e is SocketTimeoutException) {
                     errors.postValue("Time out Please try again")
                 }

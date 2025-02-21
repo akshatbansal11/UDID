@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.View
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.ActivityLoginBinding
+import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseActivity
 
 class LoginActivity : BaseActivity<ActivityLoginBinding>() {
@@ -26,7 +27,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             startActivity(Intent(this@LoginActivity,ScannerActivity::class.java))
         }
         fun applyForUDID(view: View){
-            startActivity(Intent(this@LoginActivity,ApplyForUdidActivity::class.java))
+            startActivity(Intent(this@LoginActivity,ApplyForUdidActivity::class.java)
+                .putExtra(AppConstants.IS_FROM,"login"))
         }
         fun backPress(view: View){
             onBackPressedDispatcher.onBackPressed()

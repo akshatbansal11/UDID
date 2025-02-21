@@ -13,6 +13,7 @@ import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.SavePWDFormResponse
 import com.swavlambancard.udid.model.UploadFileResponse
 import com.swavlambancard.udid.services.MyService
 import com.swavlambancard.udid.services.ServiceGenerator
@@ -21,6 +22,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
+import retrofit2.http.Part
 
 object Repository {
 
@@ -57,9 +59,11 @@ object Repository {
     suspend fun getDropDown(request: DropDownRequest): Response<DropDownResponse> {
         return api.getDropDown(request)
     }
+
     suspend fun getCodeDropDown(request: CodeDropDownRequest): Response<DropDownResponse> {
         return api.getCodeDropDown(request)
     }
+
     suspend fun getPincodeDropDown(request: PincodeRequest): Response<DropDownResponse> {
         return api.getPincodeDropDown(request)
     }
@@ -92,7 +96,7 @@ object Repository {
         applicationNumber: RequestBody?,
         mobile: RequestBody?,
         otp: RequestBody?,
-        type: RequestBody?
+        type: RequestBody?,
     ): Response<CommonResponse> {
         return api.updateMobile(
             applicationNumber,
@@ -236,7 +240,7 @@ object Repository {
         currentPincode: RequestBody?,
         hospitalTreatingId: RequestBody?,
         type: RequestBody?,
-        address_proof_file: MultipartBody.Part?
+        address_proof_file: MultipartBody.Part?,
     ): Response<CommonResponse> {
         return api.getRenewCard(
             applicationNumber,
@@ -263,44 +267,142 @@ object Repository {
     }
 
     suspend fun downloadApplication(
-        request: RequestBody): Response<ResponseBody> {
+        request: RequestBody,
+    ): Response<ResponseBody> {
         return api.downloadApplication(request)
     }
 
     suspend fun downloadReceipt(
-        request: RequestBody): Response<ResponseBody> {
+        request: RequestBody,
+    ): Response<ResponseBody> {
         return api.downloadReceipt(request)
     }
 
     suspend fun downloadEDisabilityCertificate(
-        request: RequestBody): Response<ResponseBody> {
+        request: RequestBody,
+    ): Response<ResponseBody> {
         return api.downloadEDisabilityCertificate(request)
     }
 
     suspend fun downloadUdidCard(
-        request: RequestBody): Response<ResponseBody> {
+        request: RequestBody,
+    ): Response<ResponseBody> {
         return api.downloadUdidCard(request)
     }
 
     suspend fun downloadDoctorDiagnosisSheet(
-        request: RequestBody): Response<ResponseBody> {
+        request: RequestBody,
+    ): Response<ResponseBody> {
         return api.downloadDoctorDiagnosisSheet(request)
     }
 
     suspend fun uploadFile(
         documentType: RequestBody?,
-        document: MultipartBody.Part?
+        document: MultipartBody.Part?,
     ): Response<UploadFileResponse> {
         return apiLogin.getUploadFile(
             documentType,
             document
         )
     }
+
     suspend fun editApplication(
-        request: EditProfileRequest
+        request: EditProfileRequest,
     ): Response<EditProfileResponse> {
         return api.editApplication(
             request
+        )
+    }
+
+    suspend fun savePwdForm(
+        fullName: RequestBody?,
+        regionalFullName: RequestBody?,
+        regionalLanguage: RequestBody?,
+        mobile: RequestBody?,
+        email: RequestBody?,
+        dob: RequestBody?,
+        gender: RequestBody?,//=>M/F/T
+        guardianRelation: RequestBody?,//Mother/Father/Guardian
+        fatherName: RequestBody?,
+        motherName: RequestBody?,
+        guardianName: RequestBody?,
+        guardianContact: RequestBody?,
+        photo: RequestBody?,
+        sign: RequestBody?,
+        // Proof id Identity Card
+        aadhaarNo: RequestBody?,
+        shareAadhaarInfo: RequestBody?,//0/1
+        aadhaarEnrollmentSlip: RequestBody?,
+        identityProofId: RequestBody?,
+        identityProofFile: RequestBody?,
+        //Address For Correspondence
+        addressProofId: RequestBody?,
+        addressProofFile: RequestBody?,
+        currentAddress: RequestBody?,
+        currentStateCode: RequestBody?,
+        currentDistrictCode: RequestBody?,
+        currentSubDistrictCode: RequestBody?,
+        currentVillageCode: RequestBody?,
+        currentPincode: RequestBody?,
+        //Disability Details
+        disabilityTypeId: RequestBody?,
+        disabilityDueTo: RequestBody?,
+        disabilitySinceBirth: RequestBody?,//Since(No)/Birth(Yes)
+        disabilitySince: RequestBody?,
+        haveDisabilityCert: RequestBody?,//1(yes)/0(no)
+        disabilityCertDoc: RequestBody?,
+        serialNumber: RequestBody?,
+        dateOfCertificate: RequestBody?,
+        detailOfAuthority: RequestBody?,
+        disabilityPer: RequestBody?,
+        //Hospital for assessment
+        isHospitalTreatingOtherState: RequestBody?,//=> 0/1
+        hospitalTreatingStateCode: RequestBody?,
+        hospitalTreatingDistrictCode: RequestBody?,
+        declaration: RequestBody?,//=>0/1
+    ): Response<SavePWDFormResponse> {
+        return api.savePwdForm(
+            fullName,
+            regionalFullName,
+            regionalLanguage,
+            mobile,
+            email,
+            dob,
+            gender,
+            guardianRelation,
+            fatherName,
+            motherName,
+            guardianName,
+            guardianContact,
+            photo,
+            sign,
+            aadhaarNo,
+            shareAadhaarInfo,
+            aadhaarEnrollmentSlip,
+            identityProofId,
+            identityProofFile,
+            addressProofId,
+            addressProofFile,
+            currentAddress,
+            currentStateCode,
+            currentDistrictCode,
+            currentSubDistrictCode,
+            currentVillageCode,
+            currentPincode,
+            disabilityTypeId,
+            disabilityDueTo,
+            disabilitySinceBirth,
+            disabilitySince,
+            haveDisabilityCert,
+            disabilityCertDoc,
+            serialNumber,
+            dateOfCertificate,
+            detailOfAuthority,
+            disabilityPer,
+            isHospitalTreatingOtherState,
+            hospitalTreatingStateCode,
+            hospitalTreatingDistrictCode,
+            declaration
         )
     }
 }

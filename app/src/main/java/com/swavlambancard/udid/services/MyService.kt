@@ -13,6 +13,7 @@ import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.SavePWDFormResponse
 import com.swavlambancard.udid.model.UploadFileResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -267,18 +268,34 @@ interface MyService {
         @Part("aadhaar_no") aadhaarNo: RequestBody?,
         @Part("share_aadhar_info") shareAadhaarInfo: RequestBody?,//0/1
         @Part("aadhar_enrollment_slip") aadhaarEnrollmentSlip: RequestBody?,
-        @Part("identitity_proof_id") identitityProofId: RequestBody?,
-        @Part("identitity_proof_file") identitityProofFile: RequestBody?,
+        @Part("identitity_proof_id") identityProofId: RequestBody?,
+        @Part("identitity_proof_file") identityProofFile: RequestBody?,
         //Address For Correspondence
         @Part("address_proof_id") addressProofId: RequestBody?,
         @Part("address_proof_file") addressProofFile: RequestBody?,
         @Part("current_address") currentAddress: RequestBody?,
         @Part("current_state_code") currentStateCode: RequestBody?,
         @Part("current_district_code") currentDistrictCode: RequestBody?,
-        @Part("current_subdistrict_code") currentSubdistrictCode: RequestBody?,
+        @Part("current_subdistrict_code") currentSubDistrictCode: RequestBody?,
         @Part("current_village_code") currentVillageCode: RequestBody?,
-        @Part("current_village_code") currentPincode: RequestBody?,
-    ): Response<UploadFileResponse>
+        @Part("current_pincode") currentPincode: RequestBody?,
+        //Disability Details
+        @Part("disability_type_id") disabilityTypeId: RequestBody?,
+        @Part("disability_due_to") disabilityDueTo: RequestBody?,
+        @Part("disability_due_to") disabilitySinceBirth: RequestBody?,//Since(No)/Birth(Yes)
+        @Part("disability_since") disabilitySince: RequestBody?,
+        @Part("have_disability_cert") haveDisabilityCert: RequestBody?,//1(yes)/0(no)
+        @Part("disability_cert_doc") disabilityCertDoc: RequestBody?,
+        @Part("serialNumber") serialNumber: RequestBody?,
+        @Part("date_of_certificate") dateOfCertificate: RequestBody?,
+        @Part("detail_of_authority") detailOfAuthority: RequestBody?,
+        @Part("disability_per") disabilityPer: RequestBody?,
+        //Hospital for assessment
+        @Part("is_hospital_treating_other_state") isHospitalTreatingOtherState: RequestBody?,//=> 0/1
+        @Part("hospital_treating_state_code") hospitalTreatingStateCode: RequestBody?,
+        @Part("hospital_treating_district_code") hospitalTreatingDistrictCode: RequestBody?,
+        @Part("declaration") declaration: RequestBody?,//=>0/1
+    ): Response<SavePWDFormResponse>
 }
 
 

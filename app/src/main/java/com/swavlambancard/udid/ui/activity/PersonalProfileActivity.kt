@@ -10,7 +10,6 @@ import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.ActivityPersonalProfileBinding
 import com.swavlambancard.udid.model.EditApplication
 import com.swavlambancard.udid.model.EditProfileRequest
-import com.swavlambancard.udid.model.MyAccountData
 import com.swavlambancard.udid.model.UserData
 import com.swavlambancard.udid.ui.fragments.DisabilityDetailFragment
 import com.swavlambancard.udid.ui.fragments.HospitalAssessmentFragment
@@ -30,7 +29,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     private var mBinding: ActivityPersonalProfileBinding? = null
     private var currentFragment: Fragment? = null
     private var sharedViewModel: SharedDataViewModel? = null
-
+    private var isFrom: String? = null
     override val layoutId: Int
         get() = R.layout.activity_personal_profile
 
@@ -39,7 +38,12 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         mBinding?.clickAction = ClickActions()
         sharedViewModel = ViewModelProvider(this)[SharedDataViewModel::class.java]
         sharedViewModel?.init()
-        editApi()
+        isFrom = intent.extras?.getString(AppConstants.IS_FROM)
+        if (isFrom == "login") {
+            replaceFragment(PersonalDetailFragment())
+        } else {
+            editApi()
+        }
     }
 
 
@@ -63,7 +67,19 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     val gson = Gson()
                     val userData = gson.fromJson(data.toString(), EditApplication::class.java)
                     Log.d("Decrypted Data EditProfile : ", data.toString())
-                        sharedViewModel?.userData?.value?.applicantFullName = userData.full_name
+                    sharedViewModel?.userData?.value?.applicantFullName = userData.full_name
+                    sharedViewModel?.userData?.value?.full_name_i18n = userData.full_name_i18n
+                    sharedViewModel?.userData?.value?.applicantMobileNo = userData.mobile
+                    sharedViewModel?.userData?.value?.gender = userData.gender
+                    sharedViewModel?.userData?.value?.applicantDob = userData.dob
+                    sharedViewModel?.userData?.value?.applicantEmail = userData.email
+                    sharedViewModel?.userData?.value?.fatherName = userData.father_name
+                    sharedViewModel?.userData?.value?.motherName = userData.mother_name
+                    sharedViewModel?.userData?.value?.guardianName = userData.guardian_name
+                    sharedViewModel?.userData?.value?.applicantsFMGCode = userData.guardian_relation
+                    sharedViewModel?.userData?.value?.relationWithPersonCode = userData.relation_pwd
+                    sharedViewModel?.userData?.value?.photo = userData.photo
+                    sharedViewModel?.userData?.value?.sign = userData.signature_thumb_print
                     replaceFragment(PersonalDetailFragment())
                 }
             }
