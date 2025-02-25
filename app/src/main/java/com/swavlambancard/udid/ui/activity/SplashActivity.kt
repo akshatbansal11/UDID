@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.ActivitySplashBinding
@@ -30,7 +31,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         mBinding = viewDataBinding
 
         Handler(Looper.getMainLooper()).postDelayed({
-//            Log.d("token---", Utility.getPreferenceString(this, AppConstants.WALK_THROUGH))
+            Log.d("token---", Utility.getPreferenceString(this, AppConstants.WALK_THROUGH))
 
             if (Utility.getPreferenceString(this@SplashActivity, AppConstants.WALK_THROUGH) == "true"
             ) {

@@ -143,7 +143,7 @@
                     android:fontFamily="@font/opensans_regular"
                     android:hint="@string/aadhaar_enrollment_number_"
                     android:inputType="number"
-                    android:maxLength="50"
+                    android:maxLength="16"
                     android:paddingHorizontal="@dimen/dp_10"
                     android:paddingVertical="@dimen/dp_5"
                     android:singleLine="true"

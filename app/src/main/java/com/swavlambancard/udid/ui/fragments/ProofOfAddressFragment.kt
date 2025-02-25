@@ -81,7 +81,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
 
             mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName
             addressProofId = userData.natureDocumentAddressProofCode
-            mBinding?.etNatureDocumentAddressProof?.text = userData.documentAddressProofPhoto
+            mBinding?.etFileName?.text = userData.documentAddressProofPhoto
             mBinding?.etAddress?.setText(userData.address)
             mBinding?.etState?.text = userData.stateName
             mBinding?.etDistrict?.text = userData.districtName
@@ -97,6 +97,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         }
         mBinding?.etNatureDocumentAddressProof?.addTextChangedListener {
             sharedViewModel.userData.value?.natureDocumentAddressProofName = it.toString()
+        }
+        mBinding?.etFileName?.addTextChangedListener {
+            sharedViewModel.userData.value?.documentAddressProofPhoto = it.toString()
         }
 
         mBinding?.etAddress?.addTextChangedListener {

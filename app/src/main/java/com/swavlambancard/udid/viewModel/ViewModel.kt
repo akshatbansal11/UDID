@@ -1450,6 +1450,146 @@ open class ViewModel : ViewModel() {
             }
         }
     }
+    fun downloadUpdatedName(context: Context, request: RequestBody) {
+        networkCheck(context, true)
+        scope.launch {
+            try {
+                val response = repository.downloadUpdatedName(request)
+                Log.e("response", response.toString())
+                if (response.isSuccessful && response.code() in 200..201) {
+                    response.body()?.bytes()?.let { data ->
+                        convertToPDF(context,context.getString(R.string.name_receipt), data)
+                    } ?: _downloadResult.postValue(Result.failure(Exception("No data received")))
+                } else {
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                handleException(e)
+            } finally {
+                dismissLoader()
+            }
+        }
+    }
+    fun downloadAadhaarNumber(context: Context, request: RequestBody) {
+        networkCheck(context, true)
+        scope.launch {
+            try {
+                val response = repository.downloadAadhaarNumber(request)
+                Log.e("response", response.toString())
+                if (response.isSuccessful && response.code() in 200..201) {
+                    response.body()?.bytes()?.let { data ->
+                        convertToPDF(context,context.getString(R.string.aadhaar_number_receipt), data)
+                    } ?: _downloadResult.postValue(Result.failure(Exception("No data received")))
+                } else {
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                handleException(e)
+            } finally {
+                dismissLoader()
+            }
+        }
+    }
+    fun downloadDateOfBirth(context: Context, request: RequestBody) {
+        networkCheck(context, true)
+        scope.launch {
+            try {
+                val response = repository.downloadDateOfBirth(request)
+                Log.e("response", response.toString())
+                if (response.isSuccessful && response.code() in 200..201) {
+                    response.body()?.bytes()?.let { data ->
+                        convertToPDF(context,context.getString(R.string.date_of_birth_receipt), data)
+                    } ?: _downloadResult.postValue(Result.failure(Exception("No data received")))
+                } else {
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                handleException(e)
+            } finally {
+                dismissLoader()
+            }
+        }
+    }
+    fun downloadAppeal(context: Context, request: RequestBody) {
+        networkCheck(context, true)
+        scope.launch {
+            try {
+                val response = repository.downloadAppeal(request)
+                Log.e("response", response.toString())
+                if (response.isSuccessful && response.code() in 200..201) {
+                    response.body()?.bytes()?.let { data ->
+                        convertToPDF(context,context.getString(R.string.appeal), data)
+                    } ?: _downloadResult.postValue(Result.failure(Exception("No data received")))
+                } else {
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                handleException(e)
+            } finally {
+                dismissLoader()
+            }
+        }
+    }
+    fun downloadRenewalCard(context: Context, request: RequestBody) {
+        networkCheck(context, true)
+        scope.launch {
+            try {
+                val response = repository.downloadRenewalCard(request)
+                Log.e("response", response.toString())
+                if (response.isSuccessful && response.code() in 200..201) {
+                    response.body()?.bytes()?.let { data ->
+                        convertToPDF(context,context.getString(R.string.renewal_card), data)
+                    } ?: _downloadResult.postValue(Result.failure(Exception("No data received")))
+                } else {
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                handleException(e)
+            } finally {
+                dismissLoader()
+            }
+        }
+    }
+    fun downloadSurrenderCard(context: Context, request: RequestBody) {
+        networkCheck(context, true)
+        scope.launch {
+            try {
+                val response = repository.downloadSurrenderCard(request)
+                Log.e("response", response.toString())
+                if (response.isSuccessful && response.code() in 200..201) {
+                    response.body()?.bytes()?.let { data ->
+                        convertToPDF(context,context.getString(R.string.surrender_n_card), data)
+                    } ?: _downloadResult.postValue(Result.failure(Exception("No data received")))
+                } else {
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                handleException(e)
+            } finally {
+                dismissLoader()
+            }
+        }
+    }
+    fun downloadLostCard(context: Context, request: RequestBody) {
+        networkCheck(context, true)
+        scope.launch {
+            try {
+                val response = repository.downloadLostCard(request)
+                Log.e("response", response.toString())
+                if (response.isSuccessful && response.code() in 200..201) {
+                    response.body()?.bytes()?.let { data ->
+                        convertToPDF(context,"lost_card", data)
+                    } ?: _downloadResult.postValue(Result.failure(Exception("No data received")))
+                } else {
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                handleException(e)
+            } finally {
+                dismissLoader()
+            }
+        }
+    }
 
 
     private fun convertToPDF(context: Context, fileName: String, data: ByteArray) {

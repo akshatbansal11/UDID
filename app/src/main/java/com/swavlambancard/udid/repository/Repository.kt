@@ -295,6 +295,58 @@ object Repository {
     ): Response<ResponseBody> {
         return api.downloadDoctorDiagnosisSheet(request)
     }
+    suspend fun downloadUpdatedName(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadUpdatedName(request)
+    }
+    suspend fun downloadAadhaarNumber(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadAadhaarNumber(request)
+    }
+
+    suspend fun downloadDateOfBirth(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadDateOfBirth(request)
+    }
+
+    suspend fun downloadEmailId(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadEmailId(request)
+    }
+
+    suspend fun downloadMobileNumber(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadMobileNumber(request)
+    }
+
+    suspend fun downloadAppeal(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadAppeal(request)
+    }
+
+    suspend fun downloadRenewalCard(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadRenewalCard(request)
+    }
+
+    suspend fun downloadSurrenderCard(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadSurrenderCard(request)
+    }
+
+    suspend fun downloadLostCard(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadLostCard(request)
+    }
 
     suspend fun uploadFile(
         documentType: RequestBody?,
@@ -332,6 +384,8 @@ object Repository {
         // Proof id Identity Card
         aadhaarNo: RequestBody?,
         shareAadhaarInfo: RequestBody?,//0/1
+        aadhaarInfo: RequestBody?,//Yes(1)/No(0)
+        aadhaarEnrollmentNo: RequestBody?,
         aadhaarEnrollmentSlip: RequestBody?,
         identityProofId: RequestBody?,
         identityProofFile: RequestBody?,
@@ -378,6 +432,8 @@ object Repository {
             sign,
             aadhaarNo,
             shareAadhaarInfo,
+            aadhaarInfo,
+            aadhaarEnrollmentNo,
             aadhaarEnrollmentSlip,
             identityProofId,
             identityProofFile,

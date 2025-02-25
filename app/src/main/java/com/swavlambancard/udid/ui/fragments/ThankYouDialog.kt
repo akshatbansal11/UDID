@@ -81,8 +81,8 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
         }
 
         fun downloadApplication(view: View){
-//            startDownload(getString(R.string.application))
-            mBinding?.flParent?.let { showSnackbar(it,"Downloaded") }
+            startDownload(getString(R.string.application))
+//            mBinding?.flParent?.let { showSnackbar(it,"Downloaded") }
         }
 
         fun downloadReceipt(view: View){

@@ -100,7 +100,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             mBinding?.etAadhaarEnrollment?.setText(userData.aadhaarEnrollmentNo)
             mBinding?.etIdentityProof?.text = userData.identityProofName
             identityProofId = userData.identityProofId
-            mBinding?.etFileNameIdentityProof?.text = userData.aadhaarEnrollmentUploadSlip
+            mBinding?.etFileNameIdentityProof?.text = userData.identityProofUpload
             mBinding?.etFileNameEnrollmentSlip?.text = userData.aadhaarEnrollmentUploadSlip
         }
 
@@ -206,7 +206,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             identityProofListYes.remove(DropDownResult("8", "Aadhaar Card"))
             mBinding?.llYesAadhaarCard?.showView()
             mBinding?.llNoAadhaarCard?.hideView()
-
+            mBinding?.etAadhaarEnrollment?.setText("")
+            mBinding?.etFileNameEnrollmentSlip?.text = ""
+            enrollmentSlipName = ""
         }
 
         fun rbNo(view: View) {
@@ -216,6 +218,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             identityProofList.add(DropDownResult("8", "Aadhaar Card"))
             mBinding?.llYesAadhaarCard?.hideView()
             mBinding?.llNoAadhaarCard?.showView()
+            mBinding?.etAadhaarNo?.setText("")
+            mBinding?.checkboxConfirm?.isChecked = false
+
         }
 
         fun identityProof(view: View) {
