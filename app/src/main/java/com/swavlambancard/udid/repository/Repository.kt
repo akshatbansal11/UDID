@@ -12,7 +12,9 @@ import com.swavlambancard.udid.model.GenerateOtpRequest
 import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
+import com.swavlambancard.udid.model.PendingApplicationWise
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.RejectApplicationRequest
 import com.swavlambancard.udid.model.SavePWDFormResponse
 import com.swavlambancard.udid.model.UploadFileResponse
 import com.swavlambancard.udid.services.MyService
@@ -459,6 +461,22 @@ object Repository {
             hospitalTreatingStateCode,
             hospitalTreatingDistrictCode,
             declaration
+        )
+    }
+
+    suspend fun rejectApplicationRequest(
+        request: RejectApplicationRequest,
+    ): Response<CommonResponse> {
+        return api.rejectApplicationRequest(
+            request
+        )
+    }
+
+    suspend fun pendingApplicationWise(
+        request: PendingApplicationWise,
+    ): Response<CommonResponse> {
+        return api.pendingApplicationWise(
+            request
         )
     }
 }

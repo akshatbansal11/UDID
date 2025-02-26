@@ -150,3 +150,14 @@ data class LanguageLocalize(
     val langCode: String,
     val languageName: String
 )
+
+data class RejectApplicationRequest(
+    val application_number: String?,
+    val dob: String?,
+    val type: String?
+)
+data class PendingApplicationWise(
+    val application_number: String?,
+    val dob: String?,
+    val type: String?
+)

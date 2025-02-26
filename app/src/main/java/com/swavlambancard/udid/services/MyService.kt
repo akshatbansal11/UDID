@@ -12,7 +12,9 @@ import com.swavlambancard.udid.model.GenerateOtpRequest
 import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
+import com.swavlambancard.udid.model.PendingApplicationWise
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.RejectApplicationRequest
 import com.swavlambancard.udid.model.SavePWDFormResponse
 import com.swavlambancard.udid.model.UploadFileResponse
 import okhttp3.MultipartBody
@@ -60,6 +62,8 @@ const val PINCODE_DROP_DOWN = "getPincodeDropdown"
 const val UPLOAD_FILE = "uploadFile"
 const val EDIT_APPLICATION = "editApplication"
 const val SAVE_PWD_FORM = "savePWDForm"
+const val APPLICATION_REJECT_REQUEST = "applicationRejectRequest"
+const val PENDING_APPLICATION_WISE = "pendingapplicationwise"
 
 interface MyService {
 
@@ -334,6 +338,14 @@ interface MyService {
         @Part("hospital_treating_district_code") hospitalTreatingDistrictCode: RequestBody?,
         @Part("declaration") declaration: RequestBody?,//=>0/1
     ): Response<SavePWDFormResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(APPLICATION_REJECT_REQUEST)
+    suspend fun rejectApplicationRequest(@Body request: RejectApplicationRequest): Response<CommonResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(PENDING_APPLICATION_WISE)
+    suspend fun pendingApplicationWise(@Body request: PendingApplicationWise): Response<CommonResponse>
 }
 
 

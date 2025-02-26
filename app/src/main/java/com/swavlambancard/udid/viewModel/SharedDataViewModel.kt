@@ -23,7 +23,6 @@ import okhttp3.RequestBody
 import org.json.JSONObject
 import java.net.SocketTimeoutException
 
-
 class SharedDataViewModel : ViewModel() {
     private lateinit var repository: Repository
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())

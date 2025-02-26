@@ -10,30 +10,32 @@ import android.view.View
 import android.widget.TextView
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.ActivityApplyForUdidFormBinding
+import com.swavlambancard.udid.model.PendingApplicationWise
+import com.swavlambancard.udid.model.RejectApplicationRequest
+import com.swavlambancard.udid.model.UserData
 import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseActivity
+import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
+import com.swavlambancard.udid.utilities.toast
+import com.swavlambancard.udid.viewModel.ViewModel
 import java.util.Calendar
 
-class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>() {
+class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() {
 
     override val layoutId: Int
         get() = R.layout.activity_apply_for_udid_form
     var date: String? = null
     private var isFrom: Int? = null
+    private var viewModel = ViewModel()
     private var mBinding: ActivityApplyForUdidFormBinding? = null
 
     override fun initView() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
-        mBinding?.etDob?.setOnClickListener {
-            calenderOpen(this@ApplyForUdidFormActivity, mBinding?.etDob!!)
-        }
-        mBinding?.etDobPending?.setOnClickListener {
-            calenderOpen(this@ApplyForUdidFormActivity, mBinding?.etDobPending!!)
-        }
+        viewModel.init()
         mBinding?.radioGroup?.setOnCheckedChangeListener { _, checkedButton ->
             when (checkedButton) {
                 R.id.radio_option1 -> {
@@ -76,28 +78,6 @@ class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>
                 }
             }
         }
-        mBinding?.tvSubmit?.setOnClickListener {
-            val selectedRadioButtonId = mBinding?.radioGroup?.checkedRadioButtonId
-            if (selectedRadioButtonId == -1) {
-                mBinding?.main?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_select_an_option)
-                    )
-                }
-            } else {
-
-                startActivity(Intent(this, PersonalProfileActivity::class.java)
-                    .putExtra(AppConstants.IS_FROM,"login")
-                    .putExtra(AppConstants.CHECK,isFrom))
-            }
-        }
-    }
-
-    inner class ClickActions {
-        fun backPress(view: View) {
-            onBackPressedDispatcher.onBackPressed()
-        }
     }
 
     override fun setVariables() {
@@ -105,7 +85,103 @@ class ApplyForUdidFormActivity() : BaseActivity<ActivityApplyForUdidFormBinding>
     }
 
     override fun setObservers() {
+        viewModel.rejectApplicationRequestResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.pendingApplicationWiseResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._resultflag != 0) {
+                toast(userResponseModel.message)
+            } else {
+                mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
+            }
+        }
+        viewModel.errors.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
+        }
+    }
 
+    inner class ClickActions {
+        fun backPress(view: View) {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+        fun dob(view: View) {
+            calenderOpen(this@ApplyForUdidFormActivity, mBinding?.etDob!!)
+        }
+
+        fun dobPending(view: View) {
+            calenderOpen(this@ApplyForUdidFormActivity, mBinding?.etDobPending!!)
+        }
+
+        fun submit(view: View) {
+            val selectedRadioButtonId = mBinding?.radioGroup?.checkedRadioButtonId
+            when (selectedRadioButtonId) {
+                -1 -> {
+                    mBinding?.clParent?.let {
+                        showSnackbar(
+                            it,
+                            getString(R.string.please_select_an_option)
+                        )
+                    }
+                }
+
+                R.id.radio_option1 -> {
+                    startActivity(
+                        Intent(this@ApplyForUdidFormActivity, PersonalProfileActivity::class.java)
+                            .putExtra(AppConstants.IS_FROM, "login")
+                            .putExtra(AppConstants.CHECK, isFrom)
+                    )
+                }
+
+                R.id.radio_option2 -> {
+                    startActivity(
+                        Intent(this@ApplyForUdidFormActivity, PersonalProfileActivity::class.java)
+                            .putExtra(AppConstants.IS_FROM, "login")
+                            .putExtra(AppConstants.CHECK, isFrom)
+                    )
+                }
+
+                R.id.radio_option3 -> {
+                    rejectApplicationRequestApi()
+
+                }
+
+                R.id.radio_option4 -> {
+                    startActivity(
+                        Intent(
+                            this@ApplyForUdidFormActivity,
+                            PwdLoginActivity::class.java
+                        )
+                    )
+                }
+
+                R.id.radio_option5 -> {
+                    pendingApplicationWiseApi()
+                }
+            }
+        }
+    }
+
+    private fun pendingApplicationWiseApi() {
+        viewModel.pendingApplicationWise(
+            this, PendingApplicationWise(
+                mBinding?.etEnrollmentPending?.text.toString().trim(), date, "mobile"
+            )
+        )
+    }
+
+    private fun rejectApplicationRequestApi() {
+        viewModel.rejectApplicationRequest(
+            this, RejectApplicationRequest(
+                mBinding?.etEnrollment?.text.toString().trim(), date, "mobile"
+            )
+        )
     }
 
     private fun calenderOpen(context: Context, editText: TextView) {

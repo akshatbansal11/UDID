@@ -10,7 +10,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main"
+        android:id="@+id/clParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.activity.ApplyForUdidFormActivity">
@@ -178,6 +178,7 @@
                         android:background="@drawable/curve_stroke_thin_grey"
                         android:fontFamily="@font/opensans_regular"
                         android:hint="@string/dd_mm_yyyy"
+                        android:onClick="@{ClickAction::dob}"
                         android:padding="@dimen/dp_10"
                         android:paddingVertical="10dp"
                         android:singleLine="true"
@@ -311,6 +312,7 @@
                         android:fontFamily="@font/opensans_regular"
                         android:hint="@string/dd_mm_yyyy"
                         android:padding="@dimen/dp_10"
+                        android:onClick="@{ClickAction::dobPending}"
                         android:paddingVertical="10dp"
                         android:singleLine="true"
                         android:textColor="@color/black"
@@ -329,6 +331,7 @@
                 android:layout_marginHorizontal="@dimen/dp_15"
                 android:background="@drawable/curve_fill_blue"
                 android:elevation="@dimen/dp_5"
+                android:onClick="@{ClickAction::submit}"
                 android:layout_gravity="center"
                 android:paddingHorizontal="@dimen/dp_50"
                 android:paddingVertical="@dimen/dp_12"

@@ -197,8 +197,8 @@ data class EditProfileResponse(
 
 data class EditApplication(
     val aadhaar_no: String,
-    val aadhar_enrollment_no: Any,
-    val aadhar_enrollment_slip: Any,
+    val aadhar_enrollment_no: String,
+    val aadhar_enrollment_slip: String,
     val aadhar_info: Int,
     val address_proof_file: String,
     val address_proof_id: Int,
@@ -233,7 +233,7 @@ data class EditApplication(
     val hospital_treating_id: Int,
     val hospital_treating_state_code: Int,
     val identitity_proof_file: String,
-    val identitity_proof_id: Int,
+    val identitity_proof_id: String,
     val income: Any,
     val is_hospital_treating_other_state: Boolean,
     val mobile: String,

@@ -19,7 +19,9 @@ import com.swavlambancard.udid.model.GenerateOtpRequest
 import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
+import com.swavlambancard.udid.model.PendingApplicationWise
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.RejectApplicationRequest
 import com.swavlambancard.udid.model.UploadFileResponse
 import com.swavlambancard.udid.repository.Repository
 import com.swavlambancard.udid.utilities.CommonUtils
@@ -66,6 +68,8 @@ open class ViewModel : ViewModel() {
     var renewCardResult = MutableLiveData<CommonResponse>()
     var logoutResult = MutableLiveData<CommonResponse>()
     var uploadFile = MutableLiveData<UploadFileResponse>()
+    var pendingApplicationWiseResult = MutableLiveData<CommonResponse>()
+    var rejectApplicationRequestResult = MutableLiveData<CommonResponse>()
     private val _downloadResult = MutableLiveData<Result<File>>()
     val downloadResult: LiveData<Result<File>> get() = _downloadResult
     val errors = MutableLiveData<String>()
@@ -1306,6 +1310,130 @@ open class ViewModel : ViewModel() {
                         when (response.code()) {
                             200, 201 -> {
                                 uploadFile.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun rejectApplicationRequest(
+        context: Context,
+        request: RejectApplicationRequest
+    ) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.rejectApplicationRequest(
+                    request
+                )
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                rejectApplicationRequestResult.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun pendingApplicationWise(
+        context: Context,
+        request: PendingApplicationWise
+    ) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.pendingApplicationWise(
+                    request
+                )
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                pendingApplicationWiseResult.postValue(response.body())
                                 dismissLoader()
                             }
                         }
