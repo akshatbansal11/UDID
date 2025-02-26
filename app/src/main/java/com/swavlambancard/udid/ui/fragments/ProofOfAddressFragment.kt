@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -70,11 +71,17 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
+
+//        if(check == 1){
+//
+//        }
+//        else{}
+
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
 
             mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName
             addressProofId = userData.natureDocumentAddressProofCode
-            mBinding?.etNatureDocumentAddressProof?.text = userData.documentAddressProofPhoto
+            mBinding?.etFileName?.text = userData.documentAddressProofPhoto
             mBinding?.etAddress?.setText(userData.address)
             mBinding?.etState?.text = userData.stateName
             mBinding?.etDistrict?.text = userData.districtName
@@ -88,58 +95,33 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
             pincodeId = userData.pincodeCode
 
         }
-//            mBinding?.tvNatureDocument?.setText(userData.documentAddressProof)
-//            if (!userData.documentAddressProof.isNullOrEmpty()) {
-//                mBinding?.tvNatureDocument?.setTextColor(Color.parseColor("#000000"))
-//            }
-//            mBinding?.etAddress?.setText(userData.documentAddress)
-//            mBinding?.tvState?.setText(userData.state)
-//            if (!userData.state.isNullOrEmpty()) {
-//                mBinding?.tvState?.setTextColor(Color.parseColor("#000000"))
-//            }
-//            mBinding?.tvDistrict?.setText(userData.district)
-//            if (!userData.district.isNullOrEmpty()) {
-//                mBinding?.tvDistrict?.setTextColor(Color.parseColor("#000000"))
-//            }
-//            mBinding?.tvCity?.setText(userData.city)
-//            if (!userData.city.isNullOrEmpty()) {
-//                mBinding?.tvCity?.setTextColor(Color.parseColor("#000000"))
-//            }
-//            mBinding?.tvVillage?.setText(userData.village)
-//            if (!userData.village.isNullOrEmpty()) {
-//                mBinding?.tvVillage?.setTextColor(Color.parseColor("#000000"))
-//            }
-//            mBinding?.tvPincode?.setText(userData.pincode)
-//            if (!userData.pincode.isNullOrEmpty()) {
-//                mBinding?.tvPincode?.setTextColor(Color.parseColor("#000000"))
-//            }
-//        }
-//
-//        // Save data when fields change
-//        mBinding?.tvNatureDocument?.addTextChangedListener {
-//            sharedViewModel.userData.value?.documentAddressProof = it.toString()
-//        }
-//
-//        mBinding?.etAddress?.addTextChangedListener {
-//            sharedViewModel.userData.value?.documentAddress = it.toString()
-//        }
-//
-//        mBinding?.tvState?.addTextChangedListener {
-//            sharedViewModel.userData.value?.state = it.toString()
-//        }
-//
-//        mBinding?.tvDistrict?.addTextChangedListener {
-//            sharedViewModel.userData.value?.district = it.toString()
-//        }
-//        mBinding?.tvCity?.addTextChangedListener {
-//            sharedViewModel.userData.value?.city = it.toString()
-//        }
-//        mBinding?.tvVillage?.addTextChangedListener {
-//            sharedViewModel.userData.value?.village = it.toString()
-//        }
-//        mBinding?.tvPincode?.addTextChangedListener {
-//            sharedViewModel.userData.value?.pincode = it.toString()
-//        }
+        mBinding?.etNatureDocumentAddressProof?.addTextChangedListener {
+            sharedViewModel.userData.value?.natureDocumentAddressProofName = it.toString()
+        }
+        mBinding?.etFileName?.addTextChangedListener {
+            sharedViewModel.userData.value?.documentAddressProofPhoto = it.toString()
+        }
+
+        mBinding?.etAddress?.addTextChangedListener {
+            sharedViewModel.userData.value?.address = it.toString()
+        }
+
+        mBinding?.etState?.addTextChangedListener {
+            sharedViewModel.userData.value?.stateName = it.toString()
+        }
+
+        mBinding?.etDistrict?.addTextChangedListener {
+            sharedViewModel.userData.value?.districtName = it.toString()
+        }
+        mBinding?.etSubDistrict?.addTextChangedListener {
+            sharedViewModel.userData.value?.subDistrictName = it.toString()
+        }
+        mBinding?.etVillage?.addTextChangedListener {
+            sharedViewModel.userData.value?.villageName = it.toString()
+        }
+        mBinding?.etPincode?.addTextChangedListener {
+            sharedViewModel.userData.value?.pincodeName = it.toString()
+        }
     }
 
     override fun setVariables() {

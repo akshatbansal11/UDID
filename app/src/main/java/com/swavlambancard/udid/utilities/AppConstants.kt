@@ -13,6 +13,7 @@ object AppConstants {
     const val LANGUAGE_CODE_HINDI = "hi"
     const val LANGUAGE = "LANGUAGE"
     const val IS_FROM = "IS_FROM"
+    const val CHECK = "CHECK"
     const val FIREBASE_DEVICE_TOKEN = "firebase_device_token"
     const val LOCALE = "LOCALE"
     const val TEXT: String = "TEXT"

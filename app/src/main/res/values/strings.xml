@@ -103,7 +103,7 @@
     <string name="select_hospital_treating_state_uts">Select Hospital Treating State / UTs</string>
     <string name="hospital_treating_state_uts">Hospital Treating State / UTs<font fgcolor="#FF3D00">*</font></string>
     <string name="disability_type_start">Disability Type<font fgcolor="#FF3D00">*</font></string>
-    <string name="disability_due_to_star">Disability Due To<font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_due_to_star">Disability Due To</string>
     <string name="disability_by_birth">Disability by Birth <font fgcolor="#FF3D00">*</font></string>
     <string name="disability_since_star">Disability Since<font fgcolor="#FF3D00">*</font></string>
     <string name="nature_of_document_for_address_proof">Nature of Document for Address Proof <font fgcolor="#FF3D00">*</font></string>
@@ -375,4 +375,6 @@
     <string name="enrolmentnumber29100000022071690637">EnrolmentNumber29100000022071690637</string>
     <string name="to_track_your_application_status">to track your application status.</string>
     <string name="thanks_amp_regards_nudid_support"><![CDATA[Thanks & Regards,\nUDID Support]]></string>
+    <string name="applicant_name_in">Applicant Name in %1$s</string>
+    <string name="please_upload_disability_certificate">Please Upload Disability Certificate</string>
 </resources>

@@ -30,6 +30,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     private var currentFragment: Fragment? = null
     private var sharedViewModel: SharedDataViewModel? = null
     private var isFrom: String? = null
+    var check: Int? = null
     override val layoutId: Int
         get() = R.layout.activity_personal_profile
 
@@ -39,6 +40,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         sharedViewModel = ViewModelProvider(this)[SharedDataViewModel::class.java]
         sharedViewModel?.init()
         isFrom = intent.extras?.getString(AppConstants.IS_FROM)
+        check = intent.extras?.getInt(AppConstants.CHECK)
         if (isFrom == "login") {
             replaceFragment(PersonalDetailFragment())
         } else {
@@ -80,6 +82,12 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     sharedViewModel?.userData?.value?.relationWithPersonCode = userData.relation_pwd
                     sharedViewModel?.userData?.value?.photo = userData.photo
                     sharedViewModel?.userData?.value?.sign = userData.signature_thumb_print
+                    sharedViewModel?.userData?.value?.aadhaarNo = userData.aadhaar_no
+                    sharedViewModel?.userData?.value?.aadhaarCheckBox = userData.share_aadhar_info
+                    sharedViewModel?.userData?.value?.aadhaarInfo = userData.aadhar_info
+                    sharedViewModel?.userData?.value?.aadhaarEnrollmentNo = userData.aadhar_enrollment_no
+                    sharedViewModel?.userData?.value?.aadhaarEnrollmentUploadSlip = userData.aadhar_enrollment_slip
+                    sharedViewModel?.userData?.value?.identityProofId = userData.identitity_proof_id
                     replaceFragment(PersonalDetailFragment())
                 }
             }
@@ -118,15 +126,16 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     }
 
     private fun editApi() {
+        val encryptedString =  JSEncryptService.encrypt(
+            getPreferenceOfLogin(
+                context,
+                AppConstants.LOGIN_DATA,
+                UserData::class.java
+            ).application_number.toString()).toString()
+        Log.e("Encrypted Data", encryptedString)
         sharedViewModel?.editApplication(
             this, EditProfileRequest(
-                JSEncryptService.encrypt(
-                    getPreferenceOfLogin(
-                        context,
-                        AppConstants.LOGIN_DATA,
-                        UserData::class.java
-                    ).application_number.toString().trim()
-                ).toString(),
+                encryptedString,
                 JSEncryptService.encrypt("mobile").toString()
             )
         )

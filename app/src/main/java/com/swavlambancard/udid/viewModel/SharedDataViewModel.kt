@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.swavlambancard.udid.R
 import com.swavlambancard.udid.model.EditProfileRequest
 import com.swavlambancard.udid.model.EditProfileResponse
 import com.swavlambancard.udid.model.PwdApplication
@@ -22,7 +23,6 @@ import okhttp3.RequestBody
 import org.json.JSONObject
 import java.net.SocketTimeoutException
 
-
 class SharedDataViewModel : ViewModel() {
     private lateinit var repository: Repository
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -31,6 +31,7 @@ class SharedDataViewModel : ViewModel() {
     var savePWDFormResult = MutableLiveData<SavePWDFormResponse>()
     val userData = MutableLiveData(PwdApplication()) // Initialize with default fields
     val errors = MutableLiveData<String>()
+
     init {
         userData.value = PwdApplication() // Initialize with default empty fields
     }
@@ -138,6 +139,8 @@ class SharedDataViewModel : ViewModel() {
         // Proof id Identity Card
         aadhaarNo: RequestBody?,
         shareAadhaarInfo: RequestBody?,//0/1
+        aadhaarInfo: RequestBody?,//Yes(1)/No(0)
+        aadhaarEnrollmentNo: RequestBody?,
         aadhaarEnrollmentSlip: RequestBody?,
         identityProofId: RequestBody?,
         identityProofFile: RequestBody?,
@@ -188,6 +191,8 @@ class SharedDataViewModel : ViewModel() {
                     sign,
                     aadhaarNo,
                     shareAadhaarInfo,
+                    aadhaarInfo,
+                    aadhaarEnrollmentNo,
                     aadhaarEnrollmentSlip,
                     identityProofId,
                     identityProofFile,
@@ -256,8 +261,7 @@ class SharedDataViewModel : ViewModel() {
                         }
                     }
                 }
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 if (e is SocketTimeoutException) {
                     errors.postValue("Time out Please try again")
                 }
@@ -266,9 +270,88 @@ class SharedDataViewModel : ViewModel() {
         }
     }
 
+    fun personalDetails(context: Context): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
+        if (userData.value?.applicantFullName.toString().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_enter_applicant_s_full_name))
+            return false
+        } else if (userData.value?.stateName.toString().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_select_state))
+            return false
+        } else if (userData.value?.applicantMobileNo.toString().isEmpty()) {
+            errors.postValue(context.getString(R.string.mobile_number_is_required))
+            return false
+        } else if (userData.value?.applicantMobileNo.toString().length != 10) {
+            errors.postValue(context.getString(R.string.mobile_number_must_be_exactly_10_digits))
+            return false
+        } else if (userData.value?.applicantEmail.toString().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_enter_an_email_address))
+            return false
+        } else if (userData.value?.applicantEmail.toString().trim().matches(emailRegex)) {
+            errors.postValue(context.getString(R.string.please_enter_a_valid_email_address))
+            return false
+        } else if (userData.value?.applicantDob.toString().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_select_date_of_birth))
+            return false
+        } else if (userData.value?.gender == "O") {
+            errors.postValue(context.getString(R.string.please_select_gender))
+            return false
+        } else if (userData.value?.applicantsFMGName.toString().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_select_guardian_relation))
+            return false
+        } else if (userData.value?.applicantsFMGName.toString().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_select_guardian_relation))
+            return false
+        } else if (userData.value?.applicantsFMGCode == "Father") {
+            if (userData.value?.fatherName.toString().isEmpty()) {
+                errors.postValue(context.getString(R.string.please_enter_father_name))
+                return false
+            }
+            else if (userData.value?.guardianContact.toString().isEmpty()) {
+                errors.postValue(context.getString(R.string.please_enter_contact_number))
+                return false
+            }
+        }
+        else if (userData.value?.applicantsFMGCode == "Mother") {
+            if (userData.value?.motherName.toString().isEmpty()) {
+                errors.postValue(context.getString(R.string.please_enter_father_name))
+                return false
+            }
+            else if (userData.value?.guardianContact.toString().isEmpty()) {
+                errors.postValue(context.getString(R.string.please_enter_contact_number))
+                return false
+            }
+        }
+        else if (userData.value?.applicantsFMGCode == "Guardian") {
+            if (userData.value?.relationWithPersonName.toString().isEmpty()) {
+                errors.postValue(context.getString(R.string.please_select_relation_with_person))
+                return false
+            }
+            else if (userData.value?.relationWithPersonCode!= "Self") {
+                if (userData.value?.guardianName.toString().isEmpty()) {
+                    errors.postValue(context.getString(R.string.please_enter_guardian_name))
+                    return false
+                }
+                else if (userData.value?.guardianContact.toString().isEmpty()) {
+                    errors.postValue(context.getString(R.string.please_enter_contact_number))
+                    return false
+                }
+            }
+        }
+        else if(userData.value?.photo.toString().isEmpty()){
+            errors.postValue(context.getString(R.string.please_upload_photo))
+            return false
+        }
+        else if(userData.value?.sign.toString().isEmpty()){
+            errors.postValue(context.getString(R.string.please_upload_signature))
+            return false
+        }
+        return true
+    }
 
-    fun valid(): Boolean{
-        if(userData.value?.applicantFullName.toString().isEmpty()){
+
+    fun valid(): Boolean {
+        if (userData.value?.applicantFullName.toString().isEmpty()) {
             errors.postValue("Please enter Applicant Full Name")
             return false
         }

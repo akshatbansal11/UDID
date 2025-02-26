@@ -97,7 +97,7 @@
     <string name="select_hospital_treating_state_uts">उपचार करने वाले अस्पताल का राज्य / केंद्र शासित प्रदेश चुनें</string>
     <string name="hospital_treating_state_uts">उपचार करने वाले अस्पताल का राज्य / केंद्र शासित प्रदेश<font fgcolor="#FF3D00">*</font></string>
     <string name="disability_type_start">विकलांगता का प्रकार<font fgcolor="#FF3D00">*</font></string>
-    <string name="disability_due_to_star">विकलांगता का कारण<font fgcolor="#FF3D00">*</font></string>
+    <string name="disability_due_to_star">विकलांगता का कारण</string>
     <string name="disability_by_birth">जन्म से विकलांगता <font fgcolor="#FF3D00">*</font></string>
     <string name="disability_since_star">विकलांगता से<font fgcolor="#FF3D00">*</font></string>
     <string name="nature_of_document_for_address_proof">पते के प्रमाण के लिए दस्तावेज़ का प्रकार <font fgcolor="#FF3D00">*</font></string>
@@ -365,4 +365,6 @@
     <string name="enrolmentnumber29100000022071690637">EnrolmentNumber29100000022071690637</string>
     <string name="to_track_your_application_status">to track your application status.</string>
     <string name="thanks_amp_regards_nudid_support"><![CDATA[Thanks & Regards,\nUDID Support]]></string>
+    <string name="applicant_name_in">Applicant Name in %1$s</string>
+    <string name="please_upload_disability_certificate">Please Upload Disability Certificate</string>
 </resources>

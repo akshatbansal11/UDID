@@ -59,7 +59,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     private var disabilityCertificateName: String? = null
     private var listName: String? = null
     var date: String? = null
-    private var disabilityByBirthTag: Int = 0
+    private var disabilityByBirthTag: String = "0"
     private var disabilityCertificateTag: Int = 0
     private var disabilityTypeList = ArrayList<DropDownResult>()
     private var matchItemDisabilityTypeList = arrayListOf<DropDownResult>()
@@ -78,15 +78,14 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.disabilityBirth) {
-                1->{
+                "Birth"->{
                     mBinding?.rbYes?.isChecked = true
                     mBinding?.tvDisabilitySince?.hideView()
                     mBinding?.etDisabilitySince?.hideView()
                 }
-                2->{
+                "Since"->{
                     mBinding?.rbNo?.isChecked = true
                     mBinding?.tvDisabilitySince?.showView()
                     mBinding?.etDisabilitySince?.showView()
@@ -104,14 +103,20 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     mBinding?.llDisabilityCertificateYes?.showView()
                 }
                 2->{
-                    mBinding?.rbDisabilityCertificateYes?.isChecked = true
+                    mBinding?.rbDisabilityCertificateNo?.isChecked = true
                     mBinding?.llDisabilityCertificateYes?.hideView()
                 }
                 else->{
-                    mBinding?.rbYes?.isChecked = false
-                    mBinding?.rbNo?.isChecked = false
+                    mBinding?.rbDisabilityCertificateYes?.isChecked = false
+                    mBinding?.rbDisabilityCertificateNo?.isChecked = false
                     mBinding?.llDisabilityCertificateYes?.hideView()
                 }
+            }
+            if(!sharedViewModel.userData.value?.disabilityTypeList.isNullOrEmpty()) {
+                matchItemDisabilityTypeList = sharedViewModel.userData.value?.disabilityTypeList!!
+            }
+            else{
+                matchItemDisabilityTypeList.clear()
             }
             mBinding?.etDisabilityType?.text = userData.disabilityTypeName
             disabilityTypeId = userData.disabilityTypeCode
@@ -131,13 +136,13 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.rgDisabilityByBirth?.setOnCheckedChangeListener { _, checkedId ->
             disabilityByBirthTag = when (checkedId) {
                 R.id.rbYes -> {
-                    1
+                    "Birth"
                 }
                 R.id.rbNo -> {
-                    2
+                    "Since"
                 }
                 else -> {
-                    0
+                    "0"
                 }
             }
             sharedViewModel.userData.value?.disabilityBirth = disabilityByBirthTag
@@ -202,36 +207,40 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         viewModel.codeDropDownResult.observe(this) {
             val userResponseModel = it
             if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
-                if (listName == "disabilityDueTo") {
-                    disabilityDueToList.clear()
-                    disabilityDueToList.add(
-                        DropDownResult(
-                            "0",
-                            getString(R.string.select_disability_due_to)
+                when (listName) {
+                    "disabilityDueTo" -> {
+                        disabilityDueToList.clear()
+                        disabilityDueToList.add(
+                            DropDownResult(
+                                "0",
+                                getString(R.string.select_disability_due_to)
+                            )
                         )
-                    )
-                    disabilityDueToList.addAll(userResponseModel._result)
+                        disabilityDueToList.addAll(userResponseModel._result)
 
-                } else if (listName == "disabilitySince") {
-                    disabilitySinceList.clear()
-                    disabilitySinceList.add(
-                        DropDownResult(
-                            "0",
-                            getString(R.string.select_disability_since)
+                    }
+                    "disabilitySince" -> {
+                        disabilitySinceList.clear()
+                        disabilitySinceList.add(
+                            DropDownResult(
+                                "0",
+                                getString(R.string.select_disability_since)
+                            )
                         )
-                    )
-                    disabilitySinceList.addAll(userResponseModel._result)
+                        disabilitySinceList.addAll(userResponseModel._result)
 
-                } else if (listName == "detailsOfIssuingAuthority") {
-                    detailsOfIssuingAuthorityList.clear()
-                    detailsOfIssuingAuthorityList.add(
-                        DropDownResult(
-                            "0",
-                            getString(R.string.select_issuing_authority)
+                    }
+                    "detailsOfIssuingAuthority" -> {
+                        detailsOfIssuingAuthorityList.clear()
+                        detailsOfIssuingAuthorityList.add(
+                            DropDownResult(
+                                "0",
+                                getString(R.string.select_issuing_authority)
+                            )
                         )
-                    )
-                    detailsOfIssuingAuthorityList.addAll(userResponseModel._result)
+                        detailsOfIssuingAuthorityList.addAll(userResponseModel._result)
 
+                    }
                 }
                 bottomSheetAdapter?.notifyDataSetChanged()
             }
@@ -278,6 +287,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         fun rbYes(view: View) {
             mBinding?.tvDisabilitySince?.hideView()
             mBinding?.etDisabilitySince?.hideView()
+            mBinding?.etDisabilitySince?.text = ""
+            disabilitySinceId = ""
         }
 
         fun rbNo(view: View) {
@@ -291,6 +302,14 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
 
         fun rbDisabilityCertificateNo(view: View) {
             mBinding?.llDisabilityCertificateYes?.hideView()
+            mBinding?.etFileName?.text = ""
+            disabilityCertificateName = ""
+            mBinding?.etRegistrationNoOfCertificate?.setText("")
+            mBinding?.etDateOfIssuanceOfCertificate?.text = ""
+            date = ""
+            mBinding?.etSelectIssuingAuthority?.text = ""
+            detailsOfIssuingAuthorityId = ""
+            mBinding?.etDisabilityPercentage?.setText("")
         }
 
         fun dateOfIssuanceOfCertificate(view: View) {
@@ -367,6 +386,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             sharedViewModel.userData.value?.disabilityTypeCode = disabilityTypeId
 
             matchItemDisabilityTypeList = multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
+            sharedViewModel.userData.value?.disabilityTypeList = matchItemDisabilityTypeList
             if (matchItemDisabilityTypeList.size > 0)
                 mBinding?.etDisabilityType?.text = matchItemDisabilityTypeList.joinToString(", ") { it.name }
              else {
@@ -564,7 +584,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 )
             }
             return false
-        } else if (disabilityByBirthTag == 0) {
+        }
+        else if (disabilityByBirthTag == "0") {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
@@ -572,8 +593,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 )
             }
             return false
-        } else if (disabilityByBirthTag == 2) {
-            if (mBinding?.etDisabilityDueTo?.text?.toString().isNullOrEmpty()) {
+        }
+        else if (disabilityByBirthTag == "Since") {
+            if (mBinding?.etDisabilitySince?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -582,7 +604,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
                 return false
             }
-        } else if (disabilityCertificateTag == 0) {
+        }
+        else if (disabilityCertificateTag == 0) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
@@ -590,13 +613,15 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 )
             }
             return false
-        } else if (disabilityCertificateTag == 1) {
+        }
+        else if (disabilityCertificateTag == 1) {
             if (mBinding?.etFileName?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
-                    showSnackbar(it, "Please Upload Photo")
+                    showSnackbar(it, getString(R.string.please_upload_disability_certificate))
                 }
                 return false
-            } else if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
+            }
+            else if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -604,7 +629,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     )
                 }
                 return false
-            } else if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
+            }
+            else if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -612,7 +638,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     )
                 }
                 return false
-            } else if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
+            }
+            else if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -620,16 +647,18 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     )
                 }
                 return false
-            } else if (mBinding?.etDisabilityPercentage?.text.toString().trim().isNotEmpty() &&
-                (mBinding?.etDisabilityPercentage?.text.toString() > 0.toString() || mBinding?.etDisabilityPercentage?.text.toString() < 100.toString())
-            )
+            }
+            else if (mBinding?.etDisabilityPercentage?.text.toString().trim().isNotEmpty() &&
+                (mBinding?.etDisabilityPercentage?.text.toString().toInt() < 0 || mBinding?.etDisabilityPercentage?.text.toString().toInt() > 100)
+            ) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
                         getString(R.string.enter_a_number_between_1_and_100)
                     )
                 }
-            return false
+                return false
+            }
         }
         return true
     }
