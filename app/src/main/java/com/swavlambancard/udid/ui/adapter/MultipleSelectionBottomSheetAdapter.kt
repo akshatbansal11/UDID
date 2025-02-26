@@ -2,6 +2,7 @@ package com.swavlambancard.udid.ui.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -35,6 +36,8 @@ class MultipleSelectionBottomSheetAdapter (val context: Context,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         selectedItems = matchItems
+        Log.d("LIST",matchItems.toString())
+        selectedItems.toString().let { Log.d("LIST2", it) }
         val item = item[position]
         holder.mBinding.tvName.text= item.name
         if(selectedItems.contains(DropDownResult(item.id,item.name))){

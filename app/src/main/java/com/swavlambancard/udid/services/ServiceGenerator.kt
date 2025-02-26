@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-object ServiceGenerator {
+object ServiceGenerator {//used object so that only single instance of it is created
     // This is the base Url of the application.
     private val httpClient = OkHttpClient.Builder()
     private val builder = Retrofit.Builder()

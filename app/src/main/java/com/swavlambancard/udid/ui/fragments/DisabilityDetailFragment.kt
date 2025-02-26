@@ -365,12 +365,14 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         setAdapter(view, disabilityTypeList)
         tvClose.setOnClickListener {
             sharedViewModel.userData.value?.disabilityTypeCode = disabilityTypeId
+
             matchItemDisabilityTypeList = multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
             if (matchItemDisabilityTypeList.size > 0)
                 mBinding?.etDisabilityType?.text = matchItemDisabilityTypeList.joinToString(", ") { it.name }
              else {
                 mBinding?.etDisabilityType?.hint = getString(R.string.choose_disability_types)
             }
+
             dialog.dismiss()
         }
         dialog.setCancelable(false)
