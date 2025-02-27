@@ -59,7 +59,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-        Log.d("RBCHECK",sharedViewModel.userData.value?.treatingHospitalTag.toString())
+
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.treatingHospitalTag) {
                 "1" -> {
@@ -195,9 +195,10 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         viewModel.errors.observe(this) {
             mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
         }
-        sharedViewModel.errors.observe(this) {
+        sharedViewModel.errors_api.observe(requireActivity()) {
             mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
         }
+
     }
 
     inner class ClickActions {
@@ -262,7 +263,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     dob = (sharedViewModel.userData.value?.applicantDob.toString()).toRequestBody(MultipartBody.FORM),
                     gender = (sharedViewModel.userData.value?.gender.toString()).toRequestBody(MultipartBody.FORM),
                     guardianRelation = (sharedViewModel.userData.value?.relationWithPersonCode.toString()).toRequestBody(MultipartBody.FORM),
-                    fatherName = ("sharedViewModel.userData.value?.fatherName.toString()").toRequestBody(MultipartBody.FORM),
+                    fatherName = (sharedViewModel.userData.value?.fatherName.toString()).toRequestBody(MultipartBody.FORM),
                     motherName = (sharedViewModel.userData.value?.motherName.toString()).toRequestBody(MultipartBody.FORM),
                     guardianName = (sharedViewModel.userData.value?.guardianName.toString()).toRequestBody(MultipartBody.FORM),
                     guardianContact =(sharedViewModel.userData.value?.guardianContact.toString()).toRequestBody(MultipartBody.FORM),
@@ -287,7 +288,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     disabilityDueTo = (sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
                     disabilitySinceBirth = (sharedViewModel.userData.value?.disabilityBirth.toString()).toRequestBody(MultipartBody.FORM),
                     disabilitySince = (sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
-                    haveDisabilityCert = ("0").toRequestBody(MultipartBody.FORM),
+                    haveDisabilityCert = (sharedViewModel.userData.value?.haveDisabilityCertificate.toString()).toRequestBody(MultipartBody.FORM),
                     disabilityCertDoc = (sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()).toRequestBody(MultipartBody.FORM),
                     serialNumber = (sharedViewModel.userData.value?.serialNumber.toString()).toRequestBody(MultipartBody.FORM),
                     dateOfCertificate = (sharedViewModel.userData.value?.dateOfCertificate.toString()).toRequestBody(MultipartBody.FORM),
@@ -299,8 +300,12 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     declaration = (sharedViewModel.userData.value?.hospitalCheckBox.toString()).toRequestBody(MultipartBody.FORM),
                     hospitalTreatingId=(sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(MultipartBody.FORM)
                 )
-            Log.d("FragmentData5",sharedViewModel.userData.value.toString())
-                println(sharedViewModel.userData)
+
+//            Log.d("FragmentData5",sharedViewModel.userData.value.toString())
+//                println(sharedViewModel.userData)
+            }
+            sharedViewModel.errors.observe(requireActivity()) {
+                mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
             }
         }
 
@@ -511,42 +516,42 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         bottomSheetDialog?.show()
     }
 
-    private fun valid(): Boolean {
-        if (treatingHospitalTag == "1") {
-            if (mBinding?.etHospitalTreatingState?.text.toString().trim().isEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_select_state_uts)
-                    )
-                }
-                return false
-            } else if (mBinding?.etHospitalTreatingDistrict?.text.toString().trim().isEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_select_district)
-                    )
-                }
-                return false
-            }
-        } else if (mBinding?.etHospitalName?.text.toString().trim().isEmpty()) {
-            mBinding?.llParent?.let {
-                showSnackbar(
-                    it,
-                    getString(R.string.select_hospital_name)
-                )
-            }
-            return false
-        } else if (mBinding?.cbConfirm?.isChecked == false) {
-            mBinding?.llParent?.let {
-                showSnackbar(
-                    it,
-                    getString(R.string.you_must_check_the_box_to_confirm_that_you_have_read_and_understood_the_process)
-                )
-            }
-            return false
-        }
-        return true
-    }
+//    private fun valid(): Boolean {
+//        if (treatingHospitalTag == "1") {
+//            if (mBinding?.etHospitalTreatingState?.text.toString().trim().isEmpty()) {
+//                mBinding?.llParent?.let {
+//                    showSnackbar(
+//                        it,
+//                        getString(R.string.please_select_state_uts)
+//                    )
+//                }
+//                return false
+//            } else if (mBinding?.etHospitalTreatingDistrict?.text.toString().trim().isEmpty()) {
+//                mBinding?.llParent?.let {
+//                    showSnackbar(
+//                        it,
+//                        getString(R.string.please_select_district)
+//                    )
+//                }
+//                return false
+//            }
+//        } else if (mBinding?.etHospitalName?.text.toString().trim().isEmpty()) {
+//            mBinding?.llParent?.let {
+//                showSnackbar(
+//                    it,
+//                    getString(R.string.select_hospital_name)
+//                )
+//            }
+//            return false
+//        } else if (mBinding?.cbConfirm?.isChecked == false) {
+//            mBinding?.llParent?.let {
+//                showSnackbar(
+//                    it,
+//                    getString(R.string.you_must_check_the_box_to_confirm_that_you_have_read_and_understood_the_process)
+//                )
+//            }
+//            return false
+//        }
+//        return true
+//    }
 }
