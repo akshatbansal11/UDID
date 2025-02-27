@@ -69,8 +69,12 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     val gson = Gson()
                     val userData = gson.fromJson(data.toString(), EditApplication::class.java)
                     Log.d("Decrypted Data EditProfile : ", data.toString())
+                    //Personal Details
                     sharedViewModel?.userData?.value?.applicantFullName = userData.full_name
                     sharedViewModel?.userData?.value?.full_name_i18n = userData.full_name_i18n
+                    sharedViewModel?.userData?.value?.regionalLanguageCode = userData.regional_language
+                    sharedViewModel?.userData?.value?.stateCode = userData.current_state_code
+                    sharedViewModel?.userData?.value?.stateName = userData.state.name
                     sharedViewModel?.userData?.value?.applicantMobileNo = userData.mobile
                     sharedViewModel?.userData?.value?.gender = userData.gender
                     sharedViewModel?.userData?.value?.applicantDob = userData.dob
@@ -78,16 +82,21 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     sharedViewModel?.userData?.value?.fatherName = userData.father_name
                     sharedViewModel?.userData?.value?.motherName = userData.mother_name
                     sharedViewModel?.userData?.value?.guardianName = userData.guardian_name
+                    sharedViewModel?.userData?.value?.guardianContact = userData.guardian_contact
                     sharedViewModel?.userData?.value?.applicantsFMGCode = userData.guardian_relation
+                    sharedViewModel?.userData?.value?.applicantsFMGName = userData.guardian_relation
                     sharedViewModel?.userData?.value?.relationWithPersonCode = userData.relation_pwd
+                    sharedViewModel?.userData?.value?.relationWithPersonName = userData.relation_pwd
                     sharedViewModel?.userData?.value?.photo = userData.photo
                     sharedViewModel?.userData?.value?.sign = userData.signature_thumb_print
+                    //Proof of ID
                     sharedViewModel?.userData?.value?.aadhaarNo = userData.aadhaar_no
                     sharedViewModel?.userData?.value?.aadhaarCheckBox = userData.share_aadhar_info
                     sharedViewModel?.userData?.value?.aadhaarInfo = userData.aadhar_info
                     sharedViewModel?.userData?.value?.aadhaarEnrollmentNo = userData.aadhar_enrollment_no
                     sharedViewModel?.userData?.value?.aadhaarEnrollmentUploadSlip = userData.aadhar_enrollment_slip
                     sharedViewModel?.userData?.value?.identityProofId = userData.identitity_proof_id
+                    sharedViewModel?.userData?.value?.identityProofUpload = userData.identitity_proof_file
                     replaceFragment(PersonalDetailFragment())
                 }
             }
