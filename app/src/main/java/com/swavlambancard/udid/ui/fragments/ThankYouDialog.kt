@@ -13,6 +13,8 @@ import androidx.fragment.app.DialogFragment
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.DialogThankYouBinding
 import com.swavlambancard.udid.model.UserData
+import com.swavlambancard.udid.ui.activity.LoginActivity
+import com.swavlambancard.udid.ui.activity.PwdLoginActivity
 import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseActivity
 import com.swavlambancard.udid.utilities.BaseActivity.Companion
@@ -78,6 +80,8 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
     }
     inner class ClickActions {
         fun close(view: View){
+            startActivity(Intent(requireContext(),PwdLoginActivity::class.java))
+            requireActivity().finish()
             dismiss()
         }
 

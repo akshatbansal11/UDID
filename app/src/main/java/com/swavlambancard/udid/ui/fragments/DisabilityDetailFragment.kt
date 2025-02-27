@@ -10,6 +10,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -182,9 +184,12 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.etSelectIssuingAuthority?.addTextChangedListener {
             sharedViewModel.userData.value?.detailOfAuthorityName = it.toString()
         }
-        mBinding?.etDisabilityPercentage?.addTextChangedListener {
+        mBinding?.etDisabilityPercentage?.addTextChangedListener{
             sharedViewModel.userData.value?.disabilityPercentage = it.toString()
         }
+//        {
+//            sharedViewModel.userData.value?.disabilityPercentage = it.toString()
+//        }
     }
 
     override fun setVariables() {

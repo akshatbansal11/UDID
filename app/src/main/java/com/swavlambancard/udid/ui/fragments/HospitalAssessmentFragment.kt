@@ -250,7 +250,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
 //                    hospitalTreatingDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalDistrictId.toString()).toRequestBody(MultipartBody.FORM),
 //                    declaration = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalCheckBox.toString()).toRequestBody(MultipartBody.FORM)
 //                )
-//            if (sharedViewModel.personalDetails(requireContext())) {
+            if (sharedViewModel.personalDetails(requireContext())) {
 
                 sharedViewModel.savePWDForm(
                     context = requireContext(),
@@ -301,7 +301,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 )
             Log.d("FragmentData5",sharedViewModel.userData.value.toString())
                 println(sharedViewModel.userData)
-//            }
+            }
         }
 
         fun cancel(view: View) {

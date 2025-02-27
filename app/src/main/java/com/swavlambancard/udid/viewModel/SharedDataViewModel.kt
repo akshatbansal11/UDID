@@ -274,6 +274,7 @@ class SharedDataViewModel : ViewModel() {
 
     fun personalDetails(context: Context): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
+          Log.d("EMAIL",userData.value?.applicantEmail.toString())
         if (userData.value?.applicantFullName.toString().isEmpty()) {
             errors.postValue(context.getString(R.string.please_enter_applicant_s_full_name))
             return false
@@ -289,7 +290,7 @@ class SharedDataViewModel : ViewModel() {
         } else if (userData.value?.applicantEmail.toString().isEmpty()) {
             errors.postValue(context.getString(R.string.please_enter_an_email_address))
             return false
-        } else if (userData.value?.applicantEmail.toString().trim().matches(emailRegex)) {
+        } else if (!userData.value?.applicantEmail.toString().trim().matches(emailRegex)) {
             errors.postValue(context.getString(R.string.please_enter_a_valid_email_address))
             return false
         } else if (userData.value?.applicantDob.toString().isEmpty()) {
@@ -344,19 +345,8 @@ class SharedDataViewModel : ViewModel() {
             errors.postValue(context.getString(R.string.please_upload_photo))
             return false
         }
-        else if(userData.value?.sign.toString().isEmpty()){
-            errors.postValue(context.getString(R.string.please_upload_signature))
-            return false
-        }
         return true
     }
 
 
-    fun valid(): Boolean {
-        if (userData.value?.applicantFullName.toString().isEmpty()) {
-            errors.postValue("Please enter Applicant Full Name")
-            return false
-        }
-        return true
-    }
 }
