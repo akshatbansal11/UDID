@@ -71,7 +71,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/enrolmentnumber29100000022071690637"
+
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 

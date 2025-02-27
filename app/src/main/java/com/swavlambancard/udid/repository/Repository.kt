@@ -415,6 +415,7 @@ object Repository {
         isHospitalTreatingOtherState: RequestBody?,//=> 0/1
         hospitalTreatingStateCode: RequestBody?,
         hospitalTreatingDistrictCode: RequestBody?,
+        hospitalTreatingId: RequestBody?,
         declaration: RequestBody?,//=>0/1
     ): Response<SavePWDFormResponse> {
         return api.savePwdForm(
@@ -460,6 +461,7 @@ object Repository {
             isHospitalTreatingOtherState,
             hospitalTreatingStateCode,
             hospitalTreatingDistrictCode,
+            hospitalTreatingId,
             declaration
         )
     }

@@ -61,7 +61,8 @@ const val GET_CODE_DROP_DOWN = "getCodeDropdown"
 const val PINCODE_DROP_DOWN = "getPincodeDropdown"
 const val UPLOAD_FILE = "uploadFile"
 const val EDIT_APPLICATION = "editApplication"
-const val SAVE_PWD_FORM = "savePWDForm"
+//const val SAVE_PWD_FORM = "savePWDForm"
+const val SAVE_PWD_FORM = "savePWDForm2"
 const val APPLICATION_REJECT_REQUEST = "applicationRejectRequest"
 const val PENDING_APPLICATION_WISE = "pendingapplicationwise"
 
@@ -336,6 +337,7 @@ interface MyService {
         @Part("is_hospital_treating_other_state") isHospitalTreatingOtherState: RequestBody?,//=> 0/1
         @Part("hospital_treating_state_code") hospitalTreatingStateCode: RequestBody?,
         @Part("hospital_treating_district_code") hospitalTreatingDistrictCode: RequestBody?,
+        @Part("hospital_treating_id") hospitalTreatingId: RequestBody?,
         @Part("declaration") declaration: RequestBody?,//=>0/1
     ): Response<SavePWDFormResponse>
 

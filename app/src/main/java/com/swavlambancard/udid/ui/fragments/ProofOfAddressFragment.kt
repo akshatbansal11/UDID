@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -220,6 +221,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     DisabilityDetailFragment()
                 )
+//                Log.d("FragmentData3",sharedViewModel.userData.value.toString())
             }
         }
 
