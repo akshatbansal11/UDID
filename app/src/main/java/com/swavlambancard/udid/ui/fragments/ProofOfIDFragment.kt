@@ -278,7 +278,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         // Initialize based on type
         when (type) {
             "identity_proof" -> {
-                if (identityProofList.isEmpty()) {
+                if (identityProofListYes.isEmpty()) {
                     identityProofApi()
                 }
                 val list: ArrayList<DropDownResult> = when (aadhaarTag) {
@@ -291,7 +291,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     }
 
                     else -> {
-                        identityProofList
+                        identityProofListYes
                     }
                 }
                 selectedList = list

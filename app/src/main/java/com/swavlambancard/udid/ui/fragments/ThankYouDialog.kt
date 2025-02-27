@@ -8,6 +8,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.DialogThankYouBinding
@@ -29,14 +30,14 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
 
     private var mBinding: DialogThankYouBinding? = null
     private var viewModel = ViewModel()
-    private val binding get() = mBinding!!
+//    private val binding get() = mBinding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = DialogThankYouBinding.inflate(inflater, container, false)
-        return binding.root
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.dialog_thank_you, container, false)
+        return mBinding!!.root
     }
 
     @SuppressLint("SetTextI18n")
