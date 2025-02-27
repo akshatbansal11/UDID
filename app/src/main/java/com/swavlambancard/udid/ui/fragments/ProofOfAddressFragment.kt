@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -81,7 +82,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
 
             mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName
             addressProofId = userData.natureDocumentAddressProofCode
-            mBinding?.etNatureDocumentAddressProof?.text = userData.documentAddressProofPhoto
+            mBinding?.etFileName?.text = userData.documentAddressProofPhoto
             mBinding?.etAddress?.setText(userData.address)
             mBinding?.etState?.text = userData.stateName
             mBinding?.etDistrict?.text = userData.districtName
@@ -97,6 +98,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         }
         mBinding?.etNatureDocumentAddressProof?.addTextChangedListener {
             sharedViewModel.userData.value?.natureDocumentAddressProofName = it.toString()
+        }
+        mBinding?.etFileName?.addTextChangedListener {
+            sharedViewModel.userData.value?.documentAddressProofPhoto = it.toString()
         }
 
         mBinding?.etAddress?.addTextChangedListener {
@@ -217,6 +221,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     DisabilityDetailFragment()
                 )
+//                Log.d("FragmentData3",sharedViewModel.userData.value.toString())
             }
         }
 

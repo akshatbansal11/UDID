@@ -1,6 +1,7 @@
 package com.swavlambancard.udid.ui.fragments
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -11,22 +12,27 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.FragmentHospitalAssesmentBinding
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.Filters
+import com.swavlambancard.udid.model.PwdApplication
 import com.swavlambancard.udid.ui.activity.LoginActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
+import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
+import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding>() {
     private lateinit var sharedViewModel: SharedDataViewModel
@@ -35,14 +41,16 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var bottomSheetAdapter: BottomSheetAdapter? = null
     private var layoutManager: LinearLayoutManager? = null
-    private var treatingHospitalTag: Int = 2
+    private var treatingHospitalTag: String = "0"
     var body: MultipartBody.Part? = null
     private var stateList = ArrayList<DropDownResult>()
     private var stateId: String? = null
     private var districtList = ArrayList<DropDownResult>()
     private var districtId: String? = null
+    private var hospitalDistrictId: String? = null
     private var hospitalList = ArrayList<DropDownResult>()
     private var hospitalId: String? = null
+    private var applicationNumber: String? = null
     override val layoutId: Int
         get() = R.layout.fragment_hospital_assesment
 
@@ -51,38 +59,41 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
+        Log.d("RBCHECK",sharedViewModel.userData.value?.treatingHospitalTag.toString())
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
-            when(userData.treatingHospitalTag){
-                1->{
+            when (userData.treatingHospitalTag) {
+                "1" -> {
                     mBinding?.rbYes?.isChecked = true
                     mBinding?.llTreatingHospital?.showView()
                 }
-                2->{
+
+                "0" -> {
                     mBinding?.rbNo?.isChecked = true
                     mBinding?.llTreatingHospital?.hideView()
                 }
-                else->{
+
+                else -> {
                     mBinding?.rbYes?.isChecked = false
                     mBinding?.rbNo?.isChecked = false
                     mBinding?.llTreatingHospital?.hideView()
                 }
             }
-            districtId = if(userData.treatingHospitalTag == 1) {
-                userData.hospitalDistrictId
-            } else{
-                userData.districtCode
+            if (userData.treatingHospitalTag == "1") {
+                hospitalDistrictId = userData.hospitalDistrictId
+            } else {
+                districtId = userData.districtCode
             }
             mBinding?.etHospitalTreatingState?.text = userData.hospitalStateName
             stateId = userData.hospitalStateId
             mBinding?.etHospitalTreatingDistrict?.text = userData.hospitalDistrictName
             mBinding?.etHospitalName?.text = userData.hospitalNameName
             hospitalId = userData.hospitalNameId
-            when(userData.hospitalCheckBox) {
-                0 -> {
+            when (userData.hospitalCheckBox) {
+                "0" -> {
                     mBinding?.cbConfirm?.isChecked = false
                 }
 
-                1 -> {
+                "1" -> {
                     mBinding?.cbConfirm?.isChecked = true
                 }
             }
@@ -91,15 +102,15 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         mBinding?.rgTreatingState?.setOnCheckedChangeListener { _, checkedId ->
             treatingHospitalTag = when (checkedId) {
                 R.id.rbYes -> {
-                    1
+                    "1"
                 }
 
                 R.id.rbNo -> {
-                    2
+                    "0"
                 }
 
                 else -> {
-                    0
+                    "2"
                 }
             }
             sharedViewModel.userData.value?.treatingHospitalTag = treatingHospitalTag
@@ -114,7 +125,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             sharedViewModel.userData.value?.hospitalNameName = it.toString()
         }
         mBinding?.cbConfirm?.setOnCheckedChangeListener { _, isChecked ->
-            sharedViewModel.userData.value?.hospitalCheckBox = if (isChecked) 1 else 0
+            sharedViewModel.userData.value?.hospitalCheckBox = if (isChecked) "1" else "0"
         }
     }
 
@@ -164,6 +175,23 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             }
         }
 
+        sharedViewModel.savePWDFormResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null) {
+                if(userResponseModel._resultflag==0)
+                {
+                    requireContext().toast(userResponseModel.message)
+                    return@observe
+                }
+                else{
+                applicationNumber = userResponseModel._result.application_number
+                requireContext().toast(userResponseModel.message)
+                val dialog = ThankYouDialog(applicationNumber!!)
+                dialog.show((context as AppCompatActivity).supportFragmentManager, "ThankYouDialog")
+                }
+            }
+        }
+
         viewModel.errors.observe(this) {
             mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
         }
@@ -174,9 +202,105 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
 
     inner class ClickActions {
         fun submit(view: View) {
-//            if (valid()) {
-                val dialog = ThankYouDialog("12345678900987")
-                dialog.show((context as AppCompatActivity).supportFragmentManager, "ThankYouDialog")
+//            if (sharedViewModel.personalDetails(requireContext())) {
+//
+//                sharedViewModel.savePWDForm(
+//                    context = requireContext(),
+//                    fullName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantFullName.toString()).toRequestBody(MultipartBody.FORM),
+//                    regionalFullName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.full_name_i18n.toString()).toRequestBody(MultipartBody.FORM),
+//                    regionalLanguage = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.regionalLanguageCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    mobile =EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantMobileNo.toString()).toRequestBody(MultipartBody.FORM),
+//                    email = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantEmail.toString()).toRequestBody(MultipartBody.FORM),
+//                    dob = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantDob.toString()).toRequestBody(MultipartBody.FORM),
+//                    gender = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.gender.toString()).toRequestBody(MultipartBody.FORM),
+//                    guardianRelation = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.relationWithPersonCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    fatherName = EncryptionModel.aesEncrypt("sharedViewModel.userData.value?.fatherName.toString()").toRequestBody(MultipartBody.FORM),
+//                    motherName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.motherName.toString()).toRequestBody(MultipartBody.FORM),
+//                    guardianName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.guardianName.toString()).toRequestBody(MultipartBody.FORM),
+//                    guardianContact = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.guardianContact.toString()).toRequestBody(MultipartBody.FORM),
+//                    photo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.photo.toString()).toRequestBody(MultipartBody.FORM),
+//                    sign = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.sign.toString()).toRequestBody(MultipartBody.FORM),
+//                    aadhaarNo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarNo.toString()).toRequestBody(MultipartBody.FORM),
+//                    shareAadhaarInfo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarCheckBox?.toString().toString()).toRequestBody(MultipartBody.FORM),
+//                    aadhaarInfo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarInfo?.toString().toString()).toRequestBody(MultipartBody.FORM),
+//                    aadhaarEnrollmentNo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarEnrollmentNo.toString()).toRequestBody(MultipartBody.FORM),
+//                    aadhaarEnrollmentSlip = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()).toRequestBody(MultipartBody.FORM),
+//                    identityProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.identityProofId.toString()).toRequestBody(MultipartBody.FORM),
+//                    identityProofFile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(MultipartBody.FORM),
+//                    addressProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    addressProofFile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.documentAddressProofPhoto.toString()).toRequestBody(MultipartBody.FORM),
+//                    currentAddress = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.address.toString()).toRequestBody(MultipartBody.FORM),
+//                    currentStateCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.stateCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    currentDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.districtCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    currentSubDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.subDistrictCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    currentVillageCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.villageCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    currentPincode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.pincodeCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    disabilityTypeId = EncryptionModel.aesEncrypt(Gson().toJson(sharedViewModel.userData.value?.disabilityTypeCode)).toRequestBody(MultipartBody.FORM),
+//                    disabilityDueTo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    disabilitySinceBirth = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityBirth.toString()).toRequestBody(MultipartBody.FORM),
+//                    disabilitySince = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    haveDisabilityCert = EncryptionModel.aesEncrypt("0").toRequestBody(MultipartBody.FORM),
+//                    disabilityCertDoc = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()).toRequestBody(MultipartBody.FORM),
+//                    serialNumber = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.serialNumber.toString()).toRequestBody(MultipartBody.FORM),
+//                    dateOfCertificate = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.dateOfCertificate.toString()).toRequestBody(MultipartBody.FORM),
+//                    detailOfAuthority = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.detailOfAuthorityCode.toString()).toRequestBody(MultipartBody.FORM),
+//                    disabilityPer = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityPercentage.toString()).toRequestBody(MultipartBody.FORM),
+//                    isHospitalTreatingOtherState = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.treatingHospitalTag.toString()).toRequestBody(MultipartBody.FORM),
+//                    hospitalTreatingStateCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalStateId.toString()).toRequestBody(MultipartBody.FORM),
+//                    hospitalTreatingDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalDistrictId.toString()).toRequestBody(MultipartBody.FORM),
+//                    declaration = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalCheckBox.toString()).toRequestBody(MultipartBody.FORM)
+//                )
+//            if (sharedViewModel.personalDetails(requireContext())) {
+
+                sharedViewModel.savePWDForm(
+                    context = requireContext(),
+                    fullName = (sharedViewModel.userData.value?.applicantFullName.toString()).toRequestBody(MultipartBody.FORM),
+                    regionalFullName =(sharedViewModel.userData.value?.full_name_i18n.toString()).toRequestBody(MultipartBody.FORM),
+                    regionalLanguage = (sharedViewModel.userData.value?.regionalLanguageCode.toString()).toRequestBody(MultipartBody.FORM),
+                    mobile =(sharedViewModel.userData.value?.applicantMobileNo.toString()).toRequestBody(MultipartBody.FORM),
+                    email = (sharedViewModel.userData.value?.applicantEmail.toString()).toRequestBody(MultipartBody.FORM),
+                    dob = (sharedViewModel.userData.value?.applicantDob.toString()).toRequestBody(MultipartBody.FORM),
+                    gender = (sharedViewModel.userData.value?.gender.toString()).toRequestBody(MultipartBody.FORM),
+                    guardianRelation = (sharedViewModel.userData.value?.relationWithPersonCode.toString()).toRequestBody(MultipartBody.FORM),
+                    fatherName = ("sharedViewModel.userData.value?.fatherName.toString()").toRequestBody(MultipartBody.FORM),
+                    motherName = (sharedViewModel.userData.value?.motherName.toString()).toRequestBody(MultipartBody.FORM),
+                    guardianName = (sharedViewModel.userData.value?.guardianName.toString()).toRequestBody(MultipartBody.FORM),
+                    guardianContact =(sharedViewModel.userData.value?.guardianContact.toString()).toRequestBody(MultipartBody.FORM),
+                    photo = (sharedViewModel.userData.value?.photo.toString()).toRequestBody(MultipartBody.FORM),
+                    sign = (sharedViewModel.userData.value?.sign.toString()).toRequestBody(MultipartBody.FORM),
+                    aadhaarNo = (sharedViewModel.userData.value?.aadhaarNo.toString()).toRequestBody(MultipartBody.FORM),
+                    shareAadhaarInfo = (sharedViewModel.userData.value?.aadhaarCheckBox?.toString().toString()).toRequestBody(MultipartBody.FORM),
+                    aadhaarInfo = (sharedViewModel.userData.value?.aadhaarInfo?.toString().toString()).toRequestBody(MultipartBody.FORM),
+                    aadhaarEnrollmentNo = (sharedViewModel.userData.value?.aadhaarEnrollmentNo.toString()).toRequestBody(MultipartBody.FORM),
+                    aadhaarEnrollmentSlip = (sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()).toRequestBody(MultipartBody.FORM),
+                    identityProofId = (sharedViewModel.userData.value?.identityProofId.toString()).toRequestBody(MultipartBody.FORM),
+                    identityProofFile = (sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(MultipartBody.FORM),
+                    addressProofId = (sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(MultipartBody.FORM),
+                    addressProofFile =(sharedViewModel.userData.value?.documentAddressProofPhoto.toString()).toRequestBody(MultipartBody.FORM),
+                    currentAddress = (sharedViewModel.userData.value?.address.toString()).toRequestBody(MultipartBody.FORM),
+                    currentStateCode = (sharedViewModel.userData.value?.stateCode.toString()).toRequestBody(MultipartBody.FORM),
+                    currentDistrictCode =(sharedViewModel.userData.value?.districtCode.toString()).toRequestBody(MultipartBody.FORM),
+                    currentSubDistrictCode = (sharedViewModel.userData.value?.subDistrictCode.toString()).toRequestBody(MultipartBody.FORM),
+                    currentVillageCode = (sharedViewModel.userData.value?.villageCode.toString()).toRequestBody(MultipartBody.FORM),
+                    currentPincode = (sharedViewModel.userData.value?.pincodeCode.toString()).toRequestBody(MultipartBody.FORM),
+                    disabilityTypeId = (Gson().toJson(sharedViewModel.userData.value?.disabilityTypeCode)).toRequestBody(MultipartBody.FORM),
+                    disabilityDueTo = (sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
+                    disabilitySinceBirth = (sharedViewModel.userData.value?.disabilityBirth.toString()).toRequestBody(MultipartBody.FORM),
+                    disabilitySince = (sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
+                    haveDisabilityCert = ("0").toRequestBody(MultipartBody.FORM),
+                    disabilityCertDoc = (sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()).toRequestBody(MultipartBody.FORM),
+                    serialNumber = (sharedViewModel.userData.value?.serialNumber.toString()).toRequestBody(MultipartBody.FORM),
+                    dateOfCertificate = (sharedViewModel.userData.value?.dateOfCertificate.toString()).toRequestBody(MultipartBody.FORM),
+                    detailOfAuthority = (sharedViewModel.userData.value?.detailOfAuthorityCode.toString()).toRequestBody(MultipartBody.FORM),
+                    disabilityPer = (sharedViewModel.userData.value?.disabilityPercentage.toString()).toRequestBody(MultipartBody.FORM),
+                    isHospitalTreatingOtherState = (sharedViewModel.userData.value?.treatingHospitalTag.toString()).toRequestBody(MultipartBody.FORM),
+                    hospitalTreatingStateCode = (sharedViewModel.userData.value?.hospitalStateId.toString()).toRequestBody(MultipartBody.FORM),
+                    hospitalTreatingDistrictCode = (sharedViewModel.userData.value?.hospitalDistrictId.toString()).toRequestBody(MultipartBody.FORM),
+                    declaration = (sharedViewModel.userData.value?.hospitalCheckBox.toString()).toRequestBody(MultipartBody.FORM),
+                    hospitalTreatingId=(sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(MultipartBody.FORM)
+                )
+            Log.d("FragmentData5",sharedViewModel.userData.value.toString())
+                println(sharedViewModel.userData)
 //            }
         }
 
@@ -186,14 +310,18 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
 
         fun yes(view: View) {
             mBinding?.llTreatingHospital?.showView()
+            mBinding?.etHospitalName?.text = ""
+            districtId = ""
         }
 
         fun no(view: View) {
             mBinding?.llTreatingHospital?.hideView()
+            districtId = sharedViewModel.userData.value?.districtCode
             mBinding?.etHospitalTreatingState?.text = ""
             mBinding?.etHospitalTreatingDistrict?.text = ""
-            stateId = 0.toString()
-            districtId = 0.toString()
+            mBinding?.etHospitalName?.text = ""
+            stateId = ""
+            hospitalDistrictId = ""
         }
 
         fun hospitalTreatingState(view: View) {
@@ -214,10 +342,9 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         }
 
         fun hospitalName(view: View) {
-            if(!districtId.isNullOrEmpty()) {
+            if (!districtId.isNullOrEmpty() || !hospitalDistrictId.isNullOrEmpty()) {
                 showBottomSheetDialog("hospitalName")
-            }
-            else{
+            } else {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -249,11 +376,11 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         )
     }
 
-    private fun hospitalListApi() {
+    private fun hospitalListApi(id:String) {
         viewModel.getDropDown(
             requireContext(), DropDownRequest(
                 model = "Hospitals",
-                filters = Filters(district_code = districtId),
+                filters = Filters(district_code = id),
                 fields = Fields(id = "hospital_name"),
                 type = "mobile"
             )
@@ -288,16 +415,19 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
 
             "district" -> {
 //                if (districtList.isEmpty()) {
-                    districtListApi()
+                districtListApi()
 //                }
                 selectedList = districtList
                 selectedTextView = mBinding?.etHospitalTreatingDistrict
             }
 
             "hospitalName" -> {
-//                if (hospitalList.isEmpty()) {
-                    hospitalListApi()
-//                }
+                if (treatingHospitalTag == "1") {
+                    hospitalDistrictId?.let { hospitalListApi(it) }
+                }
+                else if(treatingHospitalTag == "0"){
+                    districtId?.let { hospitalListApi(it) }
+                }
                 selectedList = hospitalList
                 selectedTextView = mBinding?.etHospitalName
             }
@@ -326,8 +456,13 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                             mBinding?.etHospitalName?.text = ""
                             hospitalList.clear()
                         } else {
-                            districtId = id
-                            sharedViewModel.userData.value?.hospitalDistrictId = id
+                            if(treatingHospitalTag == "1"){
+                            hospitalDistrictId = id
+                            }
+                            else{
+                                districtId = id
+                            }
+                            sharedViewModel.userData.value?.hospitalDistrictId = hospitalDistrictId
                         }
                     }
 
@@ -377,7 +512,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     }
 
     private fun valid(): Boolean {
-        if (treatingHospitalTag == 1) {
+        if (treatingHospitalTag == "1") {
             if (mBinding?.etHospitalTreatingState?.text.toString().trim().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -403,7 +538,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 )
             }
             return false
-        } else if (mBinding?.cbConfirm?.isChecked == true) {
+        } else if (mBinding?.cbConfirm?.isChecked == false) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,

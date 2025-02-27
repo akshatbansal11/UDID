@@ -1,5 +1,6 @@
 package com.swavlambancard.udid.ui.fragments
 
+import Translator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -8,11 +9,15 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.text.Editable
+import android.text.Html
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +30,7 @@ import com.swavlambancard.udid.model.CodeDropDownRequest
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
+import com.swavlambancard.udid.model.LanguageLocalize
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
@@ -34,8 +40,11 @@ import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
+import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -66,10 +75,53 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
     private var guardianId: String? = null
     private val guardianList = listOf(
         DropDownResult(id = "0", name = "Select Relation with PWD"),
-        DropDownResult(id = "father", name = "Father"),
-        DropDownResult(id = "mother", name = "Mother"),
-        DropDownResult(id = "guardian", name = "Guardian")
+        DropDownResult(id = "Father", name = "Father"),
+        DropDownResult(id = "Mother", name = "Mother"),
+        DropDownResult(id = "Guardian", name = "Guardian")
     )
+
+    private val languageList = listOf(
+        LanguageLocalize("35", "en", "English"),   // Andaman & Nicobar
+        LanguageLocalize("28", "te", "Telugu"),    // Andhra Pradesh
+        LanguageLocalize("12", "en", "English"),   // Arunachal Pradesh
+        LanguageLocalize("18", "as", "Assamese"),  // Assam
+        LanguageLocalize("10", "hi", "Hindi"),     // Bihar
+        LanguageLocalize("4", "en", "English"),    // Chandigarh
+        LanguageLocalize("22", "hi", "Hindi"),     // Chhattisgarh
+        LanguageLocalize("7", "hi", "Hindi"),      // Delhi
+        LanguageLocalize("30", "kok", "Konkani"),  // Goa
+        LanguageLocalize("24", "gu", "Gujarati"),  // Gujarat
+        LanguageLocalize("6", "hi", "Hindi"),      // Haryana
+        LanguageLocalize("2", "hi", "Hindi"),      // Himachal Pradesh
+        LanguageLocalize("1", "hi", "Hindi"),      // Jammu & Kashmir
+        LanguageLocalize("20", "hi", "Hindi"),     // Jharkhand
+        LanguageLocalize("29", "kn", "Kannada"),   // Karnataka
+        LanguageLocalize("32", "ml", "Malayalam"), // Kerala
+        LanguageLocalize("37", "en", "English"),   // Ladakh
+        LanguageLocalize("31", "hi", "Hindi"),     // Lakshadweep
+        LanguageLocalize("23", "hi", "Hindi"),     // Madhya Pradesh
+        LanguageLocalize("27", "mr", "Marathi"),   // Maharashtra
+        LanguageLocalize("14", "ma", "Manipuri"),  // Manipur
+        LanguageLocalize("17", "en", "English"),   // Meghalaya
+        LanguageLocalize("15", "mi", "Mizo"),      // Mizoram
+        LanguageLocalize("13", "en", "English"),   // Nagaland
+        LanguageLocalize("21", "or", "Oriya"),     // Odisha
+        LanguageLocalize("34", "en", "English"),   // Puducherry
+        LanguageLocalize("3", "pa", "Punjabi"),    // Punjab
+        LanguageLocalize("8", "hi", "Hindi"),      // Rajasthan
+        LanguageLocalize("11", "ne", "Nepali"),    // Sikkim
+        LanguageLocalize("33", "ta", "Tamil"),     // Tamil Nadu
+        LanguageLocalize("36", "te", "Telugu"),    // Telangana
+        LanguageLocalize("38", "gu", "English"),   // Dadra & Nagar Haveli and Daman & Diu
+        LanguageLocalize("16", "en", "English"),   // Tripura
+        LanguageLocalize("5", "hi", "Hindi"),      // Uttarakhand
+        LanguageLocalize("9", "hi", "Hindi"),      // Uttar Pradesh
+        LanguageLocalize("19", "bn", "Bengali")    // West Bengal
+    )
+
+    private var selectedLanguageCode: String? = null
+    private val handler = android.os.Handler()
+    private var translationRunnable: Runnable? = null
 
     override val layoutId: Int
         get() = R.layout.fragment_personal_details
@@ -80,9 +132,25 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
 
+        mBinding?.etApplicantFullName?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                translationRunnable?.let { handler.removeCallbacks(it) } // Cancel previous task
+
+                translationRunnable = Runnable {
+                    translateText(s.toString().trim())
+                }
+
+                handler.postDelayed(translationRunnable!!, 1500) // Delay translation by 500ms
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             mBinding?.etApplicantFullName?.setText(userData.applicantFullName)
             mBinding?.etApplicantNameInRegionalLanguage?.setText(userData.full_name_i18n)
+            selectedLanguageCode = userData.regionalLanguageCode
             mBinding?.etApplicantMobileNo?.setText(userData.applicantMobileNo)
             mBinding?.etApplicantEmailId?.setText(userData.applicantEmail)
             mBinding?.etApplicantDateOfBirth?.text = userData.applicantDob
@@ -107,44 +175,49 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     mBinding?.rbTransgender?.isChecked = false
                 }
             }
+            mBinding?.etApplicantsFMGName?.text = userData.applicantsFMGName
+            guardianId = userData.applicantsFMGCode
+            requireContext().toast(userData.applicantsFMGCode.toString())
             when (userData.applicantsFMGCode) {
                 "0" -> {
                     mBinding?.etApplicantsFMGName?.text = ""
                     mBinding?.llParentInfo?.hideView()
                 }
 
-                "father" -> {
+                "Father" -> {
                     mBinding?.llParentInfo?.showView()
                     mBinding?.tvRelationWithPerson?.hideView()
                     mBinding?.etRelationWithPerson?.hideView()
                     mBinding?.tvApplicantNameFMG?.text =
                         getString(R.string.applicant_father_s_name)
-                    mBinding?.etApplicantNameFMG?.hint =
+                    mBinding?.etApplicantRelativeName?.hint =
                         getString(R.string.applicant_father_s_name_)
+                    mBinding?.etApplicantRelativeName?.setText(userData.fatherName)
                 }
 
-                "mother" -> {
+                "Mother" -> {
                     mBinding?.llParentInfo?.showView()
                     mBinding?.tvRelationWithPerson?.hideView()
                     mBinding?.etRelationWithPerson?.hideView()
                     mBinding?.tvApplicantNameFMG?.text =
-                        getString(R.string.applicant_mother_s_name)
-                    mBinding?.etApplicantNameFMG?.hint =
+                     getString(R.string.applicant_mother_s_name)
+                    mBinding?.etApplicantRelativeName?.hint =
                         getString(R.string.applicant_mother_s_name_)
+                    mBinding?.etApplicantRelativeName?.setText(userData.motherName)
                 }
 
-                "guardian" -> {
+                "Guardian" -> {
                     mBinding?.llParentInfo?.showView()
                     mBinding?.tvRelationWithPerson?.showView()
                     mBinding?.etRelationWithPerson?.showView()
                     mBinding?.tvApplicantNameFMG?.text =
                         getString(R.string.name_of_guardian_caretaker)
-                    mBinding?.etApplicantNameFMG?.hint =
+                    mBinding?.etApplicantRelativeName?.hint =
                         getString(R.string.name_of_guardian_caretaker_)
+                    mBinding?.etApplicantRelativeName?.setText(userData.guardianName)
                 }
             }
-            mBinding?.etApplicantsFMGName?.text = userData.applicantsFMGName
-            guardianId = userData.applicantsFMGCode
+            mBinding?.etContactNoOfGuardian?.setText(userData.guardianContact)
 
             if (userData.relationWithPersonCode != "Self") {
                 mBinding?.llSelf?.showView()
@@ -202,6 +275,26 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.etContactNoOfGuardian?.addTextChangedListener {
             sharedViewModel.userData.value?.guardianContact = it.toString()
         }
+        mBinding?.etApplicantRelativeName?.addTextChangedListener {
+            when (guardianId) {
+                "Father" -> {
+
+                        sharedViewModel.userData.value?.fatherName = it.toString()
+
+                }
+                "Mother" -> {
+
+                        sharedViewModel.userData.value?.motherName = it.toString()
+
+                }
+                "Guardian" -> {
+
+                        sharedViewModel.userData.value?.guardianName = it.toString()
+                }
+            }
+        }
+
+
         mBinding?.etRelationWithPerson?.addTextChangedListener {
             sharedViewModel.userData.value?.relationWithPersonName = it.toString()
         }
@@ -211,6 +304,19 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.etFileNameSignature?.addTextChangedListener {
             sharedViewModel.userData.value?.sign = it.toString()
         }
+//        mBinding?.tvSaveDraft?.setOnClickListener {
+//
+//            Log.d("FragmentData",valid().toString())
+//            Log.d("FragmentData",mBinding?.etFileNamePhoto?.text.toString().trim())
+//            if (valid()) {
+//                (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
+//                sharedViewModel.userData.observe(viewLifecycleOwner){
+//
+//                    Log.d("FragmentData1",it.toString())
+//                }
+//
+//            }
+//        }
     }
 
     override fun setVariables() {
@@ -278,9 +384,15 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
     inner class ClickActions {
         fun next(view: View) {
+
             if (valid()) {
                 (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
+                sharedViewModel.userData.observe(viewLifecycleOwner){
+                    Log.d("FragmentData1",it.toString())
+                }
+
             }
+
         }
 
         fun edit(view: View) {
@@ -345,6 +457,21 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             )
         )
     }
+
+    private fun translateText(inputText: String) {
+        if (inputText.isEmpty() || selectedLanguageCode.isNullOrEmpty()) {
+            mBinding?.etApplicantNameInRegionalLanguage?.setText("")
+            return
+        }
+
+        CoroutineScope(Dispatchers.Main).launch {
+            Translator.getTranslation("en",selectedLanguageCode!!,inputText) { translatedText ->
+                Log.d("Translation", "Translated: $translatedText")
+                mBinding?.etApplicantNameInRegionalLanguage?.setText(translatedText)
+            }
+        }
+    }
+
 
     private fun calenderOpen(
         context: Context,
@@ -448,6 +575,24 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                             sharedViewModel.userData.value?.stateCode = stateId.toString()
                             mBinding?.tvApplicantNameInRegionalLanguage?.showView()
                             mBinding?.etApplicantNameInRegionalLanguage?.showView()
+                            val languageInfo = languageList.firstOrNull { it.stateId == stateId }
+                            if (languageInfo != null) {
+                                selectedLanguageCode = languageInfo.langCode
+                                sharedViewModel.userData.value?.regionalLanguageCode = languageInfo.langCode
+                                    mBinding?.tvApplicantNameInRegionalLanguage?.text =
+                                    getString(R.string.applicant_name_in, languageInfo.languageName)
+                                mBinding?.etApplicantNameInRegionalLanguage?.hint = getString(R.string.applicant_name_in, languageInfo.languageName)
+
+                                // Show loading state before translation
+                                mBinding?.etApplicantNameInRegionalLanguage?.setText("Translating...")
+
+                                // Cancel any pending translation and introduce delay
+                                translationRunnable?.let { handler.removeCallbacks(it) }
+                                translationRunnable = Runnable {
+                                    translateText(mBinding!!.etApplicantFullName.text.toString().trim())
+                                }
+                                handler.postDelayed(translationRunnable!!, 500) // Delay translation by 500ms
+                            }
                         }
                     }
 
@@ -467,7 +612,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                 mBinding?.etRelationWithPerson?.hideView()
                                 mBinding?.tvApplicantNameFMG?.text =
                                     getString(R.string.applicant_father_s_name)
-                                mBinding?.etApplicantNameFMG?.hint =
+                                mBinding?.etApplicantRelativeName?.hint =
                                     getString(R.string.applicant_father_s_name_)
                             }
 
@@ -480,7 +625,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                 mBinding?.etRelationWithPerson?.hideView()
                                 mBinding?.tvApplicantNameFMG?.text =
                                     getString(R.string.applicant_mother_s_name)
-                                mBinding?.etApplicantNameFMG?.hint =
+                                mBinding?.etApplicantRelativeName?.hint =
                                     getString(R.string.applicant_mother_s_name_)
                             }
 
@@ -493,7 +638,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                 mBinding?.etRelationWithPerson?.showView()
                                 mBinding?.tvApplicantNameFMG?.text =
                                     getString(R.string.name_of_guardian_caretaker)
-                                mBinding?.etApplicantNameFMG?.hint =
+                                mBinding?.etApplicantRelativeName?.hint =
                                     getString(R.string.name_of_guardian_caretaker_)
                             }
                         }
@@ -591,15 +736,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
             }
             return false
-        } else if (mBinding?.etApplicantEmailId?.text?.toString().isNullOrEmpty()) {
-            mBinding?.llParent?.let {
-                showSnackbar(
-                    it,
-                    getString(R.string.please_enter_an_email_address)
-                )
-            }
-            return false
-        } else if (!mBinding?.etApplicantEmailId?.text.toString().trim().matches(emailRegex)) {
+        }  else if (!mBinding?.etApplicantEmailId?.text.toString().trim().matches(emailRegex)) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
@@ -626,8 +763,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 )
             }
             return false
-        } else if (guardianId == "father") {
-            if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
+        } else if (guardianId == "Father") {
+            if (mBinding?.etApplicantRelativeName?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -644,9 +781,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
                 return false
             }
-            return false
-        } else if (guardianId == "mother") {
-            if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
+        }
+        else if (guardianId == "Mother") {
+            if (mBinding?.etApplicantRelativeName?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -663,7 +800,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
                 return false
             }
-        } else if (guardianId == "guardian") {
+        }
+        else if (guardianId == "Guardian") {
             if (mBinding?.etRelationWithPerson?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -673,7 +811,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
                 return false
             } else if (relationWithPersonId != "Self") {
-                if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
+                if (mBinding?.etApplicantRelativeName?.text.toString().isEmpty()) {
                     mBinding?.llParent?.let {
                         showSnackbar(
                             it,
@@ -691,18 +829,18 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     return false
                 }
             }
-        } else if (mBinding?.etFileNamePhoto?.text.toString().trim().isEmpty()) {
+        }
 
+        else if (mBinding?.etFileNamePhoto?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
-                showSnackbar(it, getString(R.string.please_upload_photo))
-            }
-            return false
-        } else if (mBinding?.etFileNameSignature?.text.toString().trim().isEmpty()) {
-            mBinding?.llParent?.let {
-                showSnackbar(it, getString(R.string.please_upload_signature))
+                showSnackbar(it, getString(R.string.please_upload_supporting_document))
             }
             return false
         }
+
+
+
+
         return true
     }
 
@@ -785,4 +923,6 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             )
         }
     }
+
+
 }

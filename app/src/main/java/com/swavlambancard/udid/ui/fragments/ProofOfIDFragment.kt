@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -54,7 +55,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     private var identityProofName: String? = null
     private var enrollmentSlipName: String? = null
     private var document = 0
-    private var aadhaarTag: Int = 0
+    private var aadhaarTag: Int = 2
 
     override val layoutId: Int
         get() = R.layout.fragment_proof_of_i_d
@@ -69,7 +70,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.aadhaarTag) {
-                2 -> {
+                0-> {
                     mBinding?.rbNo?.isChecked = true
                     mBinding?.llYesAadhaarCard?.hideView()
                     mBinding?.llNoAadhaarCard?.showView()
@@ -100,14 +101,15 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             mBinding?.etAadhaarEnrollment?.setText(userData.aadhaarEnrollmentNo)
             mBinding?.etIdentityProof?.text = userData.identityProofName
             identityProofId = userData.identityProofId
-            mBinding?.etFileNameIdentityProof?.text = userData.aadhaarEnrollmentUploadSlip
+            mBinding?.etFileNameIdentityProof?.text = userData.identityProofUpload
             mBinding?.etFileNameEnrollmentSlip?.text = userData.aadhaarEnrollmentUploadSlip
         }
 
         mBinding?.rgAadhaar?.setOnCheckedChangeListener { _, checkedId ->
             aadhaarTag = when (checkedId) {
                 R.id.rbNo -> {
-                    2
+                    0
+
                 }
 
                 R.id.rbYes -> {
@@ -115,10 +117,11 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 }
 
                 else -> {
-                    0
+                    2
                 }
             }
             sharedViewModel.userData.value?.aadhaarTag = aadhaarTag
+            sharedViewModel.userData.value?.aadhaarInfo = aadhaarTag
         }
         mBinding?.checkboxConfirm?.setOnCheckedChangeListener { _, isChecked ->
             sharedViewModel.userData.value?.aadhaarCheckBox = if (isChecked) 1 else 0
@@ -190,10 +193,16 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
 
     inner class ClickActions {
         fun next(view: View) {
+//            Log.d("FragmentData2",valid().toString())
+//            Log.d("FragmentData2",sharedViewModel.userData.value.toString())
+//            sharedViewModel.userData.observe(viewLifecycleOwner){
+//                Log.d("FragmentData2",it.toString())
+//            }
             if (valid()) {
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     ProofOfAddressFragment()
                 )
+
             }
         }
 
@@ -203,19 +212,24 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
 
         fun rbYes(view: View) {
             aadhaarTag = 1
-            identityProofListYes.remove(DropDownResult("8", "Aadhaar Card"))
-            mBinding?.llYesAadhaarCard?.showView()
-            mBinding?.llNoAadhaarCard?.hideView()
-
-        }
-
-        fun rbNo(view: View) {
-            aadhaarTag = 2
             identityProofList.clear()
             identityProofList.add(DropDownResult("0", getString(R.string.select_identity_proof)))
             identityProofList.add(DropDownResult("8", "Aadhaar Card"))
+            mBinding?.llYesAadhaarCard?.showView()
+            mBinding?.llNoAadhaarCard?.hideView()
+            mBinding?.etAadhaarEnrollment?.setText("")
+            mBinding?.etFileNameEnrollmentSlip?.text = ""
+            enrollmentSlipName = ""
+        }
+
+        fun rbNo(view: View) {
+            aadhaarTag = 0
+            identityProofListYes.remove(DropDownResult("8", "Aadhaar Card"))
             mBinding?.llYesAadhaarCard?.hideView()
             mBinding?.llNoAadhaarCard?.showView()
+            mBinding?.etAadhaarNo?.setText("")
+            mBinding?.checkboxConfirm?.isChecked = false
+
         }
 
         fun identityProof(view: View) {
@@ -264,20 +278,20 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         // Initialize based on type
         when (type) {
             "identity_proof" -> {
-                if (identityProofList.isEmpty()) {
+                if (identityProofListYes.isEmpty()) {
                     identityProofApi()
                 }
                 val list: ArrayList<DropDownResult> = when (aadhaarTag) {
                     1 -> {
+                        identityProofList
+                    }
+
+                    0 -> {
                         identityProofListYes
                     }
 
-                    2 -> {
-                        identityProofList
-                    }
-
                     else -> {
-                        identityProofList
+                        identityProofListYes
                     }
                 }
                 selectedList = list
@@ -339,7 +353,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     }
 
     private fun valid(): Boolean {
-        if (aadhaarTag == 0) {
+        if (aadhaarTag == 2) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
@@ -366,7 +380,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 }
                 return false
             }
-        } else if (aadhaarTag == 2) {
+        } else if (aadhaarTag == 0) {
             if (mBinding?.etAadhaarEnrollment?.text.toString().trim().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(

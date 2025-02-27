@@ -8,6 +8,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.DialogThankYouBinding
@@ -29,14 +30,14 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
 
     private var mBinding: DialogThankYouBinding? = null
     private var viewModel = ViewModel()
-    private val binding get() = mBinding!!
+//    private val binding get() = mBinding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = DialogThankYouBinding.inflate(inflater, container, false)
-        return binding.root
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.dialog_thank_you, container, false)
+        return mBinding!!.root
     }
 
     @SuppressLint("SetTextI18n")
@@ -48,7 +49,7 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
         }
         mBinding?.clickAction = ClickActions()
         viewModel.init()
-        mBinding?.tvEnrollmentNo?.text = "Enrollment No: $applicationNumber"
+        mBinding?.tvEnrollmentNo?.text = getString(R.string.enrollment_number, applicationNumber)
         observer()
     }
 
@@ -81,8 +82,8 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
         }
 
         fun downloadApplication(view: View){
-//            startDownload(getString(R.string.application))
-            mBinding?.flParent?.let { showSnackbar(it,"Downloaded") }
+            startDownload(getString(R.string.application))
+//            mBinding?.flParent?.let { showSnackbar(it,"Downloaded") }
         }
 
         fun downloadReceipt(view: View){
@@ -103,9 +104,7 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
         val requestBody = JSONObject().apply {
             put(
                 "application_number", JSEncryptService.encrypt(
-                    getPreferenceOfLogin(
-                        BaseActivity.context, AppConstants.LOGIN_DATA, UserData::class.java
-                    ).application_number.toString()
+                    applicationNumber
                 )
             )
             put("type", "mobile")

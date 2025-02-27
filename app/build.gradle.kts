@@ -68,13 +68,17 @@ android {
 
     flavorDimensions("full")
     productFlavors {
-        create("product"){
+        create("product") {
             dimension = "full"
-            buildConfigField ("String", "API_BASE_URL_PRODUCTION", "\"https://swavlambancard.gov.in/\"")
+            buildConfigField(
+                "String",
+                "API_BASE_URL_PRODUCTION",
+                "\"https://swavlambancard.gov.in/\""
+            )
         }
-        create("local"){
+        create("local") {
             dimension = "full"
-            buildConfigField ("String", "API_BASE_URL", "\"http://134.209.222.136:86/\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://134.209.222.136:86/\"")
         }
     }
 }
@@ -132,4 +136,6 @@ dependencies {
     implementation("com.vanniktech:android-image-cropper:4.6.0")
 //    implementation ("com.github.CanHub:Android-Image-Cropper:4.0.0")
 
+    //Language translation
+    implementation("com.google.mlkit:translate:17.0.3")
 }

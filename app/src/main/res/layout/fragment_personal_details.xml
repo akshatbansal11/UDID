@@ -378,9 +378,9 @@
                         android:text="@string/applicant_mother_s_name"
                         android:textColor="@color/black"
                         android:textSize="@dimen/sp_16" />
-
+<!--Name of gaurdian caretaker-->
                     <EditText
-                        android:id="@+id/etApplicantNameFMG"
+                        android:id="@+id/etApplicantRelativeName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/curve_all_corner_grey"
@@ -544,7 +544,7 @@
                 android:layout_weight="0.5"
                 android:background="@drawable/curve_fill_blue"
                 android:fontFamily="@font/poppins_medium"
-                android:onClick="@{ClickAction::next}"
+              android:onClick="@{ClickAction::next}"
                 android:paddingHorizontal="@dimen/dp_10"
                 android:paddingVertical="@dimen/dp_10"
                 android:text="@string/next"

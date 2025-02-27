@@ -12,7 +12,9 @@ import com.swavlambancard.udid.model.GenerateOtpRequest
 import com.swavlambancard.udid.model.LoginResponse
 import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
+import com.swavlambancard.udid.model.PendingApplicationWise
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.RejectApplicationRequest
 import com.swavlambancard.udid.model.SavePWDFormResponse
 import com.swavlambancard.udid.model.UploadFileResponse
 import okhttp3.MultipartBody
@@ -46,20 +48,23 @@ const val DOWNLOAD_RECEIPT = "downloadApplicationReciept"
 const val DOWNLOAD_YOUR_E_DISABILITY_CERTIFICATE = "downloadCertificate"
 const val DOWNLOAD_YOUR_UDID_CARD = "downloadUdidCard"
 const val DOWNLOAD_DOCTOR_DIAGNOSIS_SHEET = "downloadDoctorDiagonstics"
-const val SUBMIT_UPDATED_NAME = "https://swavlambancard.gov.in/api/rest/downloadUpdateNameReciept"
-const val SUBMIT_AADHAAR_NUMBER = "https://swavlambancard.gov.in/api/rest/downloadUpdateNameReciept"
-const val SUBMIT_MOBILE_NUMBER = "https://swavlambancard.gov.in/api/rest/downloadUpdateNameReciept"
-const val SUBMIT_EMAIL_ID = "https://swavlambancard.gov.in/api/rest/downloadUpdateNameReciept"
-const val SUBMIT_DATE_OF_BIRTH = "https://swavlambancard.gov.in/api/rest/downloadUpdateNameReciept"
-const val SUBMIT_RENEWAL_CARD = "https://swavlambancard.gov.in/api/rest/downloadRenewalReciept"
-const val SUBMIT_APPEAL = "https://swavlambancard.gov.in/api/rest/downloadAppealReciept"
-const val SUBMIT_SURRENDER_CARD = "https://swavlambancard.gov.in/api/rest/downloadUpdateSurrenderReciept"
-const val SUBMIT_LOST_CARD= "https://swavlambancard.gov.in/api/rest/downloadUpdateLostCardReciept"
-const val GET_CODE_DROP_DOWN= "getCodeDropdown"
-const val PINCODE_DROP_DOWN= "getPincodeDropdown"
-const val UPLOAD_FILE= "uploadFile"
-const val EDIT_APPLICATION= "editApplication"
-const val SAVE_PWD_FORM= "savePWDForm"
+const val SUBMIT_UPDATED_NAME = "downloadUpdateNameReciept"
+const val SUBMIT_AADHAAR_NUMBER = "downloadUpdateNameReciept"
+const val SUBMIT_MOBILE_NUMBER = "downloadUpdateNameReciept"
+const val SUBMIT_EMAIL_ID = "downloadUpdateNameReciept"
+const val SUBMIT_DATE_OF_BIRTH = "downloadUpdateNameReciept"
+const val SUBMIT_RENEWAL_CARD = "downloadRenewalReciept"
+const val SUBMIT_APPEAL = "downloadAppealReciept"
+const val SUBMIT_SURRENDER_CARD = "downloadUpdateSurrenderReciept"
+const val SUBMIT_LOST_CARD = "downloadUpdateLostCardReciept"
+const val GET_CODE_DROP_DOWN = "getCodeDropdown"
+const val PINCODE_DROP_DOWN = "getPincodeDropdown"
+const val UPLOAD_FILE = "uploadFile"
+const val EDIT_APPLICATION = "editApplication"
+//const val SAVE_PWD_FORM = "savePWDForm"
+const val SAVE_PWD_FORM = "savePWDForm2"
+const val APPLICATION_REJECT_REQUEST = "applicationRejectRequest"
+const val PENDING_APPLICATION_WISE = "pendingapplicationwise"
 
 interface MyService {
 
@@ -103,7 +108,7 @@ interface MyService {
         @Part("otp") otp: RequestBody?,
         @Part("type") type: RequestBody?,
         @Part document: MultipartBody.Part?,
-    ):Response<CommonResponse>
+    ): Response<CommonResponse>
 
     @Multipart
     @POST(UPDATE_MOBILE)
@@ -113,7 +118,7 @@ interface MyService {
         @Part("mobile") mobile: RequestBody?,
         @Part("otp") otp: RequestBody?,
         @Part("type") type: RequestBody?,
-    ):Response<CommonResponse>
+    ): Response<CommonResponse>
 
     @Multipart
     @POST(UPDATE_AADHAAR)
@@ -126,7 +131,7 @@ interface MyService {
         @Part("otp") otp: RequestBody?,
         @Part("type") type: RequestBody?,
         @Part document: MultipartBody.Part?,
-    ):Response<CommonResponse>
+    ): Response<CommonResponse>
 
     @Multipart
     @POST(UPDATE_DOB)
@@ -138,7 +143,7 @@ interface MyService {
         @Part("otp") otp: RequestBody?,
         @Part("type") type: RequestBody?,
         @Part document: MultipartBody.Part?,
-    ):Response<CommonResponse>
+    ): Response<CommonResponse>
 
     @Multipart
     @POST(UPDATE_EMAIL)
@@ -148,7 +153,7 @@ interface MyService {
         @Part("email") email: RequestBody?,
         @Part("otp") otp: RequestBody?,
         @Part("type") type: RequestBody?,
-    ):Response<CommonResponse>
+    ): Response<CommonResponse>
 
     @Multipart
     @Headers("Content-Type: application/json")
@@ -159,7 +164,7 @@ interface MyService {
         @Part("other_reason") otherReason: RequestBody?,
         @Part("otp") otp: RequestBody?,
         @Part("type") type: RequestBody?,
-    ):Response<CommonResponse>
+    ): Response<CommonResponse>
 
     @Multipart
     @POST(LOST_CARD)
@@ -169,8 +174,8 @@ interface MyService {
         @Part("other_reason") otherReason: RequestBody?,
         @Part("otp") otp: RequestBody?,
         @Part("type") type: RequestBody?,
-        @Part document: MultipartBody.Part?
-    ):Response<CommonResponse>
+        @Part document: MultipartBody.Part?,
+    ): Response<CommonResponse>
 
     @Multipart
     @POST(FEEDBACK_QUERY)
@@ -181,8 +186,8 @@ interface MyService {
         @Part("email") email: RequestBody?,
         @Part("message") message: RequestBody?,
         @Part("type") type: RequestBody?,
-        @Part document: MultipartBody.Part?
-    ):Response<CommonResponse>
+        @Part document: MultipartBody.Part?,
+    ): Response<CommonResponse>
 
     @Multipart
     @POST(APPEAL)
@@ -190,8 +195,8 @@ interface MyService {
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("reason") reason: RequestBody?,
         @Part("type") type: RequestBody?,
-        @Part document: MultipartBody.Part?
-    ):Response<CommonResponse>
+        @Part document: MultipartBody.Part?,
+    ): Response<CommonResponse>
 
     @Multipart
     @POST(RENEW_CARD)
@@ -205,7 +210,7 @@ interface MyService {
         @Part("current_pincode") currentPincode: RequestBody?,
         @Part("hospital_treating_id") hospitalTreatingId: RequestBody?,
         @Part("type") type: RequestBody?,
-        @Part address_proof_file: MultipartBody.Part?
+        @Part address_proof_file: MultipartBody.Part?,
     ): Response<CommonResponse>
 
     @Multipart
@@ -213,7 +218,7 @@ interface MyService {
     suspend fun logout(
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("type") type: RequestBody?,
-    ):Response<CommonResponse>
+    ): Response<CommonResponse>
 
     @Headers("Content-Type: application/json")
     @POST(DOWNLOAD_APPLICATION)
@@ -235,11 +240,47 @@ interface MyService {
     @POST(DOWNLOAD_DOCTOR_DIAGNOSIS_SHEET)
     suspend fun downloadDoctorDiagnosisSheet(@Body request: RequestBody): Response<ResponseBody>
 
+    @Headers("Content-Type: application/json")
+    @POST(SUBMIT_UPDATED_NAME)
+    suspend fun downloadUpdatedName(@Body request: RequestBody): Response<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST(SUBMIT_AADHAAR_NUMBER)
+    suspend fun downloadAadhaarNumber(@Body request: RequestBody): Response<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST(SUBMIT_DATE_OF_BIRTH)
+    suspend fun downloadDateOfBirth(@Body request: RequestBody): Response<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST(SUBMIT_EMAIL_ID)
+    suspend fun downloadEmailId(@Body request: RequestBody): Response<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST(SUBMIT_MOBILE_NUMBER)
+    suspend fun downloadMobileNumber(@Body request: RequestBody): Response<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST(SUBMIT_APPEAL)
+    suspend fun downloadAppeal(@Body request: RequestBody): Response<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST(SUBMIT_RENEWAL_CARD)
+    suspend fun downloadRenewalCard(@Body request: RequestBody): Response<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @POST(SUBMIT_SURRENDER_CARD)
+    suspend fun downloadSurrenderCard(@Body request: RequestBody): Response<ResponseBody>
+
+   @Headers("Content-Type: application/json")
+    @POST(SUBMIT_LOST_CARD)
+    suspend fun downloadLostCard(@Body request: RequestBody): Response<ResponseBody>
+
     @Multipart
     @POST(UPLOAD_FILE)
     suspend fun getUploadFile(
         @Part("document_type") documentType: RequestBody?,
-        @Part document : MultipartBody.Part?
+        @Part document: MultipartBody.Part?,
     ): Response<UploadFileResponse>
 
     @Headers("Content-Type: application/json")
@@ -263,10 +304,12 @@ interface MyService {
         @Part("guardian_name") guardianName: RequestBody?,
         @Part("guardian_contact") guardianContact: RequestBody?,
         @Part("photo") photo: RequestBody?,
-        @Part("sign") sign: RequestBody?,
+        @Part("signature_thumb_print") sign: RequestBody?,
         // Proof id Identity Card
         @Part("aadhaar_no") aadhaarNo: RequestBody?,
         @Part("share_aadhar_info") shareAadhaarInfo: RequestBody?,//0/1
+        @Part("aadhar_info") aadhaarInfo: RequestBody?,//=> Yes(1)/No(0)
+        @Part("aadhar_enrollment_no") aadhaarEnrollmentNo: RequestBody?,
         @Part("aadhar_enrollment_slip") aadhaarEnrollmentSlip: RequestBody?,
         @Part("identitity_proof_id") identityProofId: RequestBody?,
         @Part("identitity_proof_file") identityProofFile: RequestBody?,
@@ -294,8 +337,17 @@ interface MyService {
         @Part("is_hospital_treating_other_state") isHospitalTreatingOtherState: RequestBody?,//=> 0/1
         @Part("hospital_treating_state_code") hospitalTreatingStateCode: RequestBody?,
         @Part("hospital_treating_district_code") hospitalTreatingDistrictCode: RequestBody?,
+        @Part("hospital_treating_id") hospitalTreatingId: RequestBody?,
         @Part("declaration") declaration: RequestBody?,//=>0/1
     ): Response<SavePWDFormResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(APPLICATION_REJECT_REQUEST)
+    suspend fun rejectApplicationRequest(@Body request: RejectApplicationRequest): Response<CommonResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(PENDING_APPLICATION_WISE)
+    suspend fun pendingApplicationWise(@Body request: PendingApplicationWise): Response<CommonResponse>
 }
 
 
