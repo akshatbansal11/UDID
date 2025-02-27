@@ -151,6 +151,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             mBinding?.etApplicantFullName?.setText(userData.applicantFullName)
             mBinding?.etApplicantNameInRegionalLanguage?.setText(userData.full_name_i18n)
             selectedLanguageCode = userData.regionalLanguageCode
+            requireContext().toast(userData.regionalLanguageCode.toString())
             mBinding?.etApplicantMobileNo?.setText(userData.applicantMobileNo)
             mBinding?.etApplicantEmailId?.setText(userData.applicantEmail)
             mBinding?.etApplicantDateOfBirth?.text = userData.applicantDob
@@ -177,7 +178,6 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             }
             mBinding?.etApplicantsFMGName?.text = userData.applicantsFMGName
             guardianId = userData.applicantsFMGCode
-            requireContext().toast(userData.applicantsFMGCode.toString())
             when (userData.applicantsFMGCode) {
                 "0" -> {
                     mBinding?.etApplicantsFMGName?.text = ""

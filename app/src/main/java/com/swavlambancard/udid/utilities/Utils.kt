@@ -38,6 +38,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.callBack.DialogCallback
+import com.swavlambancard.udid.model.DropDownResult
 import java.io.*
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -300,6 +301,27 @@ object Utility {
         } catch (e: Exception) {
             ""
         }
+    }
+    fun dateConvertToFormatYYYYMMDD(dateString: String?): String {
+        return try {
+            val originalFormat: DateFormat =
+                SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+            val targetFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+            val date: Date = originalFormat.parse(dateString)
+
+            targetFormat.format(date).uppercase(Locale.getDefault())
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+    fun getFileNameFromUrl(url: String?): String? {
+        if (url.isNullOrBlank()) return null // Handle null or empty string case
+        return url.substringAfterLast("/", "")
+    }
+
+    fun getNameById(id: String,list: List<DropDownResult>): String {
+        return list.find { it.id == id }?.name ?: ""
     }
 
     fun dateConvertToString(dateString: String): String {

@@ -135,9 +135,11 @@ data class PwdApplication(
     var hospitalStateName: String ?= "",//hospital_treating_state_code
     var hospitalDistrictId: String ?= "",//hospital_treating_district_code
     var hospitalDistrictName: String ?= "",//hospital_treating_district_code
-    var hospitalNameId: String ?= null,
+    var hospitalNameId: String ?= null,//hospital_treating_id
     var hospitalNameName: String ?= null,//hospital_treating_id
     var hospitalCheckBox: String? =null,//declaration =>0/1
+    // extra key
+    var isFrom : String?= null
 )
 
 data class EditProfileRequest(

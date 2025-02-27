@@ -30,6 +30,7 @@ import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
+import com.swavlambancard.udid.utilities.Utility.getNameById
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
@@ -72,11 +73,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-
-//        if(check == 1){
-//
-//        }
-//        else{}
+        if(sharedViewModel.userData.value?.isFrom != "login"){
+            addressProofApi()
+        }
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
 
@@ -142,6 +141,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             )
                         )
                         addressProofList.addAll(userResponseModel._result)
+                        if(sharedViewModel.userData.value?.isFrom != "login"){
+                            mBinding?.etNatureDocumentAddressProof?.text = getNameById(sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString(),addressProofList)
+                        }
                     }
 
                     "States" -> {

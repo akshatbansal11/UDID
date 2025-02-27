@@ -27,10 +27,12 @@ import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
+import com.swavlambancard.udid.utilities.Utility.getNameById
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
+import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
@@ -67,7 +69,6 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
         identityProofApi()
-
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.aadhaarTag) {
                 0-> {
@@ -160,6 +161,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                     identityProofList.addAll(userResponseModel._result)
                     identityProofListYes.addAll(userResponseModel._result)
+                    if(sharedViewModel.userData.value?.isFrom != "login"){
+                        mBinding?.etIdentityProof?.text = getNameById(sharedViewModel.userData.value?.identityProofId.toString(),identityProofList)
+                    }
                     bottomSheetAdapter?.notifyDataSetChanged()
                 }
             }
