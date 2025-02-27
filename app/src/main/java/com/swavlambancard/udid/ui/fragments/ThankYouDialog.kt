@@ -48,7 +48,7 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
         }
         mBinding?.clickAction = ClickActions()
         viewModel.init()
-        mBinding?.tvEnrollmentNo?.text = "Enrollment No: $applicationNumber"
+        mBinding?.tvEnrollmentNo?.text = getString(R.string.enrollment_number, applicationNumber)
         observer()
     }
 
@@ -103,9 +103,7 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
         val requestBody = JSONObject().apply {
             put(
                 "application_number", JSEncryptService.encrypt(
-                    getPreferenceOfLogin(
-                        BaseActivity.context, AppConstants.LOGIN_DATA, UserData::class.java
-                    ).application_number.toString()
+                    applicationNumber
                 )
             )
             put("type", "mobile")

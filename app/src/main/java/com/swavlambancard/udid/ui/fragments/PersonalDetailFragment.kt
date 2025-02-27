@@ -10,12 +10,14 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.Editable
+import android.text.Html
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -188,9 +190,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     mBinding?.etRelationWithPerson?.hideView()
                     mBinding?.tvApplicantNameFMG?.text =
                         getString(R.string.applicant_father_s_name)
-                    mBinding?.etApplicantNameFMG?.hint =
+                    mBinding?.etApplicantRelativeName?.hint =
                         getString(R.string.applicant_father_s_name_)
-                    mBinding?.etApplicantNameFMG?.setText(userData.fatherName)
+                    mBinding?.etApplicantRelativeName?.setText(userData.fatherName)
                 }
 
                 "Mother" -> {
@@ -198,10 +200,10 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     mBinding?.tvRelationWithPerson?.hideView()
                     mBinding?.etRelationWithPerson?.hideView()
                     mBinding?.tvApplicantNameFMG?.text =
-                        getString(R.string.applicant_mother_s_name)
-                    mBinding?.etApplicantNameFMG?.hint =
+                     getString(R.string.applicant_mother_s_name)
+                    mBinding?.etApplicantRelativeName?.hint =
                         getString(R.string.applicant_mother_s_name_)
-                    mBinding?.etApplicantNameFMG?.setText(userData.motherName)
+                    mBinding?.etApplicantRelativeName?.setText(userData.motherName)
                 }
 
                 "Guardian" -> {
@@ -210,9 +212,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     mBinding?.etRelationWithPerson?.showView()
                     mBinding?.tvApplicantNameFMG?.text =
                         getString(R.string.name_of_guardian_caretaker)
-                    mBinding?.etApplicantNameFMG?.hint =
+                    mBinding?.etApplicantRelativeName?.hint =
                         getString(R.string.name_of_guardian_caretaker_)
-                    mBinding?.etApplicantNameFMG?.setText(userData.guardianName)
+                    mBinding?.etApplicantRelativeName?.setText(userData.guardianName)
                 }
             }
             mBinding?.etContactNoOfGuardian?.setText(userData.guardianContact)
@@ -273,21 +275,25 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.etContactNoOfGuardian?.addTextChangedListener {
             sharedViewModel.userData.value?.guardianContact = it.toString()
         }
-        if(guardianId == "Father") {
-            mBinding?.etApplicantNameFMG?.addTextChangedListener {
-                sharedViewModel.userData.value?.fatherName = it.toString()
+        mBinding?.etApplicantRelativeName?.addTextChangedListener {
+            when (guardianId) {
+                "Father" -> {
+
+                        sharedViewModel.userData.value?.fatherName = it.toString()
+
+                }
+                "Mother" -> {
+
+                        sharedViewModel.userData.value?.motherName = it.toString()
+
+                }
+                "Guardian" -> {
+
+                        sharedViewModel.userData.value?.guardianName = it.toString()
+                }
             }
         }
-        else if(guardianId == "Mother") {
-            mBinding?.etApplicantNameFMG?.addTextChangedListener {
-                sharedViewModel.userData.value?.motherName = it.toString()
-            }
-        }
-        else if(guardianId == "Guardian") {
-            mBinding?.etApplicantNameFMG?.addTextChangedListener {
-                sharedViewModel.userData.value?.guardianName = it.toString()
-            }
-        }
+
 
         mBinding?.etRelationWithPerson?.addTextChangedListener {
             sharedViewModel.userData.value?.relationWithPersonName = it.toString()
@@ -298,6 +304,19 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.etFileNameSignature?.addTextChangedListener {
             sharedViewModel.userData.value?.sign = it.toString()
         }
+//        mBinding?.tvSaveDraft?.setOnClickListener {
+//
+//            Log.d("FragmentData",valid().toString())
+//            Log.d("FragmentData",mBinding?.etFileNamePhoto?.text.toString().trim())
+//            if (valid()) {
+//                (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
+//                sharedViewModel.userData.observe(viewLifecycleOwner){
+//
+//                    Log.d("FragmentData1",it.toString())
+//                }
+//
+//            }
+//        }
     }
 
     override fun setVariables() {
@@ -365,9 +384,15 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
     inner class ClickActions {
         fun next(view: View) {
+
             if (valid()) {
                 (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
+                sharedViewModel.userData.observe(viewLifecycleOwner){
+                    Log.d("FragmentData1",it.toString())
+                }
+
             }
+
         }
 
         fun edit(view: View) {
@@ -587,7 +612,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                 mBinding?.etRelationWithPerson?.hideView()
                                 mBinding?.tvApplicantNameFMG?.text =
                                     getString(R.string.applicant_father_s_name)
-                                mBinding?.etApplicantNameFMG?.hint =
+                                mBinding?.etApplicantRelativeName?.hint =
                                     getString(R.string.applicant_father_s_name_)
                             }
 
@@ -600,7 +625,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                 mBinding?.etRelationWithPerson?.hideView()
                                 mBinding?.tvApplicantNameFMG?.text =
                                     getString(R.string.applicant_mother_s_name)
-                                mBinding?.etApplicantNameFMG?.hint =
+                                mBinding?.etApplicantRelativeName?.hint =
                                     getString(R.string.applicant_mother_s_name_)
                             }
 
@@ -613,7 +638,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                 mBinding?.etRelationWithPerson?.showView()
                                 mBinding?.tvApplicantNameFMG?.text =
                                     getString(R.string.name_of_guardian_caretaker)
-                                mBinding?.etApplicantNameFMG?.hint =
+                                mBinding?.etApplicantRelativeName?.hint =
                                     getString(R.string.name_of_guardian_caretaker_)
                             }
                         }
@@ -711,15 +736,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
             }
             return false
-        } else if (mBinding?.etApplicantEmailId?.text?.toString().isNullOrEmpty()) {
-            mBinding?.llParent?.let {
-                showSnackbar(
-                    it,
-                    getString(R.string.please_enter_an_email_address)
-                )
-            }
-            return false
-        } else if (!mBinding?.etApplicantEmailId?.text.toString().trim().matches(emailRegex)) {
+        }  else if (!mBinding?.etApplicantEmailId?.text.toString().trim().matches(emailRegex)) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
@@ -747,7 +764,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             }
             return false
         } else if (guardianId == "Father") {
-            if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
+            if (mBinding?.etApplicantRelativeName?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -764,10 +781,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
                 return false
             }
-            return false
         }
         else if (guardianId == "Mother") {
-            if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
+            if (mBinding?.etApplicantRelativeName?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -795,7 +811,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
                 return false
             } else if (relationWithPersonId != "Self") {
-                if (mBinding?.etApplicantNameFMG?.text.toString().isEmpty()) {
+                if (mBinding?.etApplicantRelativeName?.text.toString().isEmpty()) {
                     mBinding?.llParent?.let {
                         showSnackbar(
                             it,
@@ -814,19 +830,17 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
             }
         }
-        else if (mBinding?.etFileNamePhoto?.text.toString().trim().isEmpty()) {
 
+        else if (mBinding?.etFileNamePhoto?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
-                showSnackbar(it, getString(R.string.please_upload_photo))
+                showSnackbar(it, getString(R.string.please_upload_supporting_document))
             }
             return false
         }
-        else if (mBinding?.etFileNameSignature?.text.toString().trim().isEmpty()) {
-            mBinding?.llParent?.let {
-                showSnackbar(it, getString(R.string.please_upload_signature))
-            }
-            return false
-        }
+
+
+
+
         return true
     }
 

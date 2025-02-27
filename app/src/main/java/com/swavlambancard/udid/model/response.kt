@@ -35,7 +35,7 @@ data class DropDownResponse(
 data class DropDownResult(
     var id: String,
     var name: String
-)
+):Serializable
 
 data class OTPResponse(
     val _resultflag: Int,

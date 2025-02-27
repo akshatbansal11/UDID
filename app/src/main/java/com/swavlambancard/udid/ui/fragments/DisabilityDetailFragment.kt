@@ -60,10 +60,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     private var listName: String? = null
     var date: String? = null
     private var disabilityByBirthTag: String = "0"
-    private var disabilityCertificateTag: Int = 0
+    private var disabilityCertificateTag: Int = 2
     private var disabilityTypeList = ArrayList<DropDownResult>()
     private var matchItemDisabilityTypeList = arrayListOf<DropDownResult>()
-    private var disabilityTypeId :ArrayList<String>?= null
+    private var disabilityTypeId = arrayListOf<String>()
     private var disabilitySinceList = ArrayList<DropDownResult>()
     private var disabilitySinceId: String? = null
     private val disabilityDueToList = ArrayList<DropDownResult>()
@@ -119,7 +119,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 matchItemDisabilityTypeList.clear()
             }
             mBinding?.etDisabilityType?.text = userData.disabilityTypeName
-            disabilityTypeId = userData.disabilityTypeCode
+            disabilityTypeId = userData.disabilityTypeCode?.takeIf { it.isNotEmpty() } ?: arrayListOf()
             mBinding?.etDisabilityDueTo?.text = userData.disabilityDueToName
             disabilityDueToId = userData.disabilityDueToCode
             mBinding?.etDisabilitySince?.text = userData.disabilitySinceName
@@ -153,10 +153,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     1
                 }
                 R.id.rbDisabilityCertificateNo -> {
-                    2
+                    0
                 }
                 else -> {
-                    0
+                    2
                 }
             }
             sharedViewModel.userData.value?.haveDisabilityCertificate = disabilityCertificateTag
@@ -273,6 +273,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     HospitalAssessmentFragment()
                 )
+
+//                Log.d("FragmentData3",sharedViewModel.userData.value.toString())
+
             }
         }
 
@@ -296,6 +299,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             mBinding?.etDisabilitySince?.showView()
         }
 
+
         fun rbDisabilityCertificateYes(view: View) {
             mBinding?.llDisabilityCertificateYes?.showView()
         }
@@ -309,6 +313,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             date = ""
             mBinding?.etSelectIssuingAuthority?.text = ""
             detailsOfIssuingAuthorityId = ""
+            sharedViewModel.userData.value?.detailOfAuthorityCode=""
             mBinding?.etDisabilityPercentage?.setText("")
         }
 
@@ -382,8 +387,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             disabilityTypeApi()
         }
         setAdapter(view, disabilityTypeList)
+        Log.d("AdapterData2",disabilityTypeId.toString())
+        sharedViewModel.userData.value?.disabilityTypeCode = disabilityTypeId
         tvClose.setOnClickListener {
-            sharedViewModel.userData.value?.disabilityTypeCode = disabilityTypeId
+
 
             matchItemDisabilityTypeList = multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
             sharedViewModel.userData.value?.disabilityTypeList = matchItemDisabilityTypeList
@@ -401,6 +408,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     }
 
     private fun setAdapter(view: View, list: ArrayList<DropDownResult>) {
+
         val rvBottomSheet = view.findViewById<RecyclerView>(R.id.rvBottomSheet)
         layoutManager = LinearLayoutManager(requireContext())
         rvBottomSheet.layoutManager = layoutManager
@@ -409,12 +417,16 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             list,
             matchItemDisabilityTypeList,
         ) {
-            if (disabilityTypeId?.contains(it) == true) {
-                disabilityTypeId?.remove(it)
+                selectedItem ->
+            if (disabilityTypeId.contains(selectedItem)) {
+                disabilityTypeId.remove(selectedItem) // Remove if already present
             } else {
-                disabilityTypeId?.add(it)
+                disabilityTypeId.add(selectedItem) // Add if not present
             }
+            Log.d("AdapterData", "Updated disabilityTypeId: $disabilityTypeId")
+
         }
+
         rvBottomSheet.adapter = multipleSelectionBottomSheetAdapter
     }
 
@@ -605,7 +617,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 return false
             }
         }
-        else if (disabilityCertificateTag == 0) {
+        else if (disabilityCertificateTag == 2) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
@@ -753,6 +765,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     "document",
                     file.name, reqFile
                 )
+            uploadFileApi()
         }
     }
 

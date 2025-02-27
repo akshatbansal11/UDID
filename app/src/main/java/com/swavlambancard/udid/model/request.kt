@@ -74,14 +74,14 @@ data class PwdApplication(
     var applicantMobileNo: String? = null,//mobile
     var stateName: String? = null,//current_state_code
     var stateCode: String? = null,//current_state_code
-    var applicantEmail: String? = null,//email
+    var applicantEmail: String? = "",//email
     var applicantDob: String? = null,//dob
     var gender: String? =null,// [gender] =>M/F/T
     var applicantsFMGName: String? =null,//[guardian_relation]=>mother/father/guardian
     var applicantsFMGCode: String? =null,//[guardian_relation]=>mother/father/guardian
-    var fatherName: String ?= null,//father_name
-    var motherName: String ?= null,//mother_name
-    var guardianName: String ?= null,//guardian_name
+    var fatherName: String ?= "",//father_name
+    var motherName: String ?= "",//mother_name
+    var guardianName: String ?= "",//guardian_name
     var relationWithPersonName: String ?= null,// [relation_pwd] => Self
     var relationWithPersonCode: String ?= null,// [relation_pwd] => Self
     var guardianContact: String ?= null,//guardian_contact
@@ -89,8 +89,8 @@ data class PwdApplication(
     var sign: String? =null,//signature_thumb_print
     // Proof id Identity Card
     var aadhaarNo: String ?= null,//aadhaar_no
-    var aadhaarCheckBox: Int? =null,//[share_aadhar_info] => 0/1(checked)
-    var aadhaarInfo: Int? =null,//[aadhar_info] => Yes(1)/No(0)
+    var aadhaarCheckBox: Int? =0,//[share_aadhar_info] => 0/1(checked)
+    var aadhaarInfo: Int? =0,//[aadhar_info] => Yes(1)/No(0)
     var aadhaarTag: Int? =null,
     var aadhaarEnrollmentNo: String ?= null,//aadhar_enrollment_no
     var aadhaarEnrollmentUploadSlip: String? =null,//aadhar_enrollment_slip
@@ -121,7 +121,7 @@ data class PwdApplication(
     var disabilityDueToCode: String ?= null,// [disability_due_to] => Accident
     var disabilityBirth: String? =null,//[disability_since_birth] => Since(No)/Birth(Yes)
     var disabilitySinceName: String ?= null,//[disability_since] => 2022
-    var disabilitySinceCode: String ?= null,//[disability_since] => 2022
+    var disabilitySinceCode: String ?= "",//[disability_since] => 2022
     var uploadDisabilityCertificate: String? =null,// disability_cert_doc
     var detailOfAuthorityName: String? =null,// [detail_of_authority] => Medical Authority
     var detailOfAuthorityCode: String? =null,// [detail_of_authority] => Medical Authority
@@ -130,11 +130,11 @@ data class PwdApplication(
     var dateOfCertificate: String ?= null,// [date_of_certificate] => 01/08/2023
     var disabilityPercentage: String ?= null,//[disability_per] => 30%
     //Hospital for assessment/issue of UDID card /disability certificate
-    var treatingHospitalTag: String? =null,//is_hospital_treating_other_state => 0/1
-    var hospitalStateId: String ?= null,//hospital_treating_state_code
-    var hospitalStateName: String ?= null,//hospital_treating_state_code
-    var hospitalDistrictId: String ?= null,//hospital_treating_district_code
-    var hospitalDistrictName: String ?= null,//hospital_treating_district_code
+    var treatingHospitalTag: String? ="0",//is_hospital_treating_other_state => 0/1
+    var hospitalStateId: String ?= "",//hospital_treating_state_code
+    var hospitalStateName: String ?= "",//hospital_treating_state_code
+    var hospitalDistrictId: String ?= "",//hospital_treating_district_code
+    var hospitalDistrictName: String ?= "",//hospital_treating_district_code
     var hospitalNameId: String ?= null,
     var hospitalNameName: String ?= null,//hospital_treating_id
     var hospitalCheckBox: String? =null,//declaration =>0/1

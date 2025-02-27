@@ -168,6 +168,7 @@ class SharedDataViewModel : ViewModel() {
         isHospitalTreatingOtherState: RequestBody?,//=> 0/1
         hospitalTreatingStateCode: RequestBody?,
         hospitalTreatingDistrictCode: RequestBody?,
+        hospitalTreatingId: RequestBody?,
         declaration: RequestBody?,//=>0/1
     ) {
         // can be launched in a separate asynchronous job
@@ -217,6 +218,7 @@ class SharedDataViewModel : ViewModel() {
                     isHospitalTreatingOtherState,
                     hospitalTreatingStateCode,
                     hospitalTreatingDistrictCode,
+                    hospitalTreatingId,
                     declaration
                 )
 
