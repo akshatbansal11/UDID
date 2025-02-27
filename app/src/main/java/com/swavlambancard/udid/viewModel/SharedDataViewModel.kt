@@ -14,6 +14,7 @@ import com.swavlambancard.udid.repository.Repository
 import com.swavlambancard.udid.utilities.CommonUtils
 import com.swavlambancard.udid.utilities.ProcessDialog
 import com.swavlambancard.udid.utilities.UDID
+import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,6 +32,7 @@ class SharedDataViewModel : ViewModel() {
     var savePWDFormResult = MutableLiveData<SavePWDFormResponse>()
     val userData = MutableLiveData(PwdApplication()) // Initialize with default fields
     val errors = MutableLiveData<String>()
+    val errors_api = MutableLiveData<String>()
 
     init {
         userData.value = PwdApplication() // Initialize with default empty fields
@@ -85,7 +87,7 @@ class SharedDataViewModel : ViewModel() {
                         when (response.code()) {
                             400, 403, 404 -> {//Bad Request & Invalid Credentials
                                 val errorBody = JSONObject(response.errorBody()!!.string())
-                                errors.postValue(
+                                errors_api.postValue(
                                     errorBody.getString("message") ?: "Bad Request"
                                 )
                                 dismissLoader()
@@ -93,7 +95,7 @@ class SharedDataViewModel : ViewModel() {
 
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
-                                errors.postValue(
+                                errors_api.postValue(
                                     errorBody.getString("message") ?: "Bad Request"
                                 )
                                 UDID.closeAndRestartApplication()
@@ -101,7 +103,7 @@ class SharedDataViewModel : ViewModel() {
                             }
 
                             500 -> {//Internal Server error
-                                errors.postValue("Internal Server error")
+                                errors_api.postValue("Internal Server error")
                                 dismissLoader()
                             }
 
@@ -113,7 +115,7 @@ class SharedDataViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 if (e is SocketTimeoutException) {
-                    errors.postValue("Time out Please try again")
+                    errors_api.postValue("Time out Please try again")
                 }
                 dismissLoader()
             }
@@ -237,7 +239,7 @@ class SharedDataViewModel : ViewModel() {
                         when (response.code()) {
                             400, 403, 404 -> {//Bad Request & Invalid Credentials
                                 val errorBody = JSONObject(response.errorBody()!!.string())
-                                errors.postValue(
+                                errors_api.postValue(
                                     errorBody.getString("message") ?: "Bad Request"
                                 )
                                 dismissLoader()
@@ -245,7 +247,7 @@ class SharedDataViewModel : ViewModel() {
 
                             401 -> {
                                 val errorBody = JSONObject(response.errorBody()!!.string())
-                                errors.postValue(
+                                errors_api.postValue(
                                     errorBody.getString("message") ?: "Bad Request"
                                 )
                                 UDID.closeAndRestartApplication()
@@ -253,7 +255,7 @@ class SharedDataViewModel : ViewModel() {
                             }
 
                             500 -> {//Internal Server error
-                                errors.postValue("Internal Server error")
+                                errors_api.postValue("Internal Server error")
                                 dismissLoader()
                             }
 
@@ -265,7 +267,7 @@ class SharedDataViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 if (e is SocketTimeoutException) {
-                    errors.postValue("Time out Please try again")
+                    errors_api.postValue("Time out Please try again")
                 }
                 dismissLoader()
             }
@@ -274,6 +276,7 @@ class SharedDataViewModel : ViewModel() {
 
     fun personalDetails(context: Context): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
+          Log.d("EMAIL",userData.value?.applicantEmail.toString())
         if (userData.value?.applicantFullName.toString().isEmpty()) {
             errors.postValue(context.getString(R.string.please_enter_applicant_s_full_name))
             return false
@@ -289,7 +292,7 @@ class SharedDataViewModel : ViewModel() {
         } else if (userData.value?.applicantEmail.toString().isEmpty()) {
             errors.postValue(context.getString(R.string.please_enter_an_email_address))
             return false
-        } else if (userData.value?.applicantEmail.toString().trim().matches(emailRegex)) {
+        } else if (!userData.value?.applicantEmail.toString().trim().matches(emailRegex)) {
             errors.postValue(context.getString(R.string.please_enter_a_valid_email_address))
             return false
         } else if (userData.value?.applicantDob.toString().isEmpty()) {
@@ -344,19 +347,131 @@ class SharedDataViewModel : ViewModel() {
             errors.postValue(context.getString(R.string.please_upload_photo))
             return false
         }
-        else if(userData.value?.sign.toString().isEmpty()){
-            errors.postValue(context.getString(R.string.please_upload_signature))
+        if (userData.value?.aadhaarTag == 2) {
+
+            errors.postValue(context.getString(R.string.do_you_have_aadhaar_card_))
+            return false
+        }
+        else if (userData.value?.aadhaarTag == 1) {
+            if (userData.value?.aadhaarNo.toString().isEmpty()) {
+
+                errors.postValue(context.getString(R.string.enter_aadhaar_number))
+                return false
+            } else if (userData.value?.aadhaarCheckBox==0) {
+                errors.postValue(context.getString(R.string.please_select_checkbox))
+                return false
+            }
+        }
+        else if (userData.value?.aadhaarTag == 0) {
+            if (userData.value?.aadhaarEnrollmentNo.toString().trim().isEmpty()) {
+
+                errors.postValue(context.getString(R.string.enter_aadhaar_enrollment_number))
+                return false
+            } else if (userData.value?.aadhaarEnrollmentNo.toString().trim().isEmpty()) {
+                errors.postValue(context.getString(R.string.upload_aadhaar_enrollment_slip_))
+                return false
+            }
+        }
+        if (userData.value?.identityProofName.toString().trim().isEmpty()) {
+
+            errors.postValue(context.getString(R.string.please_select_identity_proof))
+            return false
+        }
+        if (userData.value?.identityProofUpload.toString().trim().isEmpty()) {
+
+            errors.postValue(context.getString(R.string.please_upload_supporting_document))
+            return false
+        }
+        if (userData.value?.natureDocumentAddressProofName.toString().trim().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_upload_supporting_document))
+            return false
+        } else if (userData.value?.documentAddressProofPhoto.toString().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_select_address_proof))
+            return false
+        } else if (userData.value?.address.toString().isEmpty()) {
+
+            errors.postValue(context.getString(R.string.please_enter_correspondence_address))
+            return false
+        } else if (userData.value?.stateName.toString().trim().isEmpty()) {
+
+            errors.postValue(context.getString(R.string.please_select_state_uts))
+            return false
+        } else if (userData.value?.districtName.toString().trim().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_select_district))
+            return false
+        } else if (userData.value?.subDistrictName.toString().trim().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_select_city_sub_district_tehsil))
+            return false
+        } else if (userData.value?.pincodeName.toString().trim().isEmpty()) {
+            errors.postValue(context.getString(R.string.please_enter_pincode))
+            return false
+        }
+        if (userData.value?.disabilityTypeName.toString().isNullOrEmpty()) {
+
+            errors.postValue(context.getString(R.string.please_select_disability_type))
+            return false
+        }
+        else if (userData.value?.disabilityBirth == "0") {
+            errors.postValue(context.getString(R.string.please_check_disability_by_birth_yes_no))
+            return false
+        }
+        else if (userData.value?.disabilityBirth == "Since") {
+            if (userData.value?.disabilitySinceName.toString().isNullOrEmpty()) {
+                errors.postValue(context.getString(R.string.please_select_disability_since))
+                return false
+            }
+        }
+        else if (userData.value?.haveDisabilityCertificate  == 2) {
+            errors.postValue(context.getString(R.string.please_select_do_you_have_disability_certificate_yes_no))
+            return false
+        }
+        else if (userData.value?.haveDisabilityCertificate  == 1) {
+            if (userData.value?.uploadDisabilityCertificate .toString().isEmpty()) {
+
+                errors.postValue(context.getString(R.string.please_upload_disability_certificate))
+                return false
+            }
+            else if (userData.value?.serialNumber.toString().isNullOrEmpty()) {
+
+                errors.postValue(context.getString(R.string.please_enter_sr_no_registration_no_of_certificate))
+                return false
+            }
+            else if (userData.value?.dateOfCertificate.toString().isNullOrEmpty()) {
+
+                errors.postValue(context.getString(R.string.please_select_date_of_issuance_of_certificate))
+                return false
+            }
+            else if (userData.value?.detailOfAuthorityName.toString().isNullOrEmpty()) {
+
+                errors.postValue(context.getString(R.string.please_select_details_of_issuing_authority))
+                return false
+            }
+            else if (userData.value?.disabilityPercentage.toString().trim().isNotEmpty() &&
+                (userData.value?.disabilityPercentage.toString().toInt() < 0 || userData.value?.disabilityPercentage.toString().toInt() > 100)
+            ) {
+                errors.postValue(context.getString(R.string.enter_a_number_between_1_and_100))
+                return false
+            }
+        }
+        if (userData.value?.treatingHospitalTag == "1") {
+            if (userData.value?.hospitalStateName.toString().trim().isEmpty()) {
+
+                errors.postValue(context.getString(R.string.please_select_state_uts))
+                return false
+            } else if (userData.value?.hospitalDistrictName.toString().trim().isEmpty()) {
+                errors.postValue(context.getString(R.string.please_select_district))
+                return false
+            }
+        } else if (userData.value?.hospitalNameName.toString().trim().isEmpty()) {
+
+            errors.postValue(context.getString(R.string.select_hospital_name))
+            return false
+        } else if (userData.value?.hospitalCheckBox  == "false") {
+            errors.postValue(context.getString(R.string.you_must_check_the_box_to_confirm_that_you_have_read_and_understood_the_process))
             return false
         }
         return true
     }
 
 
-    fun valid(): Boolean {
-        if (userData.value?.applicantFullName.toString().isEmpty()) {
-            errors.postValue("Please enter Applicant Full Name")
-            return false
-        }
-        return true
-    }
 }

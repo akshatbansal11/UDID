@@ -246,6 +246,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.etApplicantEmailId?.addTextChangedListener {
             sharedViewModel.userData.value?.applicantEmail = it.toString()
         }
+        Log.d("EMAILFrag1", sharedViewModel.userData.value?.applicantEmail.toString())
         mBinding?.etApplicantDateOfBirth?.addTextChangedListener {
             sharedViewModel.userData.value?.applicantDob = it.toString()
         }
@@ -507,10 +508,10 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     String.format("%02d", selectedMonth + 1) // Add 1 to month and format
                 val formattedDay =
                     String.format("%02d", selectedDay) // Format day as two digits if needed
-                Log.d(
-                    "Date",
-                    "onDateSet: MM/dd/yyyy: $formattedMonth/$formattedDay/$selectedYear"
-                )
+//                Log.d(
+//                    "Date",
+//                    "onDateSet: MM/dd/yyyy: $formattedMonth/$formattedDay/$selectedYear"
+//                )
                 date = "$selectedYear-$formattedMonth-$formattedDay"
                 editText.text = "$formattedDay/$formattedMonth/$selectedYear"
             },
