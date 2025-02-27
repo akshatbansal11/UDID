@@ -595,88 +595,75 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     private fun valid(): Boolean {
         if (mBinding?.etDisabilityType?.text?.toString().isNullOrEmpty()) {
             mBinding?.llParent?.let {
-                showSnackbar(
-                    it,
-                    getString(R.string.please_select_disability_type)
-                )
+                showSnackbar(it, getString(R.string.please_select_disability_type))
             }
             return false
         }
-        else if (disabilityByBirthTag == "0") {
+
+        if (disabilityByBirthTag == "0") {
             mBinding?.llParent?.let {
-                showSnackbar(
-                    it,
-                    getString(R.string.please_check_disability_by_birth_yes_no)
-                )
+                showSnackbar(it, getString(R.string.please_check_disability_by_birth_yes_no))
             }
             return false
         }
-        else if (disabilityByBirthTag == "Since") {
+
+        if (disabilityByBirthTag == "Since") {
             if (mBinding?.etDisabilitySince?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_select_disability_since)
-                    )
+                    showSnackbar(it, getString(R.string.please_select_disability_since))
                 }
                 return false
             }
         }
-        else if (disabilityCertificateTag == 2) {
+
+        if (disabilityCertificateTag == 2) {
             mBinding?.llParent?.let {
-                showSnackbar(
-                    it,
-                    getString(R.string.please_select_do_you_have_disability_certificate_yes_no)
-                )
+                showSnackbar(it, getString(R.string.please_select_do_you_have_disability_certificate_yes_no))
             }
             return false
         }
-        else if (disabilityCertificateTag == 1) {
+
+        if (disabilityCertificateTag == 1) {
             if (mBinding?.etFileName?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(it, getString(R.string.please_upload_disability_certificate))
                 }
                 return false
             }
-            else if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
+
+            if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_enter_sr_no_registration_no_of_certificate)
-                    )
+                    showSnackbar(it, getString(R.string.please_enter_sr_no_registration_no_of_certificate))
                 }
                 return false
             }
-            else if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
+
+            if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_select_date_of_issuance_of_certificate)
-                    )
+                    showSnackbar(it, getString(R.string.please_select_date_of_issuance_of_certificate))
                 }
                 return false
             }
-            else if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
+
+            if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_select_details_of_issuing_authority)
-                    )
+                    showSnackbar(it, getString(R.string.please_select_details_of_issuing_authority))
                 }
                 return false
             }
-            else if (mBinding?.etDisabilityPercentage?.text.toString().trim().isNotEmpty() &&
-                (mBinding?.etDisabilityPercentage?.text.toString().toInt() < 0 || mBinding?.etDisabilityPercentage?.text.toString().toInt() > 100)
-            ) {
-                mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.enter_a_number_between_1_and_100)
-                    )
+            val percentageText = mBinding?.etDisabilityPercentage?.text.toString().trim()
+
+            if (percentageText.isNotEmpty()) {
+                val percentage = percentageText.toIntOrNull()
+                if (percentage == null || percentage < 0 || percentage > 100) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(it, getString(R.string.enter_a_number_between_1_and_100))
+                    }
+                    return false
                 }
-                return false
             }
         }
+
         return true
     }
 
