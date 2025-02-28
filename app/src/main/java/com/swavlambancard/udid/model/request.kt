@@ -68,6 +68,7 @@ data class PwdApplication(
     //aes encryption
     //disability type multiple array of string to json string and then encrypt
     //Personal Details
+    var application_number: String?=null,//application_number
     var applicantFullName: String? = null,// full_name
     var full_name_i18n: String? = null,// full_name_i18n
     var regionalLanguageCode: String? = null,// regional_language

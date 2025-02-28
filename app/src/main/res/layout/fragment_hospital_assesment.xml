@@ -159,6 +159,7 @@
                 app:drawableEndCompat="@drawable/ic_arrow_down" />
 
             <LinearLayout
+                android:id="@+id/llCbConfirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_15"

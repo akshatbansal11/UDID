@@ -31,10 +31,13 @@ import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.LanguageLocalize
+import com.swavlambancard.udid.model.UserData
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
+import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
+import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
@@ -131,6 +134,17 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
+        if(sharedViewModel.userData.value?.isFrom != "login"){
+            mBinding?.tvApplicationNumber?.showView()
+            mBinding?.tvApplicationNumber?.text = getString(
+                R.string.enrollment_no_application_number,
+                getPreferenceOfLogin(
+                    requireContext(),
+                    AppConstants.LOGIN_DATA,
+                    UserData::class.java
+                ).application_number.toString()
+            )
+        }
 
         mBinding?.etApplicantFullName?.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -151,7 +165,6 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             mBinding?.etApplicantFullName?.setText(userData.applicantFullName)
             mBinding?.etApplicantNameInRegionalLanguage?.setText(userData.full_name_i18n)
             selectedLanguageCode = userData.regionalLanguageCode
-            requireContext().toast(userData.regionalLanguageCode.toString())
             mBinding?.etApplicantMobileNo?.setText(userData.applicantMobileNo)
             mBinding?.etApplicantEmailId?.setText(userData.applicantEmail)
             mBinding?.etApplicantDateOfBirth?.text = userData.applicantDob
@@ -517,6 +530,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             },
             year, month, day
         )
+
+        dialog.datePicker.maxDate = System.currentTimeMillis()
         dialog.setCancelable(false)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()

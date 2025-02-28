@@ -19,11 +19,10 @@ import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.Filters
-import com.swavlambancard.udid.model.PwdApplication
 import com.swavlambancard.udid.ui.activity.LoginActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
-import com.swavlambancard.udid.utilities.EncryptionModel
+import com.swavlambancard.udid.utilities.Utility.dateConvertToFormatYYYYMMDD
 import com.swavlambancard.udid.utilities.Utility.getNameById
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
@@ -61,9 +60,9 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
         if(sharedViewModel.userData.value?.isFrom != "login"){
+            mBinding?.llCbConfirm?.hideView()
             hospitalListApi(sharedViewModel.userData.value?.districtCode.toString())
         }
-        Log.d("RBCHECK",sharedViewModel.userData.value?.treatingHospitalTag.toString())
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.treatingHospitalTag) {
@@ -308,9 +307,6 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     declaration = (sharedViewModel.userData.value?.hospitalCheckBox.toString()).toRequestBody(MultipartBody.FORM),
                     hospitalTreatingId=(sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(MultipartBody.FORM)
                 )
-
-//            Log.d("FragmentData5",sharedViewModel.userData.value.toString())
-//                println(sharedViewModel.userData)
             }
             sharedViewModel.errors.observe(requireActivity()) {
                 mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }

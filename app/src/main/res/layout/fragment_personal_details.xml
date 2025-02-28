@@ -58,6 +58,17 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvApplicationNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:visibility="gone"
+                android:fontFamily="@font/opensans_regular"
+                android:text="@string/na"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
                 android:id="@+id/tvApplicantFullName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

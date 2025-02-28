@@ -10,8 +10,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +33,7 @@ import com.swavlambancard.udid.ui.adapter.MultipleSelectionBottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
+import com.swavlambancard.udid.utilities.Utility.filterDropDownResultsAboveSelected
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
@@ -81,21 +80,21 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
 
-
-
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.disabilityBirth) {
-                "Birth"->{
+                "Birth" -> {
                     mBinding?.rbYes?.isChecked = true
                     mBinding?.tvDisabilitySince?.hideView()
                     mBinding?.etDisabilitySince?.hideView()
                 }
-                "Since"->{
+
+                "Since" -> {
                     mBinding?.rbNo?.isChecked = true
                     mBinding?.tvDisabilitySince?.showView()
                     mBinding?.etDisabilitySince?.showView()
                 }
-                else->{
+
+                else -> {
                     mBinding?.rbYes?.isChecked = false
                     mBinding?.rbNo?.isChecked = false
                     mBinding?.tvDisabilitySince?.hideView()
@@ -103,28 +102,30 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
             }
             when (userData.haveDisabilityCertificate) {
-                1->{
+                1 -> {
                     mBinding?.rbDisabilityCertificateYes?.isChecked = true
                     mBinding?.llDisabilityCertificateYes?.showView()
                 }
-                2->{
+
+                2 -> {
                     mBinding?.rbDisabilityCertificateNo?.isChecked = true
                     mBinding?.llDisabilityCertificateYes?.hideView()
                 }
-                else->{
+
+                else -> {
                     mBinding?.rbDisabilityCertificateYes?.isChecked = false
                     mBinding?.rbDisabilityCertificateNo?.isChecked = false
                     mBinding?.llDisabilityCertificateYes?.hideView()
                 }
             }
-            if(!sharedViewModel.userData.value?.disabilityTypeList.isNullOrEmpty()) {
+            if (!sharedViewModel.userData.value?.disabilityTypeList.isNullOrEmpty()) {
                 matchItemDisabilityTypeList = sharedViewModel.userData.value?.disabilityTypeList!!
-            }
-            else{
+            } else {
                 matchItemDisabilityTypeList.clear()
             }
             mBinding?.etDisabilityType?.text = userData.disabilityTypeName
-            disabilityTypeId = userData.disabilityTypeCode?.takeIf { it.isNotEmpty() } ?: arrayListOf()
+            disabilityTypeId =
+                userData.disabilityTypeCode?.takeIf { it.isNotEmpty() } ?: arrayListOf()
             mBinding?.etDisabilityDueTo?.text = userData.disabilityDueToName
             disabilityDueToId = userData.disabilityDueToCode
             mBinding?.etDisabilitySince?.text = userData.disabilitySinceName
@@ -143,9 +144,11 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 R.id.rbYes -> {
                     "Birth"
                 }
+
                 R.id.rbNo -> {
                     "Since"
                 }
+
                 else -> {
                     "0"
                 }
@@ -157,9 +160,11 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 R.id.rbDisabilityCertificateYes -> {
                     1
                 }
+
                 R.id.rbDisabilityCertificateNo -> {
                     0
                 }
+
                 else -> {
                     2
                 }
@@ -187,7 +192,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.etSelectIssuingAuthority?.addTextChangedListener {
             sharedViewModel.userData.value?.detailOfAuthorityName = it.toString()
         }
-        mBinding?.etDisabilityPercentage?.addTextChangedListener{
+        mBinding?.etDisabilityPercentage?.addTextChangedListener {
             sharedViewModel.userData.value?.disabilityPercentage = it.toString()
         }
 //        {
@@ -225,8 +230,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             )
                         )
                         disabilityDueToList.addAll(userResponseModel._result)
-
                     }
+
                     "disabilitySince" -> {
                         disabilitySinceList.clear()
                         disabilitySinceList.add(
@@ -235,9 +240,18 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                                 getString(R.string.select_disability_since)
                             )
                         )
-                        disabilitySinceList.addAll(userResponseModel._result)
-
+                        if (sharedViewModel.userData.value?.applicantDob.toString().isEmpty()) {
+                            disabilitySinceList.addAll(userResponseModel._result)
+                        }
+                        else {
+                            val filteredList = filterDropDownResultsAboveSelected(
+                                userResponseModel._result,
+                                sharedViewModel.userData.value?.applicantDob.toString()
+                            )
+                            disabilitySinceList.addAll(filteredList)
+                        }
                     }
+
                     "detailsOfIssuingAuthority" -> {
                         detailsOfIssuingAuthorityList.clear()
                         detailsOfIssuingAuthorityList.add(
@@ -321,7 +335,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             date = ""
             mBinding?.etSelectIssuingAuthority?.text = ""
             detailsOfIssuingAuthorityId = ""
-            sharedViewModel.userData.value?.detailOfAuthorityCode=""
+            sharedViewModel.userData.value?.detailOfAuthorityCode = ""
             mBinding?.etDisabilityPercentage?.setText("")
         }
 
@@ -395,16 +409,18 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             disabilityTypeApi()
         }
         setAdapter(view, disabilityTypeList)
-        Log.d("AdapterData2",disabilityTypeId.toString())
+        Log.d("AdapterData2", disabilityTypeId.toString())
         sharedViewModel.userData.value?.disabilityTypeCode = disabilityTypeId
         tvClose.setOnClickListener {
 
 
-            matchItemDisabilityTypeList = multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
+            matchItemDisabilityTypeList =
+                multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
             sharedViewModel.userData.value?.disabilityTypeList = matchItemDisabilityTypeList
             if (matchItemDisabilityTypeList.size > 0)
-                mBinding?.etDisabilityType?.text = matchItemDisabilityTypeList.joinToString(", ") { it.name }
-             else {
+                mBinding?.etDisabilityType?.text =
+                    matchItemDisabilityTypeList.joinToString(", ") { it.name }
+            else {
                 mBinding?.etDisabilityType?.hint = getString(R.string.choose_disability_types)
             }
 
@@ -424,8 +440,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             requireContext(),
             list,
             matchItemDisabilityTypeList,
-        ) {
-                selectedItem ->
+        ) { selectedItem ->
             if (disabilityTypeId.contains(selectedItem)) {
                 disabilityTypeId.remove(selectedItem) // Remove if already present
             } else {
@@ -537,7 +552,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             selectedTextView?.text = ""
                         } else {
                             disabilityDueToId = id
-                            sharedViewModel.userData.value?.disabilityDueToCode = disabilityDueToId.toString()
+                            sharedViewModel.userData.value?.disabilityDueToCode =
+                                disabilityDueToId.toString()
                         }
                     }
 
@@ -546,7 +562,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             selectedTextView?.text = ""
                         } else {
                             disabilitySinceId = id
-                            sharedViewModel.userData.value?.disabilitySinceCode = disabilitySinceId.toString()
+                            sharedViewModel.userData.value?.disabilitySinceCode =
+                                disabilitySinceId.toString()
                         }
                     }
 
@@ -555,7 +572,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             selectedTextView?.text = ""
                         } else {
                             detailsOfIssuingAuthorityId = id
-                            sharedViewModel.userData.value?.detailOfAuthorityCode = detailsOfIssuingAuthorityId.toString()
+                            sharedViewModel.userData.value?.detailOfAuthorityCode =
+                                detailsOfIssuingAuthorityId.toString()
                         }
                     }
                 }
@@ -621,7 +639,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
 
         if (disabilityCertificateTag == 2) {
             mBinding?.llParent?.let {
-                showSnackbar(it, getString(R.string.please_select_do_you_have_disability_certificate_yes_no))
+                showSnackbar(
+                    it,
+                    getString(R.string.please_select_do_you_have_disability_certificate_yes_no)
+                )
             }
             return false
         }
@@ -636,14 +657,20 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
 
             if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
-                    showSnackbar(it, getString(R.string.please_enter_sr_no_registration_no_of_certificate))
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_enter_sr_no_registration_no_of_certificate)
+                    )
                 }
                 return false
             }
 
             if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
                 mBinding?.llParent?.let {
-                    showSnackbar(it, getString(R.string.please_select_date_of_issuance_of_certificate))
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_select_date_of_issuance_of_certificate)
+                    )
                 }
                 return false
             }
