@@ -31,10 +31,13 @@ import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.LanguageLocalize
+import com.swavlambancard.udid.model.UserData
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
+import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
+import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
@@ -46,6 +49,7 @@ import com.swavlambancard.udid.viewModel.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -493,7 +497,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         }
 
         val translatedText = withContext(Dispatchers.IO) {
-            Translator.getTranslation("en", selectedLanguageCode!!, inputText)// this is the main function responsible to give the translation so earlier on we were using a callback function inside main thread now we are using suspendcancelable coroutine which solves the blocking issue
+            Translator.getTranslation("en", selectedLanguageCode!!, inputText)// this is the main function responsible to give the translation so earlier on we were using a callback function inside main thread now we are using suspend cancelable coroutine which solves the blocking issue
         }
 
         withContext(Dispatchers.Main) {
