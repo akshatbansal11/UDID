@@ -31,13 +31,10 @@ import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.LanguageLocalize
-import com.swavlambancard.udid.model.UserData
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
-import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
-import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
@@ -122,9 +119,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         LanguageLocalize("19", "bn", "Bengali")    // West Bengal
     )
 
-    private var selectedLanguageCode: String? = null
-    private val handler = android.os.Handler()
-    private var translationRunnable: Runnable? = null
+        private var selectedLanguageCode: String? = null
+        private val handler = android.os.Handler()
+        private var translationRunnable: Runnable? = null
 
     override val layoutId: Int
         get() = R.layout.fragment_personal_details
@@ -151,7 +148,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 translationRunnable?.let { handler.removeCallbacks(it) } // Cancel previous task
 
                 translationRunnable = Runnable {
-                    translateText(s.toString().trim())
+                    lifecycleScope.launch {
+                        translateText(s.toString().trim())
+                    }
                 }
 
                 handler.postDelayed(translationRunnable!!, 1500) // Delay translation by 500ms
@@ -165,6 +164,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             mBinding?.etApplicantFullName?.setText(userData.applicantFullName)
             mBinding?.etApplicantNameInRegionalLanguage?.setText(userData.full_name_i18n)
             selectedLanguageCode = userData.regionalLanguageCode
+            requireContext().toast(userData.regionalLanguageCode.toString())
             mBinding?.etApplicantMobileNo?.setText(userData.applicantMobileNo)
             mBinding?.etApplicantEmailId?.setText(userData.applicantEmail)
             mBinding?.etApplicantDateOfBirth?.text = userData.applicantDob
@@ -471,18 +471,34 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             )
         )
     }
-
-    private fun translateText(inputText: String) {
+//    private fun translateText(inputText: String) {
+//        if (inputText.isEmpty() || selectedLanguageCode.isNullOrEmpty()) {
+//            mBinding?.etApplicantNameInRegionalLanguage?.setText("")
+//            return
+//        }
+//
+//        CoroutineScope(Dispatchers.Main).launch {
+//            Translator.getTranslation("en",selectedLanguageCode!!,inputText) { translatedText ->
+//                Log.d("Translation", "Translated: $translatedText")
+//                mBinding?.etApplicantNameInRegionalLanguage?.setText(translatedText)
+//            }
+//        }
+//    }// old implementation
+    private suspend fun translateText(inputText: String) {
         if (inputText.isEmpty() || selectedLanguageCode.isNullOrEmpty()) {
-            mBinding?.etApplicantNameInRegionalLanguage?.setText("")
+            withContext(Dispatchers.Main) {// all the ui updations are taking place in ui thread
+                mBinding?.etApplicantNameInRegionalLanguage?.setText("")
+            }
             return
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            Translator.getTranslation("en",selectedLanguageCode!!,inputText) { translatedText ->
-                Log.d("Translation", "Translated: $translatedText")
-                mBinding?.etApplicantNameInRegionalLanguage?.setText(translatedText)
-            }
+        val translatedText = withContext(Dispatchers.IO) {
+            Translator.getTranslation("en", selectedLanguageCode!!, inputText)// this is the main function responsible to give the translation so earlier on we were using a callback function inside main thread now we are using suspendcancelable coroutine which solves the blocking issue
+        }
+
+        withContext(Dispatchers.Main) {
+            Log.d("Translation", "Translated: $translatedText")
+            mBinding?.etApplicantNameInRegionalLanguage?.setText(translatedText)
         }
     }
 
@@ -605,7 +621,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                 // Cancel any pending translation and introduce delay
                                 translationRunnable?.let { handler.removeCallbacks(it) }
                                 translationRunnable = Runnable {
-                                    translateText(mBinding!!.etApplicantFullName.text.toString().trim())
+                                    lifecycleScope.launch {
+                                        translateText(mBinding!!.etApplicantFullName.text.toString().trim())
+                                    }
                                 }
                                 handler.postDelayed(translationRunnable!!, 500) // Delay translation by 500ms
                             }

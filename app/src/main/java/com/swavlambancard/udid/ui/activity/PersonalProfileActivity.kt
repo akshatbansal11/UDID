@@ -44,14 +44,17 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         isFrom = intent.extras?.getString(AppConstants.IS_FROM)
         check = intent.extras?.getInt(AppConstants.CHECK)
         sharedViewModel?.userData?.value?.isFrom = intent.extras?.getString(AppConstants.IS_FROM)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         if (isFrom == "login") {
             replaceFragment(PersonalDetailFragment())
         } else {
             editApi()
         }
     }
-
-
     override fun setVariables() {
     }
 
@@ -222,7 +225,9 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragFrame, fragment)
             .addToBackStack(null)
-            .commit()
+            .setReorderingAllowed(false)
+            .commitAllowingStateLoss()
+//            .commit()
         updateImagesForCurrentFragment()
     }
 
