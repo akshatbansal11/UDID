@@ -1,6 +1,6 @@
 package com.swavlambancard.udid.ui.fragments
 
-import Translator
+import com.swavlambancard.udid.utilities.Translator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -10,14 +10,12 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.Editable
-import android.text.Html
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -46,7 +44,6 @@ import com.swavlambancard.udid.utilities.showView
 import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -482,7 +479,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 //        }
 //
 //        CoroutineScope(Dispatchers.Main).launch {
-//            Translator.getTranslation("en",selectedLanguageCode!!,inputText) { translatedText ->
+//            com.swavlambancard.udid.utilities.Translator.getTranslation("en",selectedLanguageCode!!,inputText) { translatedText ->
 //                Log.d("Translation", "Translated: $translatedText")
 //                mBinding?.etApplicantNameInRegionalLanguage?.setText(translatedText)
 //            }
