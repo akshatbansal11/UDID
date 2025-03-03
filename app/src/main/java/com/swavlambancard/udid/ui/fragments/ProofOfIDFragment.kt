@@ -28,7 +28,9 @@ import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.getNameById
+import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
+import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
@@ -104,6 +106,30 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             identityProofId = userData.identityProofId
             mBinding?.etFileNameIdentityProof?.text = userData.identityProofUpload
             mBinding?.etFileNameEnrollmentSlip?.text = userData.aadhaarEnrollmentUploadSlip
+            if(sharedViewModel.userData.value?.isFrom != "login") {
+                mBinding?.etFileNameIdentityProof?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        userData.identityProofUpload.toString()
+                    )
+                }
+                mBinding?.etFileNameIdentityProof?.setOnClickListener {
+                    openFile(userData.identityProofUpload.toString(),requireContext())
+                }
+                mBinding?.etFileNameEnrollmentSlip?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        userData.aadhaarEnrollmentUploadSlip.toString()
+                    )
+                }
+                mBinding?.etFileNameEnrollmentSlip?.setOnClickListener {
+                    openFile(userData.aadhaarEnrollmentUploadSlip.toString(),requireContext())
+                }
+            }
+            else{
+                mBinding?.etFileNameIdentityProof?.text = userData.identityProofUpload
+                mBinding?.etFileNameEnrollmentSlip?.text = userData.aadhaarEnrollmentUploadSlip
+            }
         }
 
         mBinding?.rgAadhaar?.setOnCheckedChangeListener { _, checkedId ->
@@ -156,7 +182,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     identityProofList.add(
                         DropDownResult(
                             "0",
-                            getString(R.string.select_identity_proof)
+                            "Select Identity Proof"
                         )
                     )
                     identityProofList.addAll(userResponseModel._result)
@@ -197,11 +223,6 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
 
     inner class ClickActions {
         fun next(view: View) {
-//            Log.d("FragmentData2",valid().toString())
-//            Log.d("FragmentData2",sharedViewModel.userData.value.toString())
-//            sharedViewModel.userData.observe(viewLifecycleOwner){
-//                Log.d("FragmentData2",it.toString())
-//            }
             if (valid()) {
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     ProofOfAddressFragment()
@@ -393,7 +414,17 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                 }
                 return false
-            } else if (mBinding?.etFileNameEnrollmentSlip?.text.toString().trim().isEmpty()) {
+            }
+            else if (mBinding?.etAadhaarEnrollment?.text.toString().trim().length !in 12..16) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.aadhaar_enrollment_number_must_be_between_12_and_16_digits)
+                    )
+                }
+                return false
+            }
+            else if (mBinding?.etFileNameEnrollmentSlip?.text.toString().trim().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -531,6 +562,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 requireContext(),
                 EncryptionModel.aesEncrypt("identitity_proof_file")
                     .toRequestBody(MultipartBody.FORM),
+                EncryptionModel.aesEncrypt("mobile").toRequestBody(MultipartBody.FORM),
                 body
             )
         } else if (document == 2) {
@@ -538,6 +570,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 requireContext(),
                 EncryptionModel.aesEncrypt("aadhar_enrollment_slip")
                     .toRequestBody(MultipartBody.FORM),
+                EncryptionModel.aesEncrypt("mobile").toRequestBody(MultipartBody.FORM),
                 body
             )
         }

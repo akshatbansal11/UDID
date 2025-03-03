@@ -95,17 +95,18 @@ data class PwdApplication(
     var aadhaarTag: Int? =null,
     var aadhaarEnrollmentNo: String ?= null,//aadhar_enrollment_no
     var aadhaarEnrollmentUploadSlip: String? =null,//aadhar_enrollment_slip
+    var aadhaarEnrollmentUploadSlipPath: String? =null,//aadhar_enrollment_slip
     var identityProofId: String ?= null,//identitity_proof_id
     var identityProofName: String ?= null,//identitity_proof_id
     var identityProofUpload: String? =null,//identitity_proof_file
+    var identityProofUploadPath: String? =null,//identitity_proof_file
 
     //Address For Correspondence
     var natureDocumentAddressProofName: String ?= null,//address_proof_id
     var natureDocumentAddressProofCode: String ?= null,//address_proof_id
     var documentAddressProofPhoto: String? =null,//address_proof_file
+    var documentAddressProofPhotoPath: String? =null,//address_proof_file
     var address: String? =null,//current_address
-    var stateName1: String ?= null,//current_state_code
-    var stateCode1: String ?= null,//current_state_code
     var districtName: String ?= null,//current_district_code
     var districtCode: String ?= null,//current_district_code
     var subDistrictName: String ?= null,//current_subdistrict_code
@@ -124,6 +125,7 @@ data class PwdApplication(
     var disabilitySinceName: String ?= null,//[disability_since] => 2022
     var disabilitySinceCode: String ?= "",//[disability_since] => 2022
     var uploadDisabilityCertificate: String? =null,// disability_cert_doc
+    var uploadDisabilityCertificatePath: String? =null,// disability_cert_doc
     var detailOfAuthorityName: String? =null,// [detail_of_authority] => Medical Authority
     var detailOfAuthorityCode: String? =null,// [detail_of_authority] => Medical Authority
     var serialNumber: String? =null,//  [serial_number] => FD3245
@@ -140,7 +142,10 @@ data class PwdApplication(
     var hospitalNameName: String ?= null,//hospital_treating_id
     var hospitalCheckBox: String? =null,//declaration =>0/1
     // extra key
-    var isFrom : String?= null
+    var isFrom : String?= null,
+    var check : String?= null,
+    var photoPath:String?=null,
+    var signaturePath:String?=null
 )
 
 data class EditProfileRequest(

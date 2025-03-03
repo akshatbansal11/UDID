@@ -28,7 +28,7 @@ class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() 
     override val layoutId: Int
         get() = R.layout.activity_apply_for_udid_form
     var date: String? = null
-    private var isFrom: Int? = null
+    private var isFrom: String? = null
     private var viewModel = ViewModel()
     private var mBinding: ActivityApplyForUdidFormBinding? = null
 
@@ -42,14 +42,14 @@ class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() 
                     mBinding?.llUdidCardReject?.hideView()
                     mBinding?.llUdidCardPending?.hideView()
                     mBinding?.llUdidCard?.hideView()
-                    isFrom = 1
+                    isFrom = "1"
                 }
 
                 R.id.radio_option2 -> {
                     mBinding?.llUdidCardReject?.hideView()
                     mBinding?.llUdidCardPending?.hideView()
                     mBinding?.llUdidCard?.hideView()
-                    isFrom = 2
+                    isFrom = "2"
                 }
 
                 R.id.radio_option3 -> {
@@ -59,12 +59,14 @@ class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() 
                     date = ""
                     mBinding?.etDobPending?.text = ""
                     mBinding?.etDob?.text = ""
+                    isFrom = "3"
                 }
 
                 R.id.radio_option4 -> {
                     mBinding?.llUdidCardReject?.hideView()
                     mBinding?.llUdidCardPending?.hideView()
                     mBinding?.llUdidCard?.showView()
+                    isFrom = "4"
                 }
 
                 R.id.radio_option5 -> {
@@ -74,6 +76,7 @@ class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() 
                     date = ""
                     mBinding?.etDobPending?.text = ""
                     mBinding?.etDob?.text = ""
+                    isFrom = "5"
 
                 }
             }
@@ -88,7 +91,11 @@ class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() 
         viewModel.rejectApplicationRequestResult.observe(this) {
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
-                toast(userResponseModel.message)
+                startActivity(Intent(this, PersonalProfileActivity::class.java)
+                    .putExtra(AppConstants.IS_FROM,"rejectAndPending")
+                    .putExtra(AppConstants.APPLICATION_NO,userResponseModel._result[0].application_number)
+                    .putExtra(AppConstants.IS_FROM, "login")
+                    .putExtra(AppConstants.CHECK, isFrom))
             } else {
                 mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
             }
@@ -96,7 +103,11 @@ class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() 
         viewModel.pendingApplicationWiseResult.observe(this) {
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
-                toast(userResponseModel.message)
+                startActivity(Intent(this, PersonalProfileActivity::class.java)
+                    .putExtra(AppConstants.IS_FROM,"rejectAndPending")
+                    .putExtra(AppConstants.APPLICATION_NO,userResponseModel._result[0].application_number)
+                    .putExtra(AppConstants.IS_FROM, "login")
+                    .putExtra(AppConstants.CHECK, isFrom))
             } else {
                 mBinding?.clParent?.let { it1 -> showSnackbar(it1, userResponseModel.message) }
             }
@@ -149,16 +160,13 @@ class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() 
 
                 R.id.radio_option3 -> {
                     rejectApplicationRequestApi()
-
                 }
 
                 R.id.radio_option4 -> {
-                    startActivity(
-                        Intent(
-                            this@ApplyForUdidFormActivity,
-                            PwdLoginActivity::class.java
-                        )
-                    )
+                    val intent = Intent(this@ApplyForUdidFormActivity,PwdLoginActivity::class.java)
+                    intent.flags =
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
                 }
 
                 R.id.radio_option5 -> {

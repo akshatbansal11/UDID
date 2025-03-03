@@ -154,6 +154,9 @@ data class HospitalDistrict(
 data class HospitalState(
     val name: String
 )
+data class Village(
+    val village_name:String?
+)
 
 data class State(
     val name: String
@@ -235,6 +238,7 @@ data class EditApplication(
     val have_disability_cert: Boolean,
     val hospital: Hospital,
     val hospital_district: HospitalDistrict,
+    val village: Village?,
     val hospital_state: HospitalState,
     val hospital_treating_district_code: String,
     val hospital_treating_id: String,
@@ -267,3 +271,17 @@ data class SavePWDFormResponse(
 data class ApplicationNoResult(
     val application_number: String
 )
+
+data class RejectAndPendingResponse(
+    val _result: List<RejectAndPendingResult>,
+    val _resultflag: Int,
+    val message: String
+)
+
+data class RejectAndPendingResult(
+    val api_request_type: String,
+    val application_number: String,
+    val application_type: Int,
+    val id: Int
+)
+

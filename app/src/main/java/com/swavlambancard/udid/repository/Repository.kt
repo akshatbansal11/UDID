@@ -14,6 +14,7 @@ import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
 import com.swavlambancard.udid.model.PendingApplicationWise
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.RejectAndPendingResponse
 import com.swavlambancard.udid.model.RejectApplicationRequest
 import com.swavlambancard.udid.model.SavePWDFormResponse
 import com.swavlambancard.udid.model.UploadFileResponse
@@ -352,10 +353,12 @@ object Repository {
 
     suspend fun uploadFile(
         documentType: RequestBody?,
+        type: RequestBody?,
         document: MultipartBody.Part?,
     ): Response<UploadFileResponse> {
         return apiLogin.getUploadFile(
             documentType,
+            type,
             document
         )
     }
@@ -369,6 +372,8 @@ object Repository {
     }
 
     suspend fun savePwdForm(
+        type: RequestBody?,
+        applicationNumber: RequestBody?,
         fullName: RequestBody?,
         regionalFullName: RequestBody?,
         regionalLanguage: RequestBody?,
@@ -377,6 +382,7 @@ object Repository {
         dob: RequestBody?,
         gender: RequestBody?,//=>M/F/T
         guardianRelation: RequestBody?,//Mother/Father/Guardian
+        relationPwd: RequestBody?,
         fatherName: RequestBody?,
         motherName: RequestBody?,
         guardianName: RequestBody?,
@@ -419,6 +425,8 @@ object Repository {
         declaration: RequestBody?,//=>0/1
     ): Response<SavePWDFormResponse> {
         return api.savePwdForm(
+            type,
+            applicationNumber,
             fullName,
             regionalFullName,
             regionalLanguage,
@@ -427,6 +435,7 @@ object Repository {
             dob,
             gender,
             guardianRelation,
+            relationPwd,
             fatherName,
             motherName,
             guardianName,
@@ -465,10 +474,111 @@ object Repository {
             declaration
         )
     }
+    suspend fun updatePwdForm(
+        type: RequestBody?,
+        applicationNumber: RequestBody?,
+        fullName: RequestBody?,
+        regionalFullName: RequestBody?,
+        regionalLanguage: RequestBody?,
+        mobile: RequestBody?,
+        email: RequestBody?,
+        dob: RequestBody?,
+        gender: RequestBody?,//=>M/F/T
+        guardianRelation: RequestBody?,//Mother/Father/Guardian
+        relationPwd: RequestBody?,
+        fatherName: RequestBody?,
+        motherName: RequestBody?,
+        guardianName: RequestBody?,
+        guardianContact: RequestBody?,
+        photo: RequestBody?,
+        sign: RequestBody?,
+        // Proof id Identity Card
+        aadhaarNo: RequestBody?,
+        shareAadhaarInfo: RequestBody?,//0/1
+        aadhaarInfo: RequestBody?,//Yes(1)/No(0)
+        aadhaarEnrollmentNo: RequestBody?,
+        aadhaarEnrollmentSlip: RequestBody?,
+        identityProofId: RequestBody?,
+        identityProofFile: RequestBody?,
+        //Address For Correspondence
+        addressProofId: RequestBody?,
+        addressProofFile: RequestBody?,
+        currentAddress: RequestBody?,
+        currentStateCode: RequestBody?,
+        currentDistrictCode: RequestBody?,
+        currentSubDistrictCode: RequestBody?,
+        currentVillageCode: RequestBody?,
+        currentPincode: RequestBody?,
+        //Disability Details
+        disabilityTypeId: RequestBody?,
+        disabilityDueTo: RequestBody?,
+        disabilitySinceBirth: RequestBody?,//Since(No)/Birth(Yes)
+        disabilitySince: RequestBody?,
+        haveDisabilityCert: RequestBody?,//1(yes)/0(no)
+        disabilityCertDoc: RequestBody?,
+        serialNumber: RequestBody?,
+        dateOfCertificate: RequestBody?,
+        detailOfAuthority: RequestBody?,
+        disabilityPer: RequestBody?,
+        //Hospital for assessment
+        isHospitalTreatingOtherState: RequestBody?,//=> 0/1
+        hospitalTreatingStateCode: RequestBody?,
+        hospitalTreatingDistrictCode: RequestBody?,
+        hospitalTreatingId: RequestBody?
+    ): Response<SavePWDFormResponse> {
+        return api.updatePwdForm(
+            type,
+            applicationNumber,
+            fullName,
+            regionalFullName,
+            regionalLanguage,
+            mobile,
+            email,
+            dob,
+            gender,
+            guardianRelation,
+            relationPwd,
+            fatherName,
+            motherName,
+            guardianName,
+            guardianContact,
+            photo,
+            sign,
+            aadhaarNo,
+            shareAadhaarInfo,
+            aadhaarInfo,
+            aadhaarEnrollmentNo,
+            aadhaarEnrollmentSlip,
+            identityProofId,
+            identityProofFile,
+            addressProofId,
+            addressProofFile,
+            currentAddress,
+            currentStateCode,
+            currentDistrictCode,
+            currentSubDistrictCode,
+            currentVillageCode,
+            currentPincode,
+            disabilityTypeId,
+            disabilityDueTo,
+            disabilitySinceBirth,
+            disabilitySince,
+            haveDisabilityCert,
+            disabilityCertDoc,
+            serialNumber,
+            dateOfCertificate,
+            detailOfAuthority,
+            disabilityPer,
+            isHospitalTreatingOtherState,
+            hospitalTreatingStateCode,
+            hospitalTreatingDistrictCode,
+            hospitalTreatingId
+        )
+    }
 
     suspend fun rejectApplicationRequest(
         request: RejectApplicationRequest,
-    ): Response<CommonResponse> {
+    ): Response<RejectAndPendingResponse> {
         return api.rejectApplicationRequest(
             request
         )
@@ -476,7 +586,7 @@ object Repository {
 
     suspend fun pendingApplicationWise(
         request: PendingApplicationWise,
-    ): Response<CommonResponse> {
+    ): Response<RejectAndPendingResponse> {
         return api.pendingApplicationWise(
             request
         )

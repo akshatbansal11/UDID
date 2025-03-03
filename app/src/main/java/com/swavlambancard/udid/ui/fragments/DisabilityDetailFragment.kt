@@ -34,7 +34,10 @@ import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.filterDropDownResultsAboveSelected
+import com.swavlambancard.udid.utilities.Utility.filterMatchingIds
+import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
+import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
@@ -79,7 +82,16 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-
+        if(sharedViewModel.userData.value?.isFrom != "login"){
+            disabilityTypeApi()
+        }
+        if(sharedViewModel.userData.value?.check == "1"){
+            mBinding?.llDisabilityCertificate?.showView()
+        }
+        else if(sharedViewModel.userData.value?.check == "2"){
+            mBinding?.llDisabilityCertificate?.hideView()
+            sharedViewModel.userData.value?.haveDisabilityCertificate = 0
+        }
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.disabilityBirth) {
                 "Birth" -> {
@@ -107,7 +119,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     mBinding?.llDisabilityCertificateYes?.showView()
                 }
 
-                2 -> {
+                0 -> {
                     mBinding?.rbDisabilityCertificateNo?.isChecked = true
                     mBinding?.llDisabilityCertificateYes?.hideView()
                 }
@@ -130,7 +142,20 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             disabilityDueToId = userData.disabilityDueToCode
             mBinding?.etDisabilitySince?.text = userData.disabilitySinceName
             disabilitySinceId = userData.disabilitySinceCode
-            mBinding?.etFileName?.text = userData.uploadDisabilityCertificate
+            if(sharedViewModel.userData.value?.isFrom != "login") {
+                mBinding?.etFileName?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        userData.uploadDisabilityCertificate.toString()
+                    )
+                }
+                mBinding?.etFileName?.setOnClickListener {
+                    openFile(userData.uploadDisabilityCertificate.toString(),requireContext())
+                }
+            }
+            else{
+                mBinding?.etFileName?.text = userData.uploadDisabilityCertificate
+            }
             disabilityCertificateName = userData.uploadDisabilityCertificate
             mBinding?.etRegistrationNoOfCertificate?.setText(userData.serialNumber)
             mBinding?.etDateOfIssuanceOfCertificate?.text = userData.dateOfCertificate
@@ -195,9 +220,6 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.etDisabilityPercentage?.addTextChangedListener {
             sharedViewModel.userData.value?.disabilityPercentage = it.toString()
         }
-//        {
-//            sharedViewModel.userData.value?.disabilityPercentage = it.toString()
-//        }
     }
 
     override fun setVariables() {
@@ -211,6 +233,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     "Disabilitytypes" -> {
                         disabilityTypeList.clear()
                         disabilityTypeList.addAll(userResponseModel._result)
+                        matchItemDisabilityTypeList = filterMatchingIds(disabilityTypeId, disabilityTypeList)
                     }
                 }
                 multipleSelectionBottomSheetAdapter?.notifyDataSetChanged()
@@ -226,7 +249,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                         disabilityDueToList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.select_disability_due_to)
+                                "Select Disability Due To"
                             )
                         )
                         disabilityDueToList.addAll(userResponseModel._result)
@@ -237,7 +260,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                         disabilitySinceList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.select_disability_since)
+                                "Select Disability Since"
                             )
                         )
                         if (sharedViewModel.userData.value?.applicantDob.toString().isEmpty()) {
@@ -257,7 +280,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                         detailsOfIssuingAuthorityList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.select_issuing_authority)
+                                "Select Issuing Authority"
                             )
                         )
                         detailsOfIssuingAuthorityList.addAll(userResponseModel._result)
@@ -493,6 +516,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             },
             year, month, day
         )
+        dialog.datePicker.maxDate = System.currentTimeMillis()
         dialog.setCancelable(false)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
@@ -805,6 +829,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         viewModel.uploadFile(
             requireContext(),
             EncryptionModel.aesEncrypt("disability_cert_doc").toRequestBody(MultipartBody.FORM),
+            EncryptionModel.aesEncrypt("mobile").toRequestBody(MultipartBody.FORM),
             body
         )
     }
