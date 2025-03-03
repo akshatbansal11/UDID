@@ -14,7 +14,6 @@ import com.swavlambancard.udid.repository.Repository
 import com.swavlambancard.udid.utilities.CommonUtils
 import com.swavlambancard.udid.utilities.ProcessDialog
 import com.swavlambancard.udid.utilities.UDID
-import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -30,6 +29,7 @@ class SharedDataViewModel : ViewModel() {
     private var job: Job? = null
     var editProfileResult = MutableLiveData<EditProfileResponse>()
     var savePWDFormResult = MutableLiveData<SavePWDFormResponse>()
+    var updatePWDFormResult = MutableLiveData<SavePWDFormResponse>()
     val userData = MutableLiveData(PwdApplication()) // Initialize with default fields
     val errors = MutableLiveData<String>()
     val errors_api = MutableLiveData<String>()
@@ -124,6 +124,8 @@ class SharedDataViewModel : ViewModel() {
 
     fun savePWDForm(
         context: Context,
+        type: RequestBody?,
+        applicationNumber: RequestBody?,
         fullName: RequestBody?,
         regionalFullName: RequestBody?,
         regionalLanguage: RequestBody?,
@@ -132,6 +134,7 @@ class SharedDataViewModel : ViewModel() {
         dob: RequestBody?,
         gender: RequestBody?,//=>M/F/T
         guardianRelation: RequestBody?,//Mother/Father/Guardian
+        relationPwd: RequestBody?,
         fatherName: RequestBody?,
         motherName: RequestBody?,
         guardianName: RequestBody?,
@@ -178,6 +181,8 @@ class SharedDataViewModel : ViewModel() {
         job = scope.launch {
             try {
                 val response = repository.savePwdForm(
+                    type,
+                    applicationNumber,
                     fullName,
                     regionalFullName,
                     regionalLanguage,
@@ -186,6 +191,7 @@ class SharedDataViewModel : ViewModel() {
                     dob,
                     gender,
                     guardianRelation,
+                    relationPwd,
                     fatherName,
                     motherName,
                     guardianName,
@@ -274,9 +280,164 @@ class SharedDataViewModel : ViewModel() {
         }
     }
 
-    fun personalDetails(context: Context): Boolean {
+    fun updatePWDForm(
+        context: Context,
+        type: RequestBody?,
+        applicationNumber: RequestBody?,
+        fullName: RequestBody?,
+        regionalFullName: RequestBody?,
+        regionalLanguage: RequestBody?,
+        mobile: RequestBody?,
+        email: RequestBody?,
+        dob: RequestBody?,
+        gender: RequestBody?,//=>M/F/T
+        guardianRelation: RequestBody?,//Mother/Father/Guardian
+        relationPwd: RequestBody?,
+        fatherName: RequestBody?,
+        motherName: RequestBody?,
+        guardianName: RequestBody?,
+        guardianContact: RequestBody?,
+        photo: RequestBody?,
+        sign: RequestBody?,
+        // Proof id Identity Card
+        aadhaarNo: RequestBody?,
+        shareAadhaarInfo: RequestBody?,//0/1
+        aadhaarInfo: RequestBody?,//Yes(1)/No(0)
+        aadhaarEnrollmentNo: RequestBody?,
+        aadhaarEnrollmentSlip: RequestBody?,
+        identityProofId: RequestBody?,
+        identityProofFile: RequestBody?,
+        //Address For Correspondence
+        addressProofId: RequestBody?,
+        addressProofFile: RequestBody?,
+        currentAddress: RequestBody?,
+        currentStateCode: RequestBody?,
+        currentDistrictCode: RequestBody?,
+        currentSubDistrictCode: RequestBody?,
+        currentVillageCode: RequestBody?,
+        currentPincode: RequestBody?,
+        //Disability Details
+        disabilityTypeId: RequestBody?,
+        disabilityDueTo: RequestBody?,
+        disabilitySinceBirth: RequestBody?,//Since(No)/Birth(Yes)
+        disabilitySince: RequestBody?,
+        haveDisabilityCert: RequestBody?,//1(yes)/0(no)
+        disabilityCertDoc: RequestBody?,
+        serialNumber: RequestBody?,
+        dateOfCertificate: RequestBody?,
+        detailOfAuthority: RequestBody?,
+        disabilityPer: RequestBody?,
+        //Hospital for assessment
+        isHospitalTreatingOtherState: RequestBody?,//=> 0/1
+        hospitalTreatingStateCode: RequestBody?,
+        hospitalTreatingDistrictCode: RequestBody?,
+        hospitalTreatingId: RequestBody?,
+    ) {
+        // can be launched in a separate asynchronous job
+        networkCheck(context, true)
+        job = scope.launch {
+            try {
+                val response = repository.updatePwdForm(
+                    type,
+                    applicationNumber,
+                    fullName,
+                    regionalFullName,
+                    regionalLanguage,
+                    mobile,
+                    email,
+                    dob,
+                    gender,
+                    guardianRelation,
+                    relationPwd,
+                    fatherName,
+                    motherName,
+                    guardianName,
+                    guardianContact,
+                    photo,
+                    sign,
+                    aadhaarNo,
+                    shareAadhaarInfo,
+                    aadhaarInfo,
+                    aadhaarEnrollmentNo,
+                    aadhaarEnrollmentSlip,
+                    identityProofId,
+                    identityProofFile,
+                    addressProofId,
+                    addressProofFile,
+                    currentAddress,
+                    currentStateCode,
+                    currentDistrictCode,
+                    currentSubDistrictCode,
+                    currentVillageCode,
+                    currentPincode,
+                    disabilityTypeId,
+                    disabilityDueTo,
+                    disabilitySinceBirth,
+                    disabilitySince,
+                    haveDisabilityCert,
+                    disabilityCertDoc,
+                    serialNumber,
+                    dateOfCertificate,
+                    detailOfAuthority,
+                    disabilityPer,
+                    isHospitalTreatingOtherState,
+                    hospitalTreatingStateCode,
+                    hospitalTreatingDistrictCode,
+                    hospitalTreatingId
+                )
+
+                Log.e("response", response.toString())
+                when (response.isSuccessful) {
+                    true -> {
+                        when (response.code()) {
+                            200, 201 -> {
+                                updatePWDFormResult.postValue(response.body())
+                                dismissLoader()
+                            }
+                        }
+                    }
+
+                    false -> {
+                        when (response.code()) {
+                            400, 403, 404 -> {//Bad Request & Invalid Credentials
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors_api.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                dismissLoader()
+                            }
+
+                            401 -> {
+                                val errorBody = JSONObject(response.errorBody()!!.string())
+                                errors_api.postValue(
+                                    errorBody.getString("message") ?: "Bad Request"
+                                )
+                                UDID.closeAndRestartApplication()
+                                dismissLoader()
+                            }
+
+                            500 -> {//Internal Server error
+                                errors_api.postValue("Internal Server error")
+                                dismissLoader()
+                            }
+
+                            else -> {
+                                dismissLoader()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                if (e is SocketTimeoutException) {
+                    errors_api.postValue("Time out Please try again")
+                }
+                dismissLoader()
+            }
+        }
+    }
+
+    fun personalDetailValid(context: Context): Boolean {
         val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
-          Log.d("EMAIL",userData.value?.applicantEmail.toString())
         if (userData.value?.applicantFullName.toString().isEmpty()) {
             errors.postValue(context.getString(R.string.please_enter_applicant_s_full_name))
             return false
@@ -289,12 +450,11 @@ class SharedDataViewModel : ViewModel() {
         } else if (userData.value?.applicantMobileNo.toString().length != 10) {
             errors.postValue(context.getString(R.string.mobile_number_must_be_exactly_10_digits))
             return false
-        } else if (userData.value?.applicantEmail.toString().isEmpty()) {
-            errors.postValue(context.getString(R.string.please_enter_an_email_address))
-            return false
-        } else if (!userData.value?.applicantEmail.toString().trim().matches(emailRegex)) {
-            errors.postValue(context.getString(R.string.please_enter_a_valid_email_address))
-            return false
+        } else if (userData.value?.applicantEmail.toString().trim().isNotEmpty()) {
+            if (!userData.value?.applicantEmail.toString().trim().matches(emailRegex)) {
+                errors.postValue(context.getString(R.string.please_enter_a_valid_email_address))
+                return false
+            }
         } else if (userData.value?.applicantDob.toString().isEmpty()) {
             errors.postValue(context.getString(R.string.please_select_date_of_birth))
             return false
@@ -311,63 +471,63 @@ class SharedDataViewModel : ViewModel() {
             if (userData.value?.fatherName.toString().isEmpty()) {
                 errors.postValue(context.getString(R.string.please_enter_father_name))
                 return false
-            }
-            else if (userData.value?.guardianContact.toString().isEmpty()) {
+            } else if (userData.value?.guardianContact.toString().isEmpty()) {
                 errors.postValue(context.getString(R.string.please_enter_contact_number))
                 return false
+            } else if (userData.value?.guardianContact.toString().length != 10) {
+                errors.postValue(context.getString(R.string.mobile_number_must_be_exactly_10_digits))
+                return false
             }
-        }
-        else if (userData.value?.applicantsFMGCode == "Mother") {
+        } else if (userData.value?.applicantsFMGCode == "Mother") {
             if (userData.value?.motherName.toString().isEmpty()) {
                 errors.postValue(context.getString(R.string.please_enter_father_name))
                 return false
-            }
-            else if (userData.value?.guardianContact.toString().isEmpty()) {
+            } else if (userData.value?.guardianContact.toString().isEmpty()) {
                 errors.postValue(context.getString(R.string.please_enter_contact_number))
                 return false
             }
-        }
-        else if (userData.value?.applicantsFMGCode == "Guardian") {
+        } else if (userData.value?.applicantsFMGCode == "Guardian") {
             if (userData.value?.relationWithPersonName.toString().isEmpty()) {
                 errors.postValue(context.getString(R.string.please_select_relation_with_person))
                 return false
-            }
-            else if (userData.value?.relationWithPersonCode!= "Self") {
+            } else if (userData.value?.relationWithPersonCode != "Self") {
                 if (userData.value?.guardianName.toString().isEmpty()) {
                     errors.postValue(context.getString(R.string.please_enter_guardian_name))
                     return false
-                }
-                else if (userData.value?.guardianContact.toString().isEmpty()) {
+                } else if (userData.value?.guardianContact.toString().isEmpty()) {
                     errors.postValue(context.getString(R.string.please_enter_contact_number))
                     return false
                 }
             }
-        }
-        else if(userData.value?.photo.toString().isEmpty()){
+        } else if (userData.value?.photo.toString().isEmpty()) {
             errors.postValue(context.getString(R.string.please_upload_photo))
             return false
         }
+        return true
+    }
+    fun proofOfIdValid(context: Context): Boolean {
         if (userData.value?.aadhaarTag == 2) {
 
             errors.postValue(context.getString(R.string.do_you_have_aadhaar_card_))
             return false
-        }
-        else if (userData.value?.aadhaarTag == 1) {
+        } else if (userData.value?.aadhaarTag == 1) {
             if (userData.value?.aadhaarNo.toString().isEmpty()) {
 
                 errors.postValue(context.getString(R.string.enter_aadhaar_number))
                 return false
-            } else if (userData.value?.aadhaarCheckBox==0) {
+            } else if (userData.value?.aadhaarCheckBox == 0) {
                 errors.postValue(context.getString(R.string.please_select_checkbox))
                 return false
             }
-        }
-        else if (userData.value?.aadhaarTag == 0) {
+        } else if (userData.value?.aadhaarTag == 0) {
             if (userData.value?.aadhaarEnrollmentNo.toString().trim().isEmpty()) {
 
                 errors.postValue(context.getString(R.string.enter_aadhaar_enrollment_number))
                 return false
-            } else if (userData.value?.aadhaarEnrollmentNo.toString().trim().isEmpty()) {
+            } else if (userData.value?.aadhaarEnrollmentNo.toString().trim().length !in 12..16) {
+                errors.postValue(context.getString(R.string.aadhaar_enrollment_number_must_be_between_12_and_16_digits))
+                return false
+            } else if (userData.value?.aadhaarEnrollmentUploadSlip.toString().trim().isEmpty()) {
                 errors.postValue(context.getString(R.string.upload_aadhaar_enrollment_slip_))
                 return false
             }
@@ -382,6 +542,9 @@ class SharedDataViewModel : ViewModel() {
             errors.postValue(context.getString(R.string.please_upload_supporting_document))
             return false
         }
+        return true
+    }
+    fun proofOfAddressValid(context: Context): Boolean {
         if (userData.value?.natureDocumentAddressProofName.toString().trim().isEmpty()) {
             errors.postValue(context.getString(R.string.please_upload_supporting_document))
             return false
@@ -406,53 +569,52 @@ class SharedDataViewModel : ViewModel() {
             errors.postValue(context.getString(R.string.please_enter_pincode))
             return false
         }
-        if (userData.value?.disabilityTypeName.toString().isNullOrEmpty()) {
+        return true
+    }
+    fun disabilityDetailsValid(context: Context): Boolean {
+        if (userData.value?.disabilityTypeName.toString().isEmpty()) {
 
             errors.postValue(context.getString(R.string.please_select_disability_type))
             return false
-        }
-        else if (userData.value?.disabilityBirth == "0") {
+        } else if (userData.value?.disabilityBirth == "0") {
             errors.postValue(context.getString(R.string.please_check_disability_by_birth_yes_no))
             return false
-        }
-        else if (userData.value?.disabilityBirth == "Since") {
-            if (userData.value?.disabilitySinceName.toString().isNullOrEmpty()) {
+        } else if (userData.value?.disabilityBirth == "Since") {
+            if (userData.value?.disabilitySinceName.toString().isEmpty()) {
                 errors.postValue(context.getString(R.string.please_select_disability_since))
                 return false
             }
-        }
-        else if (userData.value?.haveDisabilityCertificate  == 2) {
+        } else if (userData.value?.haveDisabilityCertificate == 2) {
             errors.postValue(context.getString(R.string.please_select_do_you_have_disability_certificate_yes_no))
             return false
-        }
-        else if (userData.value?.haveDisabilityCertificate  == 1) {
-            if (userData.value?.uploadDisabilityCertificate .toString().isEmpty()) {
+        } else if (userData.value?.haveDisabilityCertificate == 1) {
+            if (userData.value?.uploadDisabilityCertificate.toString().isEmpty()) {
 
                 errors.postValue(context.getString(R.string.please_upload_disability_certificate))
                 return false
-            }
-            else if (userData.value?.serialNumber.toString().isNullOrEmpty()) {
+            } else if (userData.value?.serialNumber.toString().isEmpty()) {
 
                 errors.postValue(context.getString(R.string.please_enter_sr_no_registration_no_of_certificate))
                 return false
-            }
-            else if (userData.value?.dateOfCertificate.toString().isNullOrEmpty()) {
+            } else if (userData.value?.dateOfCertificate.toString().isEmpty()) {
 
                 errors.postValue(context.getString(R.string.please_select_date_of_issuance_of_certificate))
                 return false
-            }
-            else if (userData.value?.detailOfAuthorityName.toString().isNullOrEmpty()) {
+            } else if (userData.value?.detailOfAuthorityName.toString().isEmpty()) {
 
                 errors.postValue(context.getString(R.string.please_select_details_of_issuing_authority))
                 return false
-            }
-            else if (userData.value?.disabilityPercentage.toString().trim().isNotEmpty() &&
-                (userData.value?.disabilityPercentage.toString().toInt() < 0 || userData.value?.disabilityPercentage.toString().toInt() > 100)
+            } else if (userData.value?.disabilityPercentage.toString().trim().isNotEmpty() &&
+                (userData.value?.disabilityPercentage.toString()
+                    .toInt() < 0 || userData.value?.disabilityPercentage.toString().toInt() > 100)
             ) {
                 errors.postValue(context.getString(R.string.enter_a_number_between_1_and_100))
                 return false
             }
         }
+        return true
+    }
+    fun hospitalAssessmentValid(context: Context): Boolean {
         if (userData.value?.treatingHospitalTag == "1") {
             if (userData.value?.hospitalStateName.toString().trim().isEmpty()) {
 
@@ -466,12 +628,10 @@ class SharedDataViewModel : ViewModel() {
 
             errors.postValue(context.getString(R.string.select_hospital_name))
             return false
-        } else if (userData.value?.hospitalCheckBox  == "false") {
+        } else if (userData.value?.hospitalCheckBox == "false") {
             errors.postValue(context.getString(R.string.you_must_check_the_box_to_confirm_that_you_have_read_and_understood_the_process))
             return false
         }
         return true
     }
-
-
 }

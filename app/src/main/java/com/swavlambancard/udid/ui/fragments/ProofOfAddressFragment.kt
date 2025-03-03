@@ -31,7 +31,9 @@ import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.getNameById
+import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
+import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
@@ -79,9 +81,23 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
 
+            if(sharedViewModel.userData.value?.isFrom != "login") {
+                mBinding?.etFileName?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        userData.documentAddressProofPhoto.toString()
+                    )
+                }
+                mBinding?.etFileName?.setOnClickListener {
+                    openFile(userData.documentAddressProofPhoto.toString(),requireContext())
+                }
+            }
+            else{
+                mBinding?.etFileName?.text = userData.documentAddressProofPhoto
+            }
+
             mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName
             addressProofId = userData.natureDocumentAddressProofCode
-            mBinding?.etFileName?.text = userData.documentAddressProofPhoto
             mBinding?.etAddress?.setText(userData.address)
             mBinding?.etState?.text = userData.stateName
             mBinding?.etDistrict?.text = userData.districtName
@@ -93,7 +109,6 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
             subDistrictId = userData.subDistrictCode
             villageId = userData.villageCode
             pincodeId = userData.pincodeCode
-
         }
         mBinding?.etNatureDocumentAddressProof?.addTextChangedListener {
             sharedViewModel.userData.value?.natureDocumentAddressProofName = it.toString()
@@ -137,7 +152,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                         addressProofList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.select_nature_of_document)
+                                "Select Nature of Document"
                             )
                         )
                         addressProofList.addAll(userResponseModel._result)
@@ -148,13 +163,13 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
 
                     "States" -> {
                         stateList.clear()
-                        stateList.add(DropDownResult("0", getString(R.string.choose_state_uts_)))
+                        stateList.add(DropDownResult("0", "Choose State / UTs"))
                         stateList.addAll(userResponseModel._result)
                     }
 
                     "Districts" -> {
                         districtList.clear()
-                        districtList.add(DropDownResult("0", getString(R.string.choose_district)))
+                        districtList.add(DropDownResult("0", "Choose District"))
                         districtList.addAll(userResponseModel._result)
                     }
 
@@ -163,7 +178,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                         subDistrictList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.choose_city_sub_district_tehsil)
+                                "Choose City / Sub District / Tehsil"
                             )
                         )
                         subDistrictList.addAll(userResponseModel._result)
@@ -174,7 +189,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                         villageList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.choose_village_block)
+                                "Choose Village / Block"
                             )
                         )
                         villageList.addAll(userResponseModel._result)
@@ -189,7 +204,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 when (userResponseModel.model) {
                     "Pincodes" -> {
                         pincodeList.clear()
-                        pincodeList.add(DropDownResult("0", getString(R.string.choose_pincode)))
+                        pincodeList.add(DropDownResult("0", "Choose Pincode"))
                         pincodeList.addAll(userResponseModel._result)
                     }
                 }
@@ -223,7 +238,6 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     DisabilityDetailFragment()
                 )
-//                Log.d("FragmentData3",sharedViewModel.userData.value.toString())
             }
         }
 
@@ -693,6 +707,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         viewModel.uploadFile(
             requireContext(),
             EncryptionModel.aesEncrypt("address_proof_file").toRequestBody(MultipartBody.FORM),
+            EncryptionModel.aesEncrypt("mobile").toRequestBody(MultipartBody.FORM),
             body
         )
     }

@@ -80,8 +80,10 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
     }
     inner class ClickActions {
         fun close(view: View){
-            startActivity(Intent(requireContext(),PwdLoginActivity::class.java))
-            requireActivity().finish()
+            val intent = Intent(requireContext(),PwdLoginActivity::class.java)
+            intent.flags =
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
             dismiss()
         }
 

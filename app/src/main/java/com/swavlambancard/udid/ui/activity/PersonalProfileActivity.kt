@@ -22,8 +22,11 @@ import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.JSEncryptService
 import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
 import com.swavlambancard.udid.utilities.Utility
+import com.swavlambancard.udid.utilities.Utility.convertToArrayList
 import com.swavlambancard.udid.utilities.Utility.dateConvertToFormat
 import com.swavlambancard.udid.utilities.Utility.getFileNameFromUrl
+import com.swavlambancard.udid.utilities.Utility.showSnackbar
+import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import org.json.JSONObject
 
@@ -32,7 +35,6 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     private var currentFragment: Fragment? = null
     private var sharedViewModel: SharedDataViewModel? = null
     private var isFrom: String? = null
-    var check: Int? = null
     override val layoutId: Int
         get() = R.layout.activity_personal_profile
 
@@ -42,19 +44,17 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         sharedViewModel = ViewModelProvider(this)[SharedDataViewModel::class.java]
         sharedViewModel?.init()
         isFrom = intent.extras?.getString(AppConstants.IS_FROM)
-        check = intent.extras?.getInt(AppConstants.CHECK)
         sharedViewModel?.userData?.value?.isFrom = intent.extras?.getString(AppConstants.IS_FROM)
-
-    }
-
-    override fun onResume() {
-        super.onResume()
+        sharedViewModel?.userData?.value?.check = intent.extras?.getString(AppConstants.CHECK)
+        sharedViewModel?.userData?.value?.application_number = intent.extras?.getString(AppConstants.APPLICATION_NO)
         if (isFrom == "login") {
             replaceFragment(PersonalDetailFragment())
         } else {
             editApi()
         }
     }
+
+
     override fun setVariables() {
     }
 
@@ -64,7 +64,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
             if (userResponseModel != null) {
                 if (userResponseModel._resultflag == 0) {
                     mBinding?.clParent?.let { it1 ->
-                        Utility.showSnackbar(
+                        showSnackbar(
                             it1,
                             userResponseModel.message
                         )
@@ -96,8 +96,9 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     sharedViewModel?.userData?.value?.relationWithPersonCode = userData.relation_pwd
                     sharedViewModel?.userData?.value?.relationWithPersonName = userData.relation_pwd
                     sharedViewModel?.userData?.value?.photo = getFileNameFromUrl(userData.photo)
-                    sharedViewModel?.userData?.value?.sign =
-                        getFileNameFromUrl(userData.signature_thumb_print)
+                    sharedViewModel?.userData?.value?.photoPath = userData.photo
+                    sharedViewModel?.userData?.value?.sign = getFileNameFromUrl(userData.signature_thumb_print)
+                    sharedViewModel?.userData?.value?.signaturePath = userData.signature_thumb_print
                     //Proof of ID
                     sharedViewModel?.userData?.value?.aadhaarNo = userData.aadhaar_no
                     sharedViewModel?.userData?.value?.aadhaarCheckBox = userData.share_aadhar_info
@@ -105,16 +106,16 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     sharedViewModel?.userData?.value?.aadhaarTag = userData.aadhar_info
                     sharedViewModel?.userData?.value?.aadhaarEnrollmentNo =
                         userData.aadhar_enrollment_no
-                    sharedViewModel?.userData?.value?.aadhaarEnrollmentUploadSlip =
-                        userData.aadhar_enrollment_slip
+                    sharedViewModel?.userData?.value?.aadhaarEnrollmentUploadSlip = getFileNameFromUrl(userData.aadhar_enrollment_slip)
+                    sharedViewModel?.userData?.value?.aadhaarEnrollmentUploadSlipPath = userData.aadhar_enrollment_slip
                     sharedViewModel?.userData?.value?.identityProofId = userData.identitity_proof_id
-                    sharedViewModel?.userData?.value?.identityProofUpload =
-                        getFileNameFromUrl(userData.identitity_proof_file)
+                    sharedViewModel?.userData?.value?.identityProofUpload = getFileNameFromUrl(userData.identitity_proof_file)
+                    sharedViewModel?.userData?.value?.identityProofUploadPath = userData.identitity_proof_file
                     //Address Correspondence
                     sharedViewModel?.userData?.value?.natureDocumentAddressProofCode =
                         userData.address_proof_id
-                    sharedViewModel?.userData?.value?.documentAddressProofPhoto =
-                        getFileNameFromUrl(userData.address_proof_file)
+                    sharedViewModel?.userData?.value?.documentAddressProofPhoto = getFileNameFromUrl(userData.address_proof_file)
+                    sharedViewModel?.userData?.value?.documentAddressProofPhotoPath = userData.address_proof_file
                     sharedViewModel?.userData?.value?.address = userData.current_address
                     sharedViewModel?.userData?.value?.districtCode = userData.current_district_code
                     sharedViewModel?.userData?.value?.districtName = userData.district.district_name
@@ -123,12 +124,12 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     sharedViewModel?.userData?.value?.subDistrictName =
                         userData.subdistrict.subdistrict_name
                     sharedViewModel?.userData?.value?.villageCode = userData.current_village_code
-//                    sharedViewModel?.userData?.value?.villageName = userData.current_village_code
+                    sharedViewModel?.userData?.value?.villageName = userData.village?.village_name
                     sharedViewModel?.userData?.value?.pincodeName = userData.current_pincode
                     sharedViewModel?.userData?.value?.pincodeCode = userData.current_pincode
                     //disability Details
                     sharedViewModel?.userData?.value?.disabilityTypeName = userData.disability_types
-//                    sharedViewModel?.userData?.value?.disabilityTypeCode = userData.disability_type_id
+                    sharedViewModel?.userData?.value?.disabilityTypeCode = convertToArrayList(userData.disability_type_id)
                     sharedViewModel?.userData?.value?.disabilityDueToCode =
                         userData.disability_due_to
                     sharedViewModel?.userData?.value?.disabilityDueToName =
@@ -143,8 +144,8 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                         sharedViewModel?.userData?.value?.haveDisabilityCertificate = 1
                     else
                         sharedViewModel?.userData?.value?.haveDisabilityCertificate = 0
-                    sharedViewModel?.userData?.value?.uploadDisabilityCertificate =
-                        getFileNameFromUrl(userData.disability_cert_doc)
+                    sharedViewModel?.userData?.value?.uploadDisabilityCertificate = getFileNameFromUrl(userData.disability_cert_doc)
+                    sharedViewModel?.userData?.value?.uploadDisabilityCertificatePath = userData.disability_cert_doc
                     sharedViewModel?.userData?.value?.detailOfAuthorityName = userData.detail_of_authority
                     sharedViewModel?.userData?.value?.detailOfAuthorityCode = userData.detail_of_authority
                     sharedViewModel?.userData?.value?.serialNumber = userData.serial_number
@@ -174,27 +175,48 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         }
 
         fun personalDetails(view: View) {
-            replaceFragment(PersonalDetailFragment())
+//            if(sharedViewModel?.personalDetailValid(this@PersonalProfileActivity) == true) {
+//                replaceFragment(PersonalDetailFragment())
+//                error()
+//            }
         }
 
         fun proofOfId(view: View) {
-            replaceFragment(ProofOfIDFragment())
-            mBinding?.horizontalScrollView?.smoothScrollTo(55, 0)
+//            if(sharedViewModel?.proofOfIdValid(this@PersonalProfileActivity) == true) {
+//                replaceFragment(ProofOfIDFragment())
+//                mBinding?.horizontalScrollView?.smoothScrollTo(55, 0)
+//                error()
+//            }
         }
 
         fun proofOfCorrespondId(view: View) {
-            replaceFragment(ProofOfAddressFragment())
-            mBinding?.horizontalScrollView?.smoothScrollTo(330, 0)
+//            if(sharedViewModel?.proofOfAddressValid(this@PersonalProfileActivity) == true) {
+//                replaceFragment(ProofOfAddressFragment())
+//                mBinding?.horizontalScrollView?.smoothScrollTo(330, 0)
+//                error()
+//            }
         }
 
         fun disabilityDetails(view: View) {
-            replaceFragment(DisabilityDetailFragment())
-            mBinding?.horizontalScrollView?.smoothScrollTo(750, 0)
+//            if(sharedViewModel?.disabilityDetailsValid(this@PersonalProfileActivity) == true) {
+//                replaceFragment(DisabilityDetailFragment())
+//                mBinding?.horizontalScrollView?.smoothScrollTo(750, 0)
+//                error()
+//            }
         }
 
         fun hospitalAssessments(view: View) {
-            replaceFragment(HospitalAssessmentFragment())
-            mBinding?.horizontalScrollView?.smoothScrollTo(2050, 0)
+//            if(sharedViewModel?.hospitalAssessmentValid(this@PersonalProfileActivity) == true) {
+//                replaceFragment(HospitalAssessmentFragment())
+//                mBinding?.horizontalScrollView?.smoothScrollTo(2050, 0)
+//                error()
+//            }
+        }
+    }
+
+    private fun error(){
+        sharedViewModel?.errors?.observe(this) {
+            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
         }
     }
 
@@ -225,9 +247,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragFrame, fragment)
             .addToBackStack(null)
-            .setReorderingAllowed(false)
-            .commitAllowingStateLoss()
-//            .commit()
+            .commit()
         updateImagesForCurrentFragment()
     }
 
@@ -257,6 +277,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                 mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
                 mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
                 mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.horizontalScrollView?.smoothScrollTo(55, 0)
             }
 
             is ProofOfAddressFragment -> {
@@ -270,6 +291,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                 mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this, R.color.DarkBlue))
                 mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
                 mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.horizontalScrollView?.smoothScrollTo(330, 0)
             }
 
             is DisabilityDetailFragment -> {
@@ -283,6 +305,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                 mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
                 mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this, R.color.DarkBlue))
                 mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
+                mBinding?.horizontalScrollView?.smoothScrollTo(750, 0)
             }
 
             is HospitalAssessmentFragment -> {
@@ -296,6 +319,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                 mBinding?.tvPOCA?.setTextColor(ContextCompat.getColor(this, R.color.orange))
                 mBinding?.tvDD?.setTextColor(ContextCompat.getColor(this, R.color.orange))
                 mBinding?.tvHA?.setTextColor(ContextCompat.getColor(this, R.color.DarkBlue))
+                mBinding?.horizontalScrollView?.smoothScrollTo(2050, 0)
             }
 
             else -> {}

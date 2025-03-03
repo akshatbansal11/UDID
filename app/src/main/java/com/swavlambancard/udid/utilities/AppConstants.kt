@@ -6,7 +6,7 @@ object AppConstants {
     const val PASSWORD = "PASSWORD"
     const val UPDATE_REQUEST = "UPDATE_REQUEST"
     const val LOGIN_DATA = "LOGIN_DATA"
-
+    const val APPLICATION_NO = "APPLICATION_NO"
     const val WALK_THROUGH="WALK_THROUGH"
     const val WEB_URL = "WEB_URL"
     const val LANGUAGE_CODE_ENGLISH = "en"
