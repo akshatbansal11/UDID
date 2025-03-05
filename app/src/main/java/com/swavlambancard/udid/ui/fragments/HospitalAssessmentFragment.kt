@@ -249,7 +249,8 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                         Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
                         savePwdFormApiWithoutEncryption()
                     }
-                },getString(R.string.camera_permission_required))
+                },
+                    getString(R.string.please_check_again_all_your_details_again_before_confirming_your_application))
             }
         }
 

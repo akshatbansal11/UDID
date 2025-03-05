@@ -92,10 +92,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             disabilityTypeApi()
         }
         if(sharedViewModel.userData.value?.check == "1"){
-            mBinding?.llDisabilityCertificate?.showView()
+            mBinding?.llDisabilityCertificate?.hideView()
         }
         else if(sharedViewModel.userData.value?.check == "2"){
-            mBinding?.llDisabilityCertificate?.hideView()
+            mBinding?.llDisabilityCertificate?.showView()
             sharedViewModel.userData.value?.haveDisabilityCertificate = 0
         }
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
@@ -351,7 +351,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         }
 
         fun back(view: View) {
-            (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
+            (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfAddressFragment())
         }
 
         fun uploadFile(view: View) {

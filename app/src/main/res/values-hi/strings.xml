@@ -370,4 +370,5 @@
     <string name="enrollment_no_application_number">नामांकन संख्या/आवेदन संख्या %1$s</string>
     <string name="aadhaar_enrollment_number_must_be_between_12_and_16_digits">आधार नामांकन संख्या 12 से 16 अंकों के बीच होनी चाहिए।</string>
     <string name="guardian_contact_must_be_exactly_10_digits">अभिभावक का संपर्क नंबर ठीक 10 अंकों का होना चाहिए।</string>
+    <string name="please_check_again_all_your_details_again_before_confirming_your_application">कृपया अपने आवेदन की पुष्टि करने से पहले अपने सभी विवरण दोबारा जांच लें</string>
 </resources>

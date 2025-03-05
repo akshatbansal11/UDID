@@ -380,4 +380,5 @@
     <string name="enrollment_no_application_number">Enrollment No. / Application Number: %1$s</string>
     <string name="aadhaar_enrollment_number_must_be_between_12_and_16_digits">Aadhaar Enrollment Number must be between 12 and 16 digits.</string>
     <string name="guardian_contact_must_be_exactly_10_digits">Guardian Contact must be exactly 10 digits.</string>
+    <string name="please_check_again_all_your_details_again_before_confirming_your_application">Please Check again all your details again before confirming your application.</string>
 </resources>
