@@ -96,23 +96,26 @@ data class PwdApplication(
     var aadhaarEnrollmentNo: String ?= null,//aadhar_enrollment_no
     var aadhaarEnrollmentUploadSlip: String? =null,//aadhar_enrollment_slip
     var aadhaarEnrollmentUploadSlipPath: String? =null,//aadhar_enrollment_slip
+    var aadhaarEnrollmentApiSlipPath: String? =null,//aadhar_enrollment_slip
     var identityProofId: String ?= null,//identitity_proof_id
     var identityProofName: String ?= null,//identitity_proof_id
     var identityProofUpload: String? =null,//identitity_proof_file
     var identityProofUploadPath: String? =null,//identitity_proof_file
+    var identityProofApiPath: String? =null,//identitity_proof_file
 
     //Address For Correspondence
     var natureDocumentAddressProofName: String ?= null,//address_proof_id
     var natureDocumentAddressProofCode: String ?= null,//address_proof_id
     var documentAddressProofPhoto: String? =null,//address_proof_file
     var documentAddressProofPhotoPath: String? =null,//address_proof_file
+    var documentAddressProofPhotoApiPath: String? =null,//address_proof_file
     var address: String? =null,//current_address
     var districtName: String ?= null,//current_district_code
     var districtCode: String ?= null,//current_district_code
     var subDistrictName: String ?= null,//current_subdistrict_code
     var subDistrictCode: String ?= null,//current_subdistrict_code
-    var villageName: String ?= null,//current_village_code
-    var villageCode: String ?= null,//current_village_code
+    var villageName: String ?= "",//current_village_code
+    var villageCode: String ?= "",//current_village_code
     var pincodeName: String ?= null,//current_pincode
     var pincodeCode: String ?= null,//current_pincode
     //Disability Details
@@ -126,8 +129,9 @@ data class PwdApplication(
     var disabilitySinceCode: String ?= "",//[disability_since] => 2022
     var uploadDisabilityCertificate: String? =null,// disability_cert_doc
     var uploadDisabilityCertificatePath: String? =null,// disability_cert_doc
-    var detailOfAuthorityName: String? =null,// [detail_of_authority] => Medical Authority
-    var detailOfAuthorityCode: String? =null,// [detail_of_authority] => Medical Authority
+    var uploadDisabilityCertificateApiPath: String? =null,// disability_cert_doc
+    var detailOfAuthorityName: String? ="",// [detail_of_authority] => Medical Authority
+    var detailOfAuthorityCode: String? ="",// [detail_of_authority] => Medical Authority
     var serialNumber: String? =null,//  [serial_number] => FD3245
     var haveDisabilityCertificate: Int? =null,// [have_disability_cert] => 1(yes)/0(no)
     var dateOfCertificate: String ?= null,// [date_of_certificate] => 01/08/2023

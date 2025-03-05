@@ -1,33 +1,29 @@
 package com.swavlambancard.udid.ui
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
-import android.widget.Button
+import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
+import com.bumptech.glide.Glide
 import com.swavlambancard.udid.R
+import com.swavlambancard.udid.utilities.Utility
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
 class PdfViewerActivity : AppCompatActivity() {
 
-    private lateinit var btnViewImage: Button
-    private lateinit var btnViewSign: Button
-    private lateinit var btnViewPdf: Button
-    private lateinit var btnOpenInChrome: Button
     private lateinit var imageView: ImageView
+    private lateinit var ivBackPress: AppCompatImageView
     private lateinit var pdfContainer: LinearLayout
-
-    private var imageUri: Uri? = null
-    private var signUri: Uri? = null
-    private var pdfUri: Uri? = null
-    private var pdfUriTest: Uri? = null
+    private lateinit var clParent: LinearLayout
     private var pdfRenderer: PdfRenderer? = null
     private var fileDescriptor: ParcelFileDescriptor? = null
 
@@ -35,61 +31,91 @@ class PdfViewerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pdf_viewer)
 
-        btnViewImage = findViewById(R.id.btnViewImage)
-        btnViewSign = findViewById(R.id.btnViewSign)
-        btnViewPdf = findViewById(R.id.btnViewPdf)
         imageView = findViewById(R.id.imageView)
+        clParent = findViewById(R.id.clParent)
         pdfContainer = findViewById(R.id.pdfContainer)
-        btnOpenInChrome = findViewById(R.id.btnOpenInChrome)
+        ivBackPress = findViewById(R.id.ivBackPress)
+
+        ivBackPress.setOnClickListener {
+            finish()
+            onBackPressedDispatcher.onBackPressed()
+        }
 
 
+        val fileUri =
+            intent.getStringExtra("fileUri")?.takeIf { it != "null" }?.let { Uri.parse(it) }
 
-        btnOpenInChrome.setOnClickListener {
-            val pdfUrl = "https://docs.google.com/viewer?url=" +//Open the PDF IN DRIVE
-                    "https://udidrewamp.php-staging.com/uploads/pwdapplications/174097860434download_application_20250121_141737.pdf"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+        try {
+            resetViews() // Clear previous content
 
-            try {
-                startActivity(intent)
-            } catch (e: Exception) {
-                // If Chrome is not installed, open in any available browser
-                intent.setPackage(null)
-                startActivity(intent)
+            if (fileUri != null) {
+                if (isPdfFile(fileUri)) {
+                    displayPdf(fileUri)
+                } else {
+                    displayImage(fileUri)
+                }
+            } else {
+                Utility.showSnackbar(clParent, "No valid file to display")
             }
-        }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Utility.showSnackbar(clParent, "Error loading file: ${e.message}")
+            Log.d("PdfViewerActivity", "Error loading file: ${e.message}")
 
-        imageUri = intent.getStringExtra("imageUri")?.let { Uri.parse(it) }
-        signUri = intent.getStringExtra("signUri")?.let { Uri.parse(it) }
-        pdfUri = intent.getStringExtra("pdfUri")?.let { Uri.parse(it) }
-
-        btnViewImage.setOnClickListener {
-            imageView.setImageURI(imageUri)
-            imageView.visibility = ImageView.VISIBLE
-        }
-
-        btnViewSign.setOnClickListener {
-            imageView.setImageURI(signUri)
-            imageView.visibility = ImageView.VISIBLE
-        }
-
-        btnViewPdf.setOnClickListener {
-            pdfUri?.let { displayPdf(it) }
         }
     }
+
+    private fun isPdfFile(uri: Uri): Boolean {
+        val contentResolver = applicationContext.contentResolver
+        val mimeType = contentResolver.getType(uri)
+        return mimeType == "application/pdf" || uri.toString().endsWith(".pdf", ignoreCase = true)
+    }
+
+    private fun displayImage(uri: Uri) {
+        pdfContainer.removeAllViews()
+        pdfContainer.visibility = View.GONE // Hide PDF
+
+        Glide.with(this).load(uri).into(imageView)
+        imageView.visibility = View.VISIBLE
+    }
+
+
+    private fun resetViews() {
+        imageView.setImageDrawable(null) // Clear the previous image
+        imageView.visibility = View.GONE // Hide image view
+
+        pdfContainer.removeAllViews() // Remove previous PDF views
+        pdfContainer.visibility = View.GONE // Hide PDF container
+
+        pdfRenderer?.close()
+        fileDescriptor?.close()
+    }
+
 
     private fun displayPdf(uri: Uri) {
         pdfContainer.removeAllViews()  // Clear previous pages
 
         val file = getFileFromUri(uri)
-        fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY) //ParcelFileDescriptor allows us to read the PDF file.
+        fileDescriptor = ParcelFileDescriptor.open(
+            file,
+            ParcelFileDescriptor.MODE_READ_ONLY
+        ) //ParcelFileDescriptor allows us to read the PDF file.
         pdfRenderer = PdfRenderer(fileDescriptor!!) //PdfRenderer opens the PDF for rendering.
+        pdfContainer.visibility = View.VISIBLE // Ensure PDF container is shown
 
         for (i in 0 until pdfRenderer!!.pageCount) {
             val page = pdfRenderer!!.openPage(i) //openPage(i): Opens each page one by one.
-            val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)//Bitmap.createBitmap(): Creates a blank image of the same size as the PDF page.
-            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)//page.render(): Draws the PDF page onto the Bitmap.
+            val bitmap = Bitmap.createBitmap(
+                page.width,
+                page.height,
+                Bitmap.Config.ARGB_8888
+            )//Bitmap.createBitmap(): Creates a blank image of the same size as the PDF page.
+            page.render(
+                bitmap,
+                null,
+                null,
+                PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
+            )//page.render(): Draws the PDF page onto the Bitmap.
 
             val imageView = ImageView(this).apply {
                 setImageBitmap(bitmap)
@@ -118,7 +144,21 @@ class PdfViewerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        // Close PdfRenderer and FileDescriptor
         pdfRenderer?.close()
         fileDescriptor?.close()
+
+        // Delete the temporary PDF file
+        val tempFile = File(cacheDir, "temp.pdf")
+        if (tempFile.exists()) {
+            tempFile.delete()
+        }
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish() // Ensures the activity is finished when back is pressed
+    }
+
 }

@@ -476,6 +476,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
+                android:onClick="@{ClickAction::filePhotoView}"
                 android:textSize="@dimen/sp_14" />
 
 
@@ -523,6 +524,7 @@
                 android:id="@+id/etFileNameSignature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="@{ClickAction::fileSignView}"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_14" />
 

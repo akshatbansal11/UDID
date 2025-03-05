@@ -36,7 +36,7 @@
             android:name=".ui.PdfViewerActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.activity.SplashActivity"
+            android:name=".ui.FileTypeSelectorActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activity.ApplyForUdidFormActivity"
@@ -143,7 +143,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.FileTypeSelectorActivity"
+            android:name=".ui.activity.SplashActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="true"
             android:screenOrientation="portrait">

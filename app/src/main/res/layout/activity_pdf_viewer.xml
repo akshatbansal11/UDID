@@ -2,26 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:id="@+id/clParent">
 
-    <Button
-        android:id="@+id/btnViewImage"
+    <RelativeLayout
+        android:id="@+id/rlToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Image" />
+        android:background="@drawable/va_bg_application_view"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/btnViewSign"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View Sign" />
+        <LinearLayout
+            android:id="@+id/ll1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_20"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btnViewPdf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View PDF" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivBackPress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_20"
+                android:src="@drawable/ic_back" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvWelcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/dp_5"
+                android:text="@string/pwd_applications_view"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sp_20"
+                app:fontFamily="@font/poppins_semi_bold" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/imageView"
@@ -30,15 +48,8 @@
         android:scaleType="fitCenter"
         android:visibility="gone" />
 
-    <Button
-        android:id="@+id/btnOpenInChrome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Open in Chrome"
-        android:layout_marginTop="16dp"/>
-
-
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true">
