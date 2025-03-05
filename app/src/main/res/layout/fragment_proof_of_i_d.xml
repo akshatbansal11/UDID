@@ -195,6 +195,8 @@
                         android:layout_weight="1.6"
                         android:hint="@string/no_file_chosen"
                         android:padding="@dimen/dp_10"
+                        android:onClick="@{ClickAction::fileViewerAadhaar}"
+
                         android:textColor="@color/grey"
                         android:textSize="@dimen/sp_14" />
                 </LinearLayout>
@@ -280,6 +282,7 @@
                     android:layout_weight="1.6"
                     android:hint="@string/no_file_chosen"
                     android:padding="@dimen/dp_10"
+                    android:onClick="@{ClickAction::fileViewerIdentity}"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/sp_14" />
             </LinearLayout>

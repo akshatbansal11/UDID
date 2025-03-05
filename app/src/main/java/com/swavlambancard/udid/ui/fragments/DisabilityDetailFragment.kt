@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +28,7 @@ import com.swavlambancard.udid.model.CodeDropDownRequest
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
+import com.swavlambancard.udid.ui.PdfViewerActivity
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.ui.adapter.MultipleSelectionBottomSheetAdapter
@@ -74,6 +76,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     private var disabilityDueToId: String? = null
     private val detailsOfIssuingAuthorityList = ArrayList<DropDownResult>()
     private var detailsOfIssuingAuthorityId: String? = null
+    private var imageUri: Uri? = null
+    private var cameraUri: Uri? = null
+    private var pdfUri: Uri? = null
+
     override val layoutId: Int
         get() = R.layout.fragment_disability_details
 
@@ -154,8 +160,12 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
             }
             else{
-                mBinding?.etFileName?.text = userData.uploadDisabilityCertificate
-            }
+                mBinding?.etFileName?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
+                    )
+                }            }
             disabilityCertificateName = userData.uploadDisabilityCertificate
             mBinding?.etRegistrationNoOfCertificate?.setText(userData.serialNumber)
             mBinding?.etDateOfIssuanceOfCertificate?.text = userData.dateOfCertificate
@@ -220,6 +230,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.etDisabilityPercentage?.addTextChangedListener {
             sharedViewModel.userData.value?.disabilityPercentage = it.toString()
         }
+
     }
 
     override fun setVariables() {
@@ -303,6 +314,24 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 } else {
                     disabilityCertificateName = userResponseModel._result.file_name
                     mBinding?.etFileName?.text = userResponseModel._result.file_name
+                    mBinding?.etFileName?.let {
+                        setBlueUnderlinedText(
+                            it,
+                            sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
+                        )
+                    }
+                    when {
+                        pdfUri != null -> sharedViewModel.userData.value?.uploadDisabilityCertificatePath =
+                            pdfUri.toString()
+
+                        cameraUri != null -> sharedViewModel.userData.value?.uploadDisabilityCertificatePath =
+                            cameraUri.toString()
+
+
+                        imageUri != null -> sharedViewModel.userData.value?.uploadDisabilityCertificatePath =
+                            imageUri.toString()
+
+                    }
                 }
             }
         }
@@ -318,9 +347,6 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     HospitalAssessmentFragment()
                 )
-
-//                Log.d("FragmentData3",sharedViewModel.userData.value.toString())
-
             }
         }
 
@@ -383,6 +409,59 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         fun detailsOfIssuingAuthority(view: View) {
             listName = "detailsOfIssuingAuthority"
             showBottomSheetDialog("detailsOfIssuingAuthority")
+        }
+
+        fun fileDisabilityCertificate(view: View) {
+            if(sharedViewModel.userData.value?.uploadDisabilityCertificatePath==null){
+                return
+            }
+            if (sharedViewModel.userData.value?.isFrom != "login") {
+                val documentPath = sharedViewModel.userData.value?.uploadDisabilityCertificatePath
+                if (documentPath.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val uri = Uri.parse(documentPath)
+
+                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+                    // Open PDF in Chrome using Google Docs Viewer
+                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        intent.setPackage(null) // Open in any available browser
+                        startActivity(intent)
+                    }
+                } else {
+                    // Open Image in Chrome by using "file://" or "content://"
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setDataAndType(uri, "image/*") // Set the MIME type for images
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            requireContext(),
+                            "No app found to open image",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+
+            }
+            else{
+                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                intent.putExtra("fileUri", sharedViewModel.userData.value?.uploadDisabilityCertificatePath)
+                startActivity(intent)
+            }
+
         }
     }
 
@@ -729,7 +808,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 CAPTURE_IMAGE_REQUEST -> {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageFile = saveImageToFile(imageBitmap)
-                    photoFile = imageFile
+                    cameraUri = Uri.fromFile(imageFile) // Get URI from file
+                    imageUri = null
+                    pdfUri = null
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                     } else {
@@ -739,6 +820,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
 
                 PICK_IMAGE -> {
+                    imageUri = data?.data
+                    cameraUri = null
+                    pdfUri = null
                     val selectedImageUri = data?.data
                     if (selectedImageUri != null) {
                         val uriPathHelper = URIPathHelper()
@@ -766,6 +850,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
 
                 REQUEST_iMAGE_PDF -> {
+                    pdfUri = data?.data
+                    cameraUri = null
+                    imageUri = null
                     data?.data?.let { uri ->
                         val projection = arrayOf(
                             MediaStore.MediaColumns.DISPLAY_NAME,

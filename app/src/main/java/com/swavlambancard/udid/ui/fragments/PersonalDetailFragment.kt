@@ -1,6 +1,5 @@
 package com.swavlambancard.udid.ui.fragments
 
-import Translator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -9,12 +8,14 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -31,14 +32,15 @@ import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.LanguageLocalize
 import com.swavlambancard.udid.model.UserData
+import com.swavlambancard.udid.ui.PdfViewerActivity
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
+import com.swavlambancard.udid.utilities.Translator
 import com.swavlambancard.udid.utilities.URIPathHelper
-import com.swavlambancard.udid.utilities.Utility.getFileNameFromUrl
 import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
@@ -127,6 +129,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
     private var selectedLanguageCode: String? = null
     private val handler = android.os.Handler()
     private var translationRunnable: Runnable? = null
+    private var imageUri: Uri? = null
+    private var cameraUri: Uri? = null
 
     override val layoutId: Int
         get() = R.layout.fragment_personal_details
@@ -272,9 +276,22 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     openFile(userData.signaturePath.toString(), requireContext())
                 }
             }
-
-            mBinding?.etFileNamePhoto?.text = userData.photo
-            mBinding?.etFileNameSignature?.text = userData.sign
+            if(userData.photo!=null){
+                mBinding?.etFileNamePhoto?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        userData.photo!!
+                    )
+                }
+            }
+            if(userData.sign!=null){
+                mBinding?.etFileNameSignature?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        userData.sign!!
+                    )
+                }
+            }
             mBinding?.ivPhoto?.let { it1 ->
                 Glide.with(requireContext())
                     .load(sharedViewModel.userData.value?.photoPath)
@@ -358,12 +375,12 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.etRelationWithPerson?.addTextChangedListener {
             sharedViewModel.userData.value?.relationWithPersonName = it.toString()
         }
-//        mBinding?.etFileNamePhoto?.addTextChangedListener {
-//            sharedViewModel.userData.value?.photo = it.toString()
-//        }
-//        mBinding?.etFileNameSignature?.addTextChangedListener {
-//            sharedViewModel.userData.value?.sign = it.toString()
-//        }
+        mBinding?.etFileNamePhoto?.addTextChangedListener {
+            sharedViewModel.userData.value?.photo = it.toString()
+        }
+        mBinding?.etFileNameSignature?.addTextChangedListener {
+            sharedViewModel.userData.value?.sign = it.toString()
+        }
     }
 
     override fun setVariables() {
@@ -426,6 +443,20 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                     .into(it1)
                             }
                         }
+                        mBinding?.etFileNamePhoto?.let {
+                            setBlueUnderlinedText(
+                                it,
+                               userResponseModel._result.file_name
+                            )
+                        }
+                        when {
+                            cameraUri != null -> sharedViewModel.userData.value?.photoPath =
+                                cameraUri.toString()
+
+                            imageUri != null -> sharedViewModel.userData.value?.photoPath =
+                                imageUri.toString()
+
+                        }
                     } else if (document == 2) {
                         signatureName = userResponseModel._result.file_name
                         mBinding?.etFileNameSignature?.text = userResponseModel._result.file_name
@@ -436,6 +467,21 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                     .placeholder(R.drawable.ic_camera_gallery) // Optional: Add a placeholder image
                                     .into(it1)
                             }
+                        }
+                        mBinding?.etFileNameSignature?.let {
+                            setBlueUnderlinedText(
+                                it,
+                                userResponseModel._result.file_name
+                            )
+                        }
+
+                        when {
+                            cameraUri != null -> sharedViewModel.userData.value?.signaturePath =
+                                cameraUri.toString()
+
+                            imageUri != null -> sharedViewModel.userData.value?.signaturePath =
+                                imageUri.toString()
+
                         }
                     }
                 }
@@ -496,6 +542,105 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         fun dateOfBirth(view: View) {
             mBinding?.etApplicantDateOfBirth?.let { calenderOpen(requireContext(), it) }
         }
+
+
+        fun filePhotoView(view: View) {
+            if(sharedViewModel.userData.value?.photoPath==null){
+                return
+            }
+            if(sharedViewModel.userData.value?.isFrom != "login"){
+                val documentPath = sharedViewModel.userData.value?.photoPath
+                if (documentPath.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val uri = Uri.parse(documentPath)
+
+                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+                    // Open PDF in Chrome using Google Docs Viewer
+                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        intent.setPackage(null) // Open in any available browser
+                        startActivity(intent)
+                    }
+                } else {
+                    // Open Image in Chrome by using "file://" or "content://"
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setDataAndType(uri, "image/*") // Set the MIME type for images
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "No app found to open image", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+
+            }
+            else{
+                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                intent.putExtra("fileUri", sharedViewModel.userData.value?.photoPath)
+                startActivity(intent)
+            }
+
+        }
+        fun fileSignView(view: View) {
+            if(sharedViewModel.userData.value?.signaturePath==null){
+                return
+            }
+            if(sharedViewModel.userData.value?.isFrom != "login"){
+                val documentPath = sharedViewModel.userData.value?.signaturePath
+                if (documentPath.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val uri = Uri.parse(documentPath)
+
+                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+                    // Open PDF in Chrome using Google Docs Viewer
+                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        intent.setPackage(null) // Open in any available browser
+                        startActivity(intent)
+                    }
+                } else {
+                    // Open Image in Chrome by using "file://" or "content://"
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setDataAndType(uri, "image/*") // Set the MIME type for images
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "No app found to open image", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+
+            }
+            else{
+                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                intent.putExtra("fileUri", sharedViewModel.userData.value?.signaturePath)
+                startActivity(intent)
+            }
+
+        }
+
     }
 
     private fun stateListApi() {
@@ -958,6 +1103,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 CAPTURE_IMAGE_REQUEST -> {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageFile = saveImageToFile(imageBitmap)
+                    cameraUri = Uri.fromFile(imageFile) // Get URI from file
+                    imageUri = null
                     photoFile = imageFile
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
@@ -973,6 +1120,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
 
                 PICK_IMAGE -> {
+                    imageUri = data?.data
+                    cameraUri = null
                     val selectedImageUri = data?.data
                     if (selectedImageUri != null) {
                         val uriPathHelper = URIPathHelper()

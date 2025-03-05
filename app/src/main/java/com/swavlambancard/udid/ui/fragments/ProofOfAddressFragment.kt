@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -25,6 +26,7 @@ import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.Filters
 import com.swavlambancard.udid.model.Order
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.ui.PdfViewerActivity
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
@@ -66,6 +68,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
     private var pincodeId: String? = null
     var body: MultipartBody.Part? = null
     private var addressProofName: String? = null
+    private var imageUri: Uri? = null
+    private var cameraUri: Uri? = null
+    private var pdfUri: Uri? = null
 
     override val layoutId: Int
         get() = R.layout.fragment_proof_of_c_add
@@ -93,7 +98,15 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 }
             }
             else{
-                mBinding?.etFileName?.text = userData.documentAddressProofPhoto
+                if(userData.documentAddressProofPhoto!=null){
+                    mBinding?.etFileName?.let {
+                        setBlueUnderlinedText(
+                            it,
+                            userData.documentAddressProofPhoto.toString()
+                        )
+                    }
+                }
+
             }
 
             mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName
@@ -224,6 +237,23 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 } else {
                     addressProofName = userResponseModel._result.file_name
                     mBinding?.etFileName?.text = userResponseModel._result.file_name
+                    mBinding?.etFileName?.let {
+                        setBlueUnderlinedText(
+                            it,
+                            sharedViewModel.userData.value?.documentAddressProofPhoto.toString()
+                        )
+                    }
+                    when {
+                        pdfUri != null -> sharedViewModel.userData.value?.documentAddressProofPhotoPath =
+                            pdfUri.toString()
+
+                        cameraUri != null -> sharedViewModel.userData.value?.documentAddressProofPhotoPath =
+                            cameraUri.toString()
+
+                        imageUri != null -> sharedViewModel.userData.value?.documentAddressProofPhotoPath =
+                            imageUri.toString()
+
+                    }
                 }
             }
         }
@@ -243,6 +273,55 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
 
         fun back(view: View) {
             (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
+        }
+
+        fun fileCorrespondenceAddress(view: View) {
+            if(sharedViewModel.userData.value?.documentAddressProofPhotoPath==null){
+                return
+            }
+            if(sharedViewModel.userData.value?.isFrom != "login"){
+                val documentPath = sharedViewModel.userData.value?.documentAddressProofPhotoPath
+                if (documentPath.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val uri = Uri.parse(documentPath)
+
+                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+                    // Open PDF in Chrome using Google Docs Viewer
+                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        intent.setPackage(null) // Open in any available browser
+                        startActivity(intent)
+                    }
+                } else {
+                    // Open Image in Chrome by using "file://" or "content://"
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setDataAndType(uri, "image/*") // Set the MIME type for images
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "No app found to open image", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+
+            }
+            else{
+                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                intent.putExtra("fileUri", sharedViewModel.userData.value?.documentAddressProofPhotoPath)
+                startActivity(intent)
+            }
+
         }
 
         fun uploadFile(view: View) {
@@ -607,6 +686,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 CAPTURE_IMAGE_REQUEST -> {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageFile = saveImageToFile(imageBitmap)
+                    cameraUri = Uri.fromFile(imageFile) // Get URI from file
+                    imageUri = null
+                    pdfUri = null
                     photoFile = imageFile
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
@@ -617,6 +699,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 }
 
                 PICK_IMAGE -> {
+                    imageUri = data?.data
+                    cameraUri = null
+                    pdfUri = null
                     val selectedImageUri = data?.data
                     if (selectedImageUri != null) {
                         val uriPathHelper = URIPathHelper()
@@ -644,6 +729,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 }
 
                 REQUEST_iMAGE_PDF -> {
+                    pdfUri = data?.data
+                    cameraUri = null
+                    imageUri = null
                     data?.data?.let { uri ->
                         val projection = arrayOf(
                             MediaStore.MediaColumns.DISPLAY_NAME,

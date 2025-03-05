@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +23,7 @@ import com.swavlambancard.udid.databinding.FragmentProofOfIDBinding
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
+import com.swavlambancard.udid.ui.PdfViewerActivity
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
@@ -60,6 +62,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     private var enrollmentSlipName: String? = null
     private var document = 0
     private var aadhaarTag: Int = 2
+    private var imageUri: Uri? = null
+    private var cameraUri: Uri? = null
+    private var pdfUri: Uri? = null
 
     override val layoutId: Int
         get() = R.layout.fragment_proof_of_i_d
@@ -73,7 +78,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         identityProofApi()
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.aadhaarTag) {
-                0-> {
+                0 -> {
                     mBinding?.rbNo?.isChecked = true
                     mBinding?.llYesAadhaarCard?.hideView()
                     mBinding?.llNoAadhaarCard?.showView()
@@ -84,6 +89,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     mBinding?.llYesAadhaarCard?.showView()
                     mBinding?.llNoAadhaarCard?.hideView()
                 }
+
                 else -> {
                     mBinding?.rbNo?.isChecked = false
                     mBinding?.rbYes?.isChecked = false
@@ -91,7 +97,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     mBinding?.llNoAadhaarCard?.hideView()
                 }
             }
-            when(userData.aadhaarCheckBox) {
+            when (userData.aadhaarCheckBox) {
                 0 -> {
                     mBinding?.checkboxConfirm?.isChecked = false
                 }
@@ -106,7 +112,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             identityProofId = userData.identityProofId
             mBinding?.etFileNameIdentityProof?.text = userData.identityProofUpload
             mBinding?.etFileNameEnrollmentSlip?.text = userData.aadhaarEnrollmentUploadSlip
-            if(sharedViewModel.userData.value?.isFrom != "login") {
+            if (sharedViewModel.userData.value?.isFrom != "login") {
                 mBinding?.etFileNameIdentityProof?.let {
                     setBlueUnderlinedText(
                         it,
@@ -114,7 +120,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                 }
                 mBinding?.etFileNameIdentityProof?.setOnClickListener {
-                    openFile(userData.identityProofUpload.toString(),requireContext())
+                    openFile(userData.identityProofUpload.toString(), requireContext())
                 }
                 mBinding?.etFileNameEnrollmentSlip?.let {
                     setBlueUnderlinedText(
@@ -123,13 +129,24 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                 }
                 mBinding?.etFileNameEnrollmentSlip?.setOnClickListener {
-                    openFile(userData.aadhaarEnrollmentUploadSlip.toString(),requireContext())
+                    openFile(userData.aadhaarEnrollmentUploadSlip.toString(), requireContext())
+                }
+            } else {
+                mBinding?.etFileNameIdentityProof?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        userData.identityProofUpload.toString()
+                    )
+                }
+                mBinding?.etFileNameEnrollmentSlip?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        userData.aadhaarEnrollmentUploadSlip.toString()
+                    )
                 }
             }
-            else{
-                mBinding?.etFileNameIdentityProof?.text = userData.identityProofUpload
-                mBinding?.etFileNameEnrollmentSlip?.text = userData.aadhaarEnrollmentUploadSlip
-            }
+
+
         }
 
         mBinding?.rgAadhaar?.setOnCheckedChangeListener { _, checkedId ->
@@ -187,8 +204,11 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                     identityProofList.addAll(userResponseModel._result)
                     identityProofListYes.addAll(userResponseModel._result)
-                    if(sharedViewModel.userData.value?.isFrom != "login"){
-                        mBinding?.etIdentityProof?.text = getNameById(sharedViewModel.userData.value?.identityProofId.toString(),identityProofList)
+                    if (sharedViewModel.userData.value?.isFrom != "login") {
+                        mBinding?.etIdentityProof?.text = getNameById(
+                            sharedViewModel.userData.value?.identityProofId.toString(),
+                            identityProofList
+                        )
                     }
                     bottomSheetAdapter?.notifyDataSetChanged()
                 }
@@ -208,11 +228,50 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 } else {
                     if (document == 1) {
                         identityProofName = userResponseModel._result.file_name
-                        mBinding?.etFileNameIdentityProof?.text = userResponseModel._result.file_name
+                        mBinding?.etFileNameIdentityProof?.text =
+                            userResponseModel._result.file_name
+                        mBinding?.etFileNameIdentityProof?.let {
+                            setBlueUnderlinedText(
+                                it,
+                                sharedViewModel.userData.value?.identityProofUpload.toString()
+                            )
+                        }
+                        when {
+                            pdfUri != null -> sharedViewModel.userData.value?.identityProofUploadPath =
+                                pdfUri.toString()
+
+                            cameraUri != null -> sharedViewModel.userData.value?.identityProofUploadPath =
+                                cameraUri.toString()
+
+
+                            imageUri != null -> sharedViewModel.userData.value?.identityProofUploadPath =
+                                imageUri.toString()
+
+                        }
+
                     } else if (document == 2) {
                         enrollmentSlipName = userResponseModel._result.file_name
-                        mBinding?.etFileNameEnrollmentSlip?.text = userResponseModel._result.file_name
+                        mBinding?.etFileNameEnrollmentSlip?.text =
+                            userResponseModel._result.file_name
+
+                        mBinding?.etFileNameEnrollmentSlip?.let {
+                            setBlueUnderlinedText(
+                                it,
+                                sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()
+                            )
+                        }
+                        when {
+                            pdfUri != null -> sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath =
+                                pdfUri.toString()
+
+                            cameraUri != null -> sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath =
+                                cameraUri.toString()
+
+                            imageUri != null -> sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath =
+                                imageUri.toString()
+                        }
                     }
+
                 }
             }
         }
@@ -224,10 +283,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     inner class ClickActions {
         fun next(view: View) {
             if (valid()) {
-                (requireActivity() as PersonalProfileActivity).replaceFragment(
-                    ProofOfAddressFragment()
-                )
-
+            (requireActivity() as PersonalProfileActivity).replaceFragment(
+                ProofOfAddressFragment()
+            )
             }
         }
 
@@ -264,6 +322,115 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         fun uploadFileIdentityProof(view: View) {
             document = 1
             checkStoragePermission(requireContext())
+        }
+
+        fun fileViewerIdentity(view: View) {
+            if (sharedViewModel.userData.value?.identityProofUploadPath == null) {
+                return
+            }
+            if (sharedViewModel.userData.value?.isFrom != "login") {
+                val documentPath = sharedViewModel.userData.value?.identityProofUploadPath
+                if (documentPath.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val uri = Uri.parse(documentPath)
+
+                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+                    // Open PDF in Chrome using Google Docs Viewer
+                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        intent.setPackage(null) // Open in any available browser
+                        startActivity(intent)
+                    }
+                } else {
+                    // Open Image in Chrome by using "file://" or "content://"
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setDataAndType(uri, "image/*") // Set the MIME type for images
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            requireContext(),
+                            "No app found to open image",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+
+            }
+            else {
+                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                intent.putExtra("fileUri", sharedViewModel.userData.value?.identityProofUploadPath)
+                startActivity(intent)
+            }
+
+        }
+
+        fun fileViewerAadhaar(view: View) {
+            if (sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath == null) {
+                return
+            }
+            if (sharedViewModel.userData.value?.isFrom != "login") {
+                val documentPath = sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath
+                if (documentPath.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val uri = Uri.parse(documentPath)
+
+                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+                    // Open PDF in Chrome using Google Docs Viewer
+                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        intent.setPackage(null) // Open in any available browser
+                        startActivity(intent)
+                    }
+                } else {
+                    // Open Image in Chrome by using "file://" or "content://"
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setDataAndType(uri, "image/*") // Set the MIME type for images
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            requireContext(),
+                            "No app found to open image",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+
+            } else {
+                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                intent.putExtra(
+                    "fileUri",
+                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath
+                )
+                startActivity(intent)
+            }
+
+
         }
 
         fun uploadFileAadhaarEnrollmentSlip(view: View) {
@@ -386,8 +553,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 )
             }
             return false
-        }
-        else if (aadhaarTag == 1) {
+        } else if (aadhaarTag == 1) {
             if (mBinding?.etAadhaarNo?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -414,8 +580,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                 }
                 return false
-            }
-            else if (mBinding?.etAadhaarEnrollment?.text.toString().trim().length !in 12..16) {
+            } else if (mBinding?.etAadhaarEnrollment?.text.toString().trim().length !in 12..16) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -423,8 +588,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                 }
                 return false
-            }
-            else if (mBinding?.etFileNameEnrollmentSlip?.text.toString().trim().isEmpty()) {
+            } else if (mBinding?.etFileNameEnrollmentSlip?.text.toString().trim().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
@@ -460,6 +624,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 CAPTURE_IMAGE_REQUEST -> {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageFile = saveImageToFile(imageBitmap)
+                    cameraUri = Uri.fromFile(imageFile) // Get URI from file
+                    imageUri = null
+                    pdfUri = null
                     photoFile = imageFile
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
@@ -470,6 +637,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 }
 
                 PICK_IMAGE -> {
+                    imageUri = data?.data
+                    cameraUri = null
+                    pdfUri = null
                     val selectedImageUri = data?.data
                     if (selectedImageUri != null) {
                         val uriPathHelper = URIPathHelper()
@@ -497,6 +667,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 }
 
                 REQUEST_iMAGE_PDF -> {
+                    pdfUri = data?.data
+                    cameraUri = null
+                    imageUri = null
                     data?.data?.let { uri ->
                         val projection = arrayOf(
                             MediaStore.MediaColumns.DISPLAY_NAME,

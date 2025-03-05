@@ -169,6 +169,21 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
         }
     }
 
+    fun openPdfInChrome(context: Context, pdfUri: String) {
+        val pdfUrl = "https://docs.google.com/viewer?url=" +Uri.parse(pdfUri)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            // If Chrome is not installed, open in any available browser
+            intent.setPackage(null)
+            startActivity(intent)
+        }
+    }
+
     fun checkStoragePermission(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionLauncher.launch(

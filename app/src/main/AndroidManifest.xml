@@ -33,6 +33,12 @@
         tools:ignore="HardcodedDebugMode,LockedOrientationActivity"
         tools:targetApi="31">
         <activity
+            android:name=".ui.PdfViewerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.FileTypeSelectorActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activity.ApplyForUdidFormActivity"
             android:exported="false" />
         <activity
@@ -140,7 +146,7 @@
             android:name=".ui.activity.SplashActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -156,8 +162,7 @@
             android:name=".ui.activity.OnboardingScreenActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.activity.LoginActivity"
             android:configChanges="keyboardHidden|orientation"
