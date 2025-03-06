@@ -308,6 +308,7 @@ object Utility {
     }
 
     fun openFile(url: String,context: Context) {
+        Log.d("document:",url)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         try {

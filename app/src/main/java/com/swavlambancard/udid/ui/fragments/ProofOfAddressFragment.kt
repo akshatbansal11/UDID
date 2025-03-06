@@ -257,6 +257,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 }
             }
         }
+
         viewModel.errors.observe(this) {
             mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
         }
@@ -303,18 +304,8 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                     }
                 } else {
                     // Open Image in Chrome by using "file://" or "content://"
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.setDataAndType(uri, "image/*") // Set the MIME type for images
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-                    try {
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "No app found to open image", Toast.LENGTH_SHORT).show()
-                    }
+                    openFile(uri.toString(), requireContext())
                 }
-
-
             }
             else{
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)

@@ -439,22 +439,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     }
                 } else {
                     // Open Image in Chrome by using "file://" or "content://"
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.setDataAndType(uri, "image/*") // Set the MIME type for images
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-                    try {
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        Toast.makeText(
-                            requireContext(),
-                            "No app found to open image",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    openFile(uri.toString(), requireContext())
                 }
-
-
             }
             else{
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)
@@ -519,10 +505,13 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             matchItemDisabilityTypeList =
                 multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
             sharedViewModel.userData.value?.disabilityTypeList = matchItemDisabilityTypeList
-            if (matchItemDisabilityTypeList.size > 0)
+            if (matchItemDisabilityTypeList.size >= 1) {
+                Log.d("Size", matchItemDisabilityTypeList.size.toString())
                 mBinding?.etDisabilityType?.text =
                     matchItemDisabilityTypeList.joinToString(", ") { it.name }
+            }
             else {
+                mBinding?.etDisabilityType?.text = ""
                 mBinding?.etDisabilityType?.hint = getString(R.string.choose_disability_types)
             }
 
@@ -739,64 +728,67 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 return false
             }
         }
-
-        if (disabilityCertificateTag == 2) {
-            mBinding?.llParent?.let {
-                showSnackbar(
-                    it,
-                    getString(R.string.please_select_do_you_have_disability_certificate_yes_no)
-                )
-            }
-            return false
-        }
-
-        if (disabilityCertificateTag == 1) {
-            if (mBinding?.etFileName?.text.toString().isEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(it, getString(R.string.please_upload_disability_certificate))
-                }
-                return false
-            }
-
-            if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
+        if(sharedViewModel.userData.value?.check == "2") {
+            if (disabilityCertificateTag == 2) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
-                        getString(R.string.please_enter_sr_no_registration_no_of_certificate)
+                        getString(R.string.please_select_do_you_have_disability_certificate_yes_no)
                     )
                 }
                 return false
             }
 
-            if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_select_date_of_issuance_of_certificate)
-                    )
-                }
-                return false
-            }
-
-            if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(it, getString(R.string.please_select_details_of_issuing_authority))
-                }
-                return false
-            }
-            val percentageText = mBinding?.etDisabilityPercentage?.text.toString().trim()
-
-            if (percentageText.isNotEmpty()) {
-                val percentage = percentageText.toIntOrNull()
-                if (percentage == null || percentage < 0 || percentage > 100) {
+            if (disabilityCertificateTag == 1) {
+                if (mBinding?.etFileName?.text.toString().isEmpty()) {
                     mBinding?.llParent?.let {
-                        showSnackbar(it, getString(R.string.enter_a_number_between_1_and_100))
+                        showSnackbar(it, getString(R.string.please_upload_disability_certificate))
                     }
                     return false
                 }
+
+                if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(
+                            it,
+                            getString(R.string.please_enter_sr_no_registration_no_of_certificate)
+                        )
+                    }
+                    return false
+                }
+
+                if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(
+                            it,
+                            getString(R.string.please_select_date_of_issuance_of_certificate)
+                        )
+                    }
+                    return false
+                }
+
+                if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(
+                            it,
+                            getString(R.string.please_select_details_of_issuing_authority)
+                        )
+                    }
+                    return false
+                }
+                val percentageText = mBinding?.etDisabilityPercentage?.text.toString().trim()
+
+                if (percentageText.isNotEmpty()) {
+                    val percentage = percentageText.toIntOrNull()
+                    if (percentage == null || percentage < 0 || percentage > 100) {
+                        mBinding?.llParent?.let {
+                            showSnackbar(it, getString(R.string.enter_a_number_between_1_and_100))
+                        }
+                        return false
+                    }
+                }
             }
         }
-
         return true
     }
 

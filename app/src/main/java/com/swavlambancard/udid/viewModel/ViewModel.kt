@@ -1721,6 +1721,26 @@ open class ViewModel : ViewModel() {
             }
         }
     }
+    fun downloadRejectionLetter(context: Context, request: RequestBody) {
+        networkCheck(context, true)
+        scope.launch {
+            try {
+                val response = repository.downloadRejectionLetter(request)
+                Log.e("response", response.toString())
+                if (response.isSuccessful && response.code() in 200..201) {
+                    response.body()?.bytes()?.let { data ->
+                        convertToPDF(context,"lost_card", data)
+                    } ?: _downloadResult.postValue(Result.failure(Exception("No data received")))
+                } else {
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                handleException(e)
+            } finally {
+                dismissLoader()
+            }
+        }
+    }
 
 
     private fun convertToPDF(context: Context, fileName: String, data: ByteArray) {

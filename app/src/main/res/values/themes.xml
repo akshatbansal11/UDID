@@ -23,10 +23,10 @@
         <!--  add in dark theme -->
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
-<!--        <item name="bottomSheetStyle">@style/AppModalStyle</item>-->
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
     <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
-<!--        <item name="android:background">@drawable/curve_top_corner</item>-->
+        <item name="android:background">@drawable/bottom_sheet_background</item>
     </style>
 
     <!--    <style name="TextViewStyle" >-->

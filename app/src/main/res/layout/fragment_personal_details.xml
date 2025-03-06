@@ -93,6 +93,7 @@
                 android:textSize="@dimen/sp_16" />
 
             <TextView
+                android:id="@+id/tvSelectStateFromDropDown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_5"
@@ -106,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
                 android:fontFamily="@font/opensans_semibold"
-                android:text="@string/state_name"
+                android:text="@string/state_uts"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_16" />
 
@@ -135,12 +136,14 @@
                 android:text="@string/applicant_s_name_in_hindi"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_16"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <LinearLayout
+                android:id="@+id/llApplicantNameInRegionalLanguage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_7"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <EditText

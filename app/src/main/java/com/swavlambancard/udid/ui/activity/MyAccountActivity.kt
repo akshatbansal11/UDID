@@ -122,6 +122,7 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
                         mBinding?.etHospitalName?.hideView()
                     }
                     mBinding?.etEnrollmentNo?.text = if(userData.application_number.isNullOrEmpty()) getString(R.string.na) else userData.application_number
+
                     mBinding?.etHospitalName?.text = if(userData.hospital?.hospital_name.isNullOrEmpty())getString(R.string.na) else userData.hospital?.hospital_name
                     mBinding?.etUdidNo?.text = if(userData.udid_number.isNullOrEmpty()) getString(R.string.na) else userData.udid_number
                     mBinding?.etNameOfApplication?.text = if(userData.full_name.isNullOrEmpty()) getString(R.string.na) else userData.full_name

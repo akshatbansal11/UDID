@@ -62,11 +62,13 @@ const val GET_CODE_DROP_DOWN = "getCodeDropdown"
 const val PINCODE_DROP_DOWN = "getPincodeDropdown"
 const val UPLOAD_FILE = "uploadFile"
 const val EDIT_APPLICATION = "editApplication"
-//const val SAVE_PWD_FORM = "savePWDForm"
-const val SAVE_PWD_FORM = "savePWDForm2"
-const val UPDATE_PWD_FORM = "updatePWDForm2"
+const val SAVE_PWD_FORM = "savePWDForm"
+const val UPDATE_PWD_FORM = "updatePWDForm"
+//const val SAVE_PWD_FORM = "savePWDForm2"
+//const val UPDATE_PWD_FORM = "updatePWDForm2"
 const val APPLICATION_REJECT_REQUEST = "applicationRejectRequest"
 const val PENDING_APPLICATION_WISE = "pendingapplicationwise"
+const val DOWNLOAD_REJECTION_LETTER = "rejectionCertificate"
 
 interface MyService {
 
@@ -410,7 +412,13 @@ interface MyService {
     @Headers("Content-Type: application/json")
     @POST(PENDING_APPLICATION_WISE)
     suspend fun pendingApplicationWise(@Body request: PendingApplicationWise): Response<RejectAndPendingResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(DOWNLOAD_REJECTION_LETTER)
+    suspend fun downloadRejectionLetter(@Body request: RequestBody): Response<ResponseBody>
 }
+
+
 
 
 

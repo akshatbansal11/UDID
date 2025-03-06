@@ -591,6 +591,12 @@ object Repository {
             request
         )
     }
+
+    suspend fun downloadRejectionLetter(
+        request: RequestBody,
+    ): Response<ResponseBody> {
+        return api.downloadRejectionLetter(request)
+    }
 }
 
 

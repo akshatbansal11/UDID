@@ -133,7 +133,7 @@ data class MyAccountData(
     val photo_path: String?,
     val pwd_card_expiry_date: String?,
     val pwdapplicationstatus: PwdApplicationStatus?,
-    val reject_remark: Any?,
+    val reject_remark: String?,
     val state: State?,
     val subdistrict: Subdistrict?,
     val udid_number: String?

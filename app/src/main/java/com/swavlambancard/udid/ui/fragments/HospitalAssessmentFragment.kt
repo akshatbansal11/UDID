@@ -24,6 +24,7 @@ import com.swavlambancard.udid.model.UserData
 import com.swavlambancard.udid.ui.activity.DashboardActivity
 import com.swavlambancard.udid.ui.activity.LoginActivity
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
+import com.swavlambancard.udid.ui.activity.PwdLoginActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseActivity
@@ -240,14 +241,14 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 showConfirmationAlertDialog(requireContext(), object : DialogCallback {
                     override fun onYes() {
                         Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
-                        updatePwsFormApiWithoutEncryption()
+                        updatePwsFormApi()
                     }
-                },getString(R.string.camera_permission_required))
+                },getString(R.string.please_check_again_all_your_details_again_before_confirming_your_application))
             } else {
                 showConfirmationAlertDialog(requireContext(), object : DialogCallback {
                     override fun onYes() {
                         Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
-                        savePwdFormApiWithoutEncryption()
+                        savePwdFormApi()
                     }
                 },
                     getString(R.string.please_check_again_all_your_details_again_before_confirming_your_application))
@@ -255,7 +256,19 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         }
 
         fun cancel(view: View) {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            if(sharedViewModel.userData.value?.isFrom != "login") {
+
+                val intent = Intent(requireContext(), DashboardActivity::class.java)
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
+            else{
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
         }
         fun back(view: View) {
             (requireActivity() as PersonalProfileActivity).replaceFragment(DisabilityDetailFragment())
