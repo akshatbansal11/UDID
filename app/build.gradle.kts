@@ -133,9 +133,4 @@ dependencies {
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
-    implementation("com.vanniktech:android-image-cropper:4.6.0")
-//    implementation ("com.github.CanHub:Android-Image-Cropper:4.0.0")
-
-    //Language translation
-    implementation("com.google.mlkit:translate:17.0.3")
 }

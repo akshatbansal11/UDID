@@ -273,7 +273,12 @@ class DashboardAdapter(
 
             context.getString(R.string.update_personal_profile) -> {
                 holder.mBinding.llParent.setOnClickListener {
-                    context.startActivity(Intent(context, PersonalProfileActivity::class.java))
+                    context.startActivity(Intent(context, PersonalProfileActivity::class.java)
+                        .putExtra(AppConstants.APPLICATION_NO,getPreferenceOfLogin(
+                            context,
+                            AppConstants.LOGIN_DATA,
+                            UserData::class.java
+                        ).application_number))
                 }
             }
 

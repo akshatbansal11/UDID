@@ -10,12 +10,11 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -29,13 +28,18 @@ import com.swavlambancard.udid.model.CodeDropDownRequest
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
+import com.swavlambancard.udid.ui.PdfViewerActivity
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.ui.adapter.MultipleSelectionBottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
+import com.swavlambancard.udid.utilities.Utility.filterDropDownResultsAboveSelected
+import com.swavlambancard.udid.utilities.Utility.filterMatchingIds
+import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
+import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
@@ -72,6 +76,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     private var disabilityDueToId: String? = null
     private val detailsOfIssuingAuthorityList = ArrayList<DropDownResult>()
     private var detailsOfIssuingAuthorityId: String? = null
+    private var imageUri: Uri? = null
+    private var cameraUri: Uri? = null
+    private var pdfUri: Uri? = null
+
     override val layoutId: Int
         get() = R.layout.fragment_disability_details
 
@@ -80,22 +88,31 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-
-
-
+        if(sharedViewModel.userData.value?.isFrom != "login"){
+            disabilityTypeApi()
+        }
+        if(sharedViewModel.userData.value?.check == "1"){
+            mBinding?.llDisabilityCertificate?.hideView()
+        }
+        else if(sharedViewModel.userData.value?.check == "2"){
+            mBinding?.llDisabilityCertificate?.showView()
+            sharedViewModel.userData.value?.haveDisabilityCertificate = 0
+        }
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.disabilityBirth) {
-                "Birth"->{
+                "Birth" -> {
                     mBinding?.rbYes?.isChecked = true
                     mBinding?.tvDisabilitySince?.hideView()
                     mBinding?.etDisabilitySince?.hideView()
                 }
-                "Since"->{
+
+                "Since" -> {
                     mBinding?.rbNo?.isChecked = true
                     mBinding?.tvDisabilitySince?.showView()
                     mBinding?.etDisabilitySince?.showView()
                 }
-                else->{
+
+                else -> {
                     mBinding?.rbYes?.isChecked = false
                     mBinding?.rbNo?.isChecked = false
                     mBinding?.tvDisabilitySince?.hideView()
@@ -103,33 +120,52 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
             }
             when (userData.haveDisabilityCertificate) {
-                1->{
+                1 -> {
                     mBinding?.rbDisabilityCertificateYes?.isChecked = true
                     mBinding?.llDisabilityCertificateYes?.showView()
                 }
-                2->{
+
+                0 -> {
                     mBinding?.rbDisabilityCertificateNo?.isChecked = true
                     mBinding?.llDisabilityCertificateYes?.hideView()
                 }
-                else->{
+
+                else -> {
                     mBinding?.rbDisabilityCertificateYes?.isChecked = false
                     mBinding?.rbDisabilityCertificateNo?.isChecked = false
                     mBinding?.llDisabilityCertificateYes?.hideView()
                 }
             }
-            if(!sharedViewModel.userData.value?.disabilityTypeList.isNullOrEmpty()) {
+            if (!sharedViewModel.userData.value?.disabilityTypeList.isNullOrEmpty()) {
                 matchItemDisabilityTypeList = sharedViewModel.userData.value?.disabilityTypeList!!
-            }
-            else{
+            } else {
                 matchItemDisabilityTypeList.clear()
             }
             mBinding?.etDisabilityType?.text = userData.disabilityTypeName
-            disabilityTypeId = userData.disabilityTypeCode?.takeIf { it.isNotEmpty() } ?: arrayListOf()
+            disabilityTypeId =
+                userData.disabilityTypeCode?.takeIf { it.isNotEmpty() } ?: arrayListOf()
             mBinding?.etDisabilityDueTo?.text = userData.disabilityDueToName
             disabilityDueToId = userData.disabilityDueToCode
             mBinding?.etDisabilitySince?.text = userData.disabilitySinceName
             disabilitySinceId = userData.disabilitySinceCode
-            mBinding?.etFileName?.text = userData.uploadDisabilityCertificate
+            if(sharedViewModel.userData.value?.isFrom != "login") {
+                mBinding?.etFileName?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        userData.uploadDisabilityCertificate.toString()
+                    )
+                }
+                mBinding?.etFileName?.setOnClickListener {
+                    openFile(userData.uploadDisabilityCertificate.toString(),requireContext())
+                }
+            }
+            else{
+                mBinding?.etFileName?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
+                    )
+                }            }
             disabilityCertificateName = userData.uploadDisabilityCertificate
             mBinding?.etRegistrationNoOfCertificate?.setText(userData.serialNumber)
             mBinding?.etDateOfIssuanceOfCertificate?.text = userData.dateOfCertificate
@@ -143,9 +179,11 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 R.id.rbYes -> {
                     "Birth"
                 }
+
                 R.id.rbNo -> {
                     "Since"
                 }
+
                 else -> {
                     "0"
                 }
@@ -157,9 +195,11 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 R.id.rbDisabilityCertificateYes -> {
                     1
                 }
+
                 R.id.rbDisabilityCertificateNo -> {
                     0
                 }
+
                 else -> {
                     2
                 }
@@ -187,12 +227,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.etSelectIssuingAuthority?.addTextChangedListener {
             sharedViewModel.userData.value?.detailOfAuthorityName = it.toString()
         }
-        mBinding?.etDisabilityPercentage?.addTextChangedListener{
+        mBinding?.etDisabilityPercentage?.addTextChangedListener {
             sharedViewModel.userData.value?.disabilityPercentage = it.toString()
         }
-//        {
-//            sharedViewModel.userData.value?.disabilityPercentage = it.toString()
-//        }
+
     }
 
     override fun setVariables() {
@@ -206,6 +244,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     "Disabilitytypes" -> {
                         disabilityTypeList.clear()
                         disabilityTypeList.addAll(userResponseModel._result)
+                        matchItemDisabilityTypeList = filterMatchingIds(disabilityTypeId, disabilityTypeList)
                     }
                 }
                 multipleSelectionBottomSheetAdapter?.notifyDataSetChanged()
@@ -221,29 +260,38 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                         disabilityDueToList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.select_disability_due_to)
+                                "Select Disability Due To"
                             )
                         )
                         disabilityDueToList.addAll(userResponseModel._result)
-
                     }
+
                     "disabilitySince" -> {
                         disabilitySinceList.clear()
                         disabilitySinceList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.select_disability_since)
+                                "Select Disability Since"
                             )
                         )
-                        disabilitySinceList.addAll(userResponseModel._result)
-
+                        if (sharedViewModel.userData.value?.applicantDob.toString().isEmpty()) {
+                            disabilitySinceList.addAll(userResponseModel._result)
+                        }
+                        else {
+                            val filteredList = filterDropDownResultsAboveSelected(
+                                userResponseModel._result,
+                                sharedViewModel.userData.value?.applicantDob.toString()
+                            )
+                            disabilitySinceList.addAll(filteredList)
+                        }
                     }
+
                     "detailsOfIssuingAuthority" -> {
                         detailsOfIssuingAuthorityList.clear()
                         detailsOfIssuingAuthorityList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.select_issuing_authority)
+                                "Select Issuing Authority"
                             )
                         )
                         detailsOfIssuingAuthorityList.addAll(userResponseModel._result)
@@ -266,6 +314,24 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 } else {
                     disabilityCertificateName = userResponseModel._result.file_name
                     mBinding?.etFileName?.text = userResponseModel._result.file_name
+                    mBinding?.etFileName?.let {
+                        setBlueUnderlinedText(
+                            it,
+                            sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
+                        )
+                    }
+                    when {
+                        pdfUri != null -> sharedViewModel.userData.value?.uploadDisabilityCertificatePath =
+                            pdfUri.toString()
+
+                        cameraUri != null -> sharedViewModel.userData.value?.uploadDisabilityCertificatePath =
+                            cameraUri.toString()
+
+
+                        imageUri != null -> sharedViewModel.userData.value?.uploadDisabilityCertificatePath =
+                            imageUri.toString()
+
+                    }
                 }
             }
         }
@@ -281,14 +347,11 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     HospitalAssessmentFragment()
                 )
-
-//                Log.d("FragmentData3",sharedViewModel.userData.value.toString())
-
             }
         }
 
         fun back(view: View) {
-            (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
+            (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfAddressFragment())
         }
 
         fun uploadFile(view: View) {
@@ -321,7 +384,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             date = ""
             mBinding?.etSelectIssuingAuthority?.text = ""
             detailsOfIssuingAuthorityId = ""
-            sharedViewModel.userData.value?.detailOfAuthorityCode=""
+            sharedViewModel.userData.value?.detailOfAuthorityCode = ""
             mBinding?.etDisabilityPercentage?.setText("")
         }
 
@@ -346,6 +409,45 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         fun detailsOfIssuingAuthority(view: View) {
             listName = "detailsOfIssuingAuthority"
             showBottomSheetDialog("detailsOfIssuingAuthority")
+        }
+
+        fun fileDisabilityCertificate(view: View) {
+            if(sharedViewModel.userData.value?.uploadDisabilityCertificatePath==null){
+                return
+            }
+            if (sharedViewModel.userData.value?.isFrom != "login") {
+                val documentPath = sharedViewModel.userData.value?.uploadDisabilityCertificatePath
+                if (documentPath.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+                val uri = Uri.parse(documentPath)
+
+                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+                    // Open PDF in Chrome using Google Docs Viewer
+                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+
+                    try {
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        intent.setPackage(null) // Open in any available browser
+                        startActivity(intent)
+                    }
+                } else {
+                    // Open Image in Chrome by using "file://" or "content://"
+                    openFile(uri.toString(), requireContext())
+                }
+            }
+            else{
+                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                intent.putExtra("fileUri", sharedViewModel.userData.value?.uploadDisabilityCertificatePath)
+                startActivity(intent)
+            }
+
         }
     }
 
@@ -395,16 +497,21 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             disabilityTypeApi()
         }
         setAdapter(view, disabilityTypeList)
-        Log.d("AdapterData2",disabilityTypeId.toString())
+        Log.d("AdapterData2", disabilityTypeId.toString())
         sharedViewModel.userData.value?.disabilityTypeCode = disabilityTypeId
         tvClose.setOnClickListener {
 
 
-            matchItemDisabilityTypeList = multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
+            matchItemDisabilityTypeList =
+                multipleSelectionBottomSheetAdapter?.selectedItems ?: matchItemDisabilityTypeList
             sharedViewModel.userData.value?.disabilityTypeList = matchItemDisabilityTypeList
-            if (matchItemDisabilityTypeList.size > 0)
-                mBinding?.etDisabilityType?.text = matchItemDisabilityTypeList.joinToString(", ") { it.name }
-             else {
+            if (matchItemDisabilityTypeList.size >= 1) {
+                Log.d("Size", matchItemDisabilityTypeList.size.toString())
+                mBinding?.etDisabilityType?.text =
+                    matchItemDisabilityTypeList.joinToString(", ") { it.name }
+            }
+            else {
+                mBinding?.etDisabilityType?.text = ""
                 mBinding?.etDisabilityType?.hint = getString(R.string.choose_disability_types)
             }
 
@@ -424,8 +531,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             requireContext(),
             list,
             matchItemDisabilityTypeList,
-        ) {
-                selectedItem ->
+        ) { selectedItem ->
             if (disabilityTypeId.contains(selectedItem)) {
                 disabilityTypeId.remove(selectedItem) // Remove if already present
             } else {
@@ -478,6 +584,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             },
             year, month, day
         )
+        dialog.datePicker.maxDate = System.currentTimeMillis()
         dialog.setCancelable(false)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()
@@ -537,7 +644,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             selectedTextView?.text = ""
                         } else {
                             disabilityDueToId = id
-                            sharedViewModel.userData.value?.disabilityDueToCode = disabilityDueToId.toString()
+                            sharedViewModel.userData.value?.disabilityDueToCode =
+                                disabilityDueToId.toString()
                         }
                     }
 
@@ -546,7 +654,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             selectedTextView?.text = ""
                         } else {
                             disabilitySinceId = id
-                            sharedViewModel.userData.value?.disabilitySinceCode = disabilitySinceId.toString()
+                            sharedViewModel.userData.value?.disabilitySinceCode =
+                                disabilitySinceId.toString()
                         }
                     }
 
@@ -555,7 +664,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             selectedTextView?.text = ""
                         } else {
                             detailsOfIssuingAuthorityId = id
-                            sharedViewModel.userData.value?.detailOfAuthorityCode = detailsOfIssuingAuthorityId.toString()
+                            sharedViewModel.userData.value?.detailOfAuthorityCode =
+                                detailsOfIssuingAuthorityId.toString()
                         }
                     }
                 }
@@ -618,55 +728,67 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 return false
             }
         }
-
-        if (disabilityCertificateTag == 2) {
-            mBinding?.llParent?.let {
-                showSnackbar(it, getString(R.string.please_select_do_you_have_disability_certificate_yes_no))
-            }
-            return false
-        }
-
-        if (disabilityCertificateTag == 1) {
-            if (mBinding?.etFileName?.text.toString().isEmpty()) {
+        if(sharedViewModel.userData.value?.check == "2") {
+            if (disabilityCertificateTag == 2) {
                 mBinding?.llParent?.let {
-                    showSnackbar(it, getString(R.string.please_upload_disability_certificate))
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_select_do_you_have_disability_certificate_yes_no)
+                    )
                 }
                 return false
             }
 
-            if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(it, getString(R.string.please_enter_sr_no_registration_no_of_certificate))
-                }
-                return false
-            }
-
-            if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(it, getString(R.string.please_select_date_of_issuance_of_certificate))
-                }
-                return false
-            }
-
-            if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
-                mBinding?.llParent?.let {
-                    showSnackbar(it, getString(R.string.please_select_details_of_issuing_authority))
-                }
-                return false
-            }
-            val percentageText = mBinding?.etDisabilityPercentage?.text.toString().trim()
-
-            if (percentageText.isNotEmpty()) {
-                val percentage = percentageText.toIntOrNull()
-                if (percentage == null || percentage < 0 || percentage > 100) {
+            if (disabilityCertificateTag == 1) {
+                if (mBinding?.etFileName?.text.toString().isEmpty()) {
                     mBinding?.llParent?.let {
-                        showSnackbar(it, getString(R.string.enter_a_number_between_1_and_100))
+                        showSnackbar(it, getString(R.string.please_upload_disability_certificate))
                     }
                     return false
                 }
+
+                if (mBinding?.etRegistrationNoOfCertificate?.text?.toString().isNullOrEmpty()) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(
+                            it,
+                            getString(R.string.please_enter_sr_no_registration_no_of_certificate)
+                        )
+                    }
+                    return false
+                }
+
+                if (mBinding?.etDateOfIssuanceOfCertificate?.text?.toString().isNullOrEmpty()) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(
+                            it,
+                            getString(R.string.please_select_date_of_issuance_of_certificate)
+                        )
+                    }
+                    return false
+                }
+
+                if (mBinding?.etSelectIssuingAuthority?.text?.toString().isNullOrEmpty()) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(
+                            it,
+                            getString(R.string.please_select_details_of_issuing_authority)
+                        )
+                    }
+                    return false
+                }
+                val percentageText = mBinding?.etDisabilityPercentage?.text.toString().trim()
+
+                if (percentageText.isNotEmpty()) {
+                    val percentage = percentageText.toIntOrNull()
+                    if (percentage == null || percentage < 0 || percentage > 100) {
+                        mBinding?.llParent?.let {
+                            showSnackbar(it, getString(R.string.enter_a_number_between_1_and_100))
+                        }
+                        return false
+                    }
+                }
             }
         }
-
         return true
     }
 
@@ -678,7 +800,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 CAPTURE_IMAGE_REQUEST -> {
                     val imageBitmap = data?.extras?.get("data") as Bitmap
                     val imageFile = saveImageToFile(imageBitmap)
-                    photoFile = imageFile
+                    cameraUri = Uri.fromFile(imageFile) // Get URI from file
+                    imageUri = null
+                    pdfUri = null
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                     } else {
@@ -688,6 +812,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
 
                 PICK_IMAGE -> {
+                    imageUri = data?.data
+                    cameraUri = null
+                    pdfUri = null
                     val selectedImageUri = data?.data
                     if (selectedImageUri != null) {
                         val uriPathHelper = URIPathHelper()
@@ -715,6 +842,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
 
                 REQUEST_iMAGE_PDF -> {
+                    pdfUri = data?.data
+                    cameraUri = null
+                    imageUri = null
                     data?.data?.let { uri ->
                         val projection = arrayOf(
                             MediaStore.MediaColumns.DISPLAY_NAME,
@@ -778,6 +908,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         viewModel.uploadFile(
             requireContext(),
             EncryptionModel.aesEncrypt("disability_cert_doc").toRequestBody(MultipartBody.FORM),
+            EncryptionModel.aesEncrypt("mobile").toRequestBody(MultipartBody.FORM),
             body
         )
     }

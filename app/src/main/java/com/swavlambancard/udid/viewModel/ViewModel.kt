@@ -21,6 +21,7 @@ import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
 import com.swavlambancard.udid.model.PendingApplicationWise
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.RejectAndPendingResponse
 import com.swavlambancard.udid.model.RejectApplicationRequest
 import com.swavlambancard.udid.model.UploadFileResponse
 import com.swavlambancard.udid.repository.Repository
@@ -68,8 +69,8 @@ open class ViewModel : ViewModel() {
     var renewCardResult = MutableLiveData<CommonResponse>()
     var logoutResult = MutableLiveData<CommonResponse>()
     var uploadFile = MutableLiveData<UploadFileResponse>()
-    var pendingApplicationWiseResult = MutableLiveData<CommonResponse>()
-    var rejectApplicationRequestResult = MutableLiveData<CommonResponse>()
+    var pendingApplicationWiseResult = MutableLiveData<RejectAndPendingResponse>()
+    var rejectApplicationRequestResult = MutableLiveData<RejectAndPendingResponse>()
     private val _downloadResult = MutableLiveData<Result<File>>()
     val downloadResult: LiveData<Result<File>> get() = _downloadResult
     val errors = MutableLiveData<String>()
@@ -1293,6 +1294,7 @@ open class ViewModel : ViewModel() {
     fun uploadFile(
         context: Context,
         documentType: RequestBody?,
+        type: RequestBody?,
         document: MultipartBody.Part?,
     ) {
         // can be launched in a separate asynchronous job
@@ -1301,6 +1303,7 @@ open class ViewModel : ViewModel() {
             try {
                 val response = repository.uploadFile(
                     documentType,
+                    type,
                     document
                 )
 
@@ -1703,6 +1706,26 @@ open class ViewModel : ViewModel() {
         scope.launch {
             try {
                 val response = repository.downloadLostCard(request)
+                Log.e("response", response.toString())
+                if (response.isSuccessful && response.code() in 200..201) {
+                    response.body()?.bytes()?.let { data ->
+                        convertToPDF(context,"lost_card", data)
+                    } ?: _downloadResult.postValue(Result.failure(Exception("No data received")))
+                } else {
+                    handleError(response)
+                }
+            } catch (e: Exception) {
+                handleException(e)
+            } finally {
+                dismissLoader()
+            }
+        }
+    }
+    fun downloadRejectionLetter(context: Context, request: RequestBody) {
+        networkCheck(context, true)
+        scope.launch {
+            try {
+                val response = repository.downloadRejectionLetter(request)
                 Log.e("response", response.toString())
                 if (response.isSuccessful && response.code() in 200..201) {
                     response.body()?.bytes()?.let { data ->

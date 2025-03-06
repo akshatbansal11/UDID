@@ -277,7 +277,7 @@
     <string name="enrollment_no">Enrollment No</string>
     <string name="you_have_already_sent_a_renewal_request_please_contact_the_cmo">You have already sent a renewal request. Please contact the CMO</string>
     <string name="applicant_s_full_name_">Applicant\'s Full Name</string>
-    <string name="if_you_select_a_state_from_the_dropdown_the_applicant_s_full_name_will_be_translated">If you select a state from the dropdown, the applicant\'s full name will be translated automatically to the respective language.</string>
+    <string name="if_you_select_a_state_from_the_dropdown_the_applicant_s_full_name_will_be_translated">When you select a state from the dropdown, the applicant\'s full name will be automatically translated into the respective language.</string>
     <string name="applicant_s_name_in_hindi">Applicant\'s Name in Hindi</string>
     <string name="applicant_s_name_in_hindi_">Applicant\'s Name in Hindi</string>
     <string name="mobile_number_is_only_10_digits">(mobile number is only 10 digits)</string>
@@ -289,16 +289,16 @@
     <string name="transgender">Transgender</string>
     <string name="select_relation_with_pwd">Select Relation with PWD</string>
     <string name="relation_with_person">Relation with Person<font fgcolor="#FF3D00">*</font></string>
-    <string name="applicant_mother_s_name">Applicant Mother\'s Name<font fgcolor="#FF3D00">*</font></string>
+    <string name="applicant_mother_s_name">Applicant Mother\'s Name</string>
     <string name="applicant_mother_s_name_">Applicant Mother\'s Name</string>
     <string name="contact_no_of_guardian_caretaker">Contact No. of Guardian/Caretaker<font fgcolor="#FF3D00">*</font></string>
     <string name="contact_no_of_guardian_caretaker_">Contact No. of Guardian / Caretaker</string>
     <string name="only_jpeg_jpg_and_png_image_with_size_5_kb_to_100_kb">(Only jpeg, jpg and png image with size 5 KB to 100 KB allowed and Photo image Width and Height less than 800px allowed) NOTE: Please upload a recent photograph)</string>
     <string name="signature_thumb_other_print">Signature/ Thumb /Other Print</string>
     <string name="only_jpeg_jpg_and_png_image_with_size_3_kb_to_30_kb_allowed">(Only jpeg, jpg and png image with size 3 KB to 30 KB allowed)</string>
-    <string name="applicant_father_s_name">Applicant Father\'s Name<font fgcolor="#FF3D00">*</font></string>
+    <string name="applicant_father_s_name">Applicant Father\'s Name</string>
     <string name="applicant_father_s_name_">Applicant Father\'s Name</string>
-    <string name="name_of_guardian_caretaker">Name of Guardian / Caretaker<font fgcolor="#FF3D00">*</font></string>
+    <string name="name_of_guardian_caretaker">Name of Guardian / Caretaker</string>
     <string name="name_of_guardian_caretaker_">Name of Guardian / Caretaker</string>
     <string name="apply_for_udid">Apply For UDID</string>
     <string name="i_have_read_and_understood_the_process">I have read and understood the process.<font fgcolor="#FF3D00">*</font></string>
@@ -372,10 +372,14 @@
     <string name="thank_you">Thank you</string>
     <string name="your_updated_application_has_been_submitted_successfully">Your updated application has been submitted successfully.</string>
     <string name="you_can_use_this_application_number">You can use this Application Number/</string>
-    <string name="enrolmentnumber29100000022071690637">EnrolmentNumber29100000022071690637</string>
     <string name="to_track_your_application_status">to track your application status.</string>
     <string name="thanks_amp_regards_nudid_support"><![CDATA[Thanks & Regards,\nUDID Support]]></string>
     <string name="applicant_name_in">Applicant Name in %1$s</string>
     <string name="please_upload_disability_certificate">Please Upload Disability Certificate</string>
     <string name="enrollment_number">Enrollment Number: %1$s</string>
+    <string name="enrollment_no_application_number">Enrollment No. / Application Number: %1$s</string>
+    <string name="aadhaar_enrollment_number_must_be_between_12_and_16_digits">Aadhaar Enrollment Number must be between 12 and 16 digits.</string>
+    <string name="guardian_contact_must_be_exactly_10_digits">Guardian Contact must be exactly 10 digits.</string>
+    <string name="please_check_again_all_your_details_again_before_confirming_your_application">Please Check, all your details again before confirming your application form.</string>
+    <string name="download_rejection_letter">Download Rejection Letter</string>
 </resources>

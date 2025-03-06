@@ -68,6 +68,7 @@ data class PwdApplication(
     //aes encryption
     //disability type multiple array of string to json string and then encrypt
     //Personal Details
+    var application_number: String?=null,//application_number
     var applicantFullName: String? = null,// full_name
     var full_name_i18n: String? = null,// full_name_i18n
     var regionalLanguageCode: String? = null,// regional_language
@@ -94,23 +95,27 @@ data class PwdApplication(
     var aadhaarTag: Int? =null,
     var aadhaarEnrollmentNo: String ?= null,//aadhar_enrollment_no
     var aadhaarEnrollmentUploadSlip: String? =null,//aadhar_enrollment_slip
+    var aadhaarEnrollmentUploadSlipPath: String? =null,//aadhar_enrollment_slip
+    var aadhaarEnrollmentApiSlipPath: String? =null,//aadhar_enrollment_slip
     var identityProofId: String ?= null,//identitity_proof_id
     var identityProofName: String ?= null,//identitity_proof_id
     var identityProofUpload: String? =null,//identitity_proof_file
+    var identityProofUploadPath: String? =null,//identitity_proof_file
+    var identityProofApiPath: String? =null,//identitity_proof_file
 
     //Address For Correspondence
     var natureDocumentAddressProofName: String ?= null,//address_proof_id
     var natureDocumentAddressProofCode: String ?= null,//address_proof_id
     var documentAddressProofPhoto: String? =null,//address_proof_file
+    var documentAddressProofPhotoPath: String? =null,//address_proof_file
+    var documentAddressProofPhotoApiPath: String? =null,//address_proof_file
     var address: String? =null,//current_address
-    var stateName1: String ?= null,//current_state_code
-    var stateCode1: String ?= null,//current_state_code
     var districtName: String ?= null,//current_district_code
     var districtCode: String ?= null,//current_district_code
     var subDistrictName: String ?= null,//current_subdistrict_code
     var subDistrictCode: String ?= null,//current_subdistrict_code
-    var villageName: String ?= null,//current_village_code
-    var villageCode: String ?= null,//current_village_code
+    var villageName: String ?= "",//current_village_code
+    var villageCode: String ?= "",//current_village_code
     var pincodeName: String ?= null,//current_pincode
     var pincodeCode: String ?= null,//current_pincode
     //Disability Details
@@ -123,8 +128,10 @@ data class PwdApplication(
     var disabilitySinceName: String ?= null,//[disability_since] => 2022
     var disabilitySinceCode: String ?= "",//[disability_since] => 2022
     var uploadDisabilityCertificate: String? =null,// disability_cert_doc
-    var detailOfAuthorityName: String? =null,// [detail_of_authority] => Medical Authority
-    var detailOfAuthorityCode: String? =null,// [detail_of_authority] => Medical Authority
+    var uploadDisabilityCertificatePath: String? =null,// disability_cert_doc
+    var uploadDisabilityCertificateApiPath: String? =null,// disability_cert_doc
+    var detailOfAuthorityName: String? ="",// [detail_of_authority] => Medical Authority
+    var detailOfAuthorityCode: String? ="",// [detail_of_authority] => Medical Authority
     var serialNumber: String? =null,//  [serial_number] => FD3245
     var haveDisabilityCertificate: Int? =null,// [have_disability_cert] => 1(yes)/0(no)
     var dateOfCertificate: String ?= null,// [date_of_certificate] => 01/08/2023
@@ -139,7 +146,10 @@ data class PwdApplication(
     var hospitalNameName: String ?= null,//hospital_treating_id
     var hospitalCheckBox: String? =null,//declaration =>0/1
     // extra key
-    var isFrom : String?= null
+    var isFrom : String?= null,
+    var check : String?= null,
+    var photoPath:String?=null,
+    var signaturePath:String?=null
 )
 
 data class EditProfileRequest(

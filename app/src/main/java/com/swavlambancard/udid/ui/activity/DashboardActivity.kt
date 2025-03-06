@@ -74,7 +74,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>() {
                         "mobile".toRequestBody(MultipartBody.FORM)
                     )
                 }
-            })
+            },getString(R.string.are_you_sure_want_to_logout))
         }
 
         mBinding?.contentNav?.ivSetting?.setOnClickListener {

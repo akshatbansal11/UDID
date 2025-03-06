@@ -267,7 +267,7 @@
     <string name="enrollment_no">नामांकन संख्या</string>
     <string name="you_have_already_sent_a_renewal_request_please_contact_the_cmo">आपने नवीनीकरण अनुरोध पहले ही भेज दिया है. कृपया सीएमओ से संपर्क करें</string>
     <string name="applicant_s_full_name_">आवेदक का पूरा नाम</string>
-    <string name="if_you_select_a_state_from_the_dropdown_the_applicant_s_full_name_will_be_translated">यदि आप ड्रॉपडाउन से कोई राज्य चुनते हैं, तो आवेदक का पूरा नाम स्वचालित रूप से संबंधित भाषा में अनुवादित हो जाएगा।</string>
+    <string name="if_you_select_a_state_from_the_dropdown_the_applicant_s_full_name_will_be_translated">जब आप ड्रॉपडाउन से एक राज्य का चयन करते हैं, तो आवेदक का पूरा नाम स्वचालित रूप से संबंधित भाषा में अनुवादित हो जाएगा</string>
     <string name="applicant_s_name_in_hindi">आवेदक का नाम हिंदी में</string>
     <string name="applicant_s_name_in_hindi_">आवेदक का नाम हिंदी में</string>
     <string name="mobile_number_is_only_10_digits">(मोबाइल नंबर केवल 10 अंकों का होना चाहिए)</string>
@@ -279,16 +279,16 @@
     <string name="transgender">ट्रांसजेंडर</string>
     <string name="select_relation_with_pwd">पीडब्ल्यूडी के साथ संबंध चुनें</string>
     <string name="relation_with_person">व्यक्ति के साथ संबंध<font fgcolor="#FF3D00">*</font></string>
-    <string name="applicant_mother_s_name">आवेदक की माता का नाम<font color="#FF3D00">*</font></string>
+    <string name="applicant_mother_s_name">आवेदक की माता का नाम</string>
     <string name="applicant_mother_s_name_">आवेदक की माता का नाम</string>
     <string name="contact_no_of_guardian_caretaker">अभिभावक/देखभालकर्ता का संपर्क नंबर<font fgcolor="#FF3D00">*</font></string>
     <string name="contact_no_of_guardian_caretaker_">अभिभावक / देखभालकर्ता का संपर्क नंबर</string>
     <string name="only_jpeg_jpg_and_png_image_with_size_5_kb_to_100_kb">(केवल jpeg, jpg और png छवियाँ जिनका आकार 5 KB से 100 KB हो और फोटो की चौड़ाई और ऊँचाई 800px से कम हो, अनुमत हैं) नोट: कृपया हाल की तस्वीर अपलोड करें</string>
     <string name="signature_thumb_other_print">हस्ताक्षर / अंगूठे का निशान / अन्य छाप</string>
     <string name="only_jpeg_jpg_and_png_image_with_size_3_kb_to_30_kb_allowed">(केवल jpeg, jpg और png छवियाँ जिनका आकार 3 KB से 30 KB हो, अनुमत हैं)</string>
-    <string name="applicant_father_s_name">आवेदक के पिता का नाम<font fgcolor="#FF3D00">*</font></string>
+    <string name="applicant_father_s_name">आवेदक के पिता का नाम</string>
     <string name="applicant_father_s_name_">आवेदक के पिता का नाम</string>
-    <string name="name_of_guardian_caretaker">अभिभावक / देखभालकर्ता का नाम <font fgcolor="#FF3D00">*</font></string>
+    <string name="name_of_guardian_caretaker">अभिभावक / देखभालकर्ता का नाम</string>
     <string name="name_of_guardian_caretaker_">अभिभावक / देखभालकर्ता का नाम</string>
     <string name="apply_for_udid">यूडीआईडी के लिए आवेदन करें</string>
     <string name="i_have_read_and_understood_the_process">मैंने प्रक्रिया पढ़ ली है और समझ ली है। <font fgcolor="#FF3D00">*</font></string>
@@ -358,14 +358,18 @@
     <string name="i_hereby_declare_that_all_particulars_stated_above_are_true_to_the_best_of_my_knowledge_and_belief">मैं यहां घोषित करता हूँ कि उपरोक्त सभी विवरण मेरी सर्वश्रेष्ठ जानकारी और विश्वास के अनुसार सत्य हैं, और कोई महत्वपूर्ण जानकारी छुपाई या गलत नहीं बताई गई है। मैं यह भी कहता हूँ कि यदि आवेदन में कोई असमानता पाई जाती है, तो मैं प्राप्त लाभों को रद्द किए जाने और कानून के अनुसार अन्य कार्रवाई के लिए उत्तरदायी रहूँगा। *</string>
     <string name="hospital_for_assessment_issue_of_udid_card_disability_certificate">मूल्यांकन के लिए अस्पताल / UDID कार्ड / विकलांगता प्रमाण पत्र जारी करने के लिए अस्पताल</string>
     <string name="choose_hospital_treating_district">चिकित्सा करने वाले अस्पताल का जिला चुनें</string>
-    <string name="please_select_sub_district_first">Please select Sub-District First.</string>
-    <string name="thank_you">Thank you</string>
-    <string name="your_updated_application_has_been_submitted_successfully">Your updated application has been submitted successfully.</string>
-    <string name="you_can_use_this_application_number">You can use this Application Number/</string>
-    <string name="enrolmentnumber29100000022071690637">EnrolmentNumber29100000022071690637</string>
-    <string name="to_track_your_application_status">to track your application status.</string>
-    <string name="thanks_amp_regards_nudid_support"><![CDATA[Thanks & Regards,\nUDID Support]]></string>
-    <string name="applicant_name_in">Applicant Name in %1$s</string>
-    <string name="please_upload_disability_certificate">Please Upload Disability Certificate</string>
-    <string name="enrollment_number">Enrollment Number: %1$s</string>
+    <string name="please_select_sub_district_first">कृपया पहले उप-जिला चुनें।</string>
+    <string name="thank_you">धन्यवाद</string>
+    <string name="your_updated_application_has_been_submitted_successfully">आपका अद्यतन आवेदन सफलतापूर्वक जमा कर दिया गया है।</string>
+    <string name="you_can_use_this_application_number">आप इस आवेदन संख्या/</string>
+    <string name="to_track_your_application_status">के माध्यम से अपने आवेदन की स्थिति ट्रैक कर सकते हैं।</string>
+    <string name="thanks_amp_regards_nudid_support"><![CDATA[धन्यवाद और शुभकामनाएँ,\nयूडीआईडी समर्थन]]></string>
+    <string name="applicant_name_in">आवेदक का नाम %1$s में</string>
+    <string name="please_upload_disability_certificate">कृपया विकलांगता प्रमाणपत्र अपलोड करें।</string>
+    <string name="enrollment_number">नामांकन संख्या: %1$s</string>
+    <string name="enrollment_no_application_number">नामांकन संख्या/आवेदन संख्या %1$s</string>
+    <string name="aadhaar_enrollment_number_must_be_between_12_and_16_digits">आधार नामांकन संख्या 12 से 16 अंकों के बीच होनी चाहिए।</string>
+    <string name="guardian_contact_must_be_exactly_10_digits">अभिभावक का संपर्क नंबर ठीक 10 अंकों का होना चाहिए।</string>
+    <string name="please_check_again_all_your_details_again_before_confirming_your_application">कृपया अपने आवेदन पत्र की पुष्टि करने से पहले अपने सभी विवरण दोबारा जांच लें</string>
+    <string name="download_rejection_letter">अस्वीकृति पत्र डाउनलोड करें</string>
 </resources>

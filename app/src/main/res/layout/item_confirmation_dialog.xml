@@ -14,12 +14,13 @@
 
         <TextView
             android:id="@+id/tvShowText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:textAlignment="center"
             android:layout_marginHorizontal="@dimen/dp_10"
             android:layout_marginTop="@dimen/dp_20"
-            android:text="@string/are_you_sure_want_to_logout"
+            android:text="@string/na"
             android:textColor="@color/black"
             android:textSize="@dimen/sp_18" />
 

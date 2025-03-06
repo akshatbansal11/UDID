@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="ClickAction"
             type="com.swavlambancard.udid.ui.activity.ApplicationStatusActivity.ClickActions" />
@@ -15,6 +16,7 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         tools:context=".ApplicationStatus">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clToolbar"
             android:layout_width="match_parent"
@@ -73,13 +75,14 @@
                     android:id="@+id/ivProfile"
                     android:layout_width="@dimen/dp_90"
                     android:layout_height="@dimen/dp_90"
-                    android:scaleType="centerCrop"
                     android:layout_gravity="center"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/ic_profile" />
 
             </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <LinearLayout
             android:id="@+id/llParent"
             android:layout_width="match_parent"
@@ -90,26 +93,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/clToolbar">
 
-        <TextView
-            android:id="@+id/tvApplicationStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_20"
-            android:text="@string/application_status"
-            android:textColor="@color/black"
-            android:textSize="@dimen/sp_16" />
+            <TextView
+                android:id="@+id/tvApplicationStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:text="@string/application_status"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_16" />
 
-        <TextView
-            android:id="@+id/etApplicationStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_7"
-            android:background="@drawable/curve_all_corner_grey"
-            android:paddingHorizontal="@dimen/dp_10"
-            android:paddingVertical="@dimen/dp_8"
-            android:text="@string/na"
-            android:textColor="#6B6B6B"
-            android:textSize="@dimen/sp_14" />
+            <TextView
+                android:id="@+id/etApplicationStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_7"
+                android:background="@drawable/curve_all_corner_grey"
+                android:paddingHorizontal="@dimen/dp_10"
+                android:paddingVertical="@dimen/dp_8"
+                android:text="@string/na"
+                android:textColor="#6B6B6B"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:id="@+id/etRejectionLetter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_7"
+                android:fontFamily="@font/opensans_semibold"
+                android:paddingHorizontal="@dimen/dp_10"
+                android:visibility="gone"
+                android:onClick="@{ClickAction::downloadRejectionLetter}"
+                android:paddingVertical="@dimen/dp_8"
+                android:text="@string/download_rejection_letter"
+                android:textColor="@color/red"
+                android:textSize="@dimen/sp_16" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

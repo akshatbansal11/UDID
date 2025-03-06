@@ -233,6 +233,9 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
             },
             year, month, day
         )
+
+        dialog.datePicker.maxDate = System.currentTimeMillis()
+
         dialog.setCancelable(false)
         dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.show()

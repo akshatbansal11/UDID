@@ -2,7 +2,6 @@ package com.swavlambancard.udid.utilities
 
 import FileCompressor
 import android.Manifest
-import android.app.Activity
 import android.app.Dialog
 import android.content.ContentResolver
 import android.content.Context
@@ -21,27 +20,17 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
-import com.google.android.material.snackbar.Snackbar
 import com.swavlambancard.udid.R
-import com.swavlambancard.udid.utilities.BaseActivity.Companion
 import com.swavlambancard.udid.utilities.BaseActivity.Companion.REQUEST_PERMISSION_CODE
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
@@ -53,8 +42,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
     private val permissions = arrayOf(
@@ -166,6 +153,21 @@ abstract class BaseFragment<T : ViewDataBinding> : Fragment() {
                 permissionsToRequest.toTypedArray(),
                 REQUEST_PERMISSION_CODE
             )
+        }
+    }
+
+    fun openPdfInChrome(context: Context, pdfUri: String) {
+        val pdfUrl = "https://docs.google.com/viewer?url=" +Uri.parse(pdfUri)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            // If Chrome is not installed, open in any available browser
+            intent.setPackage(null)
+            startActivity(intent)
         }
     }
 

@@ -58,6 +58,17 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvApplicationNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_20"
+                android:visibility="gone"
+                android:fontFamily="@font/opensans_regular"
+                android:text="@string/na"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_16" />
+
+            <TextView
                 android:id="@+id/tvApplicantFullName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -82,6 +93,7 @@
                 android:textSize="@dimen/sp_16" />
 
             <TextView
+                android:id="@+id/tvSelectStateFromDropDown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_5"
@@ -95,7 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="7dp"
                 android:fontFamily="@font/opensans_semibold"
-                android:text="@string/state_name"
+                android:text="@string/state_uts"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_16" />
 
@@ -124,12 +136,14 @@
                 android:text="@string/applicant_s_name_in_hindi"
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_16"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <LinearLayout
+                android:id="@+id/llApplicantNameInRegionalLanguage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_7"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <EditText
@@ -432,50 +446,41 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_16" />
 
-
             <LinearLayout
                 android:id="@+id/llUploadFilePhoto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_7"
-                android:background="@drawable/curve_all_corner_white"
+                android:visibility="visible"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
-                <TextView
-                    android:id="@+id/tvChooseFilePhoto"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/dp_5"
-                    android:layout_marginVertical="@dimen/dp_5"
-                    android:layout_weight=".4"
-                    android:background="@drawable/back_number_gray"
-                    android:gravity="center"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivPhoto"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="fitXY"
                     android:onClick="@{ClickAction::uploadFilePhoto}"
-                    android:padding="@dimen/dp_10"
-                    android:text="@string/choose_file"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/sp_14" />
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent"
+                    android:src="@drawable/ic_camera_gallery" />
 
                 <TextView
-                    android:id="@+id/etFileNamePhoto"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="1.6"
-                    android:hint="@string/no_file_chosen"
-                    android:padding="@dimen/dp_10"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/only_jpeg_jpg_and_png_image_with_size_5_kb_to_100_kb"
                     android:textColor="@color/grey"
-                    android:textSize="@dimen/sp_14" />
+                    android:textSize="@dimen/sp_12" />
             </LinearLayout>
-
             <TextView
+                android:id="@+id/etFileNamePhoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/opensans_semibold"
-                android:text="@string/only_jpeg_jpg_and_png_image_with_size_5_kb_to_100_kb"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/sp_12" />
+                android:textColor="@color/black"
+                android:onClick="@{ClickAction::filePhotoView}"
+                android:textSize="@dimen/sp_14" />
 
 
             <TextView
@@ -494,45 +499,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_7"
-                android:background="@drawable/curve_all_corner_white"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
-                <TextView
-                    android:id="@+id/tvChooseFileSignature"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/dp_5"
-                    android:layout_marginVertical="@dimen/dp_5"
-                    android:layout_weight=".4"
-                    android:background="@drawable/back_number_gray"
-                    android:gravity="center"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivSignature"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="fitXY"
                     android:onClick="@{ClickAction::uploadFileSignature}"
-                    android:padding="@dimen/dp_10"
-                    android:text="@string/choose_file"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/sp_14" />
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent"
+                    android:src="@drawable/ic_camera_gallery" />
 
                 <TextView
-                    android:id="@+id/etFileNameSignature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="1.6"
-                    android:hint="@string/no_file_chosen"
-                    android:padding="@dimen/dp_10"
+                    android:layout_marginStart="@dimen/dp_5"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/only_jpeg_jpg_and_png_image_with_size_5_kb_to_100_kb"
                     android:textColor="@color/grey"
-                    android:textSize="@dimen/sp_14" />
+                    android:textSize="@dimen/sp_12" />
+
             </LinearLayout>
 
             <TextView
+                android:id="@+id/etFileNameSignature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/dp_10"
-                android:fontFamily="@font/opensans_semibold"
-                android:text="@string/only_jpeg_jpg_and_png_image_with_size_3_kb_to_30_kb_allowed"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/sp_12" />
+                android:onClick="@{ClickAction::fileSignView}"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp_14" />
 
             <TextView
                 android:id="@+id/tvSaveDraft"

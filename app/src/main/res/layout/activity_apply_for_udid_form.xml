@@ -98,6 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
+                    android:gravity="top"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="@dimen/dp_5"
                     android:textSize="@dimen/sp_14"
@@ -110,6 +111,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:fontFamily="@font/poppins_bold"
+                    android:gravity="top"
                     android:layout_marginBottom="@dimen/dp_5"
                     android:textSize="@dimen/sp_14"
                     app:buttonTint="@color/radioBrown"
@@ -123,6 +125,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="@dimen/dp_5"
                     android:textSize="@dimen/sp_14"
+                    android:gravity="top"
                     app:buttonTint="@color/radioBrown"
                     android:text="@string/i_have_applied_for_disability_certificate_udid_card_but_my_udid_application_was_rejected" />
 
@@ -196,6 +199,7 @@
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="@dimen/dp_5"
                     android:textSize="@dimen/sp_14"
+                    android:gravity="top"
                     app:buttonTint="@color/radioBrown"
                     android:text="@string/i_have_obtained_disability_certificate_udid_card_but_require_a_new_udid_card_because" />
 
@@ -254,6 +258,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
+                    android:gravity="top"
                     android:fontFamily="@font/poppins_bold"
                     android:layout_marginBottom="@dimen/dp_5"
                     android:textSize="@dimen/sp_14"

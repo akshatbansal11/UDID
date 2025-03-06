@@ -14,18 +14,27 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.Gson
 import com.swavlambancard.udid.R
+import com.swavlambancard.udid.callBack.DialogCallback
 import com.swavlambancard.udid.databinding.FragmentHospitalAssesmentBinding
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.Filters
-import com.swavlambancard.udid.model.PwdApplication
+import com.swavlambancard.udid.model.UserData
+import com.swavlambancard.udid.ui.activity.DashboardActivity
 import com.swavlambancard.udid.ui.activity.LoginActivity
+import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
+import com.swavlambancard.udid.ui.activity.PwdLoginActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
+import com.swavlambancard.udid.utilities.AppConstants
+import com.swavlambancard.udid.utilities.BaseActivity
+import com.swavlambancard.udid.utilities.BaseActivity.Companion
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
+import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
 import com.swavlambancard.udid.utilities.Utility.getNameById
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
+import com.swavlambancard.udid.utilities.Utility.showConfirmationAlertDialog
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
@@ -60,10 +69,10 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-        if(sharedViewModel.userData.value?.isFrom != "login"){
+        if (sharedViewModel.userData.value?.isFrom != "login") {
+            mBinding?.llCbConfirm?.hideView()
             hospitalListApi(sharedViewModel.userData.value?.districtCode.toString())
         }
-        Log.d("RBCHECK",sharedViewModel.userData.value?.treatingHospitalTag.toString())
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.treatingHospitalTag) {
@@ -148,7 +157,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                         stateList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.please_select_hospital_treating_state_uts)
+                                "Please select Hospital Treating State / UTs."
                             )
                         )
                         stateList.addAll(userResponseModel._result)
@@ -159,7 +168,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                         districtList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.choose_hospital_treating_district)
+                               "Choose Hospital Treating District"
                             )
                         )
                         districtList.addAll(userResponseModel._result)
@@ -170,12 +179,15 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                         hospitalList.add(
                             DropDownResult(
                                 "0",
-                                getString(R.string.select_hospital_name)
+                                "Select Hospital Name"
                             )
                         )
                         hospitalList.addAll(userResponseModel._result)
-                        if(sharedViewModel.userData.value?.isFrom != "login"){
-                            mBinding?.etHospitalName?.text = getNameById(sharedViewModel.userData.value?.hospitalNameId.toString(),hospitalList)
+                        if (sharedViewModel.userData.value?.isFrom != "login") {
+                            mBinding?.etHospitalName?.text = getNameById(
+                                sharedViewModel.userData.value?.hospitalNameId.toString(),
+                                hospitalList
+                            )
                         }
                     }
                 }
@@ -186,16 +198,30 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         sharedViewModel.savePWDFormResult.observe(this) {
             val userResponseModel = it
             if (userResponseModel?._result != null) {
-                if(userResponseModel._resultflag==0)
-                {
+                if (userResponseModel._resultflag == 0) {
                     requireContext().toast(userResponseModel.message)
                     return@observe
+                } else {
+                    applicationNumber = userResponseModel._result.application_number
+                    requireContext().toast(userResponseModel.message)
+                    val dialog = ThankYouDialog(applicationNumber!!)
+                    dialog.show(
+                        (context as AppCompatActivity).supportFragmentManager,
+                        "ThankYouDialog"
+                    )
                 }
-                else{
-                applicationNumber = userResponseModel._result.application_number
-                requireContext().toast(userResponseModel.message)
-                val dialog = ThankYouDialog(applicationNumber!!)
-                dialog.show((context as AppCompatActivity).supportFragmentManager, "ThankYouDialog")
+            }
+        }
+
+        sharedViewModel.updatePWDFormResult.observe(this) {
+            val userResponseModel = it
+            if (userResponseModel?._result != null) {
+                if (userResponseModel._resultflag == 0) {
+                    requireContext().toast(userResponseModel.message)
+                    return@observe
+                } else {
+                    requireContext().toast(userResponseModel.message)
+                    context?.startActivity(Intent(requireContext(),DashboardActivity::class.java))
                 }
             }
         }
@@ -211,114 +237,41 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
 
     inner class ClickActions {
         fun submit(view: View) {
-//            if (sharedViewModel.personalDetails(requireContext())) {
-//
-//                sharedViewModel.savePWDForm(
-//                    context = requireContext(),
-//                    fullName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantFullName.toString()).toRequestBody(MultipartBody.FORM),
-//                    regionalFullName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.full_name_i18n.toString()).toRequestBody(MultipartBody.FORM),
-//                    regionalLanguage = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.regionalLanguageCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    mobile =EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantMobileNo.toString()).toRequestBody(MultipartBody.FORM),
-//                    email = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantEmail.toString()).toRequestBody(MultipartBody.FORM),
-//                    dob = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantDob.toString()).toRequestBody(MultipartBody.FORM),
-//                    gender = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.gender.toString()).toRequestBody(MultipartBody.FORM),
-//                    guardianRelation = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.relationWithPersonCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    fatherName = EncryptionModel.aesEncrypt("sharedViewModel.userData.value?.fatherName.toString()").toRequestBody(MultipartBody.FORM),
-//                    motherName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.motherName.toString()).toRequestBody(MultipartBody.FORM),
-//                    guardianName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.guardianName.toString()).toRequestBody(MultipartBody.FORM),
-//                    guardianContact = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.guardianContact.toString()).toRequestBody(MultipartBody.FORM),
-//                    photo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.photo.toString()).toRequestBody(MultipartBody.FORM),
-//                    sign = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.sign.toString()).toRequestBody(MultipartBody.FORM),
-//                    aadhaarNo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarNo.toString()).toRequestBody(MultipartBody.FORM),
-//                    shareAadhaarInfo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarCheckBox?.toString().toString()).toRequestBody(MultipartBody.FORM),
-//                    aadhaarInfo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarInfo?.toString().toString()).toRequestBody(MultipartBody.FORM),
-//                    aadhaarEnrollmentNo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarEnrollmentNo.toString()).toRequestBody(MultipartBody.FORM),
-//                    aadhaarEnrollmentSlip = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()).toRequestBody(MultipartBody.FORM),
-//                    identityProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.identityProofId.toString()).toRequestBody(MultipartBody.FORM),
-//                    identityProofFile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(MultipartBody.FORM),
-//                    addressProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    addressProofFile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.documentAddressProofPhoto.toString()).toRequestBody(MultipartBody.FORM),
-//                    currentAddress = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.address.toString()).toRequestBody(MultipartBody.FORM),
-//                    currentStateCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.stateCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    currentDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.districtCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    currentSubDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.subDistrictCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    currentVillageCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.villageCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    currentPincode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.pincodeCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    disabilityTypeId = EncryptionModel.aesEncrypt(Gson().toJson(sharedViewModel.userData.value?.disabilityTypeCode)).toRequestBody(MultipartBody.FORM),
-//                    disabilityDueTo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    disabilitySinceBirth = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityBirth.toString()).toRequestBody(MultipartBody.FORM),
-//                    disabilitySince = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    haveDisabilityCert = EncryptionModel.aesEncrypt("0").toRequestBody(MultipartBody.FORM),
-//                    disabilityCertDoc = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()).toRequestBody(MultipartBody.FORM),
-//                    serialNumber = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.serialNumber.toString()).toRequestBody(MultipartBody.FORM),
-//                    dateOfCertificate = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.dateOfCertificate.toString()).toRequestBody(MultipartBody.FORM),
-//                    detailOfAuthority = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.detailOfAuthorityCode.toString()).toRequestBody(MultipartBody.FORM),
-//                    disabilityPer = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityPercentage.toString()).toRequestBody(MultipartBody.FORM),
-//                    isHospitalTreatingOtherState = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.treatingHospitalTag.toString()).toRequestBody(MultipartBody.FORM),
-//                    hospitalTreatingStateCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalStateId.toString()).toRequestBody(MultipartBody.FORM),
-//                    hospitalTreatingDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalDistrictId.toString()).toRequestBody(MultipartBody.FORM),
-//                    declaration = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalCheckBox.toString()).toRequestBody(MultipartBody.FORM)
-//                )
-            if (sharedViewModel.personalDetails(requireContext())) {
-
-                sharedViewModel.savePWDForm(
-                    context = requireContext(),
-                    fullName = (sharedViewModel.userData.value?.applicantFullName.toString()).toRequestBody(MultipartBody.FORM),
-                    regionalFullName =(sharedViewModel.userData.value?.full_name_i18n.toString()).toRequestBody(MultipartBody.FORM),
-                    regionalLanguage = (sharedViewModel.userData.value?.regionalLanguageCode.toString()).toRequestBody(MultipartBody.FORM),
-                    mobile =(sharedViewModel.userData.value?.applicantMobileNo.toString()).toRequestBody(MultipartBody.FORM),
-                    email = (sharedViewModel.userData.value?.applicantEmail.toString()).toRequestBody(MultipartBody.FORM),
-                    dob = (sharedViewModel.userData.value?.applicantDob.toString()).toRequestBody(MultipartBody.FORM),
-                    gender = (sharedViewModel.userData.value?.gender.toString()).toRequestBody(MultipartBody.FORM),
-                    guardianRelation = (sharedViewModel.userData.value?.relationWithPersonCode.toString()).toRequestBody(MultipartBody.FORM),
-                    fatherName = (sharedViewModel.userData.value?.fatherName.toString()).toRequestBody(MultipartBody.FORM),
-                    motherName = (sharedViewModel.userData.value?.motherName.toString()).toRequestBody(MultipartBody.FORM),
-                    guardianName = (sharedViewModel.userData.value?.guardianName.toString()).toRequestBody(MultipartBody.FORM),
-                    guardianContact =(sharedViewModel.userData.value?.guardianContact.toString()).toRequestBody(MultipartBody.FORM),
-                    photo = (sharedViewModel.userData.value?.photo.toString()).toRequestBody(MultipartBody.FORM),
-                    sign = (sharedViewModel.userData.value?.sign.toString()).toRequestBody(MultipartBody.FORM),
-                    aadhaarNo = (sharedViewModel.userData.value?.aadhaarNo.toString()).toRequestBody(MultipartBody.FORM),
-                    shareAadhaarInfo = (sharedViewModel.userData.value?.aadhaarCheckBox?.toString().toString()).toRequestBody(MultipartBody.FORM),
-                    aadhaarInfo = (sharedViewModel.userData.value?.aadhaarInfo?.toString().toString()).toRequestBody(MultipartBody.FORM),
-                    aadhaarEnrollmentNo = (sharedViewModel.userData.value?.aadhaarEnrollmentNo.toString()).toRequestBody(MultipartBody.FORM),
-                    aadhaarEnrollmentSlip = (sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()).toRequestBody(MultipartBody.FORM),
-                    identityProofId = (sharedViewModel.userData.value?.identityProofId.toString()).toRequestBody(MultipartBody.FORM),
-                    identityProofFile = (sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(MultipartBody.FORM),
-                    addressProofId = (sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(MultipartBody.FORM),
-                    addressProofFile =(sharedViewModel.userData.value?.documentAddressProofPhoto.toString()).toRequestBody(MultipartBody.FORM),
-                    currentAddress = (sharedViewModel.userData.value?.address.toString()).toRequestBody(MultipartBody.FORM),
-                    currentStateCode = (sharedViewModel.userData.value?.stateCode.toString()).toRequestBody(MultipartBody.FORM),
-                    currentDistrictCode =(sharedViewModel.userData.value?.districtCode.toString()).toRequestBody(MultipartBody.FORM),
-                    currentSubDistrictCode = (sharedViewModel.userData.value?.subDistrictCode.toString()).toRequestBody(MultipartBody.FORM),
-                    currentVillageCode = (sharedViewModel.userData.value?.villageCode.toString()).toRequestBody(MultipartBody.FORM),
-                    currentPincode = (sharedViewModel.userData.value?.pincodeCode.toString()).toRequestBody(MultipartBody.FORM),
-                    disabilityTypeId = (Gson().toJson(sharedViewModel.userData.value?.disabilityTypeCode)).toRequestBody(MultipartBody.FORM),
-                    disabilityDueTo = (sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
-                    disabilitySinceBirth = (sharedViewModel.userData.value?.disabilityBirth.toString()).toRequestBody(MultipartBody.FORM),
-                    disabilitySince = (sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(MultipartBody.FORM),
-                    haveDisabilityCert = (sharedViewModel.userData.value?.haveDisabilityCertificate.toString()).toRequestBody(MultipartBody.FORM),
-                    disabilityCertDoc = (sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()).toRequestBody(MultipartBody.FORM),
-                    serialNumber = (sharedViewModel.userData.value?.serialNumber.toString()).toRequestBody(MultipartBody.FORM),
-                    dateOfCertificate = (sharedViewModel.userData.value?.dateOfCertificate.toString()).toRequestBody(MultipartBody.FORM),
-                    detailOfAuthority = (sharedViewModel.userData.value?.detailOfAuthorityCode.toString()).toRequestBody(MultipartBody.FORM),
-                    disabilityPer = (sharedViewModel.userData.value?.disabilityPercentage.toString()).toRequestBody(MultipartBody.FORM),
-                    isHospitalTreatingOtherState = (sharedViewModel.userData.value?.treatingHospitalTag.toString()).toRequestBody(MultipartBody.FORM),
-                    hospitalTreatingStateCode = (sharedViewModel.userData.value?.hospitalStateId.toString()).toRequestBody(MultipartBody.FORM),
-                    hospitalTreatingDistrictCode = (sharedViewModel.userData.value?.hospitalDistrictId.toString()).toRequestBody(MultipartBody.FORM),
-                    declaration = (sharedViewModel.userData.value?.hospitalCheckBox.toString()).toRequestBody(MultipartBody.FORM),
-                    hospitalTreatingId=(sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(MultipartBody.FORM)
-                )
-
-//            Log.d("FragmentData5",sharedViewModel.userData.value.toString())
-//                println(sharedViewModel.userData)
-            }
-            sharedViewModel.errors.observe(requireActivity()) {
-                mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
+            if (sharedViewModel.userData.value?.isFrom != "login") {
+                showConfirmationAlertDialog(requireContext(), object : DialogCallback {
+                    override fun onYes() {
+                        Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
+                        updatePwsFormApi()
+                    }
+                },getString(R.string.please_check_again_all_your_details_again_before_confirming_your_application))
+            } else {
+                showConfirmationAlertDialog(requireContext(), object : DialogCallback {
+                    override fun onYes() {
+                        Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
+                        savePwdFormApi()
+                    }
+                },
+                    getString(R.string.please_check_again_all_your_details_again_before_confirming_your_application))
             }
         }
 
         fun cancel(view: View) {
-            startActivity(Intent(requireContext(), LoginActivity::class.java))
+            if(sharedViewModel.userData.value?.isFrom != "login") {
+
+                val intent = Intent(requireContext(), DashboardActivity::class.java)
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
+            else{
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
+        }
+        fun back(view: View) {
+            (requireActivity() as PersonalProfileActivity).replaceFragment(DisabilityDetailFragment())
         }
 
         fun yes(view: View) {
@@ -389,7 +342,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         )
     }
 
-    private fun hospitalListApi(id:String) {
+    private fun hospitalListApi(id: String) {
         viewModel.getDropDown(
             requireContext(), DropDownRequest(
                 model = "Hospitals",
@@ -437,8 +390,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             "hospitalName" -> {
                 if (treatingHospitalTag == "1") {
                     hospitalDistrictId?.let { hospitalListApi(it) }
-                }
-                else if(treatingHospitalTag == "0"){
+                } else if (treatingHospitalTag == "0") {
                     districtId?.let { hospitalListApi(it) }
                 }
                 selectedList = hospitalList
@@ -453,7 +405,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 selectedTextView?.text = selectedItem
                 when (type) {
                     "state" -> {
-                        if (selectedItem == "Select Hospital Treating State / UTs") {
+                        if (selectedItem == "Please select Hospital Treating State / UTs.") {
                             selectedTextView?.text = ""
                             mBinding?.etHospitalTreatingDistrict?.text = ""
                             districtList.clear()
@@ -469,10 +421,9 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                             mBinding?.etHospitalName?.text = ""
                             hospitalList.clear()
                         } else {
-                            if(treatingHospitalTag == "1"){
-                            hospitalDistrictId = id
-                            }
-                            else{
+                            if (treatingHospitalTag == "1") {
+                                hospitalDistrictId = id
+                            } else {
                                 districtId = id
                             }
                             sharedViewModel.userData.value?.hospitalDistrictId = hospitalDistrictId
@@ -524,42 +475,663 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         bottomSheetDialog?.show()
     }
 
-//    private fun valid(): Boolean {
-//        if (treatingHospitalTag == "1") {
-//            if (mBinding?.etHospitalTreatingState?.text.toString().trim().isEmpty()) {
-//                mBinding?.llParent?.let {
-//                    showSnackbar(
-//                        it,
-//                        getString(R.string.please_select_state_uts)
-//                    )
-//                }
-//                return false
-//            } else if (mBinding?.etHospitalTreatingDistrict?.text.toString().trim().isEmpty()) {
-//                mBinding?.llParent?.let {
-//                    showSnackbar(
-//                        it,
-//                        getString(R.string.please_select_district)
-//                    )
-//                }
-//                return false
-//            }
-//        } else if (mBinding?.etHospitalName?.text.toString().trim().isEmpty()) {
-//            mBinding?.llParent?.let {
-//                showSnackbar(
-//                    it,
-//                    getString(R.string.select_hospital_name)
-//                )
-//            }
-//            return false
-//        } else if (mBinding?.cbConfirm?.isChecked == false) {
-//            mBinding?.llParent?.let {
-//                showSnackbar(
-//                    it,
-//                    getString(R.string.you_must_check_the_box_to_confirm_that_you_have_read_and_understood_the_process)
-//                )
-//            }
-//            return false
-//        }
-//        return true
-//    }
+    private fun valid(): Boolean {
+        if (treatingHospitalTag == "1") {
+            if (mBinding?.etHospitalTreatingState?.text.toString().trim().isEmpty()) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_select_state_uts)
+                    )
+                }
+                return false
+            } else if (mBinding?.etHospitalTreatingDistrict?.text.toString().trim().isEmpty()) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_select_district)
+                    )
+                }
+                return false
+            }
+        } else if (mBinding?.etHospitalName?.text.toString().trim().isEmpty()) {
+            mBinding?.llParent?.let {
+                showSnackbar(
+                    it,
+                    getString(R.string.select_hospital_name)
+                )
+            }
+            return false
+        } else if (sharedViewModel.userData.value?.isFrom == "login") {
+            if (mBinding?.cbConfirm?.isChecked == false) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.you_must_check_the_box_to_confirm_that_you_have_read_and_understood_the_process)
+                    )
+                }
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun savePwdFormApi() {
+        if (valid()) {
+            Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
+
+            sharedViewModel.savePWDForm(
+                context = requireContext(),
+                type = EncryptionModel.aesEncrypt("mobile").toRequestBody(MultipartBody.FORM),
+                applicationNumber = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.application_number.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                fullName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantFullName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                regionalFullName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.full_name_i18n.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                regionalLanguage = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.regionalLanguageCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                mobile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantMobileNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                email = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantEmail.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                dob = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantDob.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                gender = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.gender.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianRelation = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantsFMGCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                relationPwd = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.relationWithPersonCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                fatherName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.fatherName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                motherName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.motherName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.guardianName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianContact = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.guardianContact.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                photo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.photo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                sign = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.sign.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                aadhaarNo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                shareAadhaarInfo = EncryptionModel.aesEncrypt(
+                    sharedViewModel.userData.value?.aadhaarCheckBox?.toString().toString()
+                ).toRequestBody(MultipartBody.FORM),
+                aadhaarInfo = EncryptionModel.aesEncrypt(
+                    sharedViewModel.userData.value?.aadhaarInfo?.toString().toString()
+                ).toRequestBody(MultipartBody.FORM),
+                aadhaarEnrollmentNo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarEnrollmentNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                aadhaarEnrollmentSlip = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                identityProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.identityProofId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                identityProofFile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                addressProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                addressProofFile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.documentAddressProofPhoto.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentAddress = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.address.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentStateCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.stateCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.districtCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentSubDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.subDistrictCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentVillageCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.villageCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentPincode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.pincodeCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityTypeId = EncryptionModel.aesEncrypt(Gson().toJson(sharedViewModel.userData.value?.disabilityTypeCode)).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityDueTo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilitySinceBirth = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityBirth.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilitySince = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilitySinceCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                haveDisabilityCert = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.haveDisabilityCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityCertDoc = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                serialNumber = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.serialNumber.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                dateOfCertificate = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.dateOfCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                detailOfAuthority = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.detailOfAuthorityCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityPer = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityPercentage.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                isHospitalTreatingOtherState = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.treatingHospitalTag.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingStateCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalStateId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalDistrictId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                declaration = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalCheckBox.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                )
+            )
+        }
+    }
+
+    private fun updatePwsFormApi() {
+        if (valid()) {
+            sharedViewModel.updatePWDForm(
+                context = requireContext(),
+                type = EncryptionModel.aesEncrypt("mobile").toRequestBody(MultipartBody.FORM),
+                applicationNumber = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.application_number.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                fullName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantFullName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                regionalFullName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.full_name_i18n.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                regionalLanguage = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.regionalLanguageCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                mobile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantMobileNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                email = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantEmail.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                dob = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantDob.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                gender = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.gender.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianRelation = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.applicantsFMGCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                relationPwd = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.relationWithPersonCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                fatherName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.fatherName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                motherName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.motherName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianName = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.guardianName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianContact = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.guardianContact.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                photo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.photo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                sign = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.sign.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                aadhaarNo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                shareAadhaarInfo = EncryptionModel.aesEncrypt(
+                    sharedViewModel.userData.value?.aadhaarCheckBox?.toString().toString()
+                ).toRequestBody(MultipartBody.FORM),
+                aadhaarInfo = EncryptionModel.aesEncrypt(
+                    sharedViewModel.userData.value?.aadhaarInfo?.toString().toString()
+                ).toRequestBody(MultipartBody.FORM),
+                aadhaarEnrollmentNo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarEnrollmentNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                aadhaarEnrollmentSlip = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                identityProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.identityProofId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                identityProofFile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                addressProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                addressProofFile = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.documentAddressProofPhoto.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentAddress = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.address.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentStateCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.stateCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.districtCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentSubDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.subDistrictCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentVillageCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.villageCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentPincode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.pincodeCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityTypeId = EncryptionModel.aesEncrypt(Gson().toJson(sharedViewModel.userData.value?.disabilityTypeCode)).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityDueTo = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilitySinceBirth = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityBirth.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilitySince = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilitySinceCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                haveDisabilityCert = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.haveDisabilityCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityCertDoc = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                serialNumber = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.serialNumber.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                dateOfCertificate = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.dateOfCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                detailOfAuthority = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.detailOfAuthorityCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityPer = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.disabilityPercentage.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                isHospitalTreatingOtherState = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.treatingHospitalTag.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingStateCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalStateId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingDistrictCode = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalDistrictId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                )
+            )
+        }
+    }
+
+    private fun updatePwsFormApiWithoutEncryption() {
+        if (valid()) {
+            sharedViewModel.updatePWDForm(
+                context = requireContext(),
+                type = ("mobile").toRequestBody(MultipartBody.FORM),
+                applicationNumber = (sharedViewModel.userData.value?.application_number.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                fullName = (sharedViewModel.userData.value?.applicantFullName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                regionalFullName = (sharedViewModel.userData.value?.full_name_i18n.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                regionalLanguage = (sharedViewModel.userData.value?.regionalLanguageCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                mobile = (sharedViewModel.userData.value?.applicantMobileNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                email = (sharedViewModel.userData.value?.applicantEmail.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                dob = (sharedViewModel.userData.value?.applicantDob.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                gender = (sharedViewModel.userData.value?.gender.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianRelation = (sharedViewModel.userData.value?.applicantsFMGCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                relationPwd = (sharedViewModel.userData.value?.relationWithPersonCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                fatherName = (sharedViewModel.userData.value?.fatherName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                motherName = (sharedViewModel.userData.value?.motherName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianName = (sharedViewModel.userData.value?.guardianName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianContact = (sharedViewModel.userData.value?.guardianContact.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                photo = (sharedViewModel.userData.value?.photo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                sign = (sharedViewModel.userData.value?.sign.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                aadhaarNo = (sharedViewModel.userData.value?.aadhaarNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                shareAadhaarInfo = (
+                    sharedViewModel.userData.value?.aadhaarCheckBox?.toString().toString()
+                ).toRequestBody(MultipartBody.FORM),
+                aadhaarInfo = (
+                    sharedViewModel.userData.value?.aadhaarInfo?.toString().toString()
+                ).toRequestBody(MultipartBody.FORM),
+                aadhaarEnrollmentNo = (sharedViewModel.userData.value?.aadhaarEnrollmentNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                aadhaarEnrollmentSlip = (sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                identityProofId = (sharedViewModel.userData.value?.identityProofId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                identityProofFile = (sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                addressProofId = (sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                addressProofFile = (sharedViewModel.userData.value?.documentAddressProofPhoto.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentAddress = (sharedViewModel.userData.value?.address.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentStateCode = (sharedViewModel.userData.value?.stateCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentDistrictCode = (sharedViewModel.userData.value?.districtCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentSubDistrictCode = (sharedViewModel.userData.value?.subDistrictCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentVillageCode = (sharedViewModel.userData.value?.villageCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentPincode = (sharedViewModel.userData.value?.pincodeCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityTypeId = (Gson().toJson(sharedViewModel.userData.value?.disabilityTypeCode)).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityDueTo = (sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilitySinceBirth = (sharedViewModel.userData.value?.disabilityBirth.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilitySince = (sharedViewModel.userData.value?.disabilitySinceCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                haveDisabilityCert = (sharedViewModel.userData.value?.haveDisabilityCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityCertDoc = (sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                serialNumber = (sharedViewModel.userData.value?.serialNumber.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                dateOfCertificate = (sharedViewModel.userData.value?.dateOfCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                detailOfAuthority = (sharedViewModel.userData.value?.detailOfAuthorityCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityPer = (sharedViewModel.userData.value?.disabilityPercentage.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                isHospitalTreatingOtherState = (sharedViewModel.userData.value?.treatingHospitalTag.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingStateCode = (sharedViewModel.userData.value?.hospitalStateId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingDistrictCode = (sharedViewModel.userData.value?.hospitalDistrictId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingId = (sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                )
+            )
+        }
+    }
+
+    private fun savePwdFormApiWithoutEncryption() {
+        if (valid()) {
+            Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
+
+            sharedViewModel.savePWDForm(
+                context = requireContext(),
+                type = ("mobile").toRequestBody(MultipartBody.FORM),
+                applicationNumber = (sharedViewModel.userData.value?.application_number.toString()
+                        ).toRequestBody(
+                        MultipartBody.FORM
+                    ),
+                fullName =
+                (sharedViewModel.userData.value?.applicantFullName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                regionalFullName =
+                (sharedViewModel.userData.value?.full_name_i18n.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                regionalLanguage =
+                (sharedViewModel.userData.value?.regionalLanguageCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                mobile = (sharedViewModel.userData.value?.applicantMobileNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                email = (sharedViewModel.userData.value?.applicantEmail.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                dob = (sharedViewModel.userData.value?.applicantDob.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                gender = (sharedViewModel.userData.value?.gender.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianRelation =
+                (sharedViewModel.userData.value?.applicantsFMGCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                relationPwd =
+                (sharedViewModel.userData.value?.relationWithPersonCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                fatherName = (sharedViewModel.userData.value?.fatherName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                motherName = (sharedViewModel.userData.value?.motherName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianName = (sharedViewModel.userData.value?.guardianName.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                guardianContact =
+                (sharedViewModel.userData.value?.guardianContact.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                photo = (sharedViewModel.userData.value?.photo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                sign = (sharedViewModel.userData.value?.sign.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                aadhaarNo = (sharedViewModel.userData.value?.aadhaarNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                shareAadhaarInfo = (
+                        sharedViewModel.userData.value?.aadhaarCheckBox?.toString().toString()
+                        ).toRequestBody(MultipartBody.FORM),
+                aadhaarInfo = (
+                        sharedViewModel.userData.value?.aadhaarInfo?.toString().toString()
+                        ).toRequestBody(MultipartBody.FORM),
+                aadhaarEnrollmentNo =
+                (sharedViewModel.userData.value?.aadhaarEnrollmentNo.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                aadhaarEnrollmentSlip =
+                (sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                identityProofId =
+                (sharedViewModel.userData.value?.identityProofId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                identityProofFile =
+                (sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                addressProofId =
+                (sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                addressProofFile =
+                (sharedViewModel.userData.value?.documentAddressProofPhoto.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentAddress = (sharedViewModel.userData.value?.address.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentStateCode =
+                (sharedViewModel.userData.value?.stateCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentDistrictCode =
+                (sharedViewModel.userData.value?.districtCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentSubDistrictCode =
+                (sharedViewModel.userData.value?.subDistrictCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentVillageCode =
+                (sharedViewModel.userData.value?.villageCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                currentPincode =
+                (sharedViewModel.userData.value?.pincodeCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityTypeId =
+                (Gson().toJson(sharedViewModel.userData.value?.disabilityTypeCode)).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityDueTo =
+                (sharedViewModel.userData.value?.disabilityDueToCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilitySinceBirth =
+                (sharedViewModel.userData.value?.disabilityBirth.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilitySince =
+                (sharedViewModel.userData.value?.disabilitySinceCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                haveDisabilityCert =
+                (sharedViewModel.userData.value?.haveDisabilityCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityCertDoc =
+                (sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                serialNumber = (sharedViewModel.userData.value?.serialNumber.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                dateOfCertificate =
+                (sharedViewModel.userData.value?.dateOfCertificate.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                detailOfAuthority =
+                (sharedViewModel.userData.value?.detailOfAuthorityCode.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                disabilityPer =
+                (sharedViewModel.userData.value?.disabilityPercentage.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                isHospitalTreatingOtherState =
+                (sharedViewModel.userData.value?.treatingHospitalTag.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingStateCode =
+                (sharedViewModel.userData.value?.hospitalStateId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingDistrictCode =
+                (sharedViewModel.userData.value?.hospitalDistrictId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                declaration =
+                (sharedViewModel.userData.value?.hospitalCheckBox.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
+                hospitalTreatingId =
+                (sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(
+                    MultipartBody.FORM
+                )
+            )
+        }
+    }
+
 }

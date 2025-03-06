@@ -26,7 +26,7 @@
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
     <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
-<!--        <item name="android:background">@drawable/curve_top_corner</item>-->
+        <item name="android:background">@drawable/bottom_sheet_background</item>
     </style>
 
     <!--    <style name="TextViewStyle" >-->

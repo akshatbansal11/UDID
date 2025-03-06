@@ -87,26 +87,10 @@
                     android:textColor="@color/white" />
 
                 <TextView
-                    android:id="@+id/tvScannerPage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tvPwdLogin"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginVertical="@dimen/dp_20"
-                    android:background="@drawable/curve_fill_blue"
-                    android:elevation="@dimen/dp_5"
-                    android:onClick="@{ClickAction::scanForDetails}"
-                    android:paddingHorizontal="@dimen/dp_45"
-                    android:paddingVertical="@dimen/dp_15"
-                    android:text="@string/scan_for_details"
-                    android:textAlignment="center"
-                    android:textColor="@color/white" />
-
-                <TextView
                     android:id="@+id/tvApplyForUDID"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tvScannerPage"
+                    android:layout_below="@id/tvPwdLogin"
                     android:layout_centerHorizontal="true"
                     android:layout_marginVertical="@dimen/dp_20"
                     android:background="@drawable/curve_fill_blue"
@@ -115,6 +99,22 @@
                     android:paddingHorizontal="@dimen/dp_45"
                     android:paddingVertical="@dimen/dp_15"
                     android:text="@string/apply_for_udid"
+                    android:textAlignment="center"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/tvScannerPage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvApplyForUDID"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginVertical="@dimen/dp_20"
+                    android:background="@drawable/curve_fill_blue"
+                    android:elevation="@dimen/dp_5"
+                    android:onClick="@{ClickAction::scanForDetails}"
+                    android:paddingHorizontal="@dimen/dp_45"
+                    android:paddingVertical="@dimen/dp_15"
+                    android:text="@string/scan_for_details"
                     android:textAlignment="center"
                     android:textColor="@color/white" />
 

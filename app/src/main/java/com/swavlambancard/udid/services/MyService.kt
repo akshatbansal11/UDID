@@ -14,6 +14,7 @@ import com.swavlambancard.udid.model.MyAccountResponse
 import com.swavlambancard.udid.model.OTPResponse
 import com.swavlambancard.udid.model.PendingApplicationWise
 import com.swavlambancard.udid.model.PincodeRequest
+import com.swavlambancard.udid.model.RejectAndPendingResponse
 import com.swavlambancard.udid.model.RejectApplicationRequest
 import com.swavlambancard.udid.model.SavePWDFormResponse
 import com.swavlambancard.udid.model.UploadFileResponse
@@ -61,10 +62,13 @@ const val GET_CODE_DROP_DOWN = "getCodeDropdown"
 const val PINCODE_DROP_DOWN = "getPincodeDropdown"
 const val UPLOAD_FILE = "uploadFile"
 const val EDIT_APPLICATION = "editApplication"
-//const val SAVE_PWD_FORM = "savePWDForm"
-const val SAVE_PWD_FORM = "savePWDForm2"
+const val SAVE_PWD_FORM = "savePWDForm"
+const val UPDATE_PWD_FORM = "updatePWDForm"
+//const val SAVE_PWD_FORM = "savePWDForm2"
+//const val UPDATE_PWD_FORM = "updatePWDForm2"
 const val APPLICATION_REJECT_REQUEST = "applicationRejectRequest"
 const val PENDING_APPLICATION_WISE = "pendingapplicationwise"
+const val DOWNLOAD_REJECTION_LETTER = "rejectionCertificate"
 
 interface MyService {
 
@@ -280,6 +284,7 @@ interface MyService {
     @POST(UPLOAD_FILE)
     suspend fun getUploadFile(
         @Part("document_type") documentType: RequestBody?,
+        @Part("type") type: RequestBody?,
         @Part document: MultipartBody.Part?,
     ): Response<UploadFileResponse>
 
@@ -291,6 +296,8 @@ interface MyService {
     @POST(SAVE_PWD_FORM)
     suspend fun savePwdForm(
         //Personal Details
+        @Part("type") type: RequestBody?,
+        @Part("application_number") applicationNumber: RequestBody?,
         @Part("full_name") fullName: RequestBody?,
         @Part("full_name_i18n") regionalFullName: RequestBody?,
         @Part("regional_language") regionalLanguage: RequestBody?,
@@ -299,6 +306,7 @@ interface MyService {
         @Part("dob") dob: RequestBody?,
         @Part("gender") gender: RequestBody?,//=>M/F/T
         @Part("guardian_relation") guardianRelation: RequestBody?,//Mother/Father/Guardian
+        @Part("relation_pwd") relationPwd: RequestBody?,//Mother/Father/Guardian
         @Part("father_name") fatherName: RequestBody?,
         @Part("mother_name") motherName: RequestBody?,
         @Part("guardian_name") guardianName: RequestBody?,
@@ -325,7 +333,7 @@ interface MyService {
         //Disability Details
         @Part("disability_type_id") disabilityTypeId: RequestBody?,
         @Part("disability_due_to") disabilityDueTo: RequestBody?,
-        @Part("disability_due_to") disabilitySinceBirth: RequestBody?,//Since(No)/Birth(Yes)
+        @Part("disability_since_birth") disabilitySinceBirth: RequestBody?,//Since(No)/Birth(Yes)
         @Part("disability_since") disabilitySince: RequestBody?,
         @Part("have_disability_cert") haveDisabilityCert: RequestBody?,//1(yes)/0(no)
         @Part("disability_cert_doc") disabilityCertDoc: RequestBody?,
@@ -341,14 +349,76 @@ interface MyService {
         @Part("declaration") declaration: RequestBody?,//=>0/1
     ): Response<SavePWDFormResponse>
 
+    @Multipart
+    @POST(UPDATE_PWD_FORM)
+    suspend fun updatePwdForm(
+        @Part("type") type: RequestBody?,
+        //Personal Details
+        @Part("application_number") applicationNumber: RequestBody?,
+        @Part("full_name") fullName: RequestBody?,
+        @Part("full_name_i18n") regionalFullName: RequestBody?,
+        @Part("regional_language") regionalLanguage: RequestBody?,
+        @Part("mobile") mobile: RequestBody?,
+        @Part("email") email: RequestBody?,
+        @Part("dob") dob: RequestBody?,
+        @Part("gender") gender: RequestBody?,//=>M/F/T
+        @Part("guardian_relation") guardianRelation: RequestBody?,//Mother/Father/Guardian
+        @Part("relation_pwd") relationPwd: RequestBody?,//Mother/Father/Guardian
+        @Part("father_name") fatherName: RequestBody?,
+        @Part("mother_name") motherName: RequestBody?,
+        @Part("guardian_name") guardianName: RequestBody?,
+        @Part("guardian_contact") guardianContact: RequestBody?,
+        @Part("photo") photo: RequestBody?,
+        @Part("signature_thumb_print") sign: RequestBody?,
+        // Proof id Identity Card
+        @Part("aadhaar_no") aadhaarNo: RequestBody?,
+        @Part("share_aadhar_info") shareAadhaarInfo: RequestBody?,//0/1
+        @Part("aadhar_info") aadhaarInfo: RequestBody?,//=> Yes(1)/No(0)
+        @Part("aadhar_enrollment_no") aadhaarEnrollmentNo: RequestBody?,
+        @Part("aadhar_enrollment_slip") aadhaarEnrollmentSlip: RequestBody?,
+        @Part("identitity_proof_id") identityProofId: RequestBody?,
+        @Part("identitity_proof_file") identityProofFile: RequestBody?,
+        //Address For Correspondence
+        @Part("address_proof_id") addressProofId: RequestBody?,
+        @Part("address_proof_file") addressProofFile: RequestBody?,
+        @Part("current_address") currentAddress: RequestBody?,
+        @Part("current_state_code") currentStateCode: RequestBody?,
+        @Part("current_district_code") currentDistrictCode: RequestBody?,
+        @Part("current_subdistrict_code") currentSubDistrictCode: RequestBody?,
+        @Part("current_village_code") currentVillageCode: RequestBody?,
+        @Part("current_pincode") currentPincode: RequestBody?,
+        //Disability Details
+        @Part("disability_type_id") disabilityTypeId: RequestBody?,
+        @Part("disability_due_to") disabilityDueTo: RequestBody?,
+        @Part("disability_since_birth") disabilitySinceBirth: RequestBody?,//Since(No)/Birth(Yes)
+        @Part("disability_since") disabilitySince: RequestBody?,
+        @Part("have_disability_cert") haveDisabilityCert: RequestBody?,//1(yes)/0(no)
+        @Part("disability_cert_doc") disabilityCertDoc: RequestBody?,
+        @Part("serialNumber") serialNumber: RequestBody?,
+        @Part("date_of_certificate") dateOfCertificate: RequestBody?,
+        @Part("detail_of_authority") detailOfAuthority: RequestBody?,
+        @Part("disability_per") disabilityPer: RequestBody?,
+        //Hospital for assessment
+        @Part("is_hospital_treating_other_state") isHospitalTreatingOtherState: RequestBody?,//=> 0/1
+        @Part("hospital_treating_state_code") hospitalTreatingStateCode: RequestBody?,
+        @Part("hospital_treating_district_code") hospitalTreatingDistrictCode: RequestBody?,
+        @Part("hospital_treating_id") hospitalTreatingId: RequestBody?,
+    ): Response<SavePWDFormResponse>
+
     @Headers("Content-Type: application/json")
     @POST(APPLICATION_REJECT_REQUEST)
-    suspend fun rejectApplicationRequest(@Body request: RejectApplicationRequest): Response<CommonResponse>
+    suspend fun rejectApplicationRequest(@Body request: RejectApplicationRequest): Response<RejectAndPendingResponse>
 
     @Headers("Content-Type: application/json")
     @POST(PENDING_APPLICATION_WISE)
-    suspend fun pendingApplicationWise(@Body request: PendingApplicationWise): Response<CommonResponse>
+    suspend fun pendingApplicationWise(@Body request: PendingApplicationWise): Response<RejectAndPendingResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST(DOWNLOAD_REJECTION_LETTER)
+    suspend fun downloadRejectionLetter(@Body request: RequestBody): Response<ResponseBody>
 }
+
+
 
 
 

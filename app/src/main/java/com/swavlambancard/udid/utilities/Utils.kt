@@ -23,7 +23,9 @@ import android.text.*
 import android.text.format.DateUtils
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import android.util.Base64
 import android.util.Log
 import android.util.Patterns
@@ -47,12 +49,15 @@ import java.net.URL
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.text.*
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import kotlin.collections.ArrayList
 import kotlin.math.*
 
 object EncryptionModel {
@@ -290,6 +295,29 @@ object Utility {
         return outputFormat.format(date)
     }
 
+    fun setBlueUnderlinedText(textView: TextView, text: String) {
+        val spannableString = SpannableString(text)
+
+        // Set text color to blue
+        spannableString.setSpan(ForegroundColorSpan(Color.BLUE), 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        // Underline the text
+        spannableString.setSpan(UnderlineSpan(), 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        textView.text = spannableString
+    }
+
+    fun openFile(url: String,context: Context) {
+        Log.d("document:",url)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(context, "No browser found to open this link", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     fun dateConvertToFormat(dateString: String?): String {
         return try {
             val originalFormat: DateFormat =
@@ -302,6 +330,43 @@ object Utility {
             ""
         }
     }
+
+    fun convertToArrayList(input: String): ArrayList<String> {
+        return ArrayList(input.split(","))
+    }
+
+    fun filterMatchingIds(idList: ArrayList<String>, people: List<DropDownResult>): ArrayList<DropDownResult> {
+        return ArrayList(people.filter { it.id in idList })
+    }
+
+
+    fun getYearFromDate(dateString: String?, format: String= "dd/MM/yyyy"): Int? {
+        if (dateString.isNullOrBlank()) return null // Check if date is null or empty
+
+        return try {
+            // For Android API 26+ (Oreo and above)
+            val date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern(format))
+            date.year
+        } catch (e: Exception) {
+            try {
+                // For older Android versions
+                val sdf = SimpleDateFormat(format, Locale.getDefault())
+                val date: Date? = sdf.parse(dateString)
+                val yearFormat = SimpleDateFormat("yyyy", Locale.getDefault())
+                date?.let { yearFormat.format(it).toInt() }
+            } catch (ex: Exception) {
+                null // Return null if parsing fails
+            }
+        }
+    }
+
+    fun filterDropDownResultsAboveSelected(yearList: List<DropDownResult>, selectedDate: String): ArrayList<DropDownResult> {
+        val selectedYear = getYearFromDate(selectedDate) ?: return arrayListOf() // Get year from date
+
+        return ArrayList(yearList.filter { it.name.toIntOrNull() ?: 0 >= selectedYear }) // Convert to ArrayList
+    }
+
+
     fun dateConvertToFormatYYYYMMDD(dateString: String?): String {
         return try {
             val originalFormat: DateFormat =
@@ -315,8 +380,23 @@ object Utility {
         }
     }
 
-    fun getFileNameFromUrl(url: String?): String? {
-        if (url.isNullOrBlank()) return null // Handle null or empty string case
+    fun setMandatoryField(textView: TextView, label: String) {
+        val fullText = "$label *"
+        val spannableString = SpannableString(fullText)
+
+        // Set asterisk (*) to red color
+        spannableString.setSpan(
+            ForegroundColorSpan(Color.parseColor("#FF3D00")),
+            fullText.length - 1, fullText.length,  // Apply only to the asterisk
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        textView.text = spannableString
+    }
+
+
+    fun getFileNameFromUrl(url: String?): String {
+        if (url.isNullOrBlank()) return "" // Handle null or empty string case
         return url.substringAfterLast("/", "")
     }
 
@@ -1672,7 +1752,8 @@ object Utility {
 //    }
      fun showConfirmationAlertDialog(
     context: Context,
-    callback: DialogCallback
+    callback: DialogCallback,
+    text: String
     ) {
         val dialog = Dialog(context, android.R.style.Theme_Translucent_NoTitleBar)
         dialog.setCancelable(true)
@@ -1692,7 +1773,7 @@ object Utility {
         val tvCancel: TextView = dialog.findViewById(R.id.tvCancel)
         val ivConfirm: TextView = dialog.findViewById(R.id.tvConfirm)
         val tvShowText: TextView = dialog.findViewById(R.id.tvShowText)
-
+        tvShowText.text = text
         ivConfirm.setOnClickListener {
             dialog.dismiss()
             callback.onYes()

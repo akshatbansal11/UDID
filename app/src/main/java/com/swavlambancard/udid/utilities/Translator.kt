@@ -1,3 +1,5 @@
+package com.swavlambancard.udid.utilities
+
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
