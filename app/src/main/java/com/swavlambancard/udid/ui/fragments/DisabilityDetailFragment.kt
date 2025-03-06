@@ -368,6 +368,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         fun rbNo(view: View) {
             mBinding?.tvDisabilitySince?.showView()
             mBinding?.etDisabilitySince?.showView()
+
+
         }
 
 
@@ -386,6 +388,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             detailsOfIssuingAuthorityId = ""
             sharedViewModel.userData.value?.detailOfAuthorityCode = ""
             mBinding?.etDisabilityPercentage?.setText("")
+            sharedViewModel.userData.value?.uploadDisabilityCertificatePath=null
+            cameraUri=null
+            imageUri=null
+            pdfUri=null
         }
 
         fun dateOfIssuanceOfCertificate(view: View) {
@@ -412,6 +418,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         }
 
         fun fileDisabilityCertificate(view: View) {
+            Log.d("UPLOAD",sharedViewModel.userData.value?.uploadDisabilityCertificatePath.toString())
             if(sharedViewModel.userData.value?.uploadDisabilityCertificatePath==null){
                 return
             }
@@ -439,7 +446,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     }
                 } else {
                     // Open Image in Chrome by using "file://" or "content://"
-                    openFile(uri.toString(), requireContext())
+                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                    intent.putExtra("fileUri", uri.toString())
+                    startActivity(intent)
                 }
             }
             else{
@@ -728,7 +737,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 return false
             }
         }
-        if(sharedViewModel.userData.value?.check == "2") {
+        if(sharedViewModel.userData.value?.check == "2"|| sharedViewModel.userData.value?.isFrom!="login") {
+
             if (disabilityCertificateTag == 2) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -739,7 +749,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 return false
             }
 
-            if (disabilityCertificateTag == 1) {
+
+            else if (disabilityCertificateTag == 1) {
                 if (mBinding?.etFileName?.text.toString().isEmpty()) {
                     mBinding?.llParent?.let {
                         showSnackbar(it, getString(R.string.please_upload_disability_certificate))
@@ -803,12 +814,14 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     cameraUri = Uri.fromFile(imageFile) // Get URI from file
                     imageUri = null
                     pdfUri = null
+                    photoFile=imageFile
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                     } else {
                         compressFile(photoFile!!) // Compress if size exceeds limit
                     }
                     uploadImage(photoFile!!)
+
                 }
 
                 PICK_IMAGE -> {
@@ -883,6 +896,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     }
 
     private fun uploadImage(file: File) {
+        Log.d("FILEEE",file.toString())
         lifecycleScope.launch {
             val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             body =

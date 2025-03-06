@@ -304,8 +304,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                     }
                 } else {
                     // Open Image in Chrome by using "file://" or "content://"
-                    openFile(uri.toString(), requireContext())
-                }
+                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                    intent.putExtra("fileUri", uri.toString())
+                    startActivity(intent)                }
             }
             else{
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)

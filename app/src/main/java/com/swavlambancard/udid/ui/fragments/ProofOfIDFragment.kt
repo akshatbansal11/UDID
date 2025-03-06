@@ -312,6 +312,10 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             mBinding?.llNoAadhaarCard?.showView()
             mBinding?.etAadhaarNo?.setText("")
             mBinding?.checkboxConfirm?.isChecked = false
+            sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath=null
+            cameraUri=null
+            imageUri=null
+            pdfUri=null
 
         }
 
@@ -352,8 +356,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     }
                 } else {
                     // Open Image in Chrome by using "file://" or "content://"
-                    openFile(uri.toString(), requireContext())
-                }
+                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                    intent.putExtra("fileUri", uri.toString())
+                    startActivity(intent)                }
             }
             else {
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)
@@ -389,18 +394,25 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                         intent.setPackage(null) // Open in any available browser
                         startActivity(intent)
                     }
-                } else {
-                    // Open Image in Chrome by using "file://" or "content://"
-                    openFile(uri.toString(), requireContext())
                 }
-            } else {
+                else {
+                    // Open Image in Chrome by using "file://" or "content://"
+                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                    intent.putExtra(
+                        "fileUri",
+                        uri.toString()
+                    )
+                    startActivity(intent)
+                }// update case
+            }
+            else {
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)
                 intent.putExtra(
                     "fileUri",
                     sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath
                 )
                 startActivity(intent)
-            }
+            }// registration case
 
 
         }

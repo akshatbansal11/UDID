@@ -34,15 +34,23 @@
         tools:targetApi="31">
         <activity
             android:name=".ui.PdfViewerActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ui.FileTypeSelectorActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ui.activity.ApplyForUdidFormActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ui.activity.ApplyForUdidActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ui.activity.WebViewActivity"
@@ -57,10 +65,13 @@
         <activity
             android:name=".ui.activity.AppealActivity"
             android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:exported="false"
-            android:screenOrientation="portrait" />
+          />
         <activity
             android:name=".ui.activity.PersonalProfileActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:exported="true">
 
         </activity>
@@ -76,6 +87,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.UserDataActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ui.activity.FeedbackAndQueryActivity"
@@ -172,9 +185,7 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
             tools:replace="android:screenOrientation" />
-        <activity
-            android:name="com.canhub.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat" />
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

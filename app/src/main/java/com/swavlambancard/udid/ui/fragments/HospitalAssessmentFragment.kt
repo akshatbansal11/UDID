@@ -141,6 +141,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         mBinding?.cbConfirm?.setOnCheckedChangeListener { _, isChecked ->
             sharedViewModel.userData.value?.hospitalCheckBox = if (isChecked) "1" else "0"
         }
+
     }
 
     override fun setVariables() {
@@ -237,6 +238,8 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
 
     inner class ClickActions {
         fun submit(view: View) {
+            if(valid())
+            {
             if (sharedViewModel.userData.value?.isFrom != "login") {
                 showConfirmationAlertDialog(requireContext(), object : DialogCallback {
                     override fun onYes() {
@@ -253,7 +256,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 },
                     getString(R.string.please_check_again_all_your_details_again_before_confirming_your_application))
             }
-        }
+        }}
 
         fun cancel(view: View) {
             if(sharedViewModel.userData.value?.isFrom != "login") {
@@ -286,6 +289,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             mBinding?.etHospitalTreatingState?.text = ""
             mBinding?.etHospitalTreatingDistrict?.text = ""
             mBinding?.etHospitalName?.text = ""
+            sharedViewModel.userData.value?.hospitalNameId = "0"
             stateId = ""
             hospitalDistrictId = ""
         }
@@ -433,6 +437,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     "hospitalName" -> {
                         if (selectedItem == "Select Hospital Name") {
                             selectedTextView?.text = ""
+                            sharedViewModel.userData.value?.hospitalNameId = "0"
                         } else {
                             hospitalId = id
                             sharedViewModel.userData.value?.hospitalNameId = id
@@ -476,6 +481,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     }
 
     private fun valid(): Boolean {
+
         if (treatingHospitalTag == "1") {
             if (mBinding?.etHospitalTreatingState?.text.toString().trim().isEmpty()) {
                 mBinding?.llParent?.let {
@@ -494,7 +500,9 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 }
                 return false
             }
-        } else if (mBinding?.etHospitalName?.text.toString().trim().isEmpty()) {
+        }
+
+         if (mBinding?.etHospitalName?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
@@ -517,8 +525,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     }
 
     private fun savePwdFormApi() {
-        if (valid()) {
-            Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
+
 
             sharedViewModel.savePWDForm(
                 context = requireContext(),
@@ -662,11 +669,11 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     MultipartBody.FORM
                 )
             )
-        }
+
     }
 
     private fun updatePwsFormApi() {
-        if (valid()) {
+
             sharedViewModel.updatePWDForm(
                 context = requireContext(),
                 type = EncryptionModel.aesEncrypt("mobile").toRequestBody(MultipartBody.FORM),
@@ -806,11 +813,11 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     MultipartBody.FORM
                 )
             )
-        }
+
     }
 
     private fun updatePwsFormApiWithoutEncryption() {
-        if (valid()) {
+
             sharedViewModel.updatePWDForm(
                 context = requireContext(),
                 type = ("mobile").toRequestBody(MultipartBody.FORM),
@@ -950,12 +957,12 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     MultipartBody.FORM
                 )
             )
-        }
+
     }
 
     private fun savePwdFormApiWithoutEncryption() {
-        if (valid()) {
-            Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
+
+
 
             sharedViewModel.savePWDForm(
                 context = requireContext(),
@@ -1131,7 +1138,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     MultipartBody.FORM
                 )
             )
-        }
+
     }
 
 }

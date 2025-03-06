@@ -576,7 +576,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                         startActivity(intent)
                     }
                 } else {
-                    openFile(uri.toString(), requireContext())
+                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                    intent.putExtra("fileUri", uri.toString())
+                    startActivity(intent)
                 }
             } else {
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)
@@ -614,7 +616,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     }
                 } else {
                     // Open Image in Chrome by using "file://" or "content://"
-                    openFile(uri.toString(), requireContext())
+                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+                    intent.putExtra("fileUri", uri.toString())
+                    startActivity(intent)
                 }
             } else {
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)

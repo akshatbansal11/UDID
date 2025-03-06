@@ -400,7 +400,8 @@ object Utility {
         return url.substringAfterLast("/", "")
     }
 
-    fun getNameById(id: String,list: List<DropDownResult>): String {
+    fun getNameById(id: String, list: List<DropDownResult>): String {
+        if (id == "0") return ""
         return list.find { it.id == id }?.name ?: ""
     }
 
