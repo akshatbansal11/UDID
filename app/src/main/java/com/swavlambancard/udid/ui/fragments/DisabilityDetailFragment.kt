@@ -160,12 +160,14 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
             }
             else{
+                if (sharedViewModel.userData.value?.uploadDisabilityCertificate!=null)
+                {
                 mBinding?.etFileName?.let {
                     setBlueUnderlinedText(
                         it,
                         sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
                     )
-                }            }
+                }       }     }
             disabilityCertificateName = userData.uploadDisabilityCertificate
             mBinding?.etRegistrationNoOfCertificate?.setText(userData.serialNumber)
             mBinding?.etDateOfIssuanceOfCertificate?.text = userData.dateOfCertificate
@@ -418,7 +420,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         }
 
         fun fileDisabilityCertificate(view: View) {
-            Log.d("UPLOAD",sharedViewModel.userData.value?.uploadDisabilityCertificatePath.toString())
+
             if(sharedViewModel.userData.value?.uploadDisabilityCertificatePath==null){
                 return
             }

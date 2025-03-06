@@ -961,17 +961,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
             }
             return false
-        } else if (mBinding?.etApplicantEmailId?.text.toString().trim().isNotEmpty()) {
-            if (!mBinding?.etApplicantEmailId?.text.toString().trim().matches(emailRegex)) {
-                mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.please_enter_a_valid_email_address)
-                    )
-                }
-                return false
-            }
-        } else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
+        }  else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
@@ -1036,7 +1026,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
                 return false
             }
-        } else if (guardianId == "Guardian") {
+        }
+        else if (guardianId == "Guardian") {
             if (mBinding?.etRelationWithPerson?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -1072,13 +1063,25 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     return false
                 }
             }
-        } else if (mBinding?.etFileNamePhoto?.text.toString().trim().isEmpty()) {
+        }
+
+         if (mBinding?.etFileNamePhoto?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(it, getString(R.string.please_upload_supporting_document))
             }
             return false
         }
-
+        if (mBinding?.etApplicantEmailId?.text.toString().trim().isNotEmpty()) {
+            if (!mBinding?.etApplicantEmailId?.text.toString().trim().matches(emailRegex)) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_enter_a_valid_email_address)
+                    )
+                }
+                return false
+            }
+        }
 
 
 
