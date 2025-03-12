@@ -1,5 +1,6 @@
 package com.swavlambancard.udid.repository
 
+import com.google.gson.Gson
 import com.swavlambancard.udid.model.ApplicationStatusRequest
 import com.swavlambancard.udid.model.ApplicationStatusResponse
 import com.swavlambancard.udid.model.CodeDropDownRequest
@@ -363,13 +364,19 @@ object Repository {
         )
     }
 
-    suspend fun editApplication(
-        request: EditProfileRequest,
-    ): Response<EditProfileResponse> {
-        return api.editApplication(
-            request
-        )
+    suspend fun editApplication(request: EditProfileRequest): EditProfileResponse? {
+        val response = api.editApplication(request)
+
+        return if (response.isSuccessful) {
+            response.body()?.charStream()?.use { reader ->
+                val gson = Gson()
+                gson.fromJson(reader, EditProfileResponse::class.java)
+            }
+        } else {
+            null // Handle errors in ViewModel
+        }
     }
+
 
     suspend fun savePwdForm(
         type: RequestBody?,

@@ -215,11 +215,11 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         }
     }
 
-    private fun error(){
-        sharedViewModel?.errors?.observe(this) {
-            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
-        }
-    }
+//    private fun error(){
+//        sharedViewModel?.errors?.observe(this) {
+//            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
+//        }
+//    }
 
     private fun editApi() {
         val encryptedString = JSEncryptService.encrypt(

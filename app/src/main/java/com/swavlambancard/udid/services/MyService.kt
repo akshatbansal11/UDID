@@ -293,7 +293,7 @@ interface MyService {
     @Streaming
     @Headers("Content-Type: application/json")
     @POST(EDIT_APPLICATION)
-    suspend fun editApplication(@Body request: EditProfileRequest): Response<EditProfileResponse>
+    suspend fun editApplication(@Body request: EditProfileRequest): Response<ResponseBody>
 
     @Multipart
     @POST(SAVE_PWD_FORM)

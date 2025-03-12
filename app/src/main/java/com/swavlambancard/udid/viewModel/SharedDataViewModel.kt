@@ -27,7 +27,7 @@ class SharedDataViewModel : ViewModel() {
     private lateinit var repository: Repository
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var job: Job? = null
-    var editProfileResult = MutableLiveData<EditProfileResponse>()
+    var editProfileResult = MutableLiveData<EditProfileResponse?>()
     var savePWDFormResult = MutableLiveData<SavePWDFormResponse>()
     var updatePWDFormResult = MutableLiveData<SavePWDFormResponse>()
     val userData = MutableLiveData(PwdApplication()) // Initialize with default fields
@@ -60,67 +60,33 @@ class SharedDataViewModel : ViewModel() {
         }
     }
 
-    fun editApplication(
-        context: Context,
-        request: EditProfileRequest,
-    ) {
-        // can be launched in a separate asynchronous job
+    fun editApplication(context: Context, request: EditProfileRequest) {
         networkCheck(context, true)
+
         job = scope.launch {
             try {
-                val response = repository.editApplication(
-                    request
-                )
+                val response = repository.editApplication(request)
 
-                Log.e("response", response.toString())
-                when (response.isSuccessful) {
-                    true -> {
-                        when (response.code()) {
-                            200, 201 -> {
-                                editProfileResult.postValue(response.body())
-                                dismissLoader()
-                            }
-                        }
-                    }
-
-                    false -> {
-                        when (response.code()) {
-                            400, 403, 404 -> {//Bad Request & Invalid Credentials
-                                val errorBody = JSONObject(response.errorBody()!!.string())
-                                errors_api.postValue(
-                                    errorBody.getString("message") ?: "Bad Request"
-                                )
-                                dismissLoader()
-                            }
-
-                            401 -> {
-                                val errorBody = JSONObject(response.errorBody()!!.string())
-                                errors_api.postValue(
-                                    errorBody.getString("message") ?: "Bad Request"
-                                )
-                                UDID.closeAndRestartApplication()
-                                dismissLoader()
-                            }
-
-                            500 -> {//Internal Server error
-                                errors_api.postValue("Internal Server error")
-                                dismissLoader()
-                            }
-
-                            else -> {
-                                dismissLoader()
-                            }
-                        }
-                    }
+                if (response != null) {
+                    Log.e("FULL_RESPONSE", response.toString()) // Ensure complete JSON is logged
+                    editProfileResult.postValue(response)
+                } else {
+                    errors_api.postValue("Failed to load data")
                 }
+
             } catch (e: Exception) {
+                Log.e("API_ERROR", e.localizedMessage ?: "Unknown error")
                 if (e is SocketTimeoutException) {
-                    errors_api.postValue("Time out Please try again")
+                    errors_api.postValue("Time out, please try again")
+                } else {
+                    errors_api.postValue("Something went wrong")
                 }
+            } finally {
                 dismissLoader()
             }
         }
     }
+
 
     fun savePWDForm(
         context: Context,
