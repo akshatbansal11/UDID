@@ -244,14 +244,14 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 showConfirmationAlertDialog(requireContext(), object : DialogCallback {
                     override fun onYes() {
                         Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
-                        updatePwsFormApi()
+                        updatePwsFormApiWithoutEncryption()
                     }
                 },getString(R.string.please_check_again_all_your_details_again_before_confirming_your_application))
             } else {
                 showConfirmationAlertDialog(requireContext(), object : DialogCallback {
                     override fun onYes() {
                         Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
-                        savePwdFormApi()
+                        savePwdFormApiWithoutEncryption()
                     }
                 },
                     getString(R.string.please_check_again_all_your_details_again_before_confirming_your_application))

@@ -86,11 +86,20 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
 
+            if(userData.documentAddressProofPhoto!=null){
+                mBinding?.etFileName?.text = "VIEW"
+                mBinding?.etFileName?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        "VIEW"
+                    )
+                }
+            }
             if(sharedViewModel.userData.value?.isFrom != "login") {
                 mBinding?.etFileName?.let {
                     setBlueUnderlinedText(
                         it,
-                        userData.documentAddressProofPhoto.toString()
+                        "VIEW"
                     )
                 }
                 mBinding?.etFileName?.setOnClickListener {
@@ -102,7 +111,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                     mBinding?.etFileName?.let {
                         setBlueUnderlinedText(
                             it,
-                            userData.documentAddressProofPhoto.toString()
+                            "VIEW"
                         )
                     }
                 }
@@ -126,9 +135,9 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         mBinding?.etNatureDocumentAddressProof?.addTextChangedListener {
             sharedViewModel.userData.value?.natureDocumentAddressProofName = it.toString()
         }
-        mBinding?.etFileName?.addTextChangedListener {
-            sharedViewModel.userData.value?.documentAddressProofPhoto = it.toString()
-        }
+//        mBinding?.etFileName?.addTextChangedListener {
+//            sharedViewModel.userData.value?.documentAddressProofPhoto = it.toString()
+//        }
 
         mBinding?.etAddress?.addTextChangedListener {
             sharedViewModel.userData.value?.address = it.toString()
@@ -236,13 +245,14 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                     }
                 } else {
                     addressProofName = userResponseModel._result.file_name
-                    mBinding?.etFileName?.text = userResponseModel._result.file_name
+                    mBinding?.etFileName?.text = "VIEW"
                     mBinding?.etFileName?.let {
                         setBlueUnderlinedText(
                             it,
-                            sharedViewModel.userData.value?.documentAddressProofPhoto.toString()
+                            "VIEW"
                         )
                     }
+                    sharedViewModel.userData.value?.documentAddressProofPhoto=userResponseModel._result.file_name
                     when {
                         pdfUri != null -> sharedViewModel.userData.value?.documentAddressProofPhotoPath =
                             pdfUri.toString()

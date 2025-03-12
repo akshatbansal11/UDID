@@ -147,22 +147,23 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             disabilityDueToId = userData.disabilityDueToCode
             mBinding?.etDisabilitySince?.text = userData.disabilitySinceName
             disabilitySinceId = userData.disabilitySinceCode
-            if (sharedViewModel.userData.value?.isFrom != "login") {
-                mBinding?.etFileName?.let {
-                    setBlueUnderlinedText(
-                        it,
-                        userData.uploadDisabilityCertificate.toString()
-                    )
-                }
-                mBinding?.etFileName?.setOnClickListener {
-                    openFile(userData.uploadDisabilityCertificate.toString(), requireContext())
-                }
-            } else {
-                if (sharedViewModel.userData.value?.uploadDisabilityCertificate != null) {
+            if (sharedViewModel.userData.value?.uploadDisabilityCertificate != null) {
+                if (sharedViewModel.userData.value?.isFrom != "login") {
                     mBinding?.etFileName?.let {
                         setBlueUnderlinedText(
                             it,
-                            sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
+                            "VIEW"
+                        )
+                    }
+                    mBinding?.etFileName?.setOnClickListener {
+                        openFile(userData.uploadDisabilityCertificate.toString(), requireContext())
+                    }
+                } else {
+
+                    mBinding?.etFileName?.let {
+                        setBlueUnderlinedText(
+                            it,
+                            "VIEW"
                         )
                     }
                 }
@@ -216,9 +217,9 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.etDisabilitySince?.addTextChangedListener {
             sharedViewModel.userData.value?.disabilitySinceName = it.toString()
         }
-        mBinding?.etFileName?.addTextChangedListener {
-            sharedViewModel.userData.value?.uploadDisabilityCertificate = it.toString()
-        }
+//        mBinding?.etFileName?.addTextChangedListener {
+//            sharedViewModel.userData.value?.uploadDisabilityCertificate = it.toString()
+//        }
         mBinding?.etRegistrationNoOfCertificate?.addTextChangedListener {
             sharedViewModel.userData.value?.serialNumber = it.toString()
         }
@@ -314,13 +315,14 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     }
                 } else {
                     disabilityCertificateName = userResponseModel._result.file_name
-                    mBinding?.etFileName?.text = userResponseModel._result.file_name
+                    mBinding?.etFileName?.text = "VIEW"
                     mBinding?.etFileName?.let {
                         setBlueUnderlinedText(
                             it,
-                            sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
+                            "VIEW"
                         )
                     }
+                    sharedViewModel.userData.value?.uploadDisabilityCertificate=userResponseModel._result.file_name
                     when {
                         pdfUri != null -> sharedViewModel.userData.value?.uploadDisabilityCertificatePath =
                             pdfUri.toString()
@@ -390,6 +392,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             sharedViewModel.userData.value?.detailOfAuthorityCode = ""
             mBinding?.etDisabilityPercentage?.setText("")
             sharedViewModel.userData.value?.uploadDisabilityCertificatePath = null
+            sharedViewModel.userData.value?.uploadDisabilityCertificate = null
             cameraUri = null
             imageUri = null
             pdfUri = null
