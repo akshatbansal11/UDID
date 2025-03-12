@@ -38,11 +38,6 @@
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name=".ui.FileTypeSelectorActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
             android:name=".ui.activity.ApplyForUdidFormActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
@@ -175,7 +170,7 @@
             android:name=".ui.activity.OnboardingScreenActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.activity.LoginActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -185,8 +180,6 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
             tools:replace="android:screenOrientation" />
-
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

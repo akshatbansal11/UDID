@@ -143,8 +143,8 @@ class MyAccountActivity : BaseActivity<ActivityMyAccountBinding>() {
                     }
                     mBinding?.etMobile?.text = if(userData.mobile?.toString().isNullOrEmpty()) getString(R.string.na) else userData.mobile.toString().ifEmpty { getString(R.string.na) }
                     mBinding?.etEmailID?.text = if(userData.email.isNullOrEmpty()) getString(R.string.na) else userData.email
-                    mBinding?.etAddress?.text = userData.current_address.plus(", ").plus(userData.state?.name)
-                        .plus(", ").plus(userData.district?.district_name).plus(", ").plus(userData.subdistrict?.subdistrict_name)
+                    mBinding?.etAddress?.text = userData.current_address.plus(", ").plus(userData.subdistrict?.subdistrict_name)
+                        .plus(", ").plus(userData.district?.district_name).plus(", ").plus(userData.state?.name)
                         .plus(", ").plus(userData.current_pincode)
                 }
             }

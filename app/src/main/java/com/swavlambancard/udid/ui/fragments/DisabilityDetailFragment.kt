@@ -88,15 +88,14 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-        if(sharedViewModel.userData.value?.isFrom != "login"){
+        if (sharedViewModel.userData.value?.isFrom != "login") {
             disabilityTypeApi()
         }
-        if(sharedViewModel.userData.value?.check == "1"){
+        if (sharedViewModel.userData.value?.check == "1") {
             mBinding?.llDisabilityCertificate?.hideView()
-        }
-        else if(sharedViewModel.userData.value?.check == "2"){
-            mBinding?.llDisabilityCertificate?.showView()
             sharedViewModel.userData.value?.haveDisabilityCertificate = 0
+        } else if (sharedViewModel.userData.value?.check == "2") {
+            mBinding?.llDisabilityCertificate?.showView()
         }
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.disabilityBirth) {
@@ -148,7 +147,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             disabilityDueToId = userData.disabilityDueToCode
             mBinding?.etDisabilitySince?.text = userData.disabilitySinceName
             disabilitySinceId = userData.disabilitySinceCode
-            if(sharedViewModel.userData.value?.isFrom != "login") {
+            if (sharedViewModel.userData.value?.isFrom != "login") {
                 mBinding?.etFileName?.let {
                     setBlueUnderlinedText(
                         it,
@@ -156,18 +155,18 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     )
                 }
                 mBinding?.etFileName?.setOnClickListener {
-                    openFile(userData.uploadDisabilityCertificate.toString(),requireContext())
+                    openFile(userData.uploadDisabilityCertificate.toString(), requireContext())
+                }
+            } else {
+                if (sharedViewModel.userData.value?.uploadDisabilityCertificate != null) {
+                    mBinding?.etFileName?.let {
+                        setBlueUnderlinedText(
+                            it,
+                            sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
+                        )
+                    }
                 }
             }
-            else{
-                if (sharedViewModel.userData.value?.uploadDisabilityCertificate!=null)
-                {
-                mBinding?.etFileName?.let {
-                    setBlueUnderlinedText(
-                        it,
-                        sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
-                    )
-                }       }     }
             disabilityCertificateName = userData.uploadDisabilityCertificate
             mBinding?.etRegistrationNoOfCertificate?.setText(userData.serialNumber)
             mBinding?.etDateOfIssuanceOfCertificate?.text = userData.dateOfCertificate
@@ -246,7 +245,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     "Disabilitytypes" -> {
                         disabilityTypeList.clear()
                         disabilityTypeList.addAll(userResponseModel._result)
-                        matchItemDisabilityTypeList = filterMatchingIds(disabilityTypeId, disabilityTypeList)
+                        matchItemDisabilityTypeList =
+                            filterMatchingIds(disabilityTypeId, disabilityTypeList)
                     }
                 }
                 multipleSelectionBottomSheetAdapter?.notifyDataSetChanged()
@@ -278,8 +278,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                         )
                         if (sharedViewModel.userData.value?.applicantDob.toString().isEmpty()) {
                             disabilitySinceList.addAll(userResponseModel._result)
-                        }
-                        else {
+                        } else {
                             val filteredList = filterDropDownResultsAboveSelected(
                                 userResponseModel._result,
                                 sharedViewModel.userData.value?.applicantDob.toString()
@@ -390,10 +389,10 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             detailsOfIssuingAuthorityId = ""
             sharedViewModel.userData.value?.detailOfAuthorityCode = ""
             mBinding?.etDisabilityPercentage?.setText("")
-            sharedViewModel.userData.value?.uploadDisabilityCertificatePath=null
-            cameraUri=null
-            imageUri=null
-            pdfUri=null
+            sharedViewModel.userData.value?.uploadDisabilityCertificatePath = null
+            cameraUri = null
+            imageUri = null
+            pdfUri = null
         }
 
         fun dateOfIssuanceOfCertificate(view: View) {
@@ -421,7 +420,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
 
         fun fileDisabilityCertificate(view: View) {
 
-            if(sharedViewModel.userData.value?.uploadDisabilityCertificatePath==null){
+            if (sharedViewModel.userData.value?.uploadDisabilityCertificatePath == null) {
                 return
             }
             if (sharedViewModel.userData.value?.isFrom != "login") {
@@ -452,10 +451,12 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     intent.putExtra("fileUri", uri.toString())
                     startActivity(intent)
                 }
-            }
-            else{
+            } else {
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-                intent.putExtra("fileUri", sharedViewModel.userData.value?.uploadDisabilityCertificatePath)
+                intent.putExtra(
+                    "fileUri",
+                    sharedViewModel.userData.value?.uploadDisabilityCertificatePath
+                )
                 startActivity(intent)
             }
 
@@ -520,8 +521,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 Log.d("Size", matchItemDisabilityTypeList.size.toString())
                 mBinding?.etDisabilityType?.text =
                     matchItemDisabilityTypeList.joinToString(", ") { it.name }
-            }
-            else {
+            } else {
                 mBinding?.etDisabilityType?.text = ""
                 mBinding?.etDisabilityType?.hint = getString(R.string.choose_disability_types)
             }
@@ -739,7 +739,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 return false
             }
         }
-        if(sharedViewModel.userData.value?.check == "2"|| sharedViewModel.userData.value?.isFrom!="login") {
+        if (sharedViewModel.userData.value?.check == "2" || sharedViewModel.userData.value?.isFrom != "login") {
 
             if (disabilityCertificateTag == 2) {
                 mBinding?.llParent?.let {
@@ -749,10 +749,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     )
                 }
                 return false
-            }
-
-
-            else if (disabilityCertificateTag == 1) {
+            } else if (disabilityCertificateTag == 1) {
                 if (mBinding?.etFileName?.text.toString().isEmpty()) {
                     mBinding?.llParent?.let {
                         showSnackbar(it, getString(R.string.please_upload_disability_certificate))
@@ -816,7 +813,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                     cameraUri = Uri.fromFile(imageFile) // Get URI from file
                     imageUri = null
                     pdfUri = null
-                    photoFile=imageFile
+                    photoFile = imageFile
                     val fileSizeInBytes = photoFile?.length() ?: 0
                     if (isFileSizeWithinLimit(fileSizeInBytes, 500.0)) { // 500 KB limit
                     } else {
@@ -898,7 +895,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     }
 
     private fun uploadImage(file: File) {
-        Log.d("FILEEE",file.toString())
+        Log.d("FILEEE", file.toString())
         lifecycleScope.launch {
             val reqFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             body =

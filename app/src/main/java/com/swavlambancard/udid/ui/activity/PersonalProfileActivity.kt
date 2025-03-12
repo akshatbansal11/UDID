@@ -73,15 +73,16 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     val data =
                         JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result))
                     val gson = Gson()
-                    val userData = gson.fromJson(data.toString(), EditApplication::class.java)
                     Log.d("Decrypted Data EditProfile : ", data.toString())
+                    val userData = gson.fromJson(data.toString(), EditApplication::class.java)
+//                    Log.d("Decrypted Data EditProfile : ", data.toString())
                     //Personal Details
                     sharedViewModel?.userData?.value?.applicantFullName = userData.full_name
                     sharedViewModel?.userData?.value?.full_name_i18n = userData.full_name_i18n
                     sharedViewModel?.userData?.value?.regionalLanguageCode =
                         userData.regional_language
                     sharedViewModel?.userData?.value?.stateCode = userData.current_state_code
-                    sharedViewModel?.userData?.value?.stateName = userData.state.name
+                    sharedViewModel?.userData?.value?.stateName = userData.state?.name
                     sharedViewModel?.userData?.value?.applicantMobileNo = userData.mobile
                     sharedViewModel?.userData?.value?.gender = userData.gender
                     sharedViewModel?.userData?.value?.applicantDob =
@@ -118,11 +119,11 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     sharedViewModel?.userData?.value?.documentAddressProofPhotoPath = userData.address_proof_file
                     sharedViewModel?.userData?.value?.address = userData.current_address
                     sharedViewModel?.userData?.value?.districtCode = userData.current_district_code
-                    sharedViewModel?.userData?.value?.districtName = userData.district.district_name
+                    sharedViewModel?.userData?.value?.districtName = userData.district?.district_name
                     sharedViewModel?.userData?.value?.subDistrictCode =
                         userData.current_subdistrict_code
                     sharedViewModel?.userData?.value?.subDistrictName =
-                        userData.subdistrict.subdistrict_name
+                        userData.subdistrict?.subdistrict_name
                     sharedViewModel?.userData?.value?.villageCode = userData.current_village_code
                     sharedViewModel?.userData?.value?.villageName = userData.village?.village_name
                     sharedViewModel?.userData?.value?.pincodeName = userData.current_pincode
@@ -158,9 +159,9 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                         sharedViewModel?.userData?.value?.treatingHospitalTag = "0"
                     sharedViewModel?.userData?.value?.hospitalNameId = userData.hospital_treating_id
                     sharedViewModel?.userData?.value?.hospitalStateId = userData.hospital_treating_state_code
-                    sharedViewModel?.userData?.value?.hospitalStateName = userData.hospital_state.name
+                    sharedViewModel?.userData?.value?.hospitalStateName = userData.hospital_state?.name
                     sharedViewModel?.userData?.value?.hospitalDistrictId = userData.hospital_treating_district_code
-                    sharedViewModel?.userData?.value?.hospitalDistrictName = userData.hospital_district.district_name
+                    sharedViewModel?.userData?.value?.hospitalDistrictName = userData.hospital_district?.district_name
 
                     replaceFragment(PersonalDetailFragment())
                 }

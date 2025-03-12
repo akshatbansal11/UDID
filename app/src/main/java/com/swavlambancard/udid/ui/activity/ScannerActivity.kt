@@ -33,7 +33,6 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
         registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
             run {
                 if (result.contents == null) {
-//                    toast(getString(R.string.canceled))
                     onBackPressedDispatcher.onBackPressed()
                 } else {
                     mBinding?.rlParent?.showView()
@@ -41,34 +40,6 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
                 }
             }
         }
-
-    private fun setResult(string: String){
-        Log.d("content" , string)
-
-        val pairs = parseKeyValuePairs(string)
-        mBinding?.etUdidNo?.text =if(pairs["UDID No"]?.isNotEmpty() == true) pairs["UDID No"] else getString(R.string.na)
-        mBinding?.etName?.text =if(pairs["Name"]?.isNotEmpty() == true) pairs["Name"] else getString(R.string.na)
-        mBinding?.etYearOfBirth?.text =if(pairs["Date of Birth"]?.isNotEmpty() == true)pairs["Date of Birth"] else getString(R.string.na)
-        mBinding?.etDisabilityType?.text =if(pairs["Disability Type"]?.isNotEmpty() == true)pairs["Disability Type"] else getString(R.string.na)
-        mBinding?.etPercentageOfDisability?.text =if(pairs["Percentage of Disability"]?.isNotEmpty() == true)pairs["Percentage of Disability"] else getString(R.string.na)
-        mBinding?.etDateOfIssue?.text =if(pairs["Date of Issue"]?.isNotEmpty() == true) pairs["Date of Issue"] else getString(R.string.na)
-        mBinding?.etValidUpto?.text =if(pairs["Valid Upto"]?.isNotEmpty() == true) pairs["Valid Upto"] else getString(R.string.na)
-        mBinding?.etAadhaarNo?.text = if(pairs["Aadhaar No"]?.isNotEmpty() == true) pairs["Aadhaar No"]?.let { Utility.maskAadharNumber(it)} else getString(R.string.na)
-    }
-
-    private fun parseKeyValuePairs(data: String): Map<String, String> {
-        val pairs = mutableMapOf<String, String>()
-        val lines = data.split("\n")
-        for (line in lines) {
-            val parts = line.split(": ")
-            if (parts.size == 2) {
-                val key = parts[0].trim()
-                val value = parts[1].trim()
-                pairs[key] = value
-            }
-        }
-        return pairs
-    }
 
     override val layoutId: Int
         get() = R.layout.activity_scanner
@@ -80,10 +51,31 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
         checkPermissionCamera(this)
     }
 
+    override fun setVariables() {
+    }
+
+    override fun setObservers() {
+    }
+
     inner class ClickActions{
         fun backPress(view: View) {
             onBackPressedDispatcher.onBackPressed()
         }
+    }
+
+    private fun setResult(string: String){
+        Log.d("content" , string)
+
+        val pairs = parseKeyValuePairs(string)
+        mBinding?.etUdidNo?.text =if(pairs["UDID No"]?.isNotEmpty() == true) pairs["UDID No"] else getString(R.string.na)
+        mBinding?.etName?.text =if(pairs["Name"]?.isNotEmpty() == true) pairs["Name"] else getString(R.string.na)
+//        mBinding?.etYearOfBirth?.text =if(pairs["Date of Birth"]?.isNotEmpty() == true)pairs["Date of Birth"] else getString(R.string.na)
+        mBinding?.etYearOfBirth?.text =if(pairs["Year of Birth"]?.isNotEmpty() == true)pairs["Year of Birth"] else getString(R.string.na)
+        mBinding?.etDisabilityType?.text =if(pairs["Disability Type"]?.isNotEmpty() == true)pairs["Disability Type"] else getString(R.string.na)
+        mBinding?.etPercentageOfDisability?.text =if(pairs["Percentage of Disability"]?.isNotEmpty() == true)pairs["Percentage of Disability"] else getString(R.string.na)
+        mBinding?.etDateOfIssue?.text =if(pairs["Date of Issue"]?.isNotEmpty() == true) pairs["Date of Issue"] else getString(R.string.na)
+        mBinding?.etValidUpto?.text =if(pairs["Valid Upto"]?.isNotEmpty() == true) pairs["Valid Upto"] else getString(R.string.na)
+        mBinding?.etAadhaarNo?.text = if(pairs["Aadhaar No"]?.isNotEmpty() == true) pairs["Aadhaar No"]?.let { Utility.maskAadharNumber(it)} else getString(R.string.na)
     }
 
     private fun showCamera() {
@@ -110,9 +102,17 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
         requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
     }
 
-    override fun setVariables() {
-    }
-
-    override fun setObservers() {
+    private fun parseKeyValuePairs(data: String): Map<String, String> {
+        val pairs = mutableMapOf<String, String>()
+        val lines = data.split("\n")
+        for (line in lines) {
+            val parts = line.split(": ")
+            if (parts.size == 2) {
+                val key = parts[0].trim()
+                val value = parts[1].trim()
+                pairs[key] = value
+            }
+        }
+        return pairs
     }
 }

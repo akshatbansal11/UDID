@@ -159,7 +159,7 @@ data class Village(
 )
 
 data class State(
-    val name: String
+    val name: String?
 )
 
 data class Subdistrict(
@@ -223,7 +223,7 @@ data class EditApplication(
     val disability_since_birth: String,
     val disability_type_id: String,
     val disability_types: String,
-    val district: District,
+    val district: District?,
     val dob: String,
     val email: String,
     val employment_status: Any,
@@ -237,15 +237,15 @@ data class EditApplication(
     val guardian_relation: String,
     val have_disability_cert: Boolean,
     val hospital: Hospital,
-    val hospital_district: HospitalDistrict,
+    val hospital_district: HospitalDistrict?,
     val village: Village?,
-    val hospital_state: HospitalState,
+    val hospital_state: HospitalState?,
     val hospital_treating_district_code: String,
     val hospital_treating_id: String,
     val hospital_treating_state_code: String,
     val identitity_proof_file: String,
     val identitity_proof_id: String,
-    val income: Long,
+    val income: String,
     val is_hospital_treating_other_state: Boolean,
     val mobile: String,
     val mother_name: String,
@@ -258,8 +258,8 @@ data class EditApplication(
     val serial_number: String,
     val share_aadhar_info: Int,
     val signature_thumb_print: String,
-    val state: State,
-    val subdistrict: Subdistrict
+    val state: State?,
+    val subdistrict: Subdistrict?
 )
 
 data class SavePWDFormResponse(
