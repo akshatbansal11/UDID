@@ -27,6 +27,7 @@ import retrofit2.http.Headers
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Streaming
 
 const val LOGIN = "login"
 const val GENERATE_OTP_LOGIN = "getotp"
@@ -62,6 +63,7 @@ const val GET_CODE_DROP_DOWN = "getCodeDropdown"
 const val PINCODE_DROP_DOWN = "getPincodeDropdown"
 const val UPLOAD_FILE = "uploadFile"
 const val EDIT_APPLICATION = "editApplication"
+//const val EDIT_APPLICATION = "editApplication2"
 const val SAVE_PWD_FORM = "savePWDForm"
 const val UPDATE_PWD_FORM = "updatePWDForm"
 //const val SAVE_PWD_FORM = "savePWDForm2"
@@ -288,6 +290,7 @@ interface MyService {
         @Part document: MultipartBody.Part?,
     ): Response<UploadFileResponse>
 
+    @Streaming
     @Headers("Content-Type: application/json")
     @POST(EDIT_APPLICATION)
     suspend fun editApplication(@Body request: EditProfileRequest): Response<EditProfileResponse>

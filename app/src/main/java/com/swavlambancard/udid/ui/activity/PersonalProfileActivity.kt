@@ -75,7 +75,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     val gson = Gson()
                     Log.d("Decrypted Data EditProfile : ", data.toString())
                     val userData = gson.fromJson(data.toString(), EditApplication::class.java)
-//                    Log.d("Decrypted Data EditProfile : ", data.toString())
+                    Log.d("Decrypted Data EditProfile1 : ", userData.toString())
                     //Personal Details
                     sharedViewModel?.userData?.value?.applicantFullName = userData.full_name
                     sharedViewModel?.userData?.value?.full_name_i18n = userData.full_name_i18n
@@ -222,6 +222,22 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     }
 
     private fun editApi() {
+        val encryptedString = JSEncryptService.encrypt(
+            getPreferenceOfLogin(
+                context,
+                AppConstants.LOGIN_DATA,
+                UserData::class.java
+            ).application_number.toString()
+        ).toString()
+        Log.e("Encrypted Data", encryptedString)
+        sharedViewModel?.editApplication(
+            this, EditProfileRequest(
+                encryptedString,
+                JSEncryptService.encrypt("mobile").toString()
+            )
+        )
+    }
+    private fun editApi2() {
         val encryptedString = JSEncryptService.encrypt(
             getPreferenceOfLogin(
                 context,
