@@ -62,8 +62,8 @@ const val SUBMIT_LOST_CARD = "downloadUpdateLostCardReciept"
 const val GET_CODE_DROP_DOWN = "getCodeDropdown"
 const val PINCODE_DROP_DOWN = "getPincodeDropdown"
 const val UPLOAD_FILE = "uploadFile"
-const val EDIT_APPLICATION = "editApplication"
-//const val EDIT_APPLICATION = "editApplication2"
+//const val EDIT_APPLICATION = "editApplication"
+const val EDIT_APPLICATION = "editApplication2"
 const val SAVE_PWD_FORM = "savePWDForm"
 const val UPDATE_PWD_FORM = "updatePWDForm"
 //const val SAVE_PWD_FORM = "savePWDForm2"
@@ -293,7 +293,7 @@ interface MyService {
     @Streaming
     @Headers("Content-Type: application/json")
     @POST(EDIT_APPLICATION)
-    suspend fun editApplication(@Body request: EditProfileRequest): Response<ResponseBody>
+    suspend fun editApplication(@Body request: EditProfileRequest): Response<EditProfileResponse>
 
     @Multipart
     @POST(SAVE_PWD_FORM)
