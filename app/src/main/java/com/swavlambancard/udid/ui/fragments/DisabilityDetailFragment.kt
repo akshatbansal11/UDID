@@ -147,6 +147,16 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             disabilityDueToId = userData.disabilityDueToCode
             mBinding?.etDisabilitySince?.text = userData.disabilitySinceName
             disabilitySinceId = userData.disabilitySinceCode
+            if (sharedViewModel.userData.value?.uploadDisabilityCertificatePath != null) {
+                mBinding?.etFileName?.text = "VIEW"
+                mBinding?.etFileName?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        "VIEW"
+                    )
+                }
+            }
+
             if (sharedViewModel.userData.value?.uploadDisabilityCertificate != null) {
                 if (sharedViewModel.userData.value?.isFrom != "login") {
                     mBinding?.etFileName?.let {
@@ -155,17 +165,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             "VIEW"
                         )
                     }
-                    mBinding?.etFileName?.setOnClickListener {
-                        openFile(userData.uploadDisabilityCertificate.toString(), requireContext())
-                    }
-                } else {
-
-                    mBinding?.etFileName?.let {
-                        setBlueUnderlinedText(
-                            it,
-                            "VIEW"
-                        )
-                    }
+                    sharedViewModel.userData.value?.uploadDisabilityCertificate=null
                 }
             }
             disabilityCertificateName = userData.uploadDisabilityCertificate
@@ -347,6 +347,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     inner class ClickActions {
         fun next(view: View) {
             if (valid()) {
+//                Log.d("ID Details", sharedViewModel.userData.value?.uploadDisabilityCertificate.toString())
+
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     HospitalAssessmentFragment()
                 )
@@ -426,42 +428,42 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             if (sharedViewModel.userData.value?.uploadDisabilityCertificatePath == null) {
                 return
             }
-            if (sharedViewModel.userData.value?.isFrom != "login") {
-                val documentPath = sharedViewModel.userData.value?.uploadDisabilityCertificatePath
-                if (documentPath.isNullOrEmpty()) {
-                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
-                    return
-                }
-
-                val uri = Uri.parse(documentPath)
-
-                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
-                    // Open PDF in Chrome using Google Docs Viewer
-                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
-
-                    try {
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        intent.setPackage(null) // Open in any available browser
-                        startActivity(intent)
-                    }
-                } else {
-                    // Open Image in Chrome by using "file://" or "content://"
-                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-                    intent.putExtra("fileUri", uri.toString())
-                    startActivity(intent)
-                }
-            } else {
+//            if (sharedViewModel.userData.value?.isFrom != "login") {
+//                val documentPath = sharedViewModel.userData.value?.uploadDisabilityCertificatePath
+//                if (documentPath.isNullOrEmpty()) {
+//                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+//                    return
+//                }
+//
+//                val uri = Uri.parse(documentPath)
+//
+//                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+//                    // Open PDF in Chrome using Google Docs Viewer
+//                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+//
+//                    try {
+//                        startActivity(intent)
+//                    } catch (e: Exception) {
+//                        intent.setPackage(null) // Open in any available browser
+//                        startActivity(intent)
+//                    }
+//                } else {
+//                    // Open Image in Chrome by using "file://" or "content://"
+//                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+//                    intent.putExtra("fileUri", uri.toString())
+//                    startActivity(intent)
+//                }
+//            } else {
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)
                 intent.putExtra(
                     "fileUri",
                     sharedViewModel.userData.value?.uploadDisabilityCertificatePath
                 )
                 startActivity(intent)
-            }
+//            }
 
         }
     }
