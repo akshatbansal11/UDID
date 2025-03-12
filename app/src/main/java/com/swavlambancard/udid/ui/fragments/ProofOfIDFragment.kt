@@ -110,7 +110,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             mBinding?.etAadhaarEnrollment?.setText(userData.aadhaarEnrollmentNo)
             mBinding?.etIdentityProof?.text = userData.identityProofName
             identityProofId = userData.identityProofId
-            if(userData.identityProofUpload!=null){
+            if(userData.identityProofUploadPath!=null){
                 mBinding?.etFileNameIdentityProof?.text="VIEW"
                 mBinding?.etFileNameIdentityProof?.let {
                     setBlueUnderlinedText(
@@ -119,7 +119,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                 }
             }
-            if(userData.aadhaarEnrollmentUploadSlip!=null){
+            if(userData.aadhaarEnrollmentUploadSlipPath!=null){
                 mBinding?.etFileNameEnrollmentSlip?.text="VIEW"
                 mBinding?.etFileNameEnrollmentSlip?.let {
                     setBlueUnderlinedText(
@@ -128,9 +128,26 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                 }
             }
-//            mBinding?.etFileNameIdentityProof?.text = userData.identityProofUpload
-//            mBinding?.etFileNameEnrollmentSlip?.text = userData.aadhaarEnrollmentUploadSlip
-//            if (sharedViewModel.userData.value?.isFrom != "login") {
+            if (sharedViewModel.userData.value?.isFrom != "login") {
+                if (userData.identityProofUpload != null) {
+                    mBinding?.etFileNameIdentityProof?.let {
+                        setBlueUnderlinedText(
+                            it,
+                            "VIEW"
+                        )
+                    }
+                    sharedViewModel.userData.value?.identityProofUpload=null
+                }
+                if(userData.aadhaarEnrollmentUploadSlip!=null){
+                    mBinding?.etFileNameEnrollmentSlip?.let {
+                        setBlueUnderlinedText(
+                            it,
+                            "VIEW"
+                        )
+                    }
+                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip=null
+                }
+            }
 //                mBinding?.etFileNameIdentityProof?.let {
 //                    setBlueUnderlinedText(
 //                        it,
@@ -303,6 +320,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     inner class ClickActions {
         fun next(view: View) {
             if (valid()) {
+
             (requireActivity() as PersonalProfileActivity).replaceFragment(
                 ProofOfAddressFragment()
             )
@@ -353,6 +371,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             if (sharedViewModel.userData.value?.identityProofUploadPath == null) {
                 return
             }
+            Log.d("path",sharedViewModel.userData.value?.identityProofUploadPath.toString())
 //            if (sharedViewModel.userData.value?.isFrom != "login") {
 //                val documentPath = sharedViewModel.userData.value?.identityProofUploadPath
 //                if (documentPath.isNullOrEmpty()) {
@@ -393,47 +412,47 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             if (sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath == null) {
                 return
             }
-            if (sharedViewModel.userData.value?.isFrom != "login") {
-                val documentPath = sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath
-                if (documentPath.isNullOrEmpty()) {
-                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
-                    return
-                }
-
-                val uri = Uri.parse(documentPath)
-
-                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
-                    // Open PDF in Chrome using Google Docs Viewer
-                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
-
-                    try {
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        intent.setPackage(null) // Open in any available browser
-                        startActivity(intent)
-                    }
-                }
-                else {
-                    // Open Image in Chrome by using "file://" or "content://"
-                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-                    intent.putExtra(
-                        "fileUri",
-                        uri.toString()
-                    )
-                    startActivity(intent)
-                }// update case
-            }
-            else {
+//            if (sharedViewModel.userData.value?.isFrom != "login") {
+//                val documentPath = sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath
+//                if (documentPath.isNullOrEmpty()) {
+//                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+//                    return
+//                }
+//
+//                val uri = Uri.parse(documentPath)
+//
+//                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+//                    // Open PDF in Chrome using Google Docs Viewer
+//                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+//
+//                    try {
+//                        startActivity(intent)
+//                    } catch (e: Exception) {
+//                        intent.setPackage(null) // Open in any available browser
+//                        startActivity(intent)
+//                    }
+//                }
+//                else {
+//                    // Open Image in Chrome by using "file://" or "content://"
+//                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+//                    intent.putExtra(
+//                        "fileUri",
+//                        uri.toString()
+//                    )
+//                    startActivity(intent)
+//                }// update case
+//            }
+//            else {
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)
                 intent.putExtra(
                     "fileUri",
                     sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath
                 )
                 startActivity(intent)
-            }// registration case
+//            }// registration case
 
 
         }

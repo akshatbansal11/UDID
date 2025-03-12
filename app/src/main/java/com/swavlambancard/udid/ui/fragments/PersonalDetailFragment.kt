@@ -268,6 +268,15 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             relationWithPersonId = userData.relationWithPersonCode
 
             if (sharedViewModel.userData.value?.isFrom != "login") {
+                if (userData.photo != null) {
+                    mBinding?.etFileNamePhoto?.text=userData.photo
+                    sharedViewModel.userData.value?.photo=null
+                }
+                if(userData.sign!=null){
+                    mBinding?.etFileNameSignature?.text=userData.sign
+                    sharedViewModel.userData.value?.sign=null
+                }
+
                 mBinding?.etFileNamePhoto?.setOnClickListener {
                     userData.photoPath?.let { it1 -> openFile(it1, requireContext()) }
                 }
@@ -276,22 +285,22 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     openFile(userData.signaturePath.toString(), requireContext())
                 }
             }
-            if (userData.photo != null) {
-                mBinding?.etFileNamePhoto?.let {
-                    setBlueUnderlinedText(
-                        it,
-                        userData.photo!!
-                    )
-                }
-            }
-            if (userData.sign != null) {
-                mBinding?.etFileNameSignature?.let {
-                    setBlueUnderlinedText(
-                        it,
-                        userData.sign!!
-                    )
-                }
-            }
+//            if (userData.photo != null) {
+//                mBinding?.etFileNamePhoto?.let {
+//                    setBlueUnderlinedText(
+//                        it,
+//                        userData.photo!!
+//                    )
+//                }
+//            }
+//            if (userData.sign != null) {
+//                mBinding?.etFileNameSignature?.let {
+//                    setBlueUnderlinedText(
+//                        it,
+//                        userData.sign!!
+//                    )
+//                }
+//            }
             mBinding?.ivPhoto?.let { it1 ->
                 Glide.with(requireContext())
                     .load(sharedViewModel.userData.value?.photoPath)
@@ -378,6 +387,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.etFileNamePhoto?.addTextChangedListener {
             sharedViewModel.userData.value?.photo = it.toString()
         }
+        // Update -> Photo = A-> Photo=null
+        //2-> Photo = B -> PHoto = B
 //        mBinding?.etFileNameSignature?.addTextChangedListener {
 //            sharedViewModel.userData.value?.sign = it.toString()
 //        }

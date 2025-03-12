@@ -86,7 +86,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
 
-            if(userData.documentAddressProofPhoto!=null){
+            if(userData.documentAddressProofPhotoPath!=null){
                 mBinding?.etFileName?.text = "VIEW"
                 mBinding?.etFileName?.let {
                     setBlueUnderlinedText(
@@ -96,26 +96,21 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 }
             }
             if(sharedViewModel.userData.value?.isFrom != "login") {
-                mBinding?.etFileName?.let {
-                    setBlueUnderlinedText(
-                        it,
-                        "VIEW"
-                    )
-                }
-                mBinding?.etFileName?.setOnClickListener {
-                    openFile(userData.documentAddressProofPhoto.toString(),requireContext())
-                }
-            }
-            else{
-                if(userData.documentAddressProofPhoto!=null){
+                if (userData.documentAddressProofPhoto != null) {
                     mBinding?.etFileName?.let {
                         setBlueUnderlinedText(
                             it,
                             "VIEW"
                         )
                     }
+                    sharedViewModel.userData.value?.documentAddressProofPhoto=null
                 }
-
+                mBinding?.etFileName?.let {
+                    setBlueUnderlinedText(
+                        it,
+                        "VIEW"
+                    )
+                }
             }
 
             mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName
@@ -290,39 +285,39 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
             if(sharedViewModel.userData.value?.documentAddressProofPhotoPath==null){
                 return
             }
-            if(sharedViewModel.userData.value?.isFrom != "login"){
-                val documentPath = sharedViewModel.userData.value?.documentAddressProofPhotoPath
-                if (documentPath.isNullOrEmpty()) {
-                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
-                    return
-                }
-
-                val uri = Uri.parse(documentPath)
-
-                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
-                    // Open PDF in Chrome using Google Docs Viewer
-                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
-
-                    try {
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        intent.setPackage(null) // Open in any available browser
-                        startActivity(intent)
-                    }
-                } else {
-                    // Open Image in Chrome by using "file://" or "content://"
-                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-                    intent.putExtra("fileUri", uri.toString())
-                    startActivity(intent)                }
-            }
-            else{
+//            if(sharedViewModel.userData.value?.isFrom != "login"){
+//                val documentPath = sharedViewModel.userData.value?.documentAddressProofPhotoPath
+//                if (documentPath.isNullOrEmpty()) {
+//                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
+//                    return
+//                }
+//
+//                val uri = Uri.parse(documentPath)
+//
+//                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
+//                    // Open PDF in Chrome using Google Docs Viewer
+//                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
+//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
+//
+//                    try {
+//                        startActivity(intent)
+//                    } catch (e: Exception) {
+//                        intent.setPackage(null) // Open in any available browser
+//                        startActivity(intent)
+//                    }
+//                } else {
+//                    // Open Image in Chrome by using "file://" or "content://"
+//                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
+//                    intent.putExtra("fileUri", uri.toString())
+//                    startActivity(intent)                }
+//            }
+//            else{
                 val intent = Intent(requireContext(), PdfViewerActivity::class.java)
                 intent.putExtra("fileUri", sharedViewModel.userData.value?.documentAddressProofPhotoPath)
                 startActivity(intent)
-            }
+//            }
 
         }
 

@@ -5,6 +5,7 @@ import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -41,27 +42,40 @@ class PdfViewerActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        val fileUriString = intent.getStringExtra("fileUri")
+        val fileUri = fileUriString?.takeIf { it != "null" }?.let { Uri.parse(it) }
 
-        val fileUri =
-            intent.getStringExtra("fileUri")?.takeIf { it != "null" }?.let { Uri.parse(it) }
+        Log.d("PdfViewerActivity", "File URI: $fileUriString")
 
         try {
             resetViews() // Clear previous content
 
-            if (fileUri != null) {
-                if (isPdfFile(fileUri)) {
-                    displayPdf(fileUri)
+            if (!fileUriString.isNullOrBlank()) {
+                if (fileUriString.startsWith("data:application/pdf;base64,")) {
+                    val base64Data = fileUriString.removePrefix("data:application/pdf;base64,")
+                    val decodedFile = decodeBase64ToPdf(base64Data)
+                    if (decodedFile != null) {
+                        displayPdf(Uri.fromFile(decodedFile))
+                    } else {
+                        Utility.showSnackbar(clParent, "Failed to decode PDF")
+                    }
+                } else if (fileUriString.startsWith("data:image/")) {
+                    Glide.with(this).load(fileUriString).into(imageView)
+                    imageView.visibility = View.VISIBLE
+                } else if (fileUri != null) {
+                    if (isPdfFile(fileUri)) {
+                        displayPdf(fileUri)
+                    } else {
+                        displayImage(fileUri)
+                    }
                 } else {
-                    displayImage(fileUri)
+                    Utility.showSnackbar(clParent, "No valid file to display")
                 }
-            } else {
-                Utility.showSnackbar(clParent, "No valid file to display")
             }
         } catch (e: Exception) {
             e.printStackTrace()
             Utility.showSnackbar(clParent, "Error loading file: ${e.message}")
-            Log.d("PdfViewerActivity", "Error loading file: ${e.message}")
-
+            Log.e("PdfViewerActivity", "Error loading file: ${e.message}")
         }
     }
 
@@ -79,7 +93,6 @@ class PdfViewerActivity : AppCompatActivity() {
         imageView.visibility = View.VISIBLE
     }
 
-
     private fun resetViews() {
         imageView.setImageDrawable(null) // Clear the previous image
         imageView.visibility = View.GONE // Hide image view
@@ -91,31 +104,18 @@ class PdfViewerActivity : AppCompatActivity() {
         fileDescriptor?.close()
     }
 
-
     private fun displayPdf(uri: Uri) {
         pdfContainer.removeAllViews()  // Clear previous pages
 
         val file = getFileFromUri(uri)
-        fileDescriptor = ParcelFileDescriptor.open(
-            file,
-            ParcelFileDescriptor.MODE_READ_ONLY
-        ) //ParcelFileDescriptor allows us to read the PDF file.
-        pdfRenderer = PdfRenderer(fileDescriptor!!) //PdfRenderer opens the PDF for rendering.
+        fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+        pdfRenderer = PdfRenderer(fileDescriptor!!)
         pdfContainer.visibility = View.VISIBLE // Ensure PDF container is shown
 
         for (i in 0 until pdfRenderer!!.pageCount) {
-            val page = pdfRenderer!!.openPage(i) //openPage(i): Opens each page one by one.
-            val bitmap = Bitmap.createBitmap(
-                page.width,
-                page.height,
-                Bitmap.Config.ARGB_8888
-            )//Bitmap.createBitmap(): Creates a blank image of the same size as the PDF page.
-            page.render(
-                bitmap,
-                null,
-                null,
-                PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY
-            )//page.render(): Draws the PDF page onto the Bitmap.
+            val page = pdfRenderer!!.openPage(i)
+            val bitmap = Bitmap.createBitmap(page.width, page.height, Bitmap.Config.ARGB_8888)
+            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
 
             val imageView = ImageView(this).apply {
                 setImageBitmap(bitmap)
@@ -131,7 +131,6 @@ class PdfViewerActivity : AppCompatActivity() {
         }
     }
 
-    //This copies the PDF from URI to a temporary file in cacheDir.
     private fun getFileFromUri(uri: Uri): File {
         val inputStream: InputStream? = contentResolver.openInputStream(uri)
         val file = File(cacheDir, "temp.pdf")
@@ -142,23 +141,34 @@ class PdfViewerActivity : AppCompatActivity() {
         return file
     }
 
+    private fun decodeBase64ToPdf(base64String: String): File? {
+        return try {
+            val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
+            val file = File(cacheDir, "decoded_pdf.pdf")
+
+            FileOutputStream(file).use { outputStream ->
+                outputStream.write(decodedBytes)
+            }
+            file
+        } catch (e: Exception) {
+            Log.e("PdfViewerActivity", "Failed to decode Base64 PDF", e)
+            null
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-
-        // Close PdfRenderer and FileDescriptor
         pdfRenderer?.close()
         fileDescriptor?.close()
 
-        // Delete the temporary PDF file
-        val tempFile = File(cacheDir, "temp.pdf")
-        if (tempFile.exists()) {
-            tempFile.delete()
+        listOf("temp.pdf", "decoded_pdf.pdf").forEach {
+            val file = File(cacheDir, it)
+            if (file.exists()) file.delete()
         }
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        finish() // Ensures the activity is finished when back is pressed
+        finish()
     }
-
 }
