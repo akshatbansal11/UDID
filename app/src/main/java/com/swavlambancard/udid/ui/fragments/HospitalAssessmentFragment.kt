@@ -243,8 +243,16 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             if (sharedViewModel.userData.value?.isFrom != "login") {
                 showConfirmationAlertDialog(requireContext(), object : DialogCallback {
                     override fun onYes() {
-                        Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
+//                        Log.d("Pwd Form data", sharedViewModel.userData.value.toString())
                         updatePwsFormApi()
+                        Log.d("Pwd Form data", sharedViewModel.userData.value?.sign.toString())
+                        Log.d("Pwd Form data", sharedViewModel.userData.value?.photo.toString())
+                        Log.d("Pwd Form data", sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString())
+                        Log.d("Pwd Form data", sharedViewModel.userData.value?.identityProofUpload.toString())
+                        Log.d("Pwd Form data", sharedViewModel.userData.value?.documentAddressProofPhoto.toString())
+                        Log.d("Pwd Form data", sharedViewModel.userData.value?.uploadDisabilityCertificate.toString())
+                        Log.d("Pwd Form data", sharedViewModel.userData.value?.serialNumber.toString())
+
                     }
                 },getString(R.string.please_check_again_all_your_details_again_before_confirming_your_application))
             } else {

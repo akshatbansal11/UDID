@@ -6,12 +6,14 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -32,6 +34,7 @@ import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
+import com.swavlambancard.udid.utilities.Utility.baseToUrl
 import com.swavlambancard.udid.utilities.Utility.getNameById
 import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
@@ -45,6 +48,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.io.FileOutputStream
 
 
 class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
@@ -103,7 +107,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             "VIEW"
                         )
                     }
-                    sharedViewModel.userData.value?.documentAddressProofPhoto=null
+                    sharedViewModel.userData.value?.documentAddressProofPhoto=""
                 }
                 mBinding?.etFileName?.let {
                     setBlueUnderlinedText(
@@ -285,41 +289,12 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
             if(sharedViewModel.userData.value?.documentAddressProofPhotoPath==null){
                 return
             }
-//            if(sharedViewModel.userData.value?.isFrom != "login"){
-//                val documentPath = sharedViewModel.userData.value?.documentAddressProofPhotoPath
-//                if (documentPath.isNullOrEmpty()) {
-//                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
-//                    return
-//                }
-//
-//                val uri = Uri.parse(documentPath)
-//
-//                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
-//                    // Open PDF in Chrome using Google Docs Viewer
-//                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
-//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
-//
-//                    try {
-//                        startActivity(intent)
-//                    } catch (e: Exception) {
-//                        intent.setPackage(null) // Open in any available browser
-//                        startActivity(intent)
-//                    }
-//                } else {
-//                    // Open Image in Chrome by using "file://" or "content://"
-//                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-//                    intent.putExtra("fileUri", uri.toString())
-//                    startActivity(intent)                }
-//            }
-//            else{
-                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-                intent.putExtra("fileUri", sharedViewModel.userData.value?.documentAddressProofPhotoPath)
-                startActivity(intent)
-//            }
+            baseToUrl(requireContext(),
+                sharedViewModel.userData.value?.documentAddressProofPhotoPath.toString()
+            )
 
         }
+
 
         fun uploadFile(view: View) {
             checkStoragePermission(requireContext())

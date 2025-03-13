@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.utilities.Utility
 import java.io.File
@@ -43,53 +44,54 @@ class PdfViewerActivity : AppCompatActivity() {
         }
 
         val fileUriString = intent.getStringExtra("fileUri")
-        val fileUri = fileUriString?.takeIf { it != "null" }?.let { Uri.parse(it) }
+        val mimeType = intent.getStringExtra("mimeType")
 
-        Log.d("PdfViewerActivity", "File URI: $fileUriString")
+        val fileUri = fileUriString?.let { Uri.parse(it) }
+
+        Log.d("PdfViewerActivity", "File URI: $fileUriString, MIME Type: $mimeType")
 
         try {
             resetViews() // Clear previous content
 
-            if (!fileUriString.isNullOrBlank()) {
-                if (fileUriString.startsWith("data:application/pdf;base64,")) {
-                    val base64Data = fileUriString.removePrefix("data:application/pdf;base64,")
-                    val decodedFile = decodeBase64ToPdf(base64Data)
-                    if (decodedFile != null) {
-                        displayPdf(Uri.fromFile(decodedFile))
-                    } else {
-                        Utility.showSnackbar(clParent, "Failed to decode PDF")
-                    }
-                } else if (fileUriString.startsWith("data:image/")) {
-                    Glide.with(this).load(fileUriString).into(imageView)
-                    imageView.visibility = View.VISIBLE
-                } else if (fileUri != null) {
-                    if (isPdfFile(fileUri)) {
-                        displayPdf(fileUri)
-                    } else {
-                        displayImage(fileUri)
-                    }
-                } else {
-                    Utility.showSnackbar(clParent, "No valid file to display")
+            if (fileUri != null) {
+                val actualMimeType = mimeType ?: getMimeType(fileUri)
+
+                when {
+                    actualMimeType == "application/pdf" -> displayPdf(fileUri)
+                    actualMimeType.startsWith("image/") -> displayImage(fileUri)
+                    else -> Utility.showSnackbar(clParent, "Unsupported file type")
                 }
+            } else {
+                Utility.showSnackbar(clParent, "No valid file to display")
             }
         } catch (e: Exception) {
             e.printStackTrace()
             Utility.showSnackbar(clParent, "Error loading file: ${e.message}")
-            Log.e("PdfViewerActivity", "Error loading file: ${e.message}")
         }
     }
 
-    private fun isPdfFile(uri: Uri): Boolean {
-        val contentResolver = applicationContext.contentResolver
+    private fun getMimeType(uri: Uri): String {
         val mimeType = contentResolver.getType(uri)
-        return mimeType == "application/pdf" || uri.toString().endsWith(".pdf", ignoreCase = true)
+        if (mimeType != null) return mimeType
+
+        // Fallback check based on file extension
+        val fileExtension = uri.toString().substringAfterLast('.', "").lowercase()
+        return when (fileExtension) {
+            "pdf" -> "application/pdf"
+            "jpg", "jpeg", "png", "gif", "bmp", "webp" -> "image/$fileExtension"
+            else -> "*/*" // Unknown
+        }
     }
 
     private fun displayImage(uri: Uri) {
         pdfContainer.removeAllViews()
         pdfContainer.visibility = View.GONE // Hide PDF
 
-        Glide.with(this).load(uri).into(imageView)
+        Glide.with(this)
+            .load(uri)
+            .skipMemoryCache(true) // Skip memory cache
+            .diskCacheStrategy(DiskCacheStrategy.NONE) // Disable disk cache
+            .into(imageView)
         imageView.visibility = View.VISIBLE
     }
 
@@ -141,6 +143,10 @@ class PdfViewerActivity : AppCompatActivity() {
         return file
     }
 
+    private fun getFileExtension(uri: Uri): String {
+        return uri.toString().substringAfterLast('.', "").lowercase()
+    }
+
     private fun decodeBase64ToPdf(base64String: String): File? {
         return try {
             val decodedBytes = Base64.decode(base64String, Base64.DEFAULT)
@@ -161,11 +167,12 @@ class PdfViewerActivity : AppCompatActivity() {
         pdfRenderer?.close()
         fileDescriptor?.close()
 
-        listOf("temp.pdf", "decoded_pdf.pdf").forEach {
-            val file = File(cacheDir, it)
-            if (file.exists()) file.delete()
+        // Delete all files inside cache directory
+        cacheDir?.listFiles()?.forEach { file ->
+            file.delete()
         }
     }
+
 
     override fun onBackPressed() {
         super.onBackPressed()

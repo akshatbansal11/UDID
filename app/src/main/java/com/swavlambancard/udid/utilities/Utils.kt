@@ -36,11 +36,13 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.callBack.DialogCallback
 import com.swavlambancard.udid.model.DropDownResult
+import com.swavlambancard.udid.ui.PdfViewerActivity
 import java.io.*
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -307,6 +309,75 @@ object Utility {
         textView.text = spannableString
     }
 
+    fun baseToUrl(context: Context, baseString: String) {
+        if (baseString.isNullOrEmpty()) {
+            Toast.makeText(context, "No document found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val fileUri: Uri?
+            val mimeType: String?
+
+            when {
+                baseString.startsWith("data:image/") -> {
+                    val tempFile = decodeBase64ToFile(context, baseString, "image.jpg")
+                    fileUri = tempFile?.let {
+                        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider",
+                            it
+                        )
+                    }
+                    mimeType = "image/*"
+                }
+                baseString.startsWith("data:application/pdf;base64,") -> {
+                    val tempFile = decodeBase64ToFile(context, baseString, "document.pdf")
+                    fileUri = tempFile?.let {
+                        FileProvider.getUriForFile(context, "${context.packageName}.fileprovider",
+                            it
+                        )
+                    }
+                    mimeType = "application/pdf"
+                }
+                baseString.startsWith("content://") || baseString.startsWith("file://") -> {
+                    // Local file, no need to copy it again
+                    fileUri = Uri.parse(baseString)
+                    mimeType = context.contentResolver.getType(fileUri) ?: "*/*"
+                }
+                else -> {
+                    Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show()
+                    return
+                }
+            }
+
+            if (fileUri != null) {
+                val intent = Intent(context, PdfViewerActivity::class.java).apply {
+                    putExtra("fileUri", fileUri.toString())
+                    putExtra("mimeType", mimeType)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                context.startActivity(intent)
+            } else {
+                Toast.makeText(context, "Failed to process file", Toast.LENGTH_SHORT).show()
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context, "Error processing file: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun decodeBase64ToFile(context: Context,base64String: String, fileName: String): File? {
+        return try {
+            val cleanBase64 = base64String.substringAfter(",") // Remove MIME prefix
+            val decodedBytes = Base64.decode(cleanBase64, Base64.DEFAULT)
+            val file = File(context.cacheDir, fileName)
+
+            FileOutputStream(file).use { it.write(decodedBytes) }
+            file
+        } catch (e: Exception) {
+            Log.e("Base64Conversion", "Failed to decode file", e)
+            null
+        }
+    }
     fun openFile(url: String,context: Context) {
         Log.d("document:",url)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
