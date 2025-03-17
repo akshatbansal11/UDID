@@ -92,7 +92,7 @@ class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() 
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 startActivity(Intent(this, PersonalProfileActivity::class.java)
-                    .putExtra(AppConstants.IS_FROM,"rejectAndPending")
+                    .putExtra(AppConstants.REJECT_PENDING,"rejected")
                     .putExtra(AppConstants.APPLICATION_NO,userResponseModel._result[0].application_number)
                     .putExtra(AppConstants.IS_FROM, "login")
                     .putExtra(AppConstants.CHECK, isFrom))
@@ -104,7 +104,7 @@ class ApplyForUdidFormActivity: BaseActivity<ActivityApplyForUdidFormBinding>() 
             val userResponseModel = it
             if (userResponseModel?._resultflag != 0) {
                 startActivity(Intent(this, PersonalProfileActivity::class.java)
-                    .putExtra(AppConstants.IS_FROM,"rejectAndPending")
+                    .putExtra(AppConstants.REJECT_PENDING,"pending")
                     .putExtra(AppConstants.APPLICATION_NO,userResponseModel._result[0].application_number)
                     .putExtra(AppConstants.IS_FROM, "login")
                     .putExtra(AppConstants.CHECK, isFrom))

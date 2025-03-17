@@ -175,6 +175,7 @@ class SharedDataViewModel : ViewModel() {
         hospitalTreatingDistrictCode: RequestBody?,
         hospitalTreatingId: RequestBody?,
         declaration: RequestBody?,//=>0/1
+        apiRequestType: RequestBody?
     ) {
         // can be launched in a separate asynchronous job
         networkCheck(context, true)
@@ -227,7 +228,8 @@ class SharedDataViewModel : ViewModel() {
                     hospitalTreatingStateCode,
                     hospitalTreatingDistrictCode,
                     hospitalTreatingId,
-                    declaration
+                    declaration,
+                    apiRequestType
                 )
 
                 Log.e("response", response.toString())

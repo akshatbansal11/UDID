@@ -49,6 +49,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         sharedViewModel?.userData?.value?.isFrom = intent.extras?.getString(AppConstants.IS_FROM)
         sharedViewModel?.userData?.value?.check = intent.extras?.getString(AppConstants.CHECK)
         sharedViewModel?.userData?.value?.application_number = intent.extras?.getString(AppConstants.APPLICATION_NO)
+        sharedViewModel?.userData?.value?.apiRequestType = intent.extras?.getString(AppConstants.REJECT_PENDING)
         if (isFrom == "login") {
             replaceFragment(PersonalDetailFragment())
         } else {

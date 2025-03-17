@@ -429,6 +429,7 @@ object Repository {
         hospitalTreatingDistrictCode: RequestBody?,
         hospitalTreatingId: RequestBody?,
         declaration: RequestBody?,//=>0/1
+        apiRequestType: RequestBody?,
     ): Response<SavePWDFormResponse> {
         return api.savePwdForm(
             type,
@@ -477,7 +478,8 @@ object Repository {
             hospitalTreatingStateCode,
             hospitalTreatingDistrictCode,
             hospitalTreatingId,
-            declaration
+            declaration,
+            apiRequestType
         )
     }
     suspend fun updatePwdForm(

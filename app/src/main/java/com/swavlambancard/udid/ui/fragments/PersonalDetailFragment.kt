@@ -152,6 +152,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     UserData::class.java
                 ).application_number.toString()
             )
+            sharedViewModel.userData.value?.apiRequestType = ""
         } else if (sharedViewModel.userData.value?.isFrom == "login" && (sharedViewModel.userData.value?.check == "3" || sharedViewModel.userData.value?.check == "5")) {
             mBinding?.tvApplicationNumber?.showView()
             mBinding?.tvApplicationNumber?.text =
@@ -159,6 +160,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     R.string.enrollment_no_application_number,
                     sharedViewModel.userData.value?.application_number
                 )
+        }
+        else{
+            sharedViewModel.userData.value?.apiRequestType = ""
         }
 
         mBinding?.etApplicantFullName?.addTextChangedListener(object : TextWatcher {
