@@ -111,8 +111,8 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             mBinding?.etAadhaarEnrollment?.setText(userData.aadhaarEnrollmentNo)
             mBinding?.etIdentityProof?.text = userData.identityProofName
             identityProofId = userData.identityProofId
-            if(userData.identityProofUploadPath!=null){
-                mBinding?.etFileNameIdentityProof?.text="VIEW"
+            if (userData.identityProofUploadPath != null) {
+                mBinding?.etFileNameIdentityProof?.text = "VIEW"
                 mBinding?.etFileNameIdentityProof?.let {
                     setBlueUnderlinedText(
                         it,
@@ -120,8 +120,8 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                 }
             }
-            if(userData.aadhaarEnrollmentUploadSlipPath!=null){
-                mBinding?.etFileNameEnrollmentSlip?.text="VIEW"
+            if (userData.aadhaarEnrollmentUploadSlipPath != null) {
+                mBinding?.etFileNameEnrollmentSlip?.text = "VIEW"
                 mBinding?.etFileNameEnrollmentSlip?.let {
                     setBlueUnderlinedText(
                         it,
@@ -137,16 +137,16 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                             "VIEW"
                         )
                     }
-                    sharedViewModel.userData.value?.identityProofUpload=""
+                    sharedViewModel.userData.value?.identityProofUpload = ""
                 }
-                if(userData.aadhaarEnrollmentUploadSlip!=null){
+                if (userData.aadhaarEnrollmentUploadSlip != null) {
                     mBinding?.etFileNameEnrollmentSlip?.let {
                         setBlueUnderlinedText(
                             it,
                             "VIEW"
                         )
                     }
-                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip=""
+                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip = ""
                 }
             }
 //                mBinding?.etFileNameIdentityProof?.let {
@@ -272,7 +272,8 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                                 "VIEW"
                             )
                         }
-                        sharedViewModel.userData.value?.identityProofUpload=userResponseModel._result.file_name
+                        sharedViewModel.userData.value?.identityProofUpload =
+                            userResponseModel._result.file_name
                         when {
                             pdfUri != null -> sharedViewModel.userData.value?.identityProofUploadPath =
                                 pdfUri.toString()
@@ -297,7 +298,8 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                                 "VIEW"
                             )
                         }
-                        sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip=userResponseModel._result.file_name
+                        sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip =
+                            userResponseModel._result.file_name
                         when {
                             pdfUri != null -> sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath =
                                 pdfUri.toString()
@@ -321,10 +323,22 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     inner class ClickActions {
         fun next(view: View) {
             if (valid()) {
-
-            (requireActivity() as PersonalProfileActivity).replaceFragment(
-                ProofOfAddressFragment()
-            )
+                if (aadhaarTag == 1) {
+                    mBinding?.etAadhaarEnrollment?.setText("")
+                    mBinding?.etFileNameEnrollmentSlip?.text = ""
+                    enrollmentSlipName = ""
+                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath = null
+                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip = null
+                    cameraUri = null
+                    imageUri = null
+                    pdfUri = null
+                } else {
+                    mBinding?.etAadhaarNo?.setText("")
+                    mBinding?.checkboxConfirm?.isChecked = false
+                }
+                (requireActivity() as PersonalProfileActivity).replaceFragment(
+                    ProofOfAddressFragment()
+                )
             }
         }
 
@@ -339,9 +353,16 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             identityProofList.add(DropDownResult("8", "Aadhaar Card"))
             mBinding?.llYesAadhaarCard?.showView()
             mBinding?.llNoAadhaarCard?.hideView()
-            mBinding?.etAadhaarEnrollment?.setText("")
-            mBinding?.etFileNameEnrollmentSlip?.text = ""
-            enrollmentSlipName = ""
+            if (sharedViewModel.userData.value?.isFrom == "login") {
+                mBinding?.etAadhaarEnrollment?.setText("")
+                mBinding?.etFileNameEnrollmentSlip?.text = ""
+                enrollmentSlipName = ""
+                sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath = null
+                sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip = null
+                cameraUri = null
+                imageUri = null
+                pdfUri = null
+            }
         }
 
         fun rbNo(view: View) {
@@ -349,14 +370,11 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             identityProofListYes.remove(DropDownResult("8", "Aadhaar Card"))
             mBinding?.llYesAadhaarCard?.hideView()
             mBinding?.llNoAadhaarCard?.showView()
-            mBinding?.etAadhaarNo?.setText("")
-            mBinding?.checkboxConfirm?.isChecked = false
-            sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath=null
-            sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip=null
-            cameraUri=null
-            imageUri=null
-            pdfUri=null
+            if (sharedViewModel.userData.value?.isFrom == "login") {
+                mBinding?.etAadhaarNo?.setText("")
+                mBinding?.checkboxConfirm?.isChecked = false
 
+            }
         }
 
         fun identityProof(view: View) {
@@ -372,7 +390,8 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             if (sharedViewModel.userData.value?.identityProofUploadPath == null) {
                 return
             }
-            baseToUrl(requireContext(),
+            baseToUrl(
+                requireContext(),
                 sharedViewModel.userData.value?.identityProofUploadPath.toString()
             )
 
@@ -382,7 +401,8 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             if (sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath == null) {
                 return
             }
-            baseToUrl(requireContext(),
+            baseToUrl(
+                requireContext(),
                 sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath.toString()
             )
         }

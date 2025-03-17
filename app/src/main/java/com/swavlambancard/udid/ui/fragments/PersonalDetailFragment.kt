@@ -141,7 +141,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-        Log.d("Pwd Form data", sharedViewModel.userData.value?.sign.toString())
+        Log.d("Pwd Form data", sharedViewModel.userData.value?.photo.toString())
         if (sharedViewModel.userData.value?.isFrom != "login") {
             mBinding?.tvApplicationNumber?.showView()
             mBinding?.tvApplicationNumber?.text = getString(
@@ -278,6 +278,10 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     mBinding?.etFileNameSignature?.text=userData.signaturePath
                     sharedViewModel.userData.value?.sign=""
                 }
+            }
+            else{
+                mBinding?.etFileNamePhoto?.text=userData.photo
+                mBinding?.etFileNameSignature?.text=userData.sign
             }
 //            if (userData.photo != null) {
 //                mBinding?.etFileNamePhoto?.let {
@@ -508,7 +512,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     else
                         sharedViewModel.userData.value?.sign = ""
                 }
-                Log.d("Pwd Form data", sharedViewModel.userData.value?.sign.toString())
+                Log.d("Pwd Form data", sharedViewModel.userData.value?.photo.toString())
                 (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
             }
         }

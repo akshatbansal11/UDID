@@ -18,7 +18,6 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.databinding.DataBindingUtil
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.databinding.ActivityApplyForUdidBinding
@@ -41,7 +40,12 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
     override fun initView() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
-        mBinding?.webView?.let { setupWebView(it, "https://swavlambancard.gov.in/Applyforudid?view-type=mobile") }
+        mBinding?.webView?.let {
+            setupWebView(
+                it,
+                "https://swavlambancard.gov.in/Applyforudid?view-type=mobile"
+            )
+        }
     }
 
     override fun setVariables() {
@@ -64,9 +68,13 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
             if (mBinding?.cbUdidForm?.isChecked == true) {
 //                mBinding?.clParent?.hideView()
 //                showUdidDialog()
-                startActivity(Intent(this@ApplyForUdidActivity, ApplyForUdidFormActivity::class.java))
-            }
-            else
+                startActivity(
+                    Intent(
+                        this@ApplyForUdidActivity,
+                        ApplyForUdidFormActivity::class.java
+                    )
+                )
+            } else
                 mBinding?.clParent?.let {
                     showSnackbar(
                         it,
@@ -109,9 +117,12 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
             }
         }
 
-        // Load the URL
+        // Load the URL'
+        webView.clearCache(true)
+        webView.clearHistory()
         webView.loadUrl(urlLink)
     }
+
     private fun showUdidDialog() {
         val bindingDialog: ApplyForUdidDialogBinding = DataBindingUtil.inflate(
             layoutInflater,
@@ -140,48 +151,52 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
         }
         val radioGroup: RadioGroup = dialog.findViewById(R.id.radioGroup)
         val btnConfirm: TextView = dialog.findViewById(R.id.tvSubmit)
-        bindingDialog.etDob.setOnClickListener{
-            calenderOpen(this@ApplyForUdidActivity,bindingDialog.etDob)
+        bindingDialog.etDob.setOnClickListener {
+            calenderOpen(this@ApplyForUdidActivity, bindingDialog.etDob)
         }
-        bindingDialog.etDobPending.setOnClickListener{
-            calenderOpen(this@ApplyForUdidActivity,bindingDialog.etDobPending)
+        bindingDialog.etDobPending.setOnClickListener {
+            calenderOpen(this@ApplyForUdidActivity, bindingDialog.etDobPending)
         }
-         bindingDialog.radioGroup.setOnCheckedChangeListener { radioGroup, checkedButton ->
-             when(checkedButton){
-                 R.id.radio_option1 -> {
-                     bindingDialog.llUdidCardReject.hideView()
-                     bindingDialog.llUdidCardPending.hideView()
-                     bindingDialog.llUdidCard.hideView()
-                 }
-                 R.id.radio_option2 -> {
-                     bindingDialog.llUdidCardReject.hideView()
-                     bindingDialog.llUdidCardPending.hideView()
-                     bindingDialog.llUdidCard.hideView()
-                 }
-                 R.id.radio_option3 -> {
-                     bindingDialog.llUdidCardReject.showView()
-                     bindingDialog.llUdidCardPending.hideView()
-                     bindingDialog.llUdidCard.hideView()
-                     date=""
-                     bindingDialog.etDobPending.text=""
-                     bindingDialog.etDob.text=""
-                 }
-                 R.id.radio_option4 -> {
-                     bindingDialog.llUdidCardReject.hideView()
-                     bindingDialog.llUdidCardPending.hideView()
-                     bindingDialog.llUdidCard.showView()
-                 }
-                 R.id.radio_option5 -> {
-                     bindingDialog.llUdidCardReject.hideView()
-                     bindingDialog.llUdidCardPending.showView()
-                     bindingDialog.llUdidCard.hideView()
-                     date=""
-                     bindingDialog.etDobPending.text=""
-                     bindingDialog.etDob.text=""
+        bindingDialog.radioGroup.setOnCheckedChangeListener { radioGroup, checkedButton ->
+            when (checkedButton) {
+                R.id.radio_option1 -> {
+                    bindingDialog.llUdidCardReject.hideView()
+                    bindingDialog.llUdidCardPending.hideView()
+                    bindingDialog.llUdidCard.hideView()
+                }
 
-                 }
-             }
-         }
+                R.id.radio_option2 -> {
+                    bindingDialog.llUdidCardReject.hideView()
+                    bindingDialog.llUdidCardPending.hideView()
+                    bindingDialog.llUdidCard.hideView()
+                }
+
+                R.id.radio_option3 -> {
+                    bindingDialog.llUdidCardReject.showView()
+                    bindingDialog.llUdidCardPending.hideView()
+                    bindingDialog.llUdidCard.hideView()
+                    date = ""
+                    bindingDialog.etDobPending.text = ""
+                    bindingDialog.etDob.text = ""
+                }
+
+                R.id.radio_option4 -> {
+                    bindingDialog.llUdidCardReject.hideView()
+                    bindingDialog.llUdidCardPending.hideView()
+                    bindingDialog.llUdidCard.showView()
+                }
+
+                R.id.radio_option5 -> {
+                    bindingDialog.llUdidCardReject.hideView()
+                    bindingDialog.llUdidCardPending.showView()
+                    bindingDialog.llUdidCard.hideView()
+                    date = ""
+                    bindingDialog.etDobPending.text = ""
+                    bindingDialog.etDob.text = ""
+
+                }
+            }
+        }
 
 
         btnConfirm.setOnClickListener {
@@ -201,6 +216,7 @@ class ApplyForUdidActivity : BaseActivity<ActivityApplyForUdidBinding>() {
         }
         dialog.show()
     }
+
     @SuppressLint("SetTextI18n")
     private fun calenderOpen(context: Context, editText: TextView) {
         val cal: Calendar = Calendar.getInstance()

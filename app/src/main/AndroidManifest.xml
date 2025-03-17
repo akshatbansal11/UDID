@@ -45,6 +45,7 @@
         <activity
             android:name=".ui.activity.ApplyForUdidActivity"
             android:configChanges="keyboardHidden|orientation"
+            android:hardwareAccelerated="false"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity

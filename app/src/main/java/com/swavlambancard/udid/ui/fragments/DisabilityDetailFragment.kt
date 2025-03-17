@@ -166,7 +166,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             "VIEW"
                         )
                     }
-                    sharedViewModel.userData.value?.uploadDisabilityCertificate=""
+                    sharedViewModel.userData.value?.uploadDisabilityCertificate = ""
                 }
             }
             disabilityCertificateName = userData.uploadDisabilityCertificate
@@ -323,7 +323,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                             "VIEW"
                         )
                     }
-                    sharedViewModel.userData.value?.uploadDisabilityCertificate=userResponseModel._result.file_name
+                    sharedViewModel.userData.value?.uploadDisabilityCertificate =
+                        userResponseModel._result.file_name
                     when {
                         pdfUri != null -> sharedViewModel.userData.value?.uploadDisabilityCertificatePath =
                             pdfUri.toString()
@@ -348,8 +349,22 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
     inner class ClickActions {
         fun next(view: View) {
             if (valid()) {
-//                Log.d("ID Details", sharedViewModel.userData.value?.uploadDisabilityCertificate.toString())
-
+                if (disabilityCertificateTag == 0) {
+                    mBinding?.etFileName?.text = ""
+                    disabilityCertificateName = ""
+                    mBinding?.etRegistrationNoOfCertificate?.setText("")
+                    mBinding?.etDateOfIssuanceOfCertificate?.text = ""
+                    date = ""
+                    mBinding?.etSelectIssuingAuthority?.text = ""
+                    detailsOfIssuingAuthorityId = ""
+                    sharedViewModel.userData.value?.detailOfAuthorityCode = ""
+                    mBinding?.etDisabilityPercentage?.setText("")
+                    sharedViewModel.userData.value?.uploadDisabilityCertificatePath = null
+                    sharedViewModel.userData.value?.uploadDisabilityCertificate = null
+                    cameraUri = null
+                    imageUri = null
+                    pdfUri = null
+                }
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     HospitalAssessmentFragment()
                 )
@@ -384,21 +399,25 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         }
 
         fun rbDisabilityCertificateNo(view: View) {
-            mBinding?.llDisabilityCertificateYes?.hideView()
-            mBinding?.etFileName?.text = ""
-            disabilityCertificateName = ""
-            mBinding?.etRegistrationNoOfCertificate?.setText("")
-            mBinding?.etDateOfIssuanceOfCertificate?.text = ""
-            date = ""
-            mBinding?.etSelectIssuingAuthority?.text = ""
-            detailsOfIssuingAuthorityId = ""
-            sharedViewModel.userData.value?.detailOfAuthorityCode = ""
-            mBinding?.etDisabilityPercentage?.setText("")
-            sharedViewModel.userData.value?.uploadDisabilityCertificatePath = null
-            sharedViewModel.userData.value?.uploadDisabilityCertificate = null
-            cameraUri = null
-            imageUri = null
-            pdfUri = null
+            if (sharedViewModel.userData.value?.isFrom != "login") {
+                mBinding?.llDisabilityCertificateYes?.hideView()
+            } else {
+                mBinding?.llDisabilityCertificateYes?.hideView()
+                mBinding?.etFileName?.text = ""
+                disabilityCertificateName = ""
+                mBinding?.etRegistrationNoOfCertificate?.setText("")
+                mBinding?.etDateOfIssuanceOfCertificate?.text = ""
+                date = ""
+                mBinding?.etSelectIssuingAuthority?.text = ""
+                detailsOfIssuingAuthorityId = ""
+                sharedViewModel.userData.value?.detailOfAuthorityCode = ""
+                mBinding?.etDisabilityPercentage?.setText("")
+                sharedViewModel.userData.value?.uploadDisabilityCertificatePath = null
+                sharedViewModel.userData.value?.uploadDisabilityCertificate = null
+                cameraUri = null
+                imageUri = null
+                pdfUri = null
+            }
         }
 
         fun dateOfIssuanceOfCertificate(view: View) {
@@ -429,7 +448,8 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
             if (sharedViewModel.userData.value?.uploadDisabilityCertificatePath == null) {
                 return
             }
-            baseToUrl(requireContext(),
+            baseToUrl(
+                requireContext(),
                 sharedViewModel.userData.value?.uploadDisabilityCertificatePath.toString()
             )
         }

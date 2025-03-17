@@ -340,7 +340,7 @@ interface MyService {
         @Part("disability_since") disabilitySince: RequestBody?,
         @Part("have_disability_cert") haveDisabilityCert: RequestBody?,//1(yes)/0(no)
         @Part("disability_cert_doc") disabilityCertDoc: RequestBody?,
-        @Part("serialNumber") serialNumber: RequestBody?,
+        @Part("serial_number") serialNumber: RequestBody?,
         @Part("date_of_certificate") dateOfCertificate: RequestBody?,
         @Part("detail_of_authority") detailOfAuthority: RequestBody?,
         @Part("disability_per") disabilityPer: RequestBody?,
@@ -397,7 +397,7 @@ interface MyService {
         @Part("disability_since") disabilitySince: RequestBody?,
         @Part("have_disability_cert") haveDisabilityCert: RequestBody?,//1(yes)/0(no)
         @Part("disability_cert_doc") disabilityCertDoc: RequestBody?,
-        @Part("serialNumber") serialNumber: RequestBody?,
+        @Part("serial_number") serialNumber: RequestBody?,
         @Part("date_of_certificate") dateOfCertificate: RequestBody?,
         @Part("detail_of_authority") detailOfAuthority: RequestBody?,
         @Part("disability_per") disabilityPer: RequestBody?,

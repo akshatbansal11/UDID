@@ -110,15 +110,15 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     sharedViewModel?.userData?.value?.aadhaarTag = userData.aadhar_info
                     sharedViewModel?.userData?.value?.aadhaarEnrollmentNo =
                         userData.aadhar_enrollment_no
-                    sharedViewModel?.userData?.value?.aadhaarEnrollmentUploadSlip = getFileNameFromUrl(userData.aadhar_enrollment_slip)
+                    sharedViewModel?.userData?.value?.aadhaarEnrollmentUploadSlip = userData.aadhar_enrollment_slip
                     sharedViewModel?.userData?.value?.aadhaarEnrollmentUploadSlipPath = userData.aadhar_enrollment_slip
                     sharedViewModel?.userData?.value?.identityProofId = userData.identitity_proof_id
-                    sharedViewModel?.userData?.value?.identityProofUpload = getFileNameFromUrl(userData.identitity_proof_file)
+                    sharedViewModel?.userData?.value?.identityProofUpload = userData.identitity_proof_file
                     sharedViewModel?.userData?.value?.identityProofUploadPath = userData.identitity_proof_file
                     //Address Correspondence
                     sharedViewModel?.userData?.value?.natureDocumentAddressProofCode =
                         userData.address_proof_id
-                    sharedViewModel?.userData?.value?.documentAddressProofPhoto = getFileNameFromUrl(userData.address_proof_file)
+                    sharedViewModel?.userData?.value?.documentAddressProofPhoto = userData.address_proof_file
                     sharedViewModel?.userData?.value?.documentAddressProofPhotoPath = userData.address_proof_file
                     sharedViewModel?.userData?.value?.address = userData.current_address
                     sharedViewModel?.userData?.value?.districtCode = userData.current_district_code
@@ -148,7 +148,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                         sharedViewModel?.userData?.value?.haveDisabilityCertificate = 1
                     else
                         sharedViewModel?.userData?.value?.haveDisabilityCertificate = 0
-                    sharedViewModel?.userData?.value?.uploadDisabilityCertificate = getFileNameFromUrl(userData.disability_cert_doc)
+                    sharedViewModel?.userData?.value?.uploadDisabilityCertificate = userData.disability_cert_doc
                     sharedViewModel?.userData?.value?.uploadDisabilityCertificatePath = userData.disability_cert_doc
                     sharedViewModel?.userData?.value?.detailOfAuthorityName = userData.detail_of_authority
                     sharedViewModel?.userData?.value?.detailOfAuthorityCode = userData.detail_of_authority

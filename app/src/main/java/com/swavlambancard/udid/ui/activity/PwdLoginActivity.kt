@@ -180,6 +180,7 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
                     put("dob", date)
                     put("type", "mobile")
                 }
+                Log.d("SerialDecrypt", EncryptionModel.aesDecrypt("MTdlNjM0Y2ZlZTAxNTgwYjpOVTNhOUg5Q3hGeWlLM2o3VXI5c0tnPT06NTg3YzJlZGZlMzMyZGZhZDQxN2U2NWVkMWYzNjYzODA="))
                 val encryptedString = EncryptionModel.aesEncrypt(loginRequestJson.toString())
                 val requestBody = encryptedString.toRequestBody("text/plain".toMediaTypeOrNull())
                 viewModel.getLoginApi(
