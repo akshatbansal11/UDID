@@ -29,6 +29,7 @@ import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
+import com.swavlambancard.udid.utilities.Utility.baseToUrl
 import com.swavlambancard.udid.utilities.Utility.getNameById
 import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
@@ -136,7 +137,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                             "VIEW"
                         )
                     }
-                    sharedViewModel.userData.value?.identityProofUpload=null
+                    sharedViewModel.userData.value?.identityProofUpload=""
                 }
                 if(userData.aadhaarEnrollmentUploadSlip!=null){
                     mBinding?.etFileNameEnrollmentSlip?.let {
@@ -145,7 +146,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                             "VIEW"
                         )
                     }
-                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip=null
+                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip=""
                 }
             }
 //                mBinding?.etFileNameIdentityProof?.let {
@@ -371,40 +372,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             if (sharedViewModel.userData.value?.identityProofUploadPath == null) {
                 return
             }
-            Log.d("path",sharedViewModel.userData.value?.identityProofUploadPath.toString())
-//            if (sharedViewModel.userData.value?.isFrom != "login") {
-//                val documentPath = sharedViewModel.userData.value?.identityProofUploadPath
-//                if (documentPath.isNullOrEmpty()) {
-//                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
-//                    return
-//                }
-//
-//                val uri = Uri.parse(documentPath)
-//
-//                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
-//                    // Open PDF in Chrome using Google Docs Viewer
-//                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
-//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
-//
-//                    try {
-//                        startActivity(intent)
-//                    } catch (e: Exception) {
-//                        intent.setPackage(null) // Open in any available browser
-//                        startActivity(intent)
-//                    }
-//                } else {
-//                    // Open Image in Chrome by using "file://" or "content://"
-//                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-//                    intent.putExtra("fileUri", uri.toString())
-//                    startActivity(intent)                }
-//            }
-//            else {
-                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-                intent.putExtra("fileUri", sharedViewModel.userData.value?.identityProofUploadPath)
-                startActivity(intent)
-//            }
+            baseToUrl(requireContext(),
+                sharedViewModel.userData.value?.identityProofUploadPath.toString()
+            )
 
         }
 
@@ -412,49 +382,9 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             if (sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath == null) {
                 return
             }
-//            if (sharedViewModel.userData.value?.isFrom != "login") {
-//                val documentPath = sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath
-//                if (documentPath.isNullOrEmpty()) {
-//                    Toast.makeText(requireContext(), "No document found", Toast.LENGTH_SHORT).show()
-//                    return
-//                }
-//
-//                val uri = Uri.parse(documentPath)
-//
-//                if (documentPath.endsWith(".pdf", ignoreCase = true)) {
-//                    // Open PDF in Chrome using Google Docs Viewer
-//                    val pdfUrl = "https://docs.google.com/viewer?url=$uri"
-//                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                    intent.setPackage("com.android.chrome") // Forces it to open in Chrome if available
-//
-//                    try {
-//                        startActivity(intent)
-//                    } catch (e: Exception) {
-//                        intent.setPackage(null) // Open in any available browser
-//                        startActivity(intent)
-//                    }
-//                }
-//                else {
-//                    // Open Image in Chrome by using "file://" or "content://"
-//                    val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-//                    intent.putExtra(
-//                        "fileUri",
-//                        uri.toString()
-//                    )
-//                    startActivity(intent)
-//                }// update case
-//            }
-//            else {
-                val intent = Intent(requireContext(), PdfViewerActivity::class.java)
-                intent.putExtra(
-                    "fileUri",
-                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath
-                )
-                startActivity(intent)
-//            }// registration case
-
-
+            baseToUrl(requireContext(),
+                sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlipPath.toString()
+            )
         }
 
         fun uploadFileAadhaarEnrollmentSlip(view: View) {

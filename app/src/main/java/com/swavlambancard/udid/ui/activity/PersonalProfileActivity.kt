@@ -28,6 +28,8 @@ import com.swavlambancard.udid.utilities.Utility.getFileNameFromUrl
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
+import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 
 class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
@@ -74,6 +76,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                         JSONObject(EncryptionModel.aesDecrypt(userResponseModel._result))
                     val gson = Gson()
                     Log.d("Decrypted Data EditProfile : ", data.toString())
+                    Log.d("Decrypted Data EditProfile : ", prettyPrintJson(data.toString()))
                     val userData = gson.fromJson(data.toString(), EditApplication::class.java)
                     Log.d("Decrypted Data EditProfile1 : ", userData.toString())
                     //Personal Details
@@ -96,9 +99,9 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     sharedViewModel?.userData?.value?.applicantsFMGName = userData.guardian_relation
                     sharedViewModel?.userData?.value?.relationWithPersonCode = userData.relation_pwd
                     sharedViewModel?.userData?.value?.relationWithPersonName = userData.relation_pwd
-                    sharedViewModel?.userData?.value?.photo = getFileNameFromUrl(userData.photo)
+                    sharedViewModel?.userData?.value?.photo = userData.photo
                     sharedViewModel?.userData?.value?.photoPath = userData.photo
-                    sharedViewModel?.userData?.value?.sign = getFileNameFromUrl(userData.signature_thumb_print)
+                    sharedViewModel?.userData?.value?.sign = userData.signature_thumb_print
                     sharedViewModel?.userData?.value?.signaturePath = userData.signature_thumb_print
                     //Proof of ID
                     sharedViewModel?.userData?.value?.aadhaarNo = userData.aadhaar_no
@@ -168,6 +171,17 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
             }
         }
     }
+
+    fun prettyPrintJson(json: String): String {
+        return try {
+            val jsonObject = JSONObject(json)
+            jsonObject.toString(4) // Indent with 4 spaces
+        } catch (e: JSONException) {
+            val jsonArray = JSONArray(json)
+            jsonArray.toString(4)
+        }
+    }
+
 
     inner class ClickActions {
         fun backPress(view: View) {

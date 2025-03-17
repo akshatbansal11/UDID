@@ -136,10 +136,12 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         get() = R.layout.fragment_personal_details
 
     override fun init() {
+
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
+        Log.d("Pwd Form data", sharedViewModel.userData.value?.sign.toString())
         if (sharedViewModel.userData.value?.isFrom != "login") {
             mBinding?.tvApplicationNumber?.showView()
             mBinding?.tvApplicationNumber?.text = getString(
@@ -269,20 +271,12 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
             if (sharedViewModel.userData.value?.isFrom != "login") {
                 if (userData.photo != null) {
-                    mBinding?.etFileNamePhoto?.text=userData.photo
-                    sharedViewModel.userData.value?.photo=null
+                    mBinding?.etFileNamePhoto?.text=userData.photoPath
+                    sharedViewModel.userData.value?.photo=""
                 }
                 if(userData.sign!=null){
-                    mBinding?.etFileNameSignature?.text=userData.sign
-                    sharedViewModel.userData.value?.sign=null
-                }
-
-                mBinding?.etFileNamePhoto?.setOnClickListener {
-                    userData.photoPath?.let { it1 -> openFile(it1, requireContext()) }
-                }
-
-                mBinding?.etFileNameSignature?.setOnClickListener {
-                    openFile(userData.signaturePath.toString(), requireContext())
+                    mBinding?.etFileNameSignature?.text=userData.signaturePath
+                    sharedViewModel.userData.value?.sign=""
                 }
             }
 //            if (userData.photo != null) {
@@ -389,9 +383,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         }
         // Update -> Photo = A-> Photo=null
         //2-> Photo = B -> PHoto = B
-//        mBinding?.etFileNameSignature?.addTextChangedListener {
-//            sharedViewModel.userData.value?.sign = it.toString()
-//        }
+        mBinding?.etFileNameSignature?.addTextChangedListener {
+            sharedViewModel.userData.value?.sign = it.toString()
+        }
     }
 
     override fun setVariables() {
@@ -507,11 +501,14 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
     inner class ClickActions {
         fun next(view: View) {
             if (valid()) {
-                if (mBinding?.etFileNameSignature?.text.toString().isNotEmpty())
-                    sharedViewModel.userData.value?.sign =
-                        mBinding?.etFileNameSignature?.text.toString()
-                else
-                    sharedViewModel.userData.value?.sign = ""
+                if (sharedViewModel.userData.value?.isFrom == "login") {
+                    if (mBinding?.etFileNameSignature?.text.toString().isNotEmpty())
+                        sharedViewModel.userData.value?.sign =
+                            mBinding?.etFileNameSignature?.text.toString()
+                    else
+                        sharedViewModel.userData.value?.sign = ""
+                }
+                Log.d("Pwd Form data", sharedViewModel.userData.value?.sign.toString())
                 (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
             }
         }
