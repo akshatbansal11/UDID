@@ -684,9 +684,11 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 ),
                 hospitalTreatingId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(
                     MultipartBody.FORM
-                )
+                ),
+                apiRequestType = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.apiRequestType.toString()).toRequestBody(
+                    MultipartBody.FORM
+                ),
             )
-
     }
 
     private fun updatePwsFormApi() {
@@ -1153,9 +1155,11 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 hospitalTreatingId =
                 (sharedViewModel.userData.value?.hospitalNameId.toString()).toRequestBody(
                     MultipartBody.FORM
+                ),
+                apiRequestType =
+                (sharedViewModel.userData.value?.apiRequestType.toString()).toRequestBody(
+                    MultipartBody.FORM
                 )
             )
-
     }
-
 }

@@ -350,6 +350,7 @@ interface MyService {
         @Part("hospital_treating_district_code") hospitalTreatingDistrictCode: RequestBody?,
         @Part("hospital_treating_id") hospitalTreatingId: RequestBody?,
         @Part("declaration") declaration: RequestBody?,//=>0/1
+        @Part("api_request_type") apiRequestType: RequestBody?,
     ): Response<SavePWDFormResponse>
 
     @Multipart

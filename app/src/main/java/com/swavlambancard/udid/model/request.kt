@@ -149,7 +149,8 @@ data class PwdApplication(
     var isFrom : String?= null,
     var check : String?= null,
     var photoPath:String?=null,
-    var signaturePath:String?=null
+    var signaturePath:String?=null,
+    var apiRequestType:String?=null
 )
 
 data class EditProfileRequest(
