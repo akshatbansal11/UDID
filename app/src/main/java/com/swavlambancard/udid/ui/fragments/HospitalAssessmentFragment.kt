@@ -43,6 +43,7 @@ import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 
 class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding>() {
     private lateinit var sharedViewModel: SharedDataViewModel
@@ -217,7 +218,9 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             val userResponseModel = it
             if (userResponseModel?._result != null) {
                 if (userResponseModel._resultflag == 0) {
-                    requireContext().toast(userResponseModel.message)
+
+                    val  errorMessage = parseErrorMessage(userResponseModel._result.toString())
+                    requireContext().toast(errorMessage)
                 } else {
                     requireContext().toast(userResponseModel.message)
                     context?.startActivity(Intent(requireContext(),DashboardActivity::class.java))
@@ -1144,5 +1147,32 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                     MultipartBody.FORM
                 )
             )
+    }
+
+    fun parseErrorMessage(jsonString: String): String {
+        val jsonObject = JSONObject(jsonString)
+
+        // Extract the main error message
+        val mainMessage = jsonObject.optString("message", "Something went wrong")
+
+        // Extract detailed field errors
+        val errorsObject = jsonObject.optJSONObject("errors")
+        val errorMessages = mutableListOf<String>()
+
+        errorsObject?.keys()?.forEach { key ->
+            val fieldErrors = errorsObject.optJSONObject(key)
+            fieldErrors?.keys()?.forEach { errorKey ->
+                val errorMessage = fieldErrors.optString(errorKey, "")
+                if (errorMessage.isNotEmpty()) {
+                    errorMessages.add("$key: $errorMessage")
+                }
+            }
+        }
+
+        return if (errorMessages.isNotEmpty()) {
+            "$mainMessage\n${errorMessages.joinToString("\n")}"
+        } else {
+            mainMessage
+        }
     }
 }

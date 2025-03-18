@@ -98,7 +98,8 @@ data class PwdApplication(
     var aadhaarEnrollmentUploadSlipPath: String? =null,//aadhar_enrollment_slip
     var aadhaarEnrollmentApiSlipPath: String? =null,//aadhar_enrollment_slip
     var identityProofId: String ?= null,//identitity_proof_id
-    var identityProofName: String ?= null,//identitity_proof_id
+    var identityProofNameYes: String ?= null,//identitity_proof_id
+    var identityProofNameNo: String ?= null,//identitity_proof_id
     var identityProofUpload: String? =null,//identitity_proof_file
     var identityProofUploadPath: String? =null,//identitity_proof_file
     var identityProofApiPath: String? =null,//identitity_proof_file

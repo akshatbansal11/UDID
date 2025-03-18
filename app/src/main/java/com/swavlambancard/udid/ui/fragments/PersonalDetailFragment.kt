@@ -286,53 +286,20 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 mBinding?.etFileNamePhoto?.text = userData.photo
                 mBinding?.etFileNameSignature?.text = userData.sign
             }
-//            if (userData.photo != null) {
-//                mBinding?.etFileNamePhoto?.let {
-//                    setBlueUnderlinedText(
-//                        it,
-//                        userData.photo!!
-//                    )
-//                }
-//            }
-//            if (userData.sign != null) {
-//                mBinding?.etFileNameSignature?.let {
-//                    setBlueUnderlinedText(
-//                        it,
-//                        userData.sign!!
-//                    )
-//                }
-//            }
-            mBinding?.ivPhoto?.let { it1 ->
-                Glide.with(requireContext())
-                    .load(sharedViewModel.userData.value?.photoPath)
-                    .placeholder(R.drawable.ic_camera_gallery) // Optional: Add a placeholder image
-                    .into(it1)
+            viewLifecycleOwner.lifecycleScope.launch {
+                mBinding?.ivPhoto?.let { it1 ->
+                    Glide.with(requireContext())
+                        .load(sharedViewModel.userData.value?.photoPath)
+                        .placeholder(R.drawable.ic_camera_gallery) // Optional: Add a placeholder image
+                        .into(it1)
+                }
+                mBinding?.ivSignature?.let { it1 ->
+                    Glide.with(requireContext())
+                        .load(sharedViewModel.userData.value?.signaturePath)
+                        .placeholder(R.drawable.ic_camera_gallery) // Optional: Add a placeholder image
+                        .into(it1)
+                }
             }
-            mBinding?.ivSignature?.let { it1 ->
-                Glide.with(requireContext())
-                    .load(sharedViewModel.userData.value?.signaturePath)
-                    .placeholder(R.drawable.ic_camera_gallery) // Optional: Add a placeholder image
-                    .into(it1)
-            }
-        }
-
-        mBinding?.etApplicantFullName?.addTextChangedListener {
-            sharedViewModel.userData.value?.applicantFullName = it.toString()
-        }
-        mBinding?.etStateName?.addTextChangedListener {
-            sharedViewModel.userData.value?.stateName = it.toString()
-        }
-        mBinding?.etApplicantNameInRegionalLanguage?.addTextChangedListener {
-            sharedViewModel.userData.value?.full_name_i18n = it.toString()
-        }
-        mBinding?.etApplicantMobileNo?.addTextChangedListener {
-            sharedViewModel.userData.value?.applicantMobileNo = it.toString()
-        }
-        mBinding?.etApplicantEmailId?.addTextChangedListener {
-            sharedViewModel.userData.value?.applicantEmail = it.toString()
-        }
-        mBinding?.etApplicantDateOfBirth?.addTextChangedListener {
-            sharedViewModel.userData.value?.applicantDob = it.toString()
         }
         mBinding?.rgGender?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
@@ -354,12 +321,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             }
             sharedViewModel.userData.value?.gender = genderTag
         }
-        mBinding?.etApplicantsFMGName?.addTextChangedListener {
-            sharedViewModel.userData.value?.applicantsFMGName = it.toString()
-        }
-        mBinding?.etContactNoOfGuardian?.addTextChangedListener {
-            sharedViewModel.userData.value?.guardianContact = it.toString()
-        }
+
         mBinding?.etApplicantRelativeName?.addTextChangedListener {
             when (guardianId) {
                 "Father" -> {
@@ -378,16 +340,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
             }
         }
-
-
-        mBinding?.etRelationWithPerson?.addTextChangedListener {
-            sharedViewModel.userData.value?.relationWithPersonName = it.toString()
-        }
         mBinding?.etFileNamePhoto?.addTextChangedListener {
             sharedViewModel.userData.value?.photo = it.toString()
         }
-        // Update -> Photo = A-> Photo=null
-        //2-> Photo = B -> PHoto = B
         mBinding?.etFileNameSignature?.addTextChangedListener {
             sharedViewModel.userData.value?.sign = it.toString()
         }
@@ -514,6 +469,15 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                         sharedViewModel.userData.value?.sign = ""
                 }
                 Log.d("Pwd Form data", sharedViewModel.userData.value?.photo.toString())
+                sharedViewModel.userData.value?.applicantFullName = mBinding?.etApplicantFullName?.text.toString().trim()
+                sharedViewModel.userData.value?.stateName = mBinding?.etStateName?.text.toString().trim()
+                sharedViewModel.userData.value?.full_name_i18n = mBinding?.etApplicantNameInRegionalLanguage?.text.toString().trim()
+                sharedViewModel.userData.value?.applicantMobileNo = mBinding?.etApplicantMobileNo?.text.toString().trim()
+                sharedViewModel.userData.value?.applicantEmail = mBinding?.etApplicantEmailId?.text.toString().trim()
+                sharedViewModel.userData.value?.applicantDob = mBinding?.etApplicantDateOfBirth?.text.toString().trim()
+                sharedViewModel.userData.value?.applicantsFMGName = mBinding?.etApplicantsFMGName?.text.toString().trim()
+                sharedViewModel.userData.value?.guardianContact = mBinding?.etContactNoOfGuardian?.text.toString().trim()
+                sharedViewModel.userData.value?.relationWithPersonName = mBinding?.etRelationWithPerson?.text.toString().trim()
                 (requireActivity() as PersonalProfileActivity).replaceFragment(ProofOfIDFragment())
             }
         }
@@ -1148,4 +1112,8 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
         return regex.matches(mobile)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mBinding = null
+    }
 }

@@ -6,14 +6,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Base64
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -28,7 +24,6 @@ import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.Filters
 import com.swavlambancard.udid.model.Order
 import com.swavlambancard.udid.model.PincodeRequest
-import com.swavlambancard.udid.ui.PdfViewerActivity
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
@@ -36,7 +31,6 @@ import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.baseToUrl
 import com.swavlambancard.udid.utilities.Utility.getNameById
-import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
@@ -48,7 +42,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.io.FileOutputStream
 
 
 class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
@@ -84,13 +77,13 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         mBinding?.clickAction = ClickActions()
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
-        if(sharedViewModel.userData.value?.isFrom != "login"){
+        if (sharedViewModel.userData.value?.isFrom != "login") {
             addressProofApi()
         }
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
 
-            if(userData.documentAddressProofPhotoPath!=null){
+            if (userData.documentAddressProofPhotoPath != null) {
                 mBinding?.etFileName?.text = "VIEW"
                 mBinding?.etFileName?.let {
                     setBlueUnderlinedText(
@@ -99,7 +92,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                     )
                 }
             }
-            if(sharedViewModel.userData.value?.isFrom != "login") {
+            if (sharedViewModel.userData.value?.isFrom != "login") {
                 if (userData.documentAddressProofPhoto != null) {
                     mBinding?.etFileName?.let {
                         setBlueUnderlinedText(
@@ -107,7 +100,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             "VIEW"
                         )
                     }
-                    sharedViewModel.userData.value?.documentAddressProofPhoto=""
+                    sharedViewModel.userData.value?.documentAddressProofPhoto = ""
                 }
                 mBinding?.etFileName?.let {
                     setBlueUnderlinedText(
@@ -177,8 +170,11 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             )
                         )
                         addressProofList.addAll(userResponseModel._result)
-                        if(sharedViewModel.userData.value?.isFrom != "login"){
-                            mBinding?.etNatureDocumentAddressProof?.text = getNameById(sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString(),addressProofList)
+                        if (sharedViewModel.userData.value?.isFrom != "login") {
+                            mBinding?.etNatureDocumentAddressProof?.text = getNameById(
+                                sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString(),
+                                addressProofList
+                            )
                         }
                     }
 
@@ -251,7 +247,8 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                             "VIEW"
                         )
                     }
-                    sharedViewModel.userData.value?.documentAddressProofPhoto=userResponseModel._result.file_name
+                    sharedViewModel.userData.value?.documentAddressProofPhoto =
+                        userResponseModel._result.file_name
                     when {
                         pdfUri != null -> sharedViewModel.userData.value?.documentAddressProofPhotoPath =
                             pdfUri.toString()
@@ -286,10 +283,11 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         }
 
         fun fileCorrespondenceAddress(view: View) {
-            if(sharedViewModel.userData.value?.documentAddressProofPhotoPath==null){
+            if (sharedViewModel.userData.value?.documentAddressProofPhotoPath == null) {
                 return
             }
-            baseToUrl(requireContext(),
+            baseToUrl(
+                requireContext(),
                 sharedViewModel.userData.value?.documentAddressProofPhotoPath.toString()
             )
 
@@ -467,36 +465,29 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
             }
 
             "district" -> {
-//                if (districtList.isEmpty()) {
-                    districtListApi()
-//                }
+                districtListApi()
                 selectedList = districtList
                 selectedTextView = mBinding?.etDistrict
             }
 
             "subDistrict" -> {
-//                if (subDistrictList.isEmpty()) {
-                    subDistrictListApi()
-//                }
+                subDistrictListApi()
                 selectedList = subDistrictList
                 selectedTextView = mBinding?.etSubDistrict
             }
 
             "village" -> {
-//                if (villageList.isEmpty()) {
-                    villageApi()
-//                }
+                villageApi()
                 selectedList = villageList
                 selectedTextView = mBinding?.etVillage
             }
 
             "pincode" -> {
-//                if (pincodeList.isEmpty()) {
-                    pincodeListApi()
-//                }
+                pincodeListApi()
                 selectedList = pincodeList
                 selectedTextView = mBinding?.etPincode
             }
+
             else -> return
         }
 
@@ -518,30 +509,70 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                         if (selectedItem == "Choose State / UTs") {
                             selectedTextView?.text = ""
                             mBinding?.etState?.text = ""
+                            mBinding?.etDistrict?.text = ""
+                            sharedViewModel.userData.value?.districtCode = null
                             districtList.clear()
                         } else {
-                            stateId = id
-                            sharedViewModel.userData.value?.stateCode = id
+                            if (id != sharedViewModel.userData.value?.stateCode) {
+                                stateId = id
+                                sharedViewModel.userData.value?.stateCode = id
+                                mBinding?.etDistrict?.text = ""
+                                sharedViewModel.userData.value?.districtCode = null
+                                districtList.clear()
+                            }
+                            else{
+                                stateId = id
+                                sharedViewModel.userData.value?.stateCode = id
+                            }
                         }
                     }
+
 
                     "district" -> {
                         if (selectedItem == "Choose District") {
                             selectedTextView?.text = ""
                             mBinding?.etSubDistrict?.text = ""
+                            mBinding?.etPincode?.text = ""
                             subDistrictList.clear()
-                        } else {
-                            districtId = id
-                            sharedViewModel.userData.value?.districtCode = id
+                            pincodeList.clear()
+                            sharedViewModel.userData.value?.subDistrictCode = null
+                            sharedViewModel.userData.value?.pincodeCode = null
+
+                        }
+                        else {
+                            if (id != sharedViewModel.userData.value?.districtCode) {
+                                districtId = id
+                                sharedViewModel.userData.value?.districtCode = id
+                                mBinding?.etSubDistrict?.text = ""
+                                mBinding?.etPincode?.text = ""
+                                sharedViewModel.userData.value?.subDistrictCode = null
+                                sharedViewModel.userData.value?.pincodeCode = null
+                                subDistrictList.clear()
+                                pincodeList.clear()
+                            } else {
+                                districtId = id
+                                sharedViewModel.userData.value?.districtCode = id
+                            }
                         }
                     }
 
                     "subDistrict" -> {
                         if (selectedItem == "Choose City / Sub District / Tehsil") {
                             selectedTextView?.text = ""
+                            mBinding?.etVillage?.text = ""
+                            sharedViewModel.userData.value?.villageCode = null
+                            villageList.clear()
                         } else {
-                            subDistrictId = id
-                            sharedViewModel.userData.value?.subDistrictCode = id
+                            if (id != sharedViewModel.userData.value?.subDistrictCode) {
+                                subDistrictId = id
+                                sharedViewModel.userData.value?.subDistrictCode = id
+                                mBinding?.etVillage?.text = ""
+                                sharedViewModel.userData.value?.villageCode = null
+                                villageList.clear()
+                            } else {
+                                subDistrictId = id
+                                sharedViewModel.userData.value?.subDistrictCode = id
+                            }
                         }
                     }
 

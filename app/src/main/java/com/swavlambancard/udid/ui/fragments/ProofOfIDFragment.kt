@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -72,6 +73,10 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         viewModel.init()
         sharedViewModel = ViewModelProvider(requireActivity())[SharedDataViewModel::class.java]
         identityProofApi()
+        if (sharedViewModel.userData.value?.isFrom == "login") {
+        identityProofListYes.add(DropDownResult("0", "Select Identity Proof"))
+        identityProofListYes.add(DropDownResult("8", "Aadhaar Card"))
+        }
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
             when (userData.aadhaarTag) {
                 0 -> {
@@ -104,7 +109,12 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             }
             mBinding?.etAadhaarNo?.setText(userData.aadhaarNo)
             mBinding?.etAadhaarEnrollment?.setText(userData.aadhaarEnrollmentNo)
-            mBinding?.etIdentityProof?.text = userData.identityProofName
+            if (aadhaarTag == 0) {
+                mBinding?.etIdentityProof?.text = userData.identityProofNameNo
+            } else if (aadhaarTag == 1) {
+                mBinding?.etIdentityProof?.text = userData.identityProofNameYes
+            }
+
             identityProofId = userData.identityProofId
             if (userData.identityProofUploadPath != null) {
                 mBinding?.etFileNameIdentityProof?.text = "VIEW"
@@ -144,40 +154,6 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip = ""
                 }
             }
-//                mBinding?.etFileNameIdentityProof?.let {
-//                    setBlueUnderlinedText(
-//                        it,
-//                        userData.identityProofUpload.toString()
-//                    )
-//                }
-//                mBinding?.etFileNameIdentityProof?.setOnClickListener {
-//                    openFile(userData.identityProofUpload.toString(), requireContext())
-//                }
-//                mBinding?.etFileNameEnrollmentSlip?.let {
-//                    setBlueUnderlinedText(
-//                        it,
-//                        userData.aadhaarEnrollmentUploadSlip.toString()
-//                    )
-//                }
-//                mBinding?.etFileNameEnrollmentSlip?.setOnClickListener {
-//                    openFile(userData.aadhaarEnrollmentUploadSlip.toString(), requireContext())
-//                }
-//            } else {
-//                mBinding?.etFileNameIdentityProof?.let {
-//                    setBlueUnderlinedText(
-//                        it,
-//                        userData.identityProofUpload.toString()
-//                    )
-//                }
-//                mBinding?.etFileNameEnrollmentSlip?.let {
-//                    setBlueUnderlinedText(
-//                        it,
-//                        userData.aadhaarEnrollmentUploadSlip.toString()
-//                    )
-//                }
-//            }
-
-
         }
 
         mBinding?.rgAadhaar?.setOnCheckedChangeListener { _, checkedId ->
@@ -207,15 +183,6 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         mBinding?.etAadhaarEnrollment?.addTextChangedListener {
             sharedViewModel.userData.value?.aadhaarEnrollmentNo = it.toString()
         }
-//        mBinding?.etFileNameEnrollmentSlip?.addTextChangedListener {
-//            sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip = it.toString()
-//        }
-        mBinding?.etIdentityProof?.addTextChangedListener {
-            sharedViewModel.userData.value?.identityProofName = it.toString()
-        }
-//        mBinding?.etFileNameIdentityProof?.addTextChangedListener {
-//            sharedViewModel.userData.value?.identityProofUpload = it.toString()
-//        }
     }
 
     override fun setVariables() {
@@ -234,12 +201,36 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                         )
                     )
                     identityProofList.addAll(userResponseModel._result)
-                    identityProofListYes.addAll(userResponseModel._result)
+
                     if (sharedViewModel.userData.value?.isFrom != "login") {
                         mBinding?.etIdentityProof?.text = getNameById(
                             sharedViewModel.userData.value?.identityProofId.toString(),
                             identityProofList
                         )
+                        if (sharedViewModel.userData.value?.aadhaarTag == 0) {
+                            identityProofList.remove(
+                                DropDownResult(
+                                    "8",
+                                    "Aadhaar Card"
+                                )
+                            )
+                            sharedViewModel.userData.value?.identityProofNameNo = getNameById(
+                                sharedViewModel.userData.value?.identityProofId.toString(),
+                                identityProofList
+                            )
+                        } else if (sharedViewModel.userData.value?.aadhaarTag == 1) {
+                            identityProofListYes.add(
+                                DropDownResult(
+                                    "0",
+                                    getString(R.string.select_identity_proof)
+                                )
+                            )
+                            identityProofListYes.add(DropDownResult("8", "Aadhaar Card"))
+                            sharedViewModel.userData.value?.identityProofNameYes = getNameById(
+                                sharedViewModel.userData.value?.identityProofId.toString(),
+                                identityProofList
+                            )
+                        }
                     }
                     bottomSheetAdapter?.notifyDataSetChanged()
                 }
@@ -343,9 +334,17 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
 
         fun rbYes(view: View) {
             aadhaarTag = 1
-            identityProofList.clear()
-            identityProofList.add(DropDownResult("0", getString(R.string.select_identity_proof)))
-            identityProofList.add(DropDownResult("8", "Aadhaar Card"))
+            Log.d("ID test", "rbYes: ${sharedViewModel.userData.value?.identityProofId}")
+            Log.d("ID test", "rbYesName: ${sharedViewModel.userData.value?.identityProofNameYes}")
+            if (sharedViewModel.userData.value?.identityProofId != "8") {
+                mBinding?.etIdentityProof?.text = ""
+            } else {
+                mBinding?.etIdentityProof?.text =
+                    sharedViewModel.userData.value?.identityProofNameYes
+            }
+            identityProofListYes.clear()
+            identityProofListYes.add(DropDownResult("0", getString(R.string.select_identity_proof)))
+            identityProofListYes.add(DropDownResult("8", "Aadhaar Card"))
             mBinding?.llYesAadhaarCard?.showView()
             mBinding?.llNoAadhaarCard?.hideView()
             if (sharedViewModel.userData.value?.isFrom == "login") {
@@ -362,13 +361,20 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
 
         fun rbNo(view: View) {
             aadhaarTag = 0
-            identityProofListYes.remove(DropDownResult("8", "Aadhaar Card"))
+            Log.d("ID test", "rbNo: ${sharedViewModel.userData.value?.identityProofId}")
+            Log.d("ID test", "rbNoName: ${sharedViewModel.userData.value?.identityProofNameNo}")
+            if (sharedViewModel.userData.value?.identityProofId == "8") {
+                mBinding?.etIdentityProof?.text = ""
+            } else {
+                mBinding?.etIdentityProof?.text =
+                    sharedViewModel.userData.value?.identityProofNameNo
+            }
+            identityProofList.remove(DropDownResult("8", "Aadhaar Card"))
             mBinding?.llYesAadhaarCard?.hideView()
             mBinding?.llNoAadhaarCard?.showView()
             if (sharedViewModel.userData.value?.isFrom == "login") {
                 mBinding?.etAadhaarNo?.setText("")
                 mBinding?.checkboxConfirm?.isChecked = false
-
             }
         }
 
@@ -439,20 +445,20 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         // Initialize based on type
         when (type) {
             "identity_proof" -> {
-                if (identityProofListYes.isEmpty()) {
+                if (identityProofList.isEmpty()) {
                     identityProofApi()
                 }
                 val list: ArrayList<DropDownResult> = when (aadhaarTag) {
                     1 -> {
-                        identityProofList
+                        identityProofListYes
                     }
 
                     0 -> {
-                        identityProofListYes
+                        identityProofList
                     }
 
                     else -> {
-                        identityProofListYes
+                        identityProofList
                     }
                 }
                 selectedList = list
@@ -472,8 +478,22 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                         if (selectedItem == "Select Identity Proof") {
                             selectedTextView?.text = ""
                         } else {
+
                             identityProofId = id
-                            sharedViewModel.userData.value?.identityProofId = identityProofId
+                            sharedViewModel.userData.value?.identityProofId = id
+                            Log.d("ID test", "ID: $id")
+                            Log.d("ID test", "Name: $selectedItem")
+                            if(id == "8"){
+                                sharedViewModel.userData.value?.identityProofNameYes = selectedItem
+                            }
+                            else{
+                                sharedViewModel.userData.value?.identityProofNameYes = selectedItem
+                            }
+//                            if (aadhaarTag == 0) {
+//                                sharedViewModel.userData.value?.identityProofNameYes = selectedItem
+//                            } else if (aadhaarTag == 1) {
+//                                sharedViewModel.userData.value?.identityProofNameYes = selectedItem
+//                            }
                         }
                     }
                 }
@@ -540,7 +560,8 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     )
                 }
                 return false
-            } else if (mBinding?.checkboxConfirm?.isChecked != true) {
+            }
+            else if (mBinding?.checkboxConfirm?.isChecked != true) {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,

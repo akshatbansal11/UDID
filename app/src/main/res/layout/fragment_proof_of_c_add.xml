@@ -158,7 +158,7 @@
                 android:paddingVertical="@dimen/dp_5"
                 android:singleLine="true"
                 android:onClick="@{ClickAction::state}"
-                android:hint="@string/choose_state_uts"
+                android:hint="@string/choose_state_uts_"
                 android:textColorHint="@color/grey"
                 android:textColor="@color/black"
                 app:drawableEndCompat="@drawable/ic_arrow_down" />
