@@ -6,11 +6,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +21,6 @@ import com.swavlambancard.udid.databinding.FragmentProofOfIDBinding
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
-import com.swavlambancard.udid.ui.PdfViewerActivity
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.BaseFragment
@@ -31,13 +28,11 @@ import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.baseToUrl
 import com.swavlambancard.udid.utilities.Utility.getNameById
-import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
-import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch

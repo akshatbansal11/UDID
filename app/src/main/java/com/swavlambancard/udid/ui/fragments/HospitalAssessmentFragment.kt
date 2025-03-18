@@ -310,6 +310,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             }
         }
 
+
         fun hospitalName(view: View) {
             if (!districtId.isNullOrEmpty() || !hospitalDistrictId.isNullOrEmpty()) {
                 showBottomSheetDialog("hospitalName")

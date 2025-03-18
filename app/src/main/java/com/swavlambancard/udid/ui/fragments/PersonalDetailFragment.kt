@@ -275,17 +275,16 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
 
             if (sharedViewModel.userData.value?.isFrom != "login") {
                 if (userData.photo != null) {
-                    mBinding?.etFileNamePhoto?.text=userData.photoPath
-                    sharedViewModel.userData.value?.photo=""
+                    mBinding?.etFileNamePhoto?.text = userData.photoPath
+                    sharedViewModel.userData.value?.photo = ""
                 }
-                if(userData.sign!=null){
-                    mBinding?.etFileNameSignature?.text=userData.signaturePath
-                    sharedViewModel.userData.value?.sign=""
+                if (userData.sign != null) {
+                    mBinding?.etFileNameSignature?.text = userData.signaturePath
+                    sharedViewModel.userData.value?.sign = ""
                 }
-            }
-            else{
-                mBinding?.etFileNamePhoto?.text=userData.photo
-                mBinding?.etFileNameSignature?.text=userData.sign
+            } else {
+                mBinding?.etFileNamePhoto?.text = userData.photo
+                mBinding?.etFileNameSignature?.text = userData.sign
             }
 //            if (userData.photo != null) {
 //                mBinding?.etFileNamePhoto?.let {
@@ -370,9 +369,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
 
                 "Mother" -> {
-
                     sharedViewModel.userData.value?.motherName = it.toString()
-
                 }
 
                 "Guardian" -> {
@@ -903,7 +900,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
             }
             return false
-        }  else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
+        } else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,
@@ -982,8 +979,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
                 return false
             }
-        }
-        else if (guardianId == "Guardian") {
+        } else if (guardianId == "Guardian") {
             if (mBinding?.etRelationWithPerson?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(
@@ -1028,7 +1024,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             }
         }
 
-         if (mBinding?.etFileNamePhoto?.text.toString().trim().isEmpty()) {
+        if (mBinding?.etFileNamePhoto?.text.toString().trim().isEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(it, getString(R.string.please_upload_supporting_document))
             }
