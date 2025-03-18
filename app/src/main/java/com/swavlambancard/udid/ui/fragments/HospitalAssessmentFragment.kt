@@ -201,7 +201,6 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             if (userResponseModel?._result != null) {
                 if (userResponseModel._resultflag == 0) {
                     requireContext().toast(userResponseModel.message)
-                    return@observe
                 } else {
                     applicationNumber = userResponseModel._result.application_number
                     requireContext().toast(userResponseModel.message)
@@ -219,7 +218,6 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             if (userResponseModel?._result != null) {
                 if (userResponseModel._resultflag == 0) {
                     requireContext().toast(userResponseModel.message)
-                    return@observe
                 } else {
                     requireContext().toast(userResponseModel.message)
                     context?.startActivity(Intent(requireContext(),DashboardActivity::class.java))
@@ -274,21 +272,6 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             }
         }}
 
-        fun cancel(view: View) {
-            if(sharedViewModel.userData.value?.isFrom != "login") {
-
-                val intent = Intent(requireContext(), DashboardActivity::class.java)
-                intent.flags =
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
-            }
-            else{
-                val intent = Intent(requireContext(), LoginActivity::class.java)
-                intent.flags =
-                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
-            }
-        }
         fun back(view: View) {
             (requireActivity() as PersonalProfileActivity).replaceFragment(DisabilityDetailFragment())
         }

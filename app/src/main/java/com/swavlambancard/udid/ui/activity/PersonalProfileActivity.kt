@@ -21,12 +21,9 @@ import com.swavlambancard.udid.utilities.BaseActivity
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.JSEncryptService
 import com.swavlambancard.udid.utilities.Preferences.getPreferenceOfLogin
-import com.swavlambancard.udid.utilities.Utility
 import com.swavlambancard.udid.utilities.Utility.convertToArrayList
 import com.swavlambancard.udid.utilities.Utility.dateConvertToFormat
-import com.swavlambancard.udid.utilities.Utility.getFileNameFromUrl
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
-import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import org.json.JSONArray
 import org.json.JSONException
@@ -230,29 +227,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         }
     }
 
-//    private fun error(){
-//        sharedViewModel?.errors?.observe(this) {
-//            mBinding?.let { it1 -> showSnackbar(it1.clParent, it) }
-//        }
-//    }
-
     private fun editApi() {
-        val encryptedString = JSEncryptService.encrypt(
-            getPreferenceOfLogin(
-                context,
-                AppConstants.LOGIN_DATA,
-                UserData::class.java
-            ).application_number.toString()
-        ).toString()
-        Log.e("Encrypted Data", encryptedString)
-        sharedViewModel?.editApplication(
-            this, EditProfileRequest(
-                encryptedString,
-                JSEncryptService.encrypt("mobile").toString()
-            )
-        )
-    }
-    private fun editApi2() {
         val encryptedString = JSEncryptService.encrypt(
             getPreferenceOfLogin(
                 context,

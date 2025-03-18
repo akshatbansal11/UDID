@@ -896,6 +896,13 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
             }
             return false
+        }
+        else if (!checkValidMobile(mBinding?.etApplicantMobileNo?.text.toString())) {
+            mBinding?.llParent?.let {
+                showSnackbar(it,
+                    getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
+            }
+            return false
         }  else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
@@ -938,6 +945,13 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 }
                 return false
             }
+            else if (!checkValidMobile(mBinding?.etContactNoOfGuardian?.text.toString())) {
+                mBinding?.llParent?.let {
+                    showSnackbar(it,
+                        getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
+                }
+                return false
+            }
         } else if (guardianId == "Mother") {
             if (mBinding?.etApplicantRelativeName?.text.toString().isEmpty()) {
                 mBinding?.llParent?.let {
@@ -958,6 +972,13 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             } else if (mBinding?.etContactNoOfGuardian?.text?.toString()?.length != 10) {
                 mBinding?.llParent?.let {
                     showSnackbar(it, getString(R.string.guardian_contact_must_be_exactly_10_digits))
+                }
+                return false
+            }
+            else if (!checkValidMobile(mBinding?.etContactNoOfGuardian?.text.toString())) {
+                mBinding?.llParent?.let {
+                    showSnackbar(it,
+                        getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
                 }
                 return false
             }
@@ -994,6 +1015,13 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                             it,
                             getString(R.string.guardian_contact_must_be_exactly_10_digits)
                         )
+                    }
+                    return false
+                }
+                else if (!checkValidMobile(mBinding?.etContactNoOfGuardian?.text.toString())) {
+                    mBinding?.llParent?.let {
+                        showSnackbar(it,
+                            getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
                     }
                     return false
                 }
@@ -1117,6 +1145,11 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 body
             )
         }
+    }
+
+    fun checkValidMobile(mobile: String): Boolean {
+        val regex = "^[6-9]( ?[0-9]){8} ?[0-9]$".toRegex()
+        return regex.matches(mobile)
     }
 
 }

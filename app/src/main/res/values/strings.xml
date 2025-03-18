@@ -382,4 +382,6 @@
     <string name="guardian_contact_must_be_exactly_10_digits">Guardian Contact must be exactly 10 digits.</string>
     <string name="please_check_again_all_your_details_again_before_confirming_your_application">Please Check, all your details again before confirming your application form.</string>
     <string name="download_rejection_letter">Download Rejection Letter</string>
+    <string name="the_entered_aadhaar_number_is_not_valid">The entered Aadhaar number is not valid</string>
+    <string name="first_digit_should_start_from_6_to_9_of_mobile_number">First digit should start from 6 to 9 of mobile number</string>
 </resources>

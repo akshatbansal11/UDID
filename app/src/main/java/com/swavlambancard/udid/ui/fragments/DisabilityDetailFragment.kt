@@ -14,7 +14,6 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -28,7 +27,6 @@ import com.swavlambancard.udid.model.CodeDropDownRequest
 import com.swavlambancard.udid.model.DropDownRequest
 import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
-import com.swavlambancard.udid.ui.PdfViewerActivity
 import com.swavlambancard.udid.ui.activity.PersonalProfileActivity
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.ui.adapter.MultipleSelectionBottomSheetAdapter
@@ -38,7 +36,6 @@ import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.baseToUrl
 import com.swavlambancard.udid.utilities.Utility.filterDropDownResultsAboveSelected
 import com.swavlambancard.udid.utilities.Utility.filterMatchingIds
-import com.swavlambancard.udid.utilities.Utility.openFile
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
@@ -389,10 +386,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
         fun rbNo(view: View) {
             mBinding?.tvDisabilitySince?.showView()
             mBinding?.etDisabilitySince?.showView()
-
-
         }
-
 
         fun rbDisabilityCertificateYes(view: View) {
             mBinding?.llDisabilityCertificateYes?.showView()
