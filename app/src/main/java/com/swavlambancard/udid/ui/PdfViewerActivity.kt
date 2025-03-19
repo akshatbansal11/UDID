@@ -59,6 +59,7 @@ class PdfViewerActivity : AppCompatActivity() {
                 when {
                     actualMimeType == "application/pdf" -> displayPdf(fileUri)
                     actualMimeType.startsWith("image/") -> displayImage(fileUri)
+                    actualMimeType.startsWith("*/*") -> displayImage(fileUri)
                     else -> Utility.showSnackbar(clParent, "Unsupported file type")
                 }
             } else {
