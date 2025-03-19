@@ -155,7 +155,7 @@ class DisabilityDetailFragment : BaseFragment<FragmentDisabilityDetailsBinding>(
                 }
             }
 
-            if (sharedViewModel.userData.value?.uploadDisabilityCertificate != null) {
+            if (sharedViewModel.userData.value?.uploadDisabilityCertificate != null && !(userData.uploadDisabilityCertificatePath!!.startsWith("content://") || userData.uploadDisabilityCertificatePath!!.startsWith("file://"))) {
                 if (sharedViewModel.userData.value?.isFrom != "login") {
                     mBinding?.etFileName?.let {
                         setBlueUnderlinedText(

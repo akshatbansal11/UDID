@@ -272,21 +272,22 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             }
             mBinding?.etRelationWithPerson?.text = userData.relationWithPersonName
             relationWithPersonId = userData.relationWithPersonCode
+            if (userData.photo != null) {
+                mBinding?.etFileNamePhoto?.text="VIEW"
+            }
+            if (userData.sign != null) {
+                mBinding?.etFileNameSignature?.text="VIEW"
+            }
+            if (sharedViewModel.userData.value?.isFrom != "login") {
+                if (userData.photo != null && !(userData.photoPath!!.startsWith("content://") || userData.photoPath!!.startsWith("file://"))) {
+                    sharedViewModel.userData.value?.photo = ""
+                }
+                if (userData.sign != null && !(userData.signaturePath!!.startsWith("content://") || userData.signaturePath!!.startsWith("file://"))) {
+                    sharedViewModel.userData.value?.sign = ""
+                }
 
-//            if (sharedViewModel.userData.value?.isFrom != "login") {
-//                if (userData.photo != null) {
-//                    mBinding?.etFileNamePhoto?.text = userData.photoPath
-//                    sharedViewModel.userData.value?.photo = ""
-//                }
-//                if (userData.sign != null) {
-//                    mBinding?.etFileNameSignature?.text = userData.signaturePath
-//                    sharedViewModel.userData.value?.sign = ""
-//                }
-//            } else {
-//                mBinding?.etFileNamePhoto?.text = userData.photo
-//                mBinding?.etFileNameSignature?.text = userData.sign
-//            }
-//            viewLifecycleOwner.lifecycleScope.launch {
+            }
+            viewLifecycleOwner.lifecycleScope.launch {
                 mBinding?.ivPhoto?.let { it1 ->
                     Glide.with(requireContext())
                         .load(sharedViewModel.userData.value?.photoPath)
@@ -299,7 +300,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                         .placeholder(R.drawable.ic_camera_gallery) // Optional: Add a placeholder image
                         .into(it1)
                 }
-//            }
+            }
         }
         mBinding?.rgGender?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
@@ -339,12 +340,6 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     sharedViewModel.userData.value?.guardianName = it.toString()
                 }
             }
-        }
-        mBinding?.etFileNamePhoto?.addTextChangedListener {
-            sharedViewModel.userData.value?.photo = it.toString()
-        }
-        mBinding?.etFileNameSignature?.addTextChangedListener {
-            sharedViewModel.userData.value?.sign = it.toString()
         }
     }
 
@@ -399,7 +394,6 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 } else {
                     if (document == 1) {
                         photoName = userResponseModel._result.file_name
-                        mBinding?.etFileNamePhoto?.text = userResponseModel._result.file_name
                         if (!sharedViewModel.userData.value?.photoPath.isNullOrEmpty()) {
                             mBinding?.ivPhoto?.let { it1 ->
                                 Glide.with(requireContext())
@@ -408,12 +402,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                     .into(it1)
                             }
                         }
-                        mBinding?.etFileNamePhoto?.let {
-                            setBlueUnderlinedText(
-                                it,
-                                userResponseModel._result.file_name
-                            )
-                        }
+                        sharedViewModel.userData.value?.photo =
+                            userResponseModel._result.file_name
+                        mBinding?.etFileNamePhoto?.text=userResponseModel._result.file_name
                         when {
                             cameraUri != null -> sharedViewModel.userData.value?.photoPath =
                                 cameraUri.toString()
@@ -424,7 +415,6 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                         }
                     } else if (document == 2) {
                         signatureName = userResponseModel._result.file_name
-                        mBinding?.etFileNameSignature?.text = userResponseModel._result.file_name
                         if (!sharedViewModel.userData.value?.signaturePath.isNullOrEmpty()) {
                             mBinding?.ivSignature?.let { it1 ->
                                 Glide.with(requireContext())
@@ -433,12 +423,9 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                                     .into(it1)
                             }
                         }
-                        mBinding?.etFileNameSignature?.let {
-                            setBlueUnderlinedText(
-                                it,
-                                userResponseModel._result.file_name
-                            )
-                        }
+                        sharedViewModel.userData.value?.sign =
+                            userResponseModel._result.file_name
+                        mBinding?.etFileNameSignature?.text=userResponseModel._result.file_name
 
                         when {
                             cameraUri != null -> sharedViewModel.userData.value?.signaturePath =
@@ -468,7 +455,6 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     else
                         sharedViewModel.userData.value?.sign = ""
                 }
-//                Log.d("Pwd Form data", sharedViewModel.userData.value?.photo.toString())
                 sharedViewModel.userData.value?.applicantFullName = mBinding?.etApplicantFullName?.text.toString().trim()
                 sharedViewModel.userData.value?.stateName = mBinding?.etStateName?.text.toString().trim()
                 sharedViewModel.userData.value?.full_name_i18n = mBinding?.etApplicantNameInRegionalLanguage?.text.toString().trim()

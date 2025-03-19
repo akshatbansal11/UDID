@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -93,7 +94,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 }
             }
             if (sharedViewModel.userData.value?.isFrom != "login") {
-                if (userData.documentAddressProofPhoto != null) {
+                if (userData.documentAddressProofPhoto != null && !(userData.documentAddressProofPhotoPath!!.startsWith("content://") || userData.documentAddressProofPhotoPath!!.startsWith("file://"))) {
                     mBinding?.etFileName?.let {
                         setBlueUnderlinedText(
                             it,
@@ -127,10 +128,6 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         mBinding?.etNatureDocumentAddressProof?.addTextChangedListener {
             sharedViewModel.userData.value?.natureDocumentAddressProofName = it.toString()
         }
-//        mBinding?.etFileName?.addTextChangedListener {
-//            sharedViewModel.userData.value?.documentAddressProofPhoto = it.toString()
-//        }
-
         mBinding?.etAddress?.addTextChangedListener {
             sharedViewModel.userData.value?.address = it.toString()
         }

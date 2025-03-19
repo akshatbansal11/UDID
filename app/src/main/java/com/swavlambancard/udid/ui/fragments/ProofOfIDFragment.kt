@@ -135,7 +135,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 }
             }
             if (sharedViewModel.userData.value?.isFrom != "login") {
-                if (userData.identityProofUpload != null) {
+                if (userData.identityProofUpload != null && !(userData.identityProofUploadPath!!.startsWith("content://") || userData.identityProofUploadPath!!.startsWith("file://"))) {
                     mBinding?.etFileNameIdentityProof?.let {
                         setBlueUnderlinedText(
                             it,
@@ -144,7 +144,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     }
                     sharedViewModel.userData.value?.identityProofUpload = ""
                 }
-                if (userData.aadhaarEnrollmentUploadSlip != null) {
+                if (userData.aadhaarEnrollmentUploadSlip != null && !(userData.aadhaarEnrollmentUploadSlipPath!!.startsWith("content://") || userData.aadhaarEnrollmentUploadSlipPath!!.startsWith("file://"))) {
                     mBinding?.etFileNameEnrollmentSlip?.let {
                         setBlueUnderlinedText(
                             it,
