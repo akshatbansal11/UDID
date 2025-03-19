@@ -318,9 +318,13 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     cameraUri = null
                     imageUri = null
                     pdfUri = null
+                    sharedViewModel.userData.value?.identityProofNameNo = ""
+                    sharedViewModel.userData.value?.identityProofNameYes = mBinding?.etIdentityProof?.text.toString()
                 } else {
                     mBinding?.etAadhaarNo?.setText("")
                     mBinding?.checkboxConfirm?.isChecked = false
+                    sharedViewModel.userData.value?.identityProofNameYes = ""
+                    sharedViewModel.userData.value?.identityProofNameNo = mBinding?.etIdentityProof?.text.toString()
                 }
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     ProofOfAddressFragment()
