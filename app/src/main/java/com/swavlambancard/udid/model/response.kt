@@ -269,7 +269,8 @@ data class SavePWDFormResponse(
 )
 
 data class ApplicationNoResult(
-    val application_number: String
+    val application_number: String,
+    val errors: Map<String, Any>
 )
 
 data class RejectAndPendingResponse(

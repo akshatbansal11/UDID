@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -62,6 +63,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     private var hospitalList = ArrayList<DropDownResult>()
     private var hospitalId: String? = null
     private var applicationNumber: String? = null
+    private var count = 0
     override val layoutId: Int
         get() = R.layout.fragment_hospital_assesment
 
@@ -142,6 +144,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         mBinding?.cbConfirm?.setOnCheckedChangeListener { _, isChecked ->
             sharedViewModel.userData.value?.hospitalCheckBox = if (isChecked) "1" else "0"
         }
+
     }
 
     override fun setVariables() {
@@ -217,22 +220,32 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             if (userResponseModel?._result != null) {
                 if (userResponseModel._resultflag == 0) {
                     try {
-                        val resultJson = userResponseModel._result.toString()
+                        val result = userResponseModel._result
+                        val errors = result.errors
 
-                        // Extract error messages dynamically
-                        val errorMessage = if (resultJson.startsWith("{") && resultJson.endsWith("}")) {
-                            parseErrorMessage(resultJson)
+                        if (errors != null) {
+                            val errorMessages = StringBuilder()
+
+                            // Iterate through all error keys and get their messages
+                            errors.keys.forEach { key ->
+                                val errorObj = errors[key] as? Map<*, *>
+                                errorObj?.keys?.forEach { errorType ->
+                                    val errorMessage = errorObj[errorType] as? String ?: "Unknown error"
+                                    errorMessages.append("$key: $errorMessage\n")
+                                }
+                            }
+
+                            // Show error messages using Toast.
+                            showSnackbar(mBinding?.llParent!!, errorMessages.toString().trim())
                         } else {
-                            resultJson // If it's a plain string, show it directly
+                            showSnackbar(mBinding?.llParent!!, userResponseModel.message)
                         }
-
-                        requireContext().toast(errorMessage) // Show errors in Toast
                     } catch (e: Exception) {
-                        requireContext().toast("Error parsing response")
                         e.printStackTrace()
+                        Toast.makeText(context, "Failed to parse error response", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    requireContext().toast(userResponseModel.message)
+                    requireContext().toast(userResponseModel.message ?: "Unknown error")
                     context?.startActivity(Intent(requireContext(), DashboardActivity::class.java))
                 }
             }
@@ -1155,30 +1168,9 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             )
     }
 
-    fun parseErrorMessage(resultJson: String): String {
-        return try {
-            val jsonObject = JSONObject(resultJson)
-            val errorsObject = jsonObject.optJSONObject("errors")
-            val errorMessages = mutableListOf<String>()
 
-            errorsObject?.keys()?.forEach { fieldName ->
-                val fieldErrors = errorsObject.optJSONObject(fieldName)
-                fieldErrors?.keys()?.forEach { errorKey ->
-                    val errorMessage = fieldErrors.optString(errorKey, "")
-                    if (errorMessage.isNotEmpty()) {
-                        // Format: "Field Name: Error Message"
-                        errorMessages.add("$fieldName: $errorMessage")
-                    }
-                }
-            }
-
-            if (errorMessages.isNotEmpty()) {
-                errorMessages.joinToString("\n") // Join all errors line by line
-            } else {
-                "Unknown error occurred"
-            }
-        } catch (e: Exception) {
-            "Error parsing response"
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mBinding=null
     }
 }

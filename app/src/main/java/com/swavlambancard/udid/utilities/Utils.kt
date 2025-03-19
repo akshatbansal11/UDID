@@ -1053,6 +1053,26 @@ object Utility {
         snackbar.show()
     }
 
+    fun showSnackbarIndex(view: View, message: String, onDismiss: (() -> Unit)? = null) {
+        val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+        snackbar.view.apply {
+            val params = layoutParams as FrameLayout.LayoutParams
+            params.gravity = Gravity.BOTTOM
+            layoutParams = params
+            setBackgroundColor(Color.parseColor("#AC0000"))
+        }
+
+        // Add callback to detect when the Snackbar is dismissed
+        snackbar.addCallback(object : Snackbar.Callback() {
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                onDismiss?.invoke()
+            }
+        })
+
+        snackbar.show()
+    }
+
+
     fun showSnackbarSuccess(view: View, message: String) {
         var view = view
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
