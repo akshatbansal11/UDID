@@ -273,20 +273,20 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             mBinding?.etRelationWithPerson?.text = userData.relationWithPersonName
             relationWithPersonId = userData.relationWithPersonCode
 
-            if (sharedViewModel.userData.value?.isFrom != "login") {
-                if (userData.photo != null) {
-                    mBinding?.etFileNamePhoto?.text = userData.photoPath
-                    sharedViewModel.userData.value?.photo = ""
-                }
-                if (userData.sign != null) {
-                    mBinding?.etFileNameSignature?.text = userData.signaturePath
-                    sharedViewModel.userData.value?.sign = ""
-                }
-            } else {
-                mBinding?.etFileNamePhoto?.text = userData.photo
-                mBinding?.etFileNameSignature?.text = userData.sign
-            }
-            viewLifecycleOwner.lifecycleScope.launch {
+//            if (sharedViewModel.userData.value?.isFrom != "login") {
+//                if (userData.photo != null) {
+//                    mBinding?.etFileNamePhoto?.text = userData.photoPath
+//                    sharedViewModel.userData.value?.photo = ""
+//                }
+//                if (userData.sign != null) {
+//                    mBinding?.etFileNameSignature?.text = userData.signaturePath
+//                    sharedViewModel.userData.value?.sign = ""
+//                }
+//            } else {
+//                mBinding?.etFileNamePhoto?.text = userData.photo
+//                mBinding?.etFileNameSignature?.text = userData.sign
+//            }
+//            viewLifecycleOwner.lifecycleScope.launch {
                 mBinding?.ivPhoto?.let { it1 ->
                     Glide.with(requireContext())
                         .load(sharedViewModel.userData.value?.photoPath)
@@ -299,7 +299,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                         .placeholder(R.drawable.ic_camera_gallery) // Optional: Add a placeholder image
                         .into(it1)
                 }
-            }
+//            }
         }
         mBinding?.rgGender?.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
@@ -468,7 +468,7 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                     else
                         sharedViewModel.userData.value?.sign = ""
                 }
-                Log.d("Pwd Form data", sharedViewModel.userData.value?.photo.toString())
+//                Log.d("Pwd Form data", sharedViewModel.userData.value?.photo.toString())
                 sharedViewModel.userData.value?.applicantFullName = mBinding?.etApplicantFullName?.text.toString().trim()
                 sharedViewModel.userData.value?.stateName = mBinding?.etStateName?.text.toString().trim()
                 sharedViewModel.userData.value?.full_name_i18n = mBinding?.etApplicantNameInRegionalLanguage?.text.toString().trim()
@@ -858,13 +858,14 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             }
             return false
         }
-        else if (!checkValidMobile(mBinding?.etApplicantMobileNo?.text.toString())) {
-            mBinding?.llParent?.let {
-                showSnackbar(it,
-                    getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
-            }
-            return false
-        } else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
+//        else if (!checkValidMobile(mBinding?.etApplicantMobileNo?.text.toString())) {
+//            mBinding?.llParent?.let {
+//                showSnackbar(it,
+//                    getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
+//            }
+//            return false
+//        }
+        else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(
                     it,

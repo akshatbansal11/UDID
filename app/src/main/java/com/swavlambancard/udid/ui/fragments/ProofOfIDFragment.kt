@@ -489,11 +489,6 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                             else{
                                 sharedViewModel.userData.value?.identityProofNameYes = selectedItem
                             }
-//                            if (aadhaarTag == 0) {
-//                                sharedViewModel.userData.value?.identityProofNameYes = selectedItem
-//                            } else if (aadhaarTag == 1) {
-//                                sharedViewModel.userData.value?.identityProofNameYes = selectedItem
-//                            }
                         }
                     }
                 }
@@ -552,15 +547,15 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 }
                 return false
             }
-            else if (!verhoeffAlgorithm(mBinding?.etAadhaarNo?.text.toString())) {
-                mBinding?.llParent?.let {
-                    showSnackbar(
-                        it,
-                        getString(R.string.the_entered_aadhaar_number_is_not_valid)
-                    )
-                }
-                return false
-            }
+//            else if (!verhoeffAlgorithm(mBinding?.etAadhaarNo?.text.toString())) {
+//                mBinding?.llParent?.let {
+//                    showSnackbar(
+//                        it,
+//                        getString(R.string.the_entered_aadhaar_number_is_not_valid)
+//                    )
+//                }
+//                return false
+//            }
             else if (mBinding?.checkboxConfirm?.isChecked != true) {
                 mBinding?.llParent?.let {
                     showSnackbar(

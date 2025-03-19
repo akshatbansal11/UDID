@@ -142,7 +142,6 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         mBinding?.cbConfirm?.setOnCheckedChangeListener { _, isChecked ->
             sharedViewModel.userData.value?.hospitalCheckBox = if (isChecked) "1" else "0"
         }
-
     }
 
     override fun setVariables() {
@@ -214,16 +213,27 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             }
         }
 
-        sharedViewModel.updatePWDFormResult.observe(this) {
-            val userResponseModel = it
+        sharedViewModel.updatePWDFormResult.observe(this) { userResponseModel ->
             if (userResponseModel?._result != null) {
                 if (userResponseModel._resultflag == 0) {
+                    try {
+                        val resultJson = userResponseModel._result.toString()
 
-                    val  errorMessage = parseErrorMessage(userResponseModel._result.toString())
-                    requireContext().toast(errorMessage)
+                        // Extract error messages dynamically
+                        val errorMessage = if (resultJson.startsWith("{") && resultJson.endsWith("}")) {
+                            parseErrorMessage(resultJson)
+                        } else {
+                            resultJson // If it's a plain string, show it directly
+                        }
+
+                        requireContext().toast(errorMessage) // Show errors in Toast
+                    } catch (e: Exception) {
+                        requireContext().toast("Error parsing response")
+                        e.printStackTrace()
+                    }
                 } else {
                     requireContext().toast(userResponseModel.message)
-                    context?.startActivity(Intent(requireContext(),DashboardActivity::class.java))
+                    context?.startActivity(Intent(requireContext(), DashboardActivity::class.java))
                 }
             }
         }
@@ -231,6 +241,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
         viewModel.errors.observe(this) {
             mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
         }
+
         sharedViewModel.errors_api.observe(requireActivity()) {
             mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
         }
@@ -528,8 +539,6 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     }
 
     private fun savePwdFormApi() {
-
-
             sharedViewModel.savePWDForm(
                 context = requireContext(),
                 type = EncryptionModel.aesEncrypt("mobile").toRequestBody(MultipartBody.FORM),
@@ -966,9 +975,6 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     }
 
     private fun savePwdFormApiWithoutEncryption() {
-
-
-
             sharedViewModel.savePWDForm(
                 context = requireContext(),
                 type = ("mobile").toRequestBody(MultipartBody.FORM),
@@ -1149,30 +1155,30 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             )
     }
 
-    fun parseErrorMessage(jsonString: String): String {
-        val jsonObject = JSONObject(jsonString)
+    fun parseErrorMessage(resultJson: String): String {
+        return try {
+            val jsonObject = JSONObject(resultJson)
+            val errorsObject = jsonObject.optJSONObject("errors")
+            val errorMessages = mutableListOf<String>()
 
-        // Extract the main error message
-        val mainMessage = jsonObject.optString("message", "Something went wrong")
-
-        // Extract detailed field errors
-        val errorsObject = jsonObject.optJSONObject("errors")
-        val errorMessages = mutableListOf<String>()
-
-        errorsObject?.keys()?.forEach { key ->
-            val fieldErrors = errorsObject.optJSONObject(key)
-            fieldErrors?.keys()?.forEach { errorKey ->
-                val errorMessage = fieldErrors.optString(errorKey, "")
-                if (errorMessage.isNotEmpty()) {
-                    errorMessages.add("$key: $errorMessage")
+            errorsObject?.keys()?.forEach { fieldName ->
+                val fieldErrors = errorsObject.optJSONObject(fieldName)
+                fieldErrors?.keys()?.forEach { errorKey ->
+                    val errorMessage = fieldErrors.optString(errorKey, "")
+                    if (errorMessage.isNotEmpty()) {
+                        // Format: "Field Name: Error Message"
+                        errorMessages.add("$fieldName: $errorMessage")
+                    }
                 }
             }
-        }
 
-        return if (errorMessages.isNotEmpty()) {
-            "$mainMessage\n${errorMessages.joinToString("\n")}"
-        } else {
-            mainMessage
+            if (errorMessages.isNotEmpty()) {
+                errorMessages.joinToString("\n") // Join all errors line by line
+            } else {
+                "Unknown error occurred"
+            }
+        } catch (e: Exception) {
+            "Error parsing response"
         }
     }
 }
