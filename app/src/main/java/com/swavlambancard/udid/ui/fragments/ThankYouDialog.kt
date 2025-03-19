@@ -145,4 +145,15 @@ class ThankYouDialog(private val applicationNumber:String) : DialogFragment() {
             // Handle the exception (e.g., show a toast if no PDF viewer is available)
         }
     }
+
+    override fun onDismiss(dialog: android.content.DialogInterface) {
+        super.onDismiss(dialog)
+        ClickActions().close(requireView())
+    }
+
+    override fun onCancel(dialog: android.content.DialogInterface) {
+        super.onCancel(dialog)
+        ClickActions().close(requireView())
+    }
+
 }

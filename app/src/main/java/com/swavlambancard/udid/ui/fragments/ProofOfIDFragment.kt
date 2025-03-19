@@ -491,7 +491,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                                 sharedViewModel.userData.value?.identityProofNameYes = selectedItem
                             }
                             else{
-                                sharedViewModel.userData.value?.identityProofNameYes = selectedItem
+                                sharedViewModel.userData.value?.identityProofNameNo = selectedItem
                             }
                         }
                     }
