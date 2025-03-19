@@ -844,13 +844,13 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
             }
             return false
         }
-//        else if (!checkValidMobile(mBinding?.etApplicantMobileNo?.text.toString())) {
-//            mBinding?.llParent?.let {
-//                showSnackbar(it,
-//                    getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
-//            }
-//            return false
-//        }
+        else if (!checkValidMobile(mBinding?.etApplicantMobileNo?.text.toString())) {
+            mBinding?.llParent?.let {
+                showSnackbar(it,
+                    getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
+            }
+            return false
+        }
         else if (mBinding?.etApplicantDateOfBirth?.text?.toString().isNullOrEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(

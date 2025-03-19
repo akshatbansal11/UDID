@@ -1,11 +1,15 @@
 package com.swavlambancard.udid.ui.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -203,7 +207,32 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             val userResponseModel = it
             if (userResponseModel?._result != null) {
                 if (userResponseModel._resultflag == 0) {
-                    requireContext().toast(userResponseModel.message)
+                    try {
+                        val result = userResponseModel._result
+                        val errors = result.errors
+
+                        if (errors != null) {
+                            val errorMessages = StringBuilder()
+
+                            // Iterate through all error keys and get their messages
+                            errors.keys.forEach { key ->
+                                val errorObj = errors[key] as? Map<*, *>
+                                errorObj?.keys?.forEach { errorType ->
+                                    val errorMessage = errorObj[errorType] as? String ?: "Unknown error"
+                                    errorMessages.append("$key: $errorMessage\n")
+                                }
+                            }
+
+                            // Show error messages using Toast.
+                            showErrorDialog(requireContext(), errorMessages.toString().trim())
+                        } else {
+                            showErrorDialog(requireContext(), userResponseModel.message)
+                        }
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(context, "Failed to parse error response", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     applicationNumber = userResponseModel._result.application_number
                     requireContext().toast(userResponseModel.message)
@@ -236,10 +265,11 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                             }
 
                             // Show error messages using Toast.
-                            showSnackbar(mBinding?.llParent!!, errorMessages.toString().trim())
+                            showErrorDialog(requireContext(), errorMessages.toString().trim())
                         } else {
-                            showSnackbar(mBinding?.llParent!!, userResponseModel.message)
+                            showErrorDialog(requireContext(), userResponseModel.message)
                         }
+
                     } catch (e: Exception) {
                         e.printStackTrace()
                         Toast.makeText(context, "Failed to parse error response", Toast.LENGTH_SHORT).show()
@@ -257,8 +287,35 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
 
         sharedViewModel.errors_api.observe(requireActivity()) {
             mBinding?.let { it1 -> showSnackbar(it1.llParent, it) }
+            sharedViewModel.errors_api.value = null
         }
 
+    }
+    private fun showErrorDialog(context: Context, message: String) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_error, null)
+        val dialog = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        val tvErrorMessage = dialogView.findViewById<TextView>(R.id.tvErrorMessage)
+        val btnClose = dialogView.findViewById<Button>(R.id.btnClose)
+
+        // Format message to bulleted list if multiple errors
+        val formattedMessage = if (message.contains("\n")) {
+            val messages = message.split("\n").filter { it.isNotBlank() }
+            messages.joinToString("\n") { "• $it" }
+        } else {
+            message
+        }
+
+        tvErrorMessage.text = formattedMessage
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     inner class ClickActions {
@@ -1172,5 +1229,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
     override fun onDestroyView() {
         super.onDestroyView()
         mBinding=null
+        sharedViewModel.updatePWDFormResult.value = null
+        sharedViewModel.savePWDFormResult.value = null
     }
 }
