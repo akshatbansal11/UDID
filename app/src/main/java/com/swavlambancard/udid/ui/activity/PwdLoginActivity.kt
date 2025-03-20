@@ -41,6 +41,8 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
+
+
     }
 
     override fun setVariables() {

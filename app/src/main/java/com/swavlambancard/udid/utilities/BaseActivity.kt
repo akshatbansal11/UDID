@@ -109,7 +109,7 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
             )
         }
         context = this
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         window.statusBarColor = ContextCompat.getColor(this, R.color.darkBlue)
         performDataBinding()
         initView()
