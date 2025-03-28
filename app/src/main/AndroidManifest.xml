@@ -62,15 +62,12 @@
             android:name=".ui.activity.AppealActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
-            android:exported="false"
-          />
+            android:exported="false" />
         <activity
             android:name=".ui.activity.PersonalProfileActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
-            android:exported="true">
-
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".ui.activity.RenewalCardActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -191,5 +188,4 @@
                 android:resource="@xml/provider_paths" />
         </provider>
     </application>
-
 </manifest>

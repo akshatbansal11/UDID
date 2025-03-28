@@ -31,84 +31,91 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/sp_18" />
 
-            <TextView
-                android:id="@+id/tvDocumentAddressProof"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_20"
-                android:fontFamily="@font/opensans_semibold"
-                android:text="@string/nature_of_document_for_address_proof"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_16" />
-
-            <TextView
-                android:id="@+id/etNatureDocumentAddressProof"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/curve_stroke_thin_grey"
-                android:fontFamily="@font/opensans_regular"
-                android:hint="@string/select_nature_of_document"
-                android:paddingHorizontal="@dimen/dp_10"
-                android:paddingVertical="@dimen/dp_5"
-                android:singleLine="true"
-                android:onClick="@{ClickAction::addressProof}"
-                android:textColor="@color/black"
-                android:textColorHint="@color/grey"
-                app:drawableEndCompat="@drawable/ic_arrow_down" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_7"
-                android:fontFamily="@font/opensans_semibold"
-                android:text="@string/proof_of_correspondence_address_star"
-                android:textColor="@color/black"
-                android:textSize="@dimen/sp_16" />
-
-            <LinearLayout
-                android:id="@+id/llUploadFile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_7"
-                android:background="@drawable/curve_all_corner_white"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:orientation="vertical"
+                android:id="@+id/llAddressProof">
 
                 <TextView
-                    android:id="@+id/tvChooseFile"
+                    android:id="@+id/tvDocumentAddressProof"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/dp_5"
-                    android:layout_marginVertical="@dimen/dp_5"
-                    android:layout_weight=".4"
-                    android:background="@drawable/back_number_gray"
-                    android:gravity="center"
-                    android:onClick="@{ClickAction::uploadFile}"
-                    android:padding="@dimen/dp_10"
-                    android:text="@string/choose_file"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/nature_of_document_for_address_proof"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/sp_14" />
+                    android:textSize="@dimen/sp_16" />
 
                 <TextView
-                    android:id="@+id/etFileName"
+                    android:id="@+id/etNatureDocumentAddressProof"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/curve_stroke_thin_grey"
+                    android:fontFamily="@font/opensans_regular"
+                    android:hint="@string/select_nature_of_document"
+                    android:paddingHorizontal="@dimen/dp_10"
+                    android:paddingVertical="@dimen/dp_5"
+                    android:singleLine="true"
+                    android:onClick="@{ClickAction::addressProof}"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey"
+                    app:drawableEndCompat="@drawable/ic_arrow_down" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1.6"
-                    android:hint="@string/no_file_chosen"
-                    android:padding="@dimen/dp_10"
-                    android:onClick="@{ClickAction::fileCorrespondenceAddress}"
-                    android:textColor="@color/grey"
-                    android:textSize="@dimen/sp_14" />
-            </LinearLayout>
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/proof_of_correspondence_address_star"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/sp_16" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/opensans_semibold"
-                android:text="@string/only_jpeg_jpg_png_and_pdf_with_size_10_kb_to_500_kb_allowed"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/sp_12" />
+                <LinearLayout
+                    android:id="@+id/llUploadFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_7"
+                    android:background="@drawable/curve_all_corner_white"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/tvChooseFile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/dp_5"
+                        android:layout_marginVertical="@dimen/dp_5"
+                        android:layout_weight=".4"
+                        android:background="@drawable/back_number_gray"
+                        android:gravity="center"
+                        android:onClick="@{ClickAction::uploadFile}"
+                        android:padding="@dimen/dp_10"
+                        android:text="@string/choose_file"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_14" />
+
+                    <TextView
+                        android:id="@+id/etFileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1.6"
+                        android:hint="@string/no_file_chosen"
+                        android:padding="@dimen/dp_10"
+                        android:onClick="@{ClickAction::fileCorrespondenceAddress}"
+                        android:textColor="@color/grey"
+                        android:textSize="@dimen/sp_14" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/opensans_semibold"
+                    android:text="@string/only_jpeg_jpg_png_and_pdf_with_size_10_kb_to_500_kb_allowed"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/sp_12" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"

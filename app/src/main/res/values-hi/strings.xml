@@ -374,4 +374,6 @@
     <string name="download_rejection_letter">अस्वीकृति पत्र डाउनलोड करें</string>
     <string name="the_entered_aadhaar_number_is_not_valid">The entered Aadhaar number is not valid</string>
     <string name="first_digit_should_start_from_6_to_9_of_mobile_number">First digit should start from 6 to 9 of mobile number</string>
+    <string name="is_the_aadhaar_and_address_the_same">Is the Aadhaar and address the same?<font fgcolor="#FF3D00">*</font></string>
+    <string name="correspondence_address_same_as_aadhaar_address">Correspondence Address Same as Aadhaar Address</string>
 </resources>

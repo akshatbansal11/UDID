@@ -35,6 +35,8 @@ import com.swavlambancard.udid.utilities.Utility.getNameById
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
+import com.swavlambancard.udid.utilities.hideView
+import com.swavlambancard.udid.utilities.showView
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
@@ -83,7 +85,12 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         }
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
-
+            if(sharedViewModel.userData.value?.isAadhaarAddressSame == 1){
+                mBinding?.llAddressProof?.showView()
+            }
+            else{
+                mBinding?.llAddressProof?.hideView()
+            }
             if (userData.documentAddressProofPhotoPath != null) {
                 mBinding?.etFileName?.text = "VIEW"
                 mBinding?.etFileName?.let {
@@ -629,20 +636,23 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
     }
 
     private fun valid(): Boolean {
-        if (mBinding?.etNatureDocumentAddressProof?.text.toString().trim().isEmpty()) {
-            mBinding?.llParent?.let {
-                showSnackbar(
-                    it,
-                    getString(R.string.please_select_nature_of_document)
-                )
+        if(sharedViewModel.userData.value?.isAadhaarAddressSame == 1) {
+            if (mBinding?.etNatureDocumentAddressProof?.text.toString().trim().isEmpty()) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.please_select_nature_of_document)
+                    )
+                }
+                return false
+            } else if (mBinding?.etFileName?.text.toString().isEmpty()) {
+                mBinding?.llParent?.let {
+                    showSnackbar(it, getString(R.string.please_select_address_proof))
+                }
+                return false
             }
-            return false
-        } else if (mBinding?.etFileName?.text.toString().isEmpty()) {
-            mBinding?.llParent?.let {
-                showSnackbar(it, getString(R.string.please_select_address_proof))
-            }
-            return false
-        } else if (mBinding?.etAddress?.text.toString().isEmpty()) {
+        }
+        if (mBinding?.etAddress?.text.toString().isEmpty()) {
             mBinding?.llParent?.let {
                 showSnackbar(it, getString(R.string.please_enter_correspondence_address))
             }

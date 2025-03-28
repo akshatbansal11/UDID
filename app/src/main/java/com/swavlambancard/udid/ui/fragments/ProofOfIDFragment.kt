@@ -59,6 +59,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
     private var enrollmentSlipName: String? = null
     private var document = 0
     private var aadhaarTag: Int = 2
+    private var isAadhaarAddressSame: Int = 2
     private var imageUri: Uri? = null
     private var cameraUri: Uri? = null
     private var pdfUri: Uri? = null
@@ -96,6 +97,20 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     mBinding?.rbYes?.isChecked = false
                     mBinding?.llYesAadhaarCard?.hideView()
                     mBinding?.llNoAadhaarCard?.hideView()
+                }
+            }
+            when (userData.isAadhaarAddressSame) {
+                0 -> {
+                    mBinding?.rbNo?.isChecked = true
+                }
+
+                1 -> {
+                    mBinding?.rbYes?.isChecked = true
+                }
+
+                else -> {
+                    mBinding?.rbNo?.isChecked = false
+                    mBinding?.rbYes?.isChecked = false
                 }
             }
             when (userData.aadhaarCheckBox) {
@@ -351,6 +366,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             identityProofListYes.add(DropDownResult("8", "Aadhaar Card"))
             mBinding?.llYesAadhaarCard?.showView()
             mBinding?.llNoAadhaarCard?.hideView()
+            mBinding?.llSameAddress?.showView()
             if (sharedViewModel.userData.value?.isFrom == "login") {
                 mBinding?.etAadhaarEnrollment?.setText("")
                 mBinding?.etFileNameEnrollmentSlip?.text = ""
@@ -375,6 +391,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             }
             identityProofList.remove(DropDownResult("8", "Aadhaar Card"))
             mBinding?.llYesAadhaarCard?.hideView()
+            mBinding?.llSameAddress?.hideView()
             mBinding?.llNoAadhaarCard?.showView()
             if (sharedViewModel.userData.value?.isFrom == "login") {
                 mBinding?.etAadhaarNo?.setText("")
@@ -415,6 +432,14 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         fun uploadFileAadhaarEnrollmentSlip(view: View) {
             document = 2
             checkStoragePermission(requireContext())
+        }
+
+        fun rbIsTheAadhaarAddressSameYes(view: View){
+            sharedViewModel.userData.value?.isAadhaarAddressSame = 1
+        }
+
+        fun rbIsTheAadhaarAddressSameNo(view: View) {
+            sharedViewModel.userData.value?.isAadhaarAddressSame = 0
         }
     }
 
@@ -565,6 +590,15 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     showSnackbar(
                         it,
                         getString(R.string.please_select_checkbox)
+                    )
+                }
+                return false
+            }
+            else if (isAadhaarAddressSame == 2) {
+                mBinding?.llParent?.let {
+                    showSnackbar(
+                        it,
+                        getString(R.string.correspondence_address_same_as_aadhaar_address)
                     )
                 }
                 return false

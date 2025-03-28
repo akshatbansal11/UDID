@@ -93,6 +93,7 @@ data class PwdApplication(
     var aadhaarCheckBox: Int? =0,//[share_aadhar_info] => 0/1(checked)
     var aadhaarInfo: Int? =0,//[aadhar_info] => Yes(1)/No(0)
     var aadhaarTag: Int? =null,
+    var isAadhaarAddressSame: Int? =null,
     var aadhaarEnrollmentNo: String ?= null,//aadhar_enrollment_no
     var aadhaarEnrollmentUploadSlip: String? =null,//aadhar_enrollment_slip
     var aadhaarEnrollmentUploadSlipPath: String? =null,//aadhar_enrollment_slip
