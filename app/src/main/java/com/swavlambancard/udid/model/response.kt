@@ -245,6 +245,7 @@ data class EditApplication(
     val hospital_treating_state_code: String,
     val identitity_proof_file: String,
     val identitity_proof_id: String,
+    val address_check: Int,
     val income: String,
     val is_hospital_treating_other_state: Boolean,
     val mobile: String,

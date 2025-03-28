@@ -113,6 +113,7 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
                     sharedViewModel?.userData?.value?.identityProofId = userData.identitity_proof_id
                     sharedViewModel?.userData?.value?.identityProofUpload = userData.identitity_proof_file
                     sharedViewModel?.userData?.value?.identityProofUploadPath = userData.identitity_proof_file
+                    sharedViewModel?.userData?.value?.isAadhaarAddressSame = userData.address_check
                     //Address Correspondence
                     sharedViewModel?.userData?.value?.natureDocumentAddressProofCode =
                         userData.address_proof_id

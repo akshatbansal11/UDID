@@ -343,6 +343,11 @@ object Utility {
                     fileUri = Uri.parse(baseString)
                     mimeType = context.contentResolver.getType(fileUri) ?: "*/*"
                 }
+                baseString.startsWith("http://") || baseString.startsWith("https://") -> {
+                    // Handle HTTP or HTTPS URLs
+                    fileUri = Uri.parse(baseString)
+                    mimeType = if (baseString.contains(".pdf")) "application/pdf" else "image/*"
+                }
                 else -> {
                     Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show()
                     return

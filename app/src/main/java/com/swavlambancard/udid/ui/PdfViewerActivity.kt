@@ -16,9 +16,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.swavlambancard.udid.R
 import com.swavlambancard.udid.utilities.Utility
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.net.URL
 
 class PdfViewerActivity : AppCompatActivity() {
 
@@ -57,11 +62,21 @@ class PdfViewerActivity : AppCompatActivity() {
                 val actualMimeType = mimeType ?: getMimeType(fileUri)
 
                 when {
+                    fileUri.scheme?.startsWith("http") == true -> {
+                        if (mimeType == "application/pdf") {
+                            displayPdfFromUrl(fileUri.toString())
+                        } else if (mimeType?.startsWith("image/") == true) {
+                            displayImage(fileUri)
+                        } else {
+                            Utility.showSnackbar(clParent, "Unsupported file type")
+                        }
+                    }
                     actualMimeType == "application/pdf" -> displayPdf(fileUri)
                     actualMimeType.startsWith("image/") -> displayImage(fileUri)
                     actualMimeType.startsWith("*/*") -> displayImage(fileUri)
                     else -> Utility.showSnackbar(clParent, "Unsupported file type")
                 }
+
             } else {
                 Utility.showSnackbar(clParent, "No valid file to display")
             }
@@ -106,7 +121,30 @@ class PdfViewerActivity : AppCompatActivity() {
         pdfRenderer?.close()
         fileDescriptor?.close()
     }
+    private fun displayPdfFromUrl(pdfUrl: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val url = URL(pdfUrl)
+                val connection = url.openConnection()
+                connection.connect()
 
+                val inputStream = connection.getInputStream()
+                val tempFile = File(cacheDir, "temp_pdf_from_url.pdf")
+                FileOutputStream(tempFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+
+                withContext(Dispatchers.Main) {
+                    displayPdf(Uri.fromFile(tempFile))
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Utility.showSnackbar(clParent, "Failed to load PDF: ${e.message}")
+                }
+                e.printStackTrace()
+            }
+        }
+    }
     private fun displayPdf(uri: Uri) {
         pdfContainer.removeAllViews()  // Clear previous pages
 

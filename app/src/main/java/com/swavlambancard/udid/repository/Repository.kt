@@ -403,6 +403,7 @@ object Repository {
         aadhaarEnrollmentSlip: RequestBody?,
         identityProofId: RequestBody?,
         identityProofFile: RequestBody?,
+        addressCheck: RequestBody?,
         //Address For Correspondence
         addressProofId: RequestBody?,
         addressProofFile: RequestBody?,
@@ -456,6 +457,7 @@ object Repository {
             aadhaarEnrollmentSlip,
             identityProofId,
             identityProofFile,
+            addressCheck,
             addressProofId,
             addressProofFile,
             currentAddress,
@@ -508,6 +510,7 @@ object Repository {
         aadhaarEnrollmentSlip: RequestBody?,
         identityProofId: RequestBody?,
         identityProofFile: RequestBody?,
+        addressCheck: RequestBody?,
         //Address For Correspondence
         addressProofId: RequestBody?,
         addressProofFile: RequestBody?,
@@ -559,6 +562,7 @@ object Repository {
             aadhaarEnrollmentSlip,
             identityProofId,
             identityProofFile,
+            addressCheck,
             addressProofId,
             addressProofFile,
             currentAddress,

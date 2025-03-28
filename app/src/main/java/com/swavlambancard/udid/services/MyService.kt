@@ -324,6 +324,7 @@ interface MyService {
         @Part("aadhar_enrollment_slip") aadhaarEnrollmentSlip: RequestBody?,
         @Part("identitity_proof_id") identityProofId: RequestBody?,
         @Part("identitity_proof_file") identityProofFile: RequestBody?,
+        @Part("address_check") addressCheck : RequestBody?,
         //Address For Correspondence
         @Part("address_proof_id") addressProofId: RequestBody?,
         @Part("address_proof_file") addressProofFile: RequestBody?,
@@ -382,6 +383,7 @@ interface MyService {
         @Part("aadhar_enrollment_slip") aadhaarEnrollmentSlip: RequestBody?,
         @Part("identitity_proof_id") identityProofId: RequestBody?,
         @Part("identitity_proof_file") identityProofFile: RequestBody?,
+        @Part("address_check") addressCheck : RequestBody?,
         //Address For Correspondence
         @Part("address_proof_id") addressProofId: RequestBody?,
         @Part("address_proof_file") addressProofFile: RequestBody?,

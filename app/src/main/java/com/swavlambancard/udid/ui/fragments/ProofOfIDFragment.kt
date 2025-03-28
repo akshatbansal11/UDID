@@ -34,6 +34,7 @@ import com.swavlambancard.udid.utilities.Utility.setBlueUnderlinedText
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
 import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
+import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.SharedDataViewModel
 import com.swavlambancard.udid.viewModel.ViewModel
 import kotlinx.coroutines.launch
@@ -82,12 +83,15 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             when (userData.aadhaarTag) {
                 0 -> {
                     mBinding?.rbNo?.isChecked = true
+                    sharedViewModel.userData.value?.isAadhaarAddressSame = 0
+                    mBinding?.llSameAddress?.hideView()
                     mBinding?.llYesAadhaarCard?.hideView()
                     mBinding?.llNoAadhaarCard?.showView()
                 }
 
                 1 -> {
                     mBinding?.rbYes?.isChecked = true
+                    mBinding?.llSameAddress?.showView()
                     mBinding?.llYesAadhaarCard?.showView()
                     mBinding?.llNoAadhaarCard?.hideView()
                 }
@@ -95,22 +99,29 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 else -> {
                     mBinding?.rbNo?.isChecked = false
                     mBinding?.rbYes?.isChecked = false
+                    mBinding?.llSameAddress?.showView()
                     mBinding?.llYesAadhaarCard?.hideView()
                     mBinding?.llNoAadhaarCard?.hideView()
                 }
             }
             when (userData.isAadhaarAddressSame) {
                 0 -> {
-                    mBinding?.rbNo?.isChecked = true
+                    isAadhaarAddressSame=0
+                    mBinding?.rbIsTheAadhaarAddressSameNo?.isChecked = true
+                    sharedViewModel.userData.value?.isAadhaarAddressSame = 0
                 }
 
                 1 -> {
-                    mBinding?.rbYes?.isChecked = true
+                    isAadhaarAddressSame=1
+                    mBinding?.rbIsTheAadhaarAddressSameYes?.isChecked = true
+                    sharedViewModel.userData.value?.isAadhaarAddressSame = 1
                 }
 
                 else -> {
-                    mBinding?.rbNo?.isChecked = false
-                    mBinding?.rbYes?.isChecked = false
+                    isAadhaarAddressSame=0
+                    sharedViewModel.userData.value?.isAadhaarAddressSame = 0
+                    mBinding?.rbIsTheAadhaarAddressSameNo?.isChecked = false
+                    mBinding?.rbIsTheAadhaarAddressSameYes?.isChecked = false
                 }
             }
             when (userData.aadhaarCheckBox) {
@@ -175,7 +186,6 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
             aadhaarTag = when (checkedId) {
                 R.id.rbNo -> {
                     0
-
                 }
 
                 R.id.rbYes -> {
@@ -381,6 +391,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
 
         fun rbNo(view: View) {
             aadhaarTag = 0
+            sharedViewModel.userData.value?.isAadhaarAddressSame = 0
             Log.d("ID test", "rbNo: ${sharedViewModel.userData.value?.identityProofId}")
             Log.d("ID test", "rbNoName: ${sharedViewModel.userData.value?.identityProofNameNo}")
             if (sharedViewModel.userData.value?.identityProofId == "8") {
@@ -435,10 +446,12 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
         }
 
         fun rbIsTheAadhaarAddressSameYes(view: View){
+            isAadhaarAddressSame=1
             sharedViewModel.userData.value?.isAadhaarAddressSame = 1
         }
 
         fun rbIsTheAadhaarAddressSameNo(view: View) {
+            isAadhaarAddressSame=0
             sharedViewModel.userData.value?.isAadhaarAddressSame = 0
         }
     }
@@ -598,7 +611,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                 mBinding?.llParent?.let {
                     showSnackbar(
                         it,
-                        getString(R.string.correspondence_address_same_as_aadhaar_address)
+                        getString(R.string.please_select_is_the_aadhaar_address_and_correspondence_address_the_same)
                     )
                 }
                 return false

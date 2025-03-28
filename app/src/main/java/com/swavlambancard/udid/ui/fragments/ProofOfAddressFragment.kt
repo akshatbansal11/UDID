@@ -85,7 +85,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         }
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
-            if(sharedViewModel.userData.value?.isAadhaarAddressSame == 1){
+            if(sharedViewModel.userData.value?.isAadhaarAddressSame == 0){
                 mBinding?.llAddressProof?.showView()
             }
             else{
@@ -110,14 +110,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                     }
                     sharedViewModel.userData.value?.documentAddressProofPhoto = ""
                 }
-                mBinding?.etFileName?.let {
-                    setBlueUnderlinedText(
-                        it,
-                        "VIEW"
-                    )
-                }
             }
-
             mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName
             addressProofId = userData.natureDocumentAddressProofCode
             mBinding?.etAddress?.setText(userData.address)
@@ -275,6 +268,15 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
 
     inner class ClickActions {
         fun next(view: View) {
+            if(sharedViewModel.userData.value?.isAadhaarAddressSame == 1){
+                sharedViewModel.userData.value?.documentAddressProofPhoto=""
+                sharedViewModel.userData.value?.natureDocumentAddressProofName=""
+                sharedViewModel.userData.value?.natureDocumentAddressProofCode=""
+            }
+            Log.d("Address Same", sharedViewModel.userData.value?.isAadhaarAddressSame.toString())
+            Log.d("Address Same", sharedViewModel.userData.value?.documentAddressProofPhoto.toString())
+            Log.d("Address Same", sharedViewModel.userData.value?.natureDocumentAddressProofName.toString())
+            Log.d("Address Same", sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString())
             if (valid()) {
                 (requireActivity() as PersonalProfileActivity).replaceFragment(
                     DisabilityDetailFragment()
@@ -636,7 +638,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
     }
 
     private fun valid(): Boolean {
-        if(sharedViewModel.userData.value?.isAadhaarAddressSame == 1) {
+        if(sharedViewModel.userData.value?.isAadhaarAddressSame == 0) {
             if (mBinding?.etNatureDocumentAddressProof?.text.toString().trim().isEmpty()) {
                 mBinding?.llParent?.let {
                     showSnackbar(

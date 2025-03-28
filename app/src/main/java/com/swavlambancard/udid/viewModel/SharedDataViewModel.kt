@@ -148,6 +148,7 @@ class SharedDataViewModel : ViewModel() {
         aadhaarEnrollmentSlip: RequestBody?,
         identityProofId: RequestBody?,
         identityProofFile: RequestBody?,
+        addressCheck: RequestBody?,
         //Address For Correspondence
         addressProofId: RequestBody?,
         addressProofFile: RequestBody?,
@@ -205,6 +206,7 @@ class SharedDataViewModel : ViewModel() {
                     aadhaarEnrollmentSlip,
                     identityProofId,
                     identityProofFile,
+                    addressCheck,
                     addressProofId,
                     addressProofFile,
                     currentAddress,
@@ -308,6 +310,7 @@ class SharedDataViewModel : ViewModel() {
         aadhaarEnrollmentSlip: RequestBody?,
         identityProofId: RequestBody?,
         identityProofFile: RequestBody?,
+        addressCheck: RequestBody?,
         //Address For Correspondence
         addressProofId: RequestBody?,
         addressProofFile: RequestBody?,
@@ -363,6 +366,7 @@ class SharedDataViewModel : ViewModel() {
                     aadhaarEnrollmentSlip,
                     identityProofId,
                     identityProofFile,
+                    addressCheck,
                     addressProofId,
                     addressProofFile,
                     currentAddress,

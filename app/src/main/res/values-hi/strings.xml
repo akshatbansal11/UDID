@@ -376,4 +376,5 @@
     <string name="first_digit_should_start_from_6_to_9_of_mobile_number">First digit should start from 6 to 9 of mobile number</string>
     <string name="is_the_aadhaar_and_address_the_same">Is the Aadhaar and address the same?<font fgcolor="#FF3D00">*</font></string>
     <string name="correspondence_address_same_as_aadhaar_address">Correspondence Address Same as Aadhaar Address</string>
+    <string name="please_select_is_the_aadhaar_address_and_correspondence_address_the_same">Please Select Is The Aadhaar address and Correspondence address the same</string>
 </resources>

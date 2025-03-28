@@ -345,31 +345,7 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                                 updatePwsFormApi()
                                 Log.d(
                                     "Pwd Form data",
-                                    sharedViewModel.userData.value?.sign.toString()
-                                )
-                                Log.d(
-                                    "Pwd Form data",
-                                    sharedViewModel.userData.value?.photo.toString()
-                                )
-                                Log.d(
-                                    "Pwd Form data",
-                                    sharedViewModel.userData.value?.aadhaarEnrollmentUploadSlip.toString()
-                                )
-                                Log.d(
-                                    "Pwd Form data",
-                                    sharedViewModel.userData.value?.identityProofUpload.toString()
-                                )
-                                Log.d(
-                                    "Pwd Form data",
-                                    sharedViewModel.userData.value?.documentAddressProofPhoto.toString()
-                                )
-                                Log.d(
-                                    "Pwd Form data",
-                                    sharedViewModel.userData.value?.uploadDisabilityCertificate.toString()
-                                )
-                                Log.d(
-                                    "Pwd Form data",
-                                    sharedViewModel.userData.value?.serialNumber.toString()
+                                    sharedViewModel.userData.value?.isAadhaarAddressSame.toString()
                                 )
 
                             }
@@ -777,6 +753,10 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 .toRequestBody(
                     MultipartBody.FORM
                 ),
+            addressCheck = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.isAadhaarAddressSame.toString())
+                .toRequestBody(
+                    MultipartBody.FORM
+                ),
             addressProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString())
                 .toRequestBody(
                     MultipartBody.FORM
@@ -971,6 +951,10 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
                 .toRequestBody(
                     MultipartBody.FORM
                 ),
+            addressCheck = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.isAadhaarAddressSame.toString())
+                .toRequestBody(
+                    MultipartBody.FORM
+                ),
             addressProofId = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString())
                 .toRequestBody(
                     MultipartBody.FORM
@@ -1137,6 +1121,10 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             identityProofFile = (sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(
                 MultipartBody.FORM
             ),
+            addressCheck = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.isAadhaarAddressSame.toString())
+                .toRequestBody(
+                    MultipartBody.FORM
+                ),
             addressProofId = (sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(
                 MultipartBody.FORM
             ),
@@ -1291,6 +1279,10 @@ class HospitalAssessmentFragment : BaseFragment<FragmentHospitalAssesmentBinding
             (sharedViewModel.userData.value?.identityProofUpload.toString()).toRequestBody(
                 MultipartBody.FORM
             ),
+            addressCheck = EncryptionModel.aesEncrypt(sharedViewModel.userData.value?.isAadhaarAddressSame.toString())
+                .toRequestBody(
+                    MultipartBody.FORM
+                ),
             addressProofId =
             (sharedViewModel.userData.value?.natureDocumentAddressProofCode.toString()).toRequestBody(
                 MultipartBody.FORM
