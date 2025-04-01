@@ -157,6 +157,32 @@
                         android:textSize="@dimen/sp_14" />
 
                     <TextView
+                        android:id="@+id/tvRegionalLanguage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:fontFamily="@font/opensans_semibold"
+                        android:text="@string/choose_regional_language"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/sp_16" />
+
+                    <TextView
+                        android:id="@+id/etRegionalLanguage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/dp_7"
+                        android:background="@drawable/curve_stroke_thin_grey"
+                        android:fontFamily="@font/opensans_regular"
+                        android:hint="@string/choose_regional_language_"
+                        android:onClick="@{ClickAction::regionalLanguage}"
+                        android:paddingHorizontal="@dimen/dp_10"
+                        android:paddingVertical="@dimen/dp_8"
+                        android:singleLine="true"
+                        android:textColor="#6B6B6B"
+                        android:textSize="@dimen/sp_14"
+                        app:drawableEndCompat="@drawable/ic_arrow_down" />
+
+                    <TextView
                         android:id="@+id/tvUpdatedNameRegionalLanguage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

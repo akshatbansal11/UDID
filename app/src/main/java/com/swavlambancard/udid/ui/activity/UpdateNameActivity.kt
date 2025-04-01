@@ -6,6 +6,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -23,12 +26,14 @@ import com.swavlambancard.udid.model.DropDownResult
 import com.swavlambancard.udid.model.Fields
 import com.swavlambancard.udid.model.Filters
 import com.swavlambancard.udid.model.GenerateOtpRequest
+import com.swavlambancard.udid.model.LanguageLocalize
 import com.swavlambancard.udid.model.UserData
 import com.swavlambancard.udid.ui.adapter.BottomSheetAdapter
 import com.swavlambancard.udid.utilities.AppConstants
 import com.swavlambancard.udid.utilities.BaseActivity
 import com.swavlambancard.udid.utilities.EncryptionModel
 import com.swavlambancard.udid.utilities.JSEncryptService
+import com.swavlambancard.udid.utilities.Translator
 import com.swavlambancard.udid.utilities.URIPathHelper
 import com.swavlambancard.udid.utilities.Utility.rotateDrawable
 import com.swavlambancard.udid.utilities.Utility.showSnackbar
@@ -36,7 +41,9 @@ import com.swavlambancard.udid.utilities.hideView
 import com.swavlambancard.udid.utilities.showView
 import com.swavlambancard.udid.utilities.toast
 import com.swavlambancard.udid.viewModel.ViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -54,7 +61,11 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
     private var reasonToUpdateNameId: String? = null
     private var identityProofList = ArrayList<DropDownResult>()
     private var identityProofId: String? = null
+    private var regionalLanguageList = ArrayList<DropDownResult>()
+    private var regionalLanguageId: String? = null
     var body: MultipartBody.Part? = null
+    private val handler = android.os.Handler()
+    private var translationRunnable: Runnable? = null
 
     override val layoutId: Int
         get() = R.layout.activity_update_name
@@ -63,6 +74,22 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
+
+        mBinding?.etUpdatedName?.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                translationRunnable?.let { handler.removeCallbacks(it) } // Cancel previous task
+
+                translationRunnable = Runnable {
+                    lifecycleScope.launch {
+                        translateText(s.toString().trim())
+                    }
+                }
+                handler.postDelayed(translationRunnable!!, 1000) // Delay translation by 500ms
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
     override fun setVariables() {
@@ -96,10 +123,16 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
             if (userResponseModel?._result != null && userResponseModel._result.isNotEmpty()) {
                 if (userResponseModel.model == "Identityproofs") {
                     identityProofList.clear()
-                    identityProofList.add(DropDownResult("0", getString(R.string.select_identity_proof)))
+                    identityProofList.add(DropDownResult("0", "Select Identity Proof"))
                     identityProofList.addAll(userResponseModel._result)
                     bottomSheetAdapter?.notifyDataSetChanged()
-                } else if (userResponseModel.model == "Updationreason") {
+                } else if (userResponseModel.model == "Languages") {
+                    regionalLanguageList.clear()
+                    regionalLanguageList.add(DropDownResult("0", "Choose Regional Language"))
+                    regionalLanguageList.addAll(userResponseModel._result)
+                    bottomSheetAdapter?.notifyDataSetChanged()
+                }
+                else if (userResponseModel.model == "Updationreason") {
                     reasonToUpdateNameList.clear()
                     reasonToUpdateNameList.add(DropDownResult("0", getString(R.string.spelling_correction_in_name)))
                     reasonToUpdateNameList.addAll(userResponseModel._result)
@@ -157,6 +190,9 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         fun identityProof(view: View) {
             showBottomSheetDialog("identity_proof")
         }
+        fun regionalLanguage(view: View) {
+            showBottomSheetDialog("regional_language")
+        }
 
         fun reasonToUpdateName(view: View) {
             showBottomSheetDialog("reason_to_update_name")
@@ -179,11 +215,42 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         }
     }
 
+    private suspend fun translateText(inputText: String) {
+        if (inputText.isEmpty() || regionalLanguageId.isNullOrEmpty()) {
+            withContext(Dispatchers.Main) {// all the ui updations are taking place in ui thread
+                mBinding?.etUpdatedNameRegionalLanguage?.setText("")
+            }
+            return
+        }
+
+        val translatedText = withContext(Dispatchers.IO) {
+            Translator.getTranslation(
+                "en",
+                regionalLanguageId!!,
+                inputText
+            )// this is the main function responsible to give the translation so earlier on we were using a callback function inside main thread now we are using suspend cancelable coroutine which solves the blocking issue
+        }
+
+        withContext(Dispatchers.Main) {
+            Log.d("Translation", "Translated: $translatedText")
+            mBinding?.etUpdatedNameRegionalLanguage?.setText(translatedText)
+        }
+    }
+
     private fun identityProofApi() {
         viewModel.getDropDown(
             this, DropDownRequest(
                 Fields(id = "identity_name"),
                 model = "Identityproofs",
+                type = "mobile"
+            )
+        )
+    }
+    private fun regionalLanguageApi() {
+        viewModel.getDropDown(
+            this, DropDownRequest(
+                Fields(iso_code = "language_name"),
+                model = "Languages",
                 type = "mobile"
             )
         )
@@ -277,6 +344,13 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                 selectedTextView = mBinding?.etIdentityProof
             }
 
+            "regional_language" -> {
+                if (regionalLanguageList.isEmpty()) {
+                    regionalLanguageApi()
+                }
+                selectedList = regionalLanguageList
+                selectedTextView = mBinding?.etRegionalLanguage
+            }
             "reason_to_update_name" -> {
                 if (reasonToUpdateNameList.isEmpty()) {
                     reasonToUpdateNameListApi()
@@ -298,6 +372,28 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
                         selectedTextView?.text = ""
                     } else {
                         identityProofId = id
+                    }
+                }
+                "regional_language" -> {
+                    if (selectedItem == "Choose Regional Language") {
+                        selectedTextView?.text = ""
+                    } else {
+                        regionalLanguageId = id
+                        mBinding?.etUpdatedNameRegionalLanguage?.setText("Translating...")
+
+                        // Cancel any pending translation and introduce delay
+                        translationRunnable?.let { handler.removeCallbacks(it) }
+                        translationRunnable = Runnable {
+                            lifecycleScope.launch {
+                                translateText(
+                                    mBinding?.etUpdatedName?.text.toString().trim()
+                                )
+                            }
+                        }
+                        handler.postDelayed(
+                            translationRunnable!!,
+                            500
+                        ) // Delay translation by 500ms
                     }
                 }
 
@@ -360,6 +456,12 @@ class UpdateNameActivity : BaseActivity<ActivityUpdateNameBinding>() {
         if (mBinding?.etUpdatedName?.text.toString().isEmpty()) {
             mBinding?.clParent?.let {
                 showSnackbar(it, getString(R.string.please_enter_the_updated_name))
+            }
+            return false
+        } else if (mBinding?.etRegionalLanguage?.text.toString().isEmpty()) {
+            mBinding?.clParent?.let {
+                showSnackbar(it, getString(R.string.please_select_regional_language))
+
             }
             return false
         } else if (mBinding?.etUpdatedNameRegionalLanguage?.text.toString().isEmpty()) {

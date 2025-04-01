@@ -34,6 +34,7 @@ data class Fields(
     val subdistrict_code: String? = null,
     val district_code: String? = null,
     val village_code: String? = null,
+    val iso_code: String? = null,
 )
 
 data class Filters(
