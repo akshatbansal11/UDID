@@ -118,7 +118,6 @@ interface MyService {
 
     @Multipart
     @POST(UPDATE_MOBILE)
-    @Headers("Content-Type: application/json")
     suspend fun updateMobile(
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("mobile") mobile: RequestBody?,
@@ -153,7 +152,6 @@ interface MyService {
 
     @Multipart
     @POST(UPDATE_EMAIL)
-    @Headers("Content-Type: application/json")
     suspend fun updateEmail(
         @Part("application_number") applicationNumber: RequestBody?,
         @Part("email") email: RequestBody?,

@@ -108,7 +108,7 @@ class UpdateMobileNumberActivity : BaseActivity<ActivityUpdateMobileNumberBindin
                 if (mBinding?.etEnterOtp?.text.toString().trim().isNotEmpty()) {
                     updateMobileNumberApi()
                 } else {
-                    showSnackbar(mBinding?.clParent!!, getString(R.string.please_enter_the_otp))
+                    mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_the_otp)) }
                 }
             }
         }
@@ -124,6 +124,9 @@ class UpdateMobileNumberActivity : BaseActivity<ActivityUpdateMobileNumberBindin
                         AppConstants.LOGIN_DATA,
                         UserData::class.java
                     ).application_number.toString()
+                ),
+                mobile = JSEncryptService.encrypt(
+                    mBinding?.etUpdatedNumber?.text.toString().trim()
                 )
             )
         )

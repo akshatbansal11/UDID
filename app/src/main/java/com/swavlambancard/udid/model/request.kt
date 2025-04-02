@@ -51,6 +51,7 @@ data class Order(
 
 data class GenerateOtpRequest(
     val application_number: String?,
+    val mobile : String?= null,
     val type: String = "mobile",
 )
 
