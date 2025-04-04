@@ -372,12 +372,12 @@
     <string name="guardian_contact_must_be_exactly_10_digits">अभिभावक का संपर्क नंबर ठीक 10 अंकों का होना चाहिए।</string>
     <string name="please_check_again_all_your_details_again_before_confirming_your_application">कृपया अपने आवेदन पत्र की पुष्टि करने से पहले अपने सभी विवरण दोबारा जांच लें</string>
     <string name="download_rejection_letter">अस्वीकृति पत्र डाउनलोड करें</string>
-    <string name="the_entered_aadhaar_number_is_not_valid">The entered Aadhaar number is not valid</string>
-    <string name="first_digit_should_start_from_6_to_9_of_mobile_number">First digit should start from 6 to 9 of mobile number</string>
-    <string name="is_the_aadhaar_and_address_the_same">Is the Aadhaar and address the same?<font fgcolor="#FF3D00">*</font></string>
-    <string name="correspondence_address_same_as_aadhaar_address">Correspondence Address Same as Aadhaar Address</string>
-    <string name="please_select_is_the_aadhaar_address_and_correspondence_address_the_same">Please Select Is The Aadhaar address and Correspondence address the same</string>
-    <string name="choose_regional_language">Choose Regional Language<font fgcolor="#FF3D00">*</font></string>
-    <string name="choose_regional_language_">Choose Regional Language</string>
-    <string name="please_select_regional_language">Please Select Regional Language</string>
+    <string name="the_entered_aadhaar_number_is_not_valid">दर्ज किया गया आधार नंबर वैध नहीं है</string>
+    <string name="first_digit_should_start_from_6_to_9_of_mobile_number">मोबाइल नंबर का पहला अंक 6 से 9 के बीच होना चाहिए</string>
+    <string name="is_the_aadhaar_and_address_the_same">क्या आधार और पता एक ही है?<font fgcolor="#FF3D00">*</font></string>
+    <string name="correspondence_address_same_as_aadhaar_address">पत्राचार का पता आधार के पते के समान है</string>
+    <string name="please_select_is_the_aadhaar_address_and_correspondence_address_the_same">कृपया चुनें कि क्या आधार का पता और पत्राचार का पता एक ही है</string>
+    <string name="choose_regional_language">क्षेत्रीय भाषा चुनें<font fgcolor="#FF3D00">*</font></string>
+    <string name="choose_regional_language_">क्षेत्रीय भाषा चुनें</string>
+    <string name="please_select_regional_language">कृपया क्षेत्रीय भाषा चुनें</string>
 </resources>

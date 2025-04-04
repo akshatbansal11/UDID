@@ -2,6 +2,7 @@ package com.swavlambancard.udid.ui.activity
 
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,6 +35,8 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
     private var currentFragment: Fragment? = null
     private var sharedViewModel: SharedDataViewModel? = null
     private var isFrom: String? = null
+    private lateinit var backPressedCallback: OnBackPressedCallback
+
     override val layoutId: Int
         get() = R.layout.activity_personal_profile
 
@@ -52,8 +55,44 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         } else {
             editApi()
         }
+        backPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Get the current fragment index
+                val currentFragmentIndex = getCurrentFragmentIndex()
+
+                if (currentFragmentIndex > 0) {
+                    // Navigate to previous fragment
+                    navigateToPreviousFragment(currentFragmentIndex)
+                } else {
+                    showExitConfirmationDialog()
+                }
+            }
+
+        }
+
+        // Register the callback
+        onBackPressedDispatcher.addCallback(this, backPressedCallback)
+    }
+    private fun getCurrentFragmentIndex(): Int {
+        return when (currentFragment) {
+            is PersonalDetailFragment -> 0
+            is ProofOfIDFragment -> 1
+            is ProofOfAddressFragment -> 2
+            is DisabilityDetailFragment -> 3
+            is HospitalAssessmentFragment -> 4
+            else -> 0
+        }
     }
 
+    private fun navigateToPreviousFragment(currentIndex: Int) {
+        when (currentIndex) {
+            1 -> replaceFragment(PersonalDetailFragment())
+            2 -> replaceFragment(ProofOfIDFragment())
+            3 -> replaceFragment(ProofOfAddressFragment())
+            4 -> replaceFragment(DisabilityDetailFragment())
+            else -> showExitConfirmationDialog() // Fallback
+        }
+    }
 
     override fun setVariables() {
     }
@@ -184,10 +223,17 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
 
     inner class ClickActions {
         fun backPress(view: View) {
-            finish()
-            onBackPressedDispatcher.onBackPressed()
-        }
+            // Get the current fragment index
+            val currentFragmentIndex = getCurrentFragmentIndex()
 
+            if (currentFragmentIndex > 0) {
+                // Navigate to previous fragment
+                navigateToPreviousFragment(currentFragmentIndex)
+            } else {
+                // Show exit dialog if we're on the first fragment
+                showExitConfirmationDialog()
+            }
+        }
         fun personalDetails(view: View) {
 //            if(sharedViewModel?.personalDetailValid(this@PersonalProfileActivity) == true) {
 //                replaceFragment(PersonalDetailFragment())
@@ -227,7 +273,37 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
 //            }
         }
     }
+    private fun showExitConfirmationDialog() {
+//        val dialogBinding = LayoutInflater.from(this@PersonalProfileActivity).inflate(R.layout.custom_back_dialog, null)
+//        val customDialog = Dialog(this@PersonalProfileActivity)
+//
+//        customDialog.setContentView(dialogBinding)
+//        customDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//        customDialog.window!!.setLayout(
+//            (resources.displayMetrics.widthPixels * 0.9).toInt(),
+//            LinearLayout.LayoutParams.WRAP_CONTENT
+//        )
+//        customDialog.window!!.setGravity(Gravity.CENTER)
+//        val lp: WindowManager.LayoutParams = customDialog.window!!.attributes
+//        lp.dimAmount = 0.5f
+//        customDialog.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+//        customDialog.setCancelable(false)
+//
+//        val btnStay = dialogBinding.findViewById<Button>(R.id.btnStay)
+//        val btnDiscard = dialogBinding.findViewById<Button>(R.id.btnDiscard)
+//
+//        btnStay.setOnClickListener {
+//            customDialog.dismiss()
+//        }
+//
+//        btnDiscard.setOnClickListener {
+//            customDialog.dismiss()
+            backPressedCallback.remove() // Remove callback to prevent loop
+            finish()
+//        }
 
+//        customDialog.show()
+    }
     private fun editApi() {
         val encryptedString = JSEncryptService.encrypt(
             getPreferenceOfLogin(
@@ -245,16 +321,12 @@ class PersonalProfileActivity : BaseActivity<ActivityPersonalProfileBinding>() {
         )
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
-    }
 
     fun replaceFragment(fragment: Fragment) {
         currentFragment = fragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragFrame, fragment)
-            .addToBackStack(null)
+            // .addToBackStack(null) // Remove this line
             .commit()
         updateImagesForCurrentFragment()
     }
