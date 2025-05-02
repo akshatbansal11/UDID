@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
@@ -15,6 +16,7 @@ import com.swavlambancard.udid.utilities.BaseActivity
 import com.swavlambancard.udid.utilities.Utility
 import com.swavlambancard.udid.utilities.showView
 import com.swavlambancard.udid.utilities.toast
+import kotlinx.coroutines.launch
 
 class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
 
@@ -33,7 +35,9 @@ class ScannerActivity : BaseActivity<ActivityScannerBinding>() {
         registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
             run {
                 if (result.contents == null) {
-                    onBackPressedDispatcher.onBackPressed()
+                    lifecycleScope.launch {
+                        onBackPressedDispatcher.onBackPressed()
+                    }
                 } else {
                     mBinding?.rlParent?.showView()
                     setResult(result.contents)

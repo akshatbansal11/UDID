@@ -2081,7 +2081,7 @@ object Utility {
     fun versionName(context: Context): String {
         try {
             val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            return pInfo.versionName
+            return pInfo.versionName.toString()
 //            println(version)
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()

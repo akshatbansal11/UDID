@@ -101,7 +101,7 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
                 }
             }
             if (sharedViewModel.userData.value?.isFrom != "login") {
-                if (userData.documentAddressProofPhoto != null && !(userData.documentAddressProofPhotoPath!!.startsWith("content://") || userData.documentAddressProofPhotoPath!!.startsWith("file://"))) {
+                if (userData.documentAddressProofPhoto != null && !(userData.documentAddressProofPhotoPath?.startsWith("content://") == true || userData.documentAddressProofPhotoPath?.startsWith("file://") == true)) {
                     mBinding?.etFileName?.let {
                         setBlueUnderlinedText(
                             it,

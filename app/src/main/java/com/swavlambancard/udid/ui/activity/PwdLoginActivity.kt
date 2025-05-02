@@ -33,7 +33,6 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
     private var viewModel = ViewModel()
     var date: String? = null
 
-
     override val layoutId: Int
         get() = R.layout.activity_pwdlogin
 
@@ -41,8 +40,6 @@ class PwdLoginActivity : BaseActivity<ActivityPwdloginBinding>() {
         mBinding = viewDataBinding
         mBinding?.clickAction = ClickActions()
         viewModel.init()
-
-
     }
 
     override fun setVariables() {

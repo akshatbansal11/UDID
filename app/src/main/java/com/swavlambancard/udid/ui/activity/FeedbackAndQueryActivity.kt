@@ -128,6 +128,13 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
             }
             return false
         }
+        else if (!checkValidMobile(mBinding?.etMobile?.text.toString())) {
+            mBinding?.llParent?.let {
+                showSnackbar(it,
+                    getString(R.string.first_digit_should_start_from_6_to_9_of_mobile_number))
+            }
+            return false
+        }
         else if (mBinding?.etMobile?.text.toString().trim().length != 10) {
             mBinding?.clParent?.let {
                 showSnackbar(it, getString(R.string.mobile_number_must_be_exactly_10_digits))
@@ -142,12 +149,17 @@ class FeedbackAndQueryActivity : BaseActivity<ActivityFeedbackAndQueryBinding>()
             mBinding?.clParent?.let { showSnackbar(it, getString(R.string.please_enter_your_message)) }
             return false
         }
-        else if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
-            mBinding?.clParent?.let { showSnackbar(it,getString(R.string.please_upload_document)) }
-            return false
-        }
+//        else if (mBinding?.etFileName?.text.toString().trim().isEmpty()) {
+//            mBinding?.clParent?.let { showSnackbar(it,getString(R.string.please_upload_document)) }
+//            return false
+//        }
 
         return true
+    }
+
+    fun checkValidMobile(mobile: String): Boolean {
+        val regex = "^[6-9]( ?[0-9]){8} ?[0-9]$".toRegex()
+        return regex.matches(mobile)
     }
 
     @SuppressLint("Range")
