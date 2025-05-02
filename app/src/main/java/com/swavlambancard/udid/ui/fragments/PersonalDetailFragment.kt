@@ -279,10 +279,10 @@ class PersonalDetailFragment : BaseFragment<FragmentPersonalDetailsBinding>() {
                 mBinding?.etFileNameSignature?.text="VIEW"
             }
             if (sharedViewModel.userData.value?.isFrom != "login") {
-                if (userData.photo != null && !(userData.photoPath!!.startsWith("content://") || userData.photoPath!!.startsWith("file://"))) {
+                if (userData.photo != null && !(userData.photoPath?.startsWith("content://") == true || userData.photoPath?.startsWith("file://") == true)) {
                     sharedViewModel.userData.value?.photo = ""
                 }
-                if (userData.sign != null && !(userData.signaturePath!!.startsWith("content://") || userData.signaturePath!!.startsWith("file://"))) {
+                if (userData.sign != null && !(userData.signaturePath?.startsWith("content://") == true || userData.signaturePath?.startsWith("file://") == true)) {
                     sharedViewModel.userData.value?.sign = ""
                 }
 

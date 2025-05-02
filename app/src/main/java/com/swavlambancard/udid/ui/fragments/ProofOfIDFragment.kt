@@ -170,7 +170,7 @@ class ProofOfIDFragment : BaseFragment<FragmentProofOfIDBinding>() {
                     }
                     sharedViewModel.userData.value?.identityProofUpload = ""
                 }
-                if (userData.aadhaarEnrollmentUploadSlip != null && !(userData.aadhaarEnrollmentUploadSlipPath!!.startsWith("content://") || userData.aadhaarEnrollmentUploadSlipPath!!.startsWith("file://"))) {
+                if (userData.aadhaarEnrollmentUploadSlip != null && !(userData.aadhaarEnrollmentUploadSlipPath?.startsWith("content://") == true || userData.aadhaarEnrollmentUploadSlipPath?.startsWith("file://") == true)) {
                     mBinding?.etFileNameEnrollmentSlip?.let {
                         setBlueUnderlinedText(
                             it,

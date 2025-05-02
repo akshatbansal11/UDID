@@ -85,45 +85,46 @@ class ProofOfAddressFragment : BaseFragment<FragmentProofOfCAddBinding>() {
         }
 
         sharedViewModel.userData.observe(viewLifecycleOwner) { userData ->
-            if(sharedViewModel.userData.value?.isAadhaarAddressSame == 0){
+            if (userData == null) return@observe  // Safeguard
+
+            if (userData.isAadhaarAddressSame == 0) {
                 mBinding?.llAddressProof?.showView()
-            }
-            else{
+            } else {
                 mBinding?.llAddressProof?.hideView()
             }
-            if (userData.documentAddressProofPhotoPath != null) {
+
+            if (!userData.documentAddressProofPhotoPath.isNullOrEmpty()) {
                 mBinding?.etFileName?.text = "VIEW"
                 mBinding?.etFileName?.let {
-                    setBlueUnderlinedText(
-                        it,
-                        "VIEW"
-                    )
+                    setBlueUnderlinedText(it, "VIEW")
                 }
             }
-            if (sharedViewModel.userData.value?.isFrom != "login") {
-                if (userData.documentAddressProofPhoto != null && !(userData.documentAddressProofPhotoPath?.startsWith("content://") == true || userData.documentAddressProofPhotoPath?.startsWith("file://") == true)) {
+
+            if (userData.isFrom != "login") {
+                if (!userData.documentAddressProofPhoto.isNullOrEmpty()
+                    && !(userData.documentAddressProofPhotoPath?.startsWith("content://") == true
+                            || userData.documentAddressProofPhotoPath?.startsWith("file://") == true)
+                ) {
                     mBinding?.etFileName?.let {
-                        setBlueUnderlinedText(
-                            it,
-                            "VIEW"
-                        )
+                        setBlueUnderlinedText(it, "VIEW")
                     }
-                    sharedViewModel.userData.value?.documentAddressProofPhoto = ""
+                    userData.documentAddressProofPhoto = ""
                 }
             }
-            mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName
-            addressProofId = userData.natureDocumentAddressProofCode
-            mBinding?.etAddress?.setText(userData.address)
-            mBinding?.etState?.text = userData.stateName
-            mBinding?.etDistrict?.text = userData.districtName
-            mBinding?.etSubDistrict?.text = userData.subDistrictName
-            mBinding?.etVillage?.text = userData.villageName
-            mBinding?.etPincode?.text = userData.pincodeName
-            stateId = userData.stateCode
-            districtId = userData.districtCode
-            subDistrictId = userData.subDistrictCode
-            villageId = userData.villageCode
-            pincodeId = userData.pincodeCode
+
+            mBinding?.etNatureDocumentAddressProof?.text = userData.natureDocumentAddressProofName ?: ""
+            addressProofId = userData.natureDocumentAddressProofCode ?: ""
+            mBinding?.etAddress?.setText(userData.address ?: "")
+            mBinding?.etState?.text = userData.stateName ?: ""
+            mBinding?.etDistrict?.text = userData.districtName ?: ""
+            mBinding?.etSubDistrict?.text = userData.subDistrictName ?: ""
+            mBinding?.etVillage?.text = userData.villageName ?: ""
+            mBinding?.etPincode?.text = userData.pincodeName ?: ""
+            stateId = userData.stateCode ?: ""
+            districtId = userData.districtCode ?: ""
+            subDistrictId = userData.subDistrictCode ?: ""
+            villageId = userData.villageCode ?: ""
+            pincodeId = userData.pincodeCode ?: ""
         }
         mBinding?.etNatureDocumentAddressProof?.addTextChangedListener {
             sharedViewModel.userData.value?.natureDocumentAddressProofName = it.toString()
